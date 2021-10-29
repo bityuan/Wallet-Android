@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center|bottom"
+    android:orientation="vertical">
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/bg_choose_chain">
+
+        <TextView
+            android:id="@+id/tv_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="16dp"
+            android:text="@string/cancel"
+            android:textColor="@color/color_8e92a3"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/home_choose_chain"
+            android:textColor="@color/gray_33"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+
+    </FrameLayout>
+
+
+    <cn.finalteam.loadingviewfinal.RecyclerViewFinal
+        android:id="@+id/rv_list"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:background="@android:color/white" />
+
+
+</LinearLayout>

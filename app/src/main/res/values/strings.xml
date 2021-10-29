@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">开源钱包</string>
+    <string name="main_home">首页</string>
+    <string name="main_market">行情</string>
+    <string name="main_explore">探索</string>
+    <string name="main_my">我的</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

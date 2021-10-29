@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <SurfaceView
+        android:id="@+id/surfaceView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <com.king.zxing.ViewfinderView
+        android:id="@+id/viewfinderView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:labelText="@string/my_scan_toast"
+        app:labelTextSize="14sp"
+        app:laserColor="@color/colorPrimary"
+        app:frameColor="@color/colorPrimary"
+        app:cornerColor="@color/colorPrimary"
+        app:resultPointColor="@color/colorPrimary"
+        app:labelTextLocation="bottom"
+        app:laserStyle="grid"
+        app:gridHeight="0dp"/>
+</FrameLayout>

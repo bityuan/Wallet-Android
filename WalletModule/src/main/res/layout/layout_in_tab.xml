@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/secondTitleLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:layout_marginBottom="6dp"
+    android:orientation="vertical">
+
+    <RadioGroup
+        android:id="@+id/rg_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_common"
+            android:layout_width="80dp"
+            android:layout_height="30dp"
+            android:background="@drawable/selector_in_menu"
+            android:button="@null"
+            android:checked="true"
+            android:gravity="center"
+            android:text="@string/in_universal"
+            android:textColor="@drawable/tv_selector_in_tab"
+            android:textSize="17sp" />
+
+
+        <RadioButton
+            android:id="@+id/rb_bi"
+            android:layout_width="80dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="42dp"
+            android:background="@drawable/selector_in_menu"
+            android:button="@null"
+            android:gravity="center"
+            android:visibility="gone"
+            android:text="@string/in_exclusive"
+            android:textColor="@drawable/tv_selector_in_tab"
+            android:textSize="17sp" />
+
+
+    </RadioGroup>
+
+
+    <TextView
+        android:id="@+id/tv_common_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rg_menu"
+        android:layout_alignLeft="@+id/rg_menu"
+        android:layout_marginLeft="-15dp"
+        android:layout_marginTop="5dp"
+        android:text="@string/in_common_tip"
+        android:textColor="@color/color_D9DCE9"
+        android:textSize="12sp" />
+
+
+    <TextView
+        android:id="@+id/tv_bi_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rg_menu"
+        android:layout_alignRight="@+id/rg_menu"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="-15dp"
+        android:text="@string/in_bi_tip"
+        android:textColor="@color/color_D9DCE9"
+        android:textSize="12sp"
+        android:visibility="gone" />
+
+
+</RelativeLayout>

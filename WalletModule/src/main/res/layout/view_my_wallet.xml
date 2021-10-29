@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:layout_marginLeft="20dp"
+    android:layout_marginTop="12dp"
+    android:layout_marginRight="20dp">
+
+    <RelativeLayout
+        android:id="@+id/walletBg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="12dp"
+        android:background="@mipmap/my_wallet_bg_black">
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_39"
+            android:layout_marginTop="@dimen/dp_25"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="@string/my_wallets_mnem_walllet" />
+
+        <TextView
+            android:id="@+id/walletId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_39"
+            android:layout_marginTop="@dimen/dp_59"
+            android:ellipsize="middle"
+            android:singleLine="true"
+            android:textColor="@color/color_80ffffff"
+            android:textSize="14sp"
+            tools:text="Uid：123456" />
+
+        <TextView
+            android:id="@+id/money"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="@dimen/dp_17"
+            android:layout_marginTop="@dimen/dp_22"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_18"
+            android:textStyle="bold"
+            tools:text="￥69373.53"
+            android:layout_marginRight="@dimen/dp_17" />
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/coinIcon"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_centerVertical="true"
+        tools:src="@mipmap/my_wallet_coins" />
+
+    <TextView
+        android:id="@+id/currentWallet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:background="@mipmap/my_wallet_current"
+        android:gravity="center"
+        android:text="@string/my_wallets_current_wallet"
+        android:textColor="#ffffff"
+        android:textSize="12sp" />
+
+
+</RelativeLayout>

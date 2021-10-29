@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fatherLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_f8f8fa"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:background="@color/color_f8f8fa" />
+
+    <RelativeLayout
+        android:id="@+id/titleLayout"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="@color/color_f8f8fa">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="57dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:scaleType="center"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_back"
+            tools:ignore="VectorDrawableCompat" />
+
+        <ImageView
+            android:id="@+id/topLeft"
+            android:layout_width="57dp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/iv_back"
+            android:visibility="gone"
+            android:scaleType="center"
+            android:src="@mipmap/home_top_left" />
+
+        <TextView
+            android:id="@+id/walletTypeName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textColor="@color/gray_33"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:text="@string/my_wallets_mnem_walllet" />
+
+        <ImageView
+            android:id="@+id/topRight"
+            android:layout_width="57dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:scaleType="center"
+            android:src="@mipmap/home_top_wallet" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <cn.finalteam.loadingviewfinal.SwipeRefreshLayoutFinal
+            android:id="@+id/swl_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:ptr_duration_to_close="300"
+            app:ptr_duration_to_close_header="1500"
+            app:ptr_keep_header_when_refresh="true"
+            app:ptr_ratio_of_header_height_to_refresh="1.2"
+            app:ptr_resistance="1.7">
+
+            <cn.finalteam.loadingviewfinal.RecyclerViewFinal
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:cacheColorHint="#00000000"
+                android:descendantFocusability="beforeDescendants"
+                app:loadMoreMode="click|scroll"
+                app:loadMoreView="cn.finalteam.loadingviewfinal.DefaultLoadMoreView"
+                app:noLoadMoreHideView="false" />
+
+        </cn.finalteam.loadingviewfinal.SwipeRefreshLayoutFinal>
+
+        <LinearLayout
+            android:id="@+id/emptyView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/home_empty" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="@string/home_empty"
+                android:textColor="#ff8e92a3"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>

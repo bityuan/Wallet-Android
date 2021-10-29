@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.fzm.walletmodule.ui.widget.LimitEditText
+        android:id="@+id/et_mnem"
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:background="@drawable/bg_remember_words"
+        android:gravity="center_vertical"
+        android:hint="@string/import_wallet_hint0"
+        android:paddingLeft="14dp"
+        android:paddingRight="14dp"
+        android:textColor="@color/color_333649"
+        android:textColorHint="@color/gray_8e"
+        android:textSize="16sp" />
+
+    <TextView
+        android:layout_marginTop="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/import_wallet_tips"
+        android:textColor="#ff7190ff"
+        android:textSize="14sp" />
+
+</LinearLayout>

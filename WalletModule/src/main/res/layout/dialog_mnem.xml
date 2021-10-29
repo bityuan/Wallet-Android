@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_re_white"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp">
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="@string/my_wallet_detail_mnem"
+                android:textColor="@color/gray_349"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/iv_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:src="@mipmap/icon_close" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="45dp"
+            android:layout_height="4dp"
+            android:layout_marginLeft="25dp"
+            android:background="@color/color_7190FF" />
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginRight="25dp"
+            android:background="@color/gray_f8">
+
+            <TextView
+                android:id="@+id/tv_mnem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@color/gray_f8"
+                android:lineSpacingMultiplier="1.5"
+                android:padding="@dimen/dp_10"
+                android:text="床前明 月光疑 是地上 床前明 月光疑"
+                android:textColor="@color/gray_349"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="17dp"
+            android:layout_marginEnd="@dimen/dp_25"
+            android:drawableLeft="@mipmap/icon_tip_mnem"
+            android:drawablePadding="3dp"
+            android:text="@string/export_mnem_tip"
+            android:textColor="@color/color_DD2E41"
+            android:textSize="14sp"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="@dimen/dp_25" />
+
+        <ImageView
+            android:id="@+id/iv_mnem_qrcode"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="21dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="9dp"
+            android:text="助记词二维码"
+            android:textColor="@color/color_333649"
+            android:textSize="@dimen/sp_14" />
+
+        <Button
+            android:id="@+id/btn_copy"
+            android:layout_width="160dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/bg_shape_button"
+            android:gravity="center"
+            android:text="@string/ok"
+            android:textColor="@android:color/white"
+            android:textSize="17sp" />
+    </LinearLayout>
+
+
+</LinearLayout>

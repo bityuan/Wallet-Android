@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_f0f3ff"
+    tools:context=".ui.fragment.WalletIndexFragment">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/bigIcon"
+            android:layout_width="match_parent"
+            android:layout_height="329dp"
+            android:layout_centerHorizontal="true"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/wallet_index_big_icon_other" />
+
+        <ImageView
+            android:id="@+id/iv_back_windex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_back"
+            tools:ignore="VectorDrawableCompat" />
+    </FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/fatherLayout"
+        android:layout_width="match_parent"
+        android:layout_height="230dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="22dp"
+        android:layout_marginRight="22dp"
+        android:layout_marginBottom="146dp">
+
+        <RelativeLayout
+            android:id="@+id/hdLayout"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:background="@mipmap/wallet_index_small_hd_bg">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:drawableRight="@mipmap/wallet_type_icon"
+                android:drawablePadding="8dp"
+                android:text="@string/block_chain_wallet"
+                android:textColor="#ffffffff"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/walletCreate"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="100dp"
+                android:background="@drawable/bg_wallet_index_white_button"
+                android:gravity="center"
+                android:paddingLeft="13dp"
+                android:paddingRight="13dp"
+                android:text="@string/my_create_wallet"
+                android:textColor="@color/color_333649"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/walletImport"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="100dp"
+                android:layout_toRightOf="@id/walletCreate"
+                android:background="@drawable/bg_wallet_index_blue_button"
+                android:gravity="center"
+                android:paddingLeft="13dp"
+                android:paddingRight="13dp"
+                android:text="@string/my_import_wallet"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+</RelativeLayout>

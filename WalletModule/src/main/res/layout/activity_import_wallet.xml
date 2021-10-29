@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/baseTitleLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+       <!-- <com.google.android.material.tabs.TabLayout
+            android:id="@+id/slidingTabs"
+            style="@style/CustomTabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />-->
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:overScrollMode="always"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_16"
+                android:layout_marginRight="@dimen/dp_16"
+                android:orientation="vertical">
+
+                <com.fzm.walletmodule.ui.widget.LimitEditText
+                    android:id="@+id/et_mnem"
+                    android:layout_width="match_parent"
+                    android:layout_height="110dp"
+                    android:background="@drawable/bg_remember_words"
+                    android:gravity="center_vertical"
+                    android:hint="@string/import_wallet_hint0"
+                    android:paddingLeft="14dp"
+                    android:paddingRight="14dp"
+                    android:textColor="@color/color_333649"
+                    android:textColorHint="@color/gray_8e"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_marginTop="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/import_wallet_tips"
+                    android:textColor="#ff7190ff"
+                    android:textSize="14sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:text="@string/wallet_name"
+                    android:textColor="#ff8e92a3"
+                    android:textSize="14sp" />
+
+                <EditText
+                    android:id="@+id/walletName"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@null"
+                    android:gravity="center_vertical"
+                    android:maxLength="16"
+                    android:textColor="#ff333649"
+                    android:textSize="16sp"
+                    tools:text="账户1" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="#D9DCE9" />
+
+                <LinearLayout
+                    android:id="@+id/passwordLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/passwordTip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:gravity="bottom"
+                        android:text="@string/my_set_password_toast"
+                        android:textColor="#ff8e92a3"
+                        android:textSize="14sp"
+                        android:visibility="invisible" />
+
+                    <EditText
+                        android:id="@+id/walletPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="2dp"
+                        android:background="@null"
+                        android:gravity="center_vertical"
+                        android:hint="@string/set_wallet_password"
+                        android:inputType="textPassword"
+                        android:maxLength="16"
+                        android:textColor="#ff333649"
+                        android:textColorHint="#8E92A3"
+                        android:textSize="16sp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:background="#D9DCE9" />
+
+                    <TextView
+                        android:id="@+id/passwordAgainTip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:gravity="bottom"
+                        android:text="@string/my_set_password_different"
+                        android:textColor="#ff8e92a3"
+                        android:textSize="14sp"
+                        android:visibility="invisible" />
+
+                    <EditText
+                        android:id="@+id/walletPasswordAgain"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="2dp"
+                        android:background="@null"
+                        android:gravity="center_vertical"
+                        android:hint="@string/confirm_wallet_password"
+                        android:inputType="textPassword"
+                        android:maxLength="16"
+                        android:textColor="#ff333649"
+                        android:textColorHint="#8E92A3"
+                        android:textSize="16sp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:background="#D9DCE9" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="25dp" />
+
+            </LinearLayout>
+        </ScrollView>
+
+        <Button
+            android:id="@+id/btnImport"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginLeft="@dimen/dp_16"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="@dimen/dp_16"
+            android:layout_marginBottom="15dp"
+            android:background="@drawable/bg_import_wallet_button"
+            android:gravity="center"
+            android:text="@string/my_import_start"
+            android:textColor="@color/white"
+            android:textSize="17sp" />
+
+    </LinearLayout>
+</RelativeLayout>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/walletBg"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="@dimen/dp_10"
+        android:background="@mipmap/header_wallet_hd_wallet">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="4dp"
+                android:visibility="gone"
+                tools:src="@mipmap/header_wallet_icon_bty" />
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ffd9dce9"
+                android:textSize="@dimen/sp_20"
+                tools:text="某某的账户（￥）" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/money"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="44dp"
+            android:textColor="#fff5f5f5"
+            android:visibility="gone"
+            android:textSize="36sp"
+            tools:text="69373.53" />
+
+        <TextView
+            android:id="@+id/address"
+            android:layout_width="194dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="93dp"
+            android:ellipsize="middle"
+            android:singleLine="true"
+            android:text="schdhuvhdduhduvhdug21easygug"
+            android:visibility="gone"
+            android:textColor="#80ffffff"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/more"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="13dp"
+            android:layout_marginRight="14dp"
+            android:scaleType="center"
+            android:src="@mipmap/header_wallet_more" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>
