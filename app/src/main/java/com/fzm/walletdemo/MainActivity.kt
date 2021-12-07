@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
         EventBus.getDefault().register(this)
         setTabSelection()
 
+
     }
 
 
