@@ -1,15 +1,21 @@
 package com.fzm.walletmodule.utils;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
+
+import androidx.core.app.ActivityCompat;
 
 import com.fzm.walletmodule.R;
 
@@ -265,6 +271,5 @@ public class AppUtils {
         }
         return null;
     }
-
 
 }

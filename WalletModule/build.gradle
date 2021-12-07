@@ -77,6 +77,7 @@ dependencies {
     api "com.zhy:base-rvadapter:3.0.3"
     api "com.alibaba:fastjson:1.2.48"
     api "cn.finalteam.loadingviewfinal:ultra-pull-to-refresh:1.0.1"
-
+    api "com.alibaba.android:vlayout:1.2.36@aar"
+    api "com.makeramen:roundedimageview:2.3.0"
 }
 apply from: './nexus-push.gradle'

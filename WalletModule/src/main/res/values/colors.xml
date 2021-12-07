@@ -28,4 +28,6 @@
     <color name="gray_66">#666666</color>
     <color name="color_DD2E41">#DD2E41</color>
     <color name="color_80ffffff">#80ffffff</color>
+    <color name="color_bg">#F8F8FA</color>
+
 </resources>
