@@ -5,13 +5,14 @@ import com.fzm.walletmodule.utils.MMkvUtil.decodeString
 
 class ApiEnv {
 
-    companion object{
+    companion object {
 
         const val ONLINE = 0
         const val DEBUG = 1
         const val GO_URL = "go_url"
         const val GO_URL_DEBUG = "https://183.129.226.77:8083"
         const val GO_URL_ONLINE = "https://go.biqianbao.net"
+        const val BASE_URL = "https://www.bitfeel.cn"
         private const val goEnv = ONLINE
         @JvmStatic
         fun getGoURL(): String? {
