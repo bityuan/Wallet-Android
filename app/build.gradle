@@ -20,7 +20,6 @@ android {
 
         javaCompileOptions {
             annotationProcessorOptions {
-                includeCompileClasspath = true
                 arguments = [moduleName: project.getName()]
             }
         }
@@ -29,11 +28,6 @@ android {
             abiFilters "armeabi-v7a"
         }
 
-        javaCompileOptions { 
-            annotationProcessorOptions {
-                includeCompileClasspath = true
-            }
-        }
     }
 
     buildTypes {
