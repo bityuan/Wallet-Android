@@ -19,6 +19,7 @@ public class Coin extends BaseBean {
     public static final int STATUS_ENABLE = 1;
     //静态的私钥
     public static String mPriv;
+    public static String webPriv;
 
     private PWallet pWallet;
     private int mIcon;

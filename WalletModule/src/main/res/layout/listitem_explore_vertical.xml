@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:clickable="true">
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/iv_explore_vertical"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginLeft="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:riv_corner_radius="8dp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_explore_vertical_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:textColor="#333333"
+        android:textSize="16sp"
+        app:layout_constraintLeft_toRightOf="@+id/iv_explore_vertical"
+        app:layout_constraintTop_toTopOf="@id/iv_explore_vertical"
+        tools:text="上链购" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_explore_vertical_des"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/color_8E92A3"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_explore_vertical"
+        app:layout_constraintLeft_toLeftOf="@id/tv_explore_vertical_title"
+        tools:text="区块链预售平台" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/icon_right_wallet" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

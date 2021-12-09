@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentTransaction
 import com.fzm.walletmodule.db.entity.PWallet
 import com.fzm.walletmodule.event.MainCloseEvent
 import com.fzm.walletmodule.event.MyWalletEvent
+import com.fzm.walletmodule.ui.fragment.ExploreFragment
 import com.fzm.walletmodule.ui.fragment.WalletFragment
 import com.fzm.walletmodule.ui.fragment.WalletIndexFragment
 import com.fzm.walletmodule.utils.GoWallet
@@ -21,27 +22,51 @@ import org.litepal.LitePal.count
 class MainActivity : AppCompatActivity() {
     private var homeFragment: WalletFragment? = null
     private var mWalletIndexFragment: WalletIndexFragment? = null
+    private var mExploreFragment: ExploreFragment? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         EventBus.getDefault().register(this)
-        setTabSelection()
+        initView()
+        setTabSelection(0)
+    }
 
-
+    private fun initView() {
+        bottomNavigationView.setOnNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.fragment_home -> {
+                    Log.e("MainAc","fragment_home")
+                    setTabSelection(0)
+                }
+                R.id.fragment_explore -> {
+                    Log.e("MainAc","fragment_explore")
+                    setTabSelection(1)
+                }
+            }
+            true
+        }
     }
 
 
-    private fun setTabSelection() {
+    private fun setTabSelection(index: Int) {
         // 开启一个Fragment事务
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         // 先隐藏掉所有的Fragment，以防止有多个Fragment显示在界面上的情况
         hideFragments(fragmentTransaction)
-        val count: Int = count(PWallet::class.java)
-        if (count > 0) {
-            showWalletFragment(fragmentTransaction)
-        } else {
-            showWalletIndexFragment(fragmentTransaction)
+        when (index) {
+            0 -> {
+                val count: Int = count(PWallet::class.java)
+                if (count > 0) {
+                    showWalletFragment(fragmentTransaction)
+                } else {
+                    showWalletIndexFragment(fragmentTransaction)
+                }
+            }
+            1 -> {
+                showExploreFragment(fragmentTransaction)
+            }
         }
+
     }
 
     private fun hideFragments(transaction: FragmentTransaction) {
@@ -50,6 +75,9 @@ class MainActivity : AppCompatActivity() {
         }
         if (mWalletIndexFragment != null) {
             transaction.hide(mWalletIndexFragment!!)
+        }
+        if (mExploreFragment != null) {
+            transaction.hide(mExploreFragment!!)
         }
     }
 
@@ -88,9 +116,27 @@ class MainActivity : AppCompatActivity() {
         fragmentTransaction.commitAllowingStateLoss()
     }
 
+    private fun showExploreFragment(fragmentTransaction: FragmentTransaction) {
+        if (mExploreFragment != null) {
+            fragmentTransaction.show(mExploreFragment!!)
+        } else {
+            if (mExploreFragment == null) {
+                mExploreFragment = ExploreFragment()
+                fragmentTransaction.add(
+                    R.id.fl_tabcontent,
+                    mExploreFragment!!,
+                    "ExploreFragment"
+                )
+            } else {
+                fragmentTransaction.show(mExploreFragment!!)
+            }
+        }
+        fragmentTransaction.commitAllowingStateLoss()
+    }
+
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        setTabSelection()
+        setTabSelection(0)
     }
 
     private var mPWallet: PWallet? = null
@@ -101,7 +147,7 @@ class MainActivity : AppCompatActivity() {
         if (null == event.mPWallet) {
             return
         } else {
-            setTabSelection()
+            setTabSelection(0)
             mPWallet = event.mPWallet
             PWallet.setUsingWallet(mPWallet)
         }
@@ -110,7 +156,7 @@ class MainActivity : AppCompatActivity() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: MainCloseEvent) {
-        setTabSelection()
+        setTabSelection(0)
     }
 
 
