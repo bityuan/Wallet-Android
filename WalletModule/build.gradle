@@ -79,5 +79,14 @@ dependencies {
     api "cn.finalteam.loadingviewfinal:ultra-pull-to-refresh:1.0.1"
     api "com.alibaba.android:vlayout:1.2.36@aar"
     api "com.makeramen:roundedimageview:2.3.0"
+    api "com.squareup.okhttp3:okhttp:3.14.9"
+    api "com.squareup.retrofit2:retrofit:2.8.2"
+    api "org.koin:koin-androidx-scope:2.1.5"
+    api "org.koin:koin-androidx-viewmodel:2.1.5"
+    api "org.koin:koin-androidx-fragment:2.1.5"
+    api "org.koin:koin-androidx-ext:2.1.5"
+    api "com.squareup.retrofit2:converter-gson:2.8.2"
+    api  "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
+    api "com.squareup.okhttp3:logging-interceptor:3.14.9"
 }
 apply from: './nexus-push.gradle'

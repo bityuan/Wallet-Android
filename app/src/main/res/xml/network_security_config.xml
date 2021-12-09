@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!--Android 7 以上谷歌更严格的安全机制-->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" overridePins="true" />
+            <certificates src="user" overridePins="true" />
+
+        </trust-anchors>
+    </base-config>
+  <!--  <debug-overrides>
+        <certificates src="system" overridePins="true" />
+    </debug-overrides>-->
+</network-security-config>
