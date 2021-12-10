@@ -47,7 +47,6 @@ android {
 repositories {
     flatDir {
         dirs 'libs'
-        dirs project(':WalletModule').file('libs')
     }
 }
 

@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentTransaction
 import com.fzm.walletmodule.db.entity.PWallet
 import com.fzm.walletmodule.event.MainCloseEvent
 import com.fzm.walletmodule.event.MyWalletEvent
+import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.fragment.ExploreFragment
 import com.fzm.walletmodule.ui.fragment.WalletFragment
 import com.fzm.walletmodule.ui.fragment.WalletIndexFragment
@@ -19,11 +20,13 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.litepal.LitePal.count
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
     private var homeFragment: WalletFragment? = null
     private var mWalletIndexFragment: WalletIndexFragment? = null
     private var mExploreFragment: ExploreFragment? = null
     override fun onCreate(savedInstanceState: Bundle?) {
+        mCustomToobar = true
+        setStatusColor(R.color.color_333649)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         EventBus.getDefault().register(this)
@@ -31,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         setTabSelection(0)
     }
 
-    private fun initView() {
+     override fun initView() {
         bottomNavigationView.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.fragment_home -> {

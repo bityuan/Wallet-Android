@@ -79,7 +79,7 @@ class OutActivity : BaseActivity() {
         val chainBeans = where(
             "name = ? and pwallet_id = ?",
             mCoin!!.chain,
-           (mCoin!!.getpWallet().id).toString()
+            (mCoin!!.getpWallet().id).toString()
         ).find(Coin::class.java)
         if (!ListUtils.isEmpty(chainBeans)) {
             mChainBean = chainBeans[0]
@@ -121,11 +121,9 @@ class OutActivity : BaseActivity() {
             override fun onProgressChanged(
                 seekBar: SeekBar,
                 progress: Int,
-                fromUser: Boolean
+                fromUser: Boolean,
             ) {
-                var progress = progress
-                progress += minInt
-                mFee = DoubleUtils.intToDouble(progress, length)
+                mFee = DoubleUtils.intToDouble(progress + minInt, length)
                 // updateFee(progress, length)
                 tv_fee.text = DecimalUtils.subZero(DecimalUtils.formatDouble(mFee))
                 tv_fee_coin_name.text = mCoin!!.chain
@@ -134,9 +132,9 @@ class OutActivity : BaseActivity() {
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
             override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
-        seekbar_money.max = maxInt - minInt
+        seekbar_money.max = maxInt
         //初始进度（推荐款工费）
-        seekbar_money.progress = averageInt - minInt
+        seekbar_money.progress = maxInt / 2
     }
 
     override fun initListener() {
@@ -412,7 +410,7 @@ class OutActivity : BaseActivity() {
         fromPos: Int,
         to: String,
         toPos: Int,
-        cls: Class<T>
+        cls: Class<T>,
     ): T {
         return try {
             cls.cast(value)

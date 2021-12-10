@@ -1,19 +1,15 @@
 package com.fzm.walletmodule.ui.base
 
 import android.annotation.SuppressLint
-import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.Window
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.viewModelScope
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.api.AndroidWebBridge
 import com.fzm.walletmodule.bean.*
@@ -23,27 +19,17 @@ import com.fzm.walletmodule.db.entity.PWallet
 import com.fzm.walletmodule.utils.*
 import com.fzm.walletmodule.vm.OutViewModel
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.dialog_dapp.view.*
 import kotlinx.android.synthetic.main.dialog_put_password.view.*
 import kotlinx.android.synthetic.main.dialog_put_password.view.btn_ok
 import kotlinx.android.synthetic.main.dialog_put_password.view.et_input
 import kotlinx.android.synthetic.main.dialog_put_password.view.iv_close
 import kotlinx.coroutines.*
-import org.jetbrains.anko.toast
-import org.json.JSONException
-import org.json.JSONObject
 import org.koin.android.ext.android.inject
 import org.litepal.LitePal.select
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import walletapi.*
 import wendu.dsbridge.CompletionHandler
 import wendu.dsbridge.DWebView
-import java.lang.Exception
-import java.lang.NullPointerException
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 /**
  *@author zx
@@ -79,6 +65,7 @@ open class BaseWebActivity : BaseActivity() {
         dWebView.getSettings().setGeolocationEnabled(true)
         dWebView.getSettings().setJavaScriptEnabled(true)
         dWebView.getSettings().setBlockNetworkImage(false)
+
     }
 
     //调用支付宝H5支付调起的时候不可设置，否则无法回调shouldOverrideUrlLoading

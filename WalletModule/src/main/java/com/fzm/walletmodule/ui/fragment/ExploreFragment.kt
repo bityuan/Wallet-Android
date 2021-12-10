@@ -35,13 +35,19 @@ class ExploreFragment : BaseFragment() {
         list.add(e1)
         list.add(e2)
         val exAdapter = ExAdapter(list)
-        exAdapter.setOnItemClickListener(object : ExAdapter.OnItemClickListener{
+        exAdapter.setOnItemClickListener(object : ExAdapter.OnItemClickListener {
             override fun onItemClick(v: View, position: Int) {
                 val ex = list[position]
-                val intent = Intent(activity,WebAppDetailsActivity::class.java)
-                when(ex.id) {
-                    0-> intent.putExtra(WebAppDetailsActivity.URL,"http://172.16.103.198:8078/home")
-                    1-> intent.putExtra(WebAppDetailsActivity.URL,"http://121.40.18.70:8065/bridge")
+                val intent = Intent(activity, WebAppDetailsActivity::class.java)
+                when (ex.id) {
+                    0 -> {
+                        intent.putExtra(WebAppDetailsActivity.URL,"http://172.16.103.198:8078/home")
+                        intent.putExtra(WebAppDetailsActivity.TITLE, "去中心化交易所")
+                    }
+                    1 -> {
+                        intent.putExtra(WebAppDetailsActivity.URL,"http://121.40.18.70:8065/bridge")
+                        intent.putExtra(WebAppDetailsActivity.TITLE, "跨链桥")
+                    }
                 }
                 startActivity(intent)
             }
