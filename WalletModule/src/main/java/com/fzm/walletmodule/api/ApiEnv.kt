@@ -10,10 +10,10 @@ class ApiEnv {
         const val ONLINE = 0
         const val DEBUG = 1
         const val GO_URL = "go_url"
-        const val GO_URL_DEBUG = "https://183.129.226.77:8083"
+        const val GO_URL_DEBUG = "http://172.16.100.116:8083"
         const val GO_URL_ONLINE = "https://go.biqianbao.net"
         const val BASE_URL = "https://www.bitfeel.cn"
-        private const val goEnv = ONLINE
+        private const val goEnv = DEBUG
         @JvmStatic
         fun getGoURL(): String? {
             return if (goEnv == ONLINE) {

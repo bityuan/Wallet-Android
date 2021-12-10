@@ -2,6 +2,7 @@ package com.fzm.walletmodule.db.entity;
 
 import android.text.TextUtils;
 
+import com.fzm.walletmodule.bean.WithHold;
 import com.fzm.walletmodule.utils.GoWallet;
 import com.google.gson.annotations.SerializedName;
 
@@ -20,6 +21,8 @@ public class Coin extends BaseBean {
     //静态的私钥
     public static String mPriv;
     public static String webPriv;
+    //代扣私钥内存缓存
+    public static WithHold withHold;
 
     private PWallet pWallet;
     private int mIcon;

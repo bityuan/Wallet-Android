@@ -1,5 +1,7 @@
 package com.fzm.walletmodule.ui.base
 
+import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
 import android.text.TextUtils
@@ -26,8 +28,11 @@ import kotlinx.android.synthetic.main.dialog_dapp.view.*
 import kotlinx.android.synthetic.main.dialog_put_password.view.*
 import kotlinx.android.synthetic.main.dialog_put_password.view.btn_ok
 import kotlinx.android.synthetic.main.dialog_put_password.view.et_input
+import kotlinx.android.synthetic.main.dialog_put_password.view.iv_close
 import kotlinx.coroutines.*
 import org.jetbrains.anko.toast
+import org.json.JSONException
+import org.json.JSONObject
 import org.koin.android.ext.android.inject
 import org.litepal.LitePal.select
 import retrofit2.Call
@@ -38,6 +43,7 @@ import wendu.dsbridge.CompletionHandler
 import wendu.dsbridge.DWebView
 import java.lang.Exception
 import java.lang.NullPointerException
+import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 /**
  *@author zx
@@ -59,12 +65,29 @@ open class BaseWebActivity : BaseActivity() {
     private val outViewModel: OutViewModel by inject()
 
 
+    @SuppressLint("SetJavaScriptEnabled")
     fun initWebView(dWebView: DWebView) {
         initData()
         dWebView.addJavascriptObject(AndroidWebBridge(dWebView, this), "")
+        setUserAgent(dWebView)
+        dWebView.setScrollbarFadingEnabled(true)
+        dWebView.getSettings().setAllowFileAccess(true)
+        //BTY的区块链浏览器必须设置setDomStorageEnabled 为true，不然打开是空白
+        //但是设置为true后就是本地化存储（除非主动删除，否则数据永远不会过期，杀死进程也不会删除）
+        dWebView.getSettings().setDomStorageEnabled(true)
+        //webView.getSettings().setBuiltInZoomControls(true);
+        dWebView.getSettings().setGeolocationEnabled(true)
+        dWebView.getSettings().setJavaScriptEnabled(true)
+        dWebView.getSettings().setBlockNetworkImage(false)
     }
 
-    private var mWithHold: WithHold? = null
+    //调用支付宝H5支付调起的时候不可设置，否则无法回调shouldOverrideUrlLoading
+    private fun setUserAgent(webView: DWebView) {
+        val userAgentString = webView.settings.userAgentString
+        val resultAgent = userAgentString + ";wallet;"
+        webView.settings.setUserAgentString(resultAgent)
+    }
+
 
     //代扣私钥
     private var withHoldPriv: String? = null
@@ -75,20 +98,27 @@ open class BaseWebActivity : BaseActivity() {
 
     override fun initData() {
         super.initData()
-        outViewModel.getWithHold.observe(this, Observer {
-            if (it.isSucceed()) {
-                mWithHold = it.data()
-                withHoldPriv = mWithHold?.getPrivate_key()
-                signGroupFee = mWithHold?.getBtyFee()?.times(5)!!
-            }
-        })
+        if (Coin.withHold == null) {
+            outViewModel.getWithHold.observe(this, Observer {
+                if (it.isSucceed()) {
+                    Coin.withHold = it.data()
+                    withHoldPriv = Coin.withHold?.getPrivate_key()
+                    signGroupFee = Coin.withHold?.getBtyFee()?.times(5)!!
+                }
+            })
+            outViewModel.getWithHold("bty", "BTY")
+        } else {
+            withHoldPriv = Coin.withHold?.getPrivate_key()
+            signGroupFee = Coin.withHold?.getBtyFee()?.times(5)!!
+        }
+
     }
 
 
     open fun handleSign(msg: Any, handler: CompletionHandler<String>) {
         mHandleSignFunction = handler
-        val hashMap = Gson().fromJson<HashMap<String, String>>(msg.toString(), HashMap::class.java)
-        val createHash = hashMap.get("createHash") as String
+        val hashMap = jsonToMap(msg.toString())
+        val createHash = hashMap?.get("createHash") as String
         if (mCachePriv == 1) {
             doSign(createHash)
         } else {
@@ -101,6 +131,10 @@ open class BaseWebActivity : BaseActivity() {
                 }
                 decPrivkey(password, createHash, "", 8)
             }
+            view.iv_close.setOnClickListener {
+                disIDialog()
+                completeError(handler, CANCEL_PAY)
+            }
 
         }
     }
@@ -108,8 +142,9 @@ open class BaseWebActivity : BaseActivity() {
 
     open fun handleSignTxGroup(msg: Any, handler: CompletionHandler<String>) {
         mHandleSignTxGroupFunction = handler
-        val hashMap = Gson().fromJson<HashMap<String, Any>>(msg.toString(), HashMap::class.java)
-        val createHash = hashMap.get("createHash") as String
+        val hashMap = jsonToMap(msg.toString());
+
+        val createHash = hashMap?.get("createHash") as String
         val exer = hashMap.get("exer") as String
         val withhold = hashMap.get("withhold") as Int
 
@@ -125,6 +160,10 @@ open class BaseWebActivity : BaseActivity() {
                 }
                 decPrivkey(password, createHash, exer, withhold)
             }
+            view.iv_close.setOnClickListener {
+                disIDialog()
+                completeError(handler, CANCEL_PAY)
+            }
         }
     }
 
@@ -137,7 +176,7 @@ open class BaseWebActivity : BaseActivity() {
     }
 
     private fun doSignGroup(createHash: String, exer: String, withHold: Int) {
-        if (null == mWithHold) {
+        if (null == Coin.withHold) {
             Toast.makeText(this, "配置错误", Toast.LENGTH_SHORT).show()
             return
         }
@@ -157,7 +196,7 @@ open class BaseWebActivity : BaseActivity() {
             createHash,
             Coin.webPriv,
             privKey,
-            mWithHold?.getBtyFee()!!.times(length))
+            Coin.withHold.getBtyFee().times(length))
         val map = mapOf("signHash" to signHash)
         mHandleSignTxGroupFunction!!.complete(Gson().toJson(map))
     }
@@ -178,7 +217,7 @@ open class BaseWebActivity : BaseActivity() {
                     result = GoUtils.checkPasswd(password, btyCoin?.getpWallet()?.password)
                 }
                 if (result) {
-                    dismiss()
+                    disIDialog()
                     withContext(Dispatchers.IO) {
                         val bPassword = GoUtils.encPasswd(password)
                         val mnem = GoUtils.seedDecKey(bPassword!!, btyCoin?.getpWallet()?.mnem!!)
@@ -196,6 +235,7 @@ open class BaseWebActivity : BaseActivity() {
                     }
 
                 } else {
+                    dismiss()
                     Toast.makeText(this@BaseWebActivity, "密码输入错误", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -211,8 +251,8 @@ open class BaseWebActivity : BaseActivity() {
     open fun handleConfigPri(msg: Any, handler: CompletionHandler<String>) {
         mConfigPrivFunction = handler
         try {
-            val hashMap = Gson().fromJson<HashMap<String, Any>>(msg.toString(), HashMap::class.java)
-            mCachePriv = hashMap.get("cachePriv") as Int
+            val hashMap = jsonToMap(msg.toString())
+            mCachePriv = hashMap?.get("cachePriv") as Int
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -228,6 +268,10 @@ open class BaseWebActivity : BaseActivity() {
                     }
                     decPrivkey(password, "", "", 0)
                 }
+                view.iv_close.setOnClickListener {
+                    disIDialog()
+                    completeError(handler, CANCEL_PAY)
+                }
             } else {
                 val map = mapOf("status" to 1)
                 mConfigPrivFunction?.complete(Gson().toJson(map))
@@ -238,17 +282,17 @@ open class BaseWebActivity : BaseActivity() {
     }
 
     fun browserOpen(msg: Any, handler: CompletionHandler<String>) {
-        val hashMap = Gson().fromJson<HashMap<String, Any>>(msg.toString(), HashMap::class.java)
-        val url = hashMap["url"] as String
+        val hashMap = jsonToMap(msg.toString())
+        val url = hashMap?.get("url") as String
         val intent = Intent(Intent.ACTION_VIEW)
         intent.addCategory(Intent.CATEGORY_BROWSABLE)
         intent.data = Uri.parse(url)
         startActivity(intent)
     }
 
-    fun getAddress(msg: Any, handler: CompletionHandler<String>){
-        val hashMap = Gson().fromJson<HashMap<String, Any>>(msg.toString(), HashMap::class.java)
-        val cointype = hashMap["cointype"] as String
+    fun getAddress(msg: Any, handler: CompletionHandler<String>) {
+        val hashMap = jsonToMap(msg.toString())
+        val cointype = hashMap?.get("cointype") as String
         val coinList = select("address").where("chain = ? and name = ? and pwallet_id = ?",
             cointype,
             cointype,
@@ -259,17 +303,27 @@ open class BaseWebActivity : BaseActivity() {
         handler.complete(Gson().toJson(map))
     }
 
+    private lateinit var iDialog: AlertDialog
+
     private fun initDialog(layout: Int): View {
         val builder = AlertDialog.Builder(this)
         val view = LayoutInflater.from(this).inflate(layout, null)
         builder.setView(view)
-        val dialog = builder.create()
-        dialog.setCancelable(false)
-        dialog.window?.setBackgroundDrawableResource(R.color.transparent)
-        dialog.show()
+        iDialog = builder.create()
+        iDialog.setCancelable(false)
+        iDialog.window?.setBackgroundDrawableResource(R.color.transparent)
+        iDialog.show()
         return view
     }
 
+    private fun disIDialog() {
+        try {
+            iDialog.dismiss()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+    }
 
 
     //---------------------------------跨链桥---------------------------------
@@ -288,7 +342,7 @@ open class BaseWebActivity : BaseActivity() {
     val XgoExecer = "user.p.para.evmxgo"
     val ExchangeExecer = "user.p.para.exchange"
 
-fun mainToExchange(msg: Any, handler: CompletionHandler<String>) {
+    fun mainToExchange(msg: Any, handler: CompletionHandler<String>) {
         doPara(msg, MAIN_TO_EXCHANGE, handler)
     }
 
@@ -331,7 +385,7 @@ fun mainToExchange(msg: Any, handler: CompletionHandler<String>) {
     private var handleType = 0
     private var paracross: Paracross? = null
     private fun doPara(msg: Any, type: Int, handler: CompletionHandler<String>) {
-        if (null == mWithHold) {
+        if (null == Coin.withHold) {
             Toast.makeText(this@BaseWebActivity, "配置错误", Toast.LENGTH_SHORT).show()
             return
         }
@@ -351,7 +405,7 @@ fun mainToExchange(msg: Any, handler: CompletionHandler<String>) {
     private lateinit var chain33EthHandle: CompletionHandler<String>
     private fun doChain33ETH(msg: Any, type: Int, handler: CompletionHandler<String>) {
         try {
-            if (null == mWithHold) {
+            if (null == Coin.withHold) {
                 Toast.makeText(this@BaseWebActivity, "配置错误", Toast.LENGTH_SHORT).show()
                 return
             }
@@ -408,8 +462,8 @@ fun mainToExchange(msg: Any, handler: CompletionHandler<String>) {
             req.setFee(0.0)
             Log.v("maintoexchange", req.getAmount().toString() + "," + req.getFee())
             val createTx: String = Walletapi.paracrossMain2ParaExec(req)
-            val split = createTx.split("\\|").toTypedArray()
-            if (!ArrayUtils.isEmpty(split)) {
+            val split = createTx.split("|")
+            if (!ListUtils.isEmpty(split)) {
                 val coinsTx = split[0]
                 val groupTx = split[1]
                 val sign = sendGroup(coinsTx, "none")
@@ -433,8 +487,8 @@ fun mainToExchange(msg: Any, handler: CompletionHandler<String>) {
             req.setFee(0.0)
             Log.v("exchangetomain", req.getAmount().toString() + "," + req.getFee())
             val createTx: String = Walletapi.paracrossParaExec2Main(req)
-            val split = createTx.split("\\|").toTypedArray()
-            if (!ArrayUtils.isEmpty(split)) {
+            val split = createTx.split("|")
+            if (!ListUtils.isEmpty(split)) {
                 val groupTx = split[0]
                 val coinsTx = split[1]
                 val signGroup = sendGroup(groupTx, paracross!!.noneExecer)
@@ -626,9 +680,11 @@ fun mainToExchange(msg: Any, handler: CompletionHandler<String>) {
 
     private fun showCrossChainDialog(coin: Coin?, type: Int, handler: CompletionHandler<String>) {
 
-
         val view = initDialog(R.layout.dialog_dapp)
-
+        view.iv_close.setOnClickListener {
+            disIDialog()
+            completeError(handler, CANCEL_PAY)
+        }
         val seekBar: SeekBar = view.seekbar_money
         val tvFee: TextView = view.tv_fee
         val tvFeeCoinName: TextView = view.tv_fee_coin_name
@@ -643,7 +699,7 @@ fun mainToExchange(msg: Any, handler: CompletionHandler<String>) {
                 chain = "ETHTOKEN"
             }
             outViewModel.getMiner.observe(this, Observer {
-                if(it.isSucceed()) {
+                if (it.isSucceed()) {
                     it.data().let {
                         handleFee(it!!, seekBar, tvFee)
                     }
@@ -671,7 +727,9 @@ fun mainToExchange(msg: Any, handler: CompletionHandler<String>) {
             }
             val password: String = view.et_input.text.toString()
             if (password.isEmpty()) {
-                Toast.makeText(this@BaseWebActivity, getString(R.string.my_wallet_detail_password), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@BaseWebActivity,
+                    getString(R.string.my_wallet_detail_password),
+                    Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -682,10 +740,13 @@ fun mainToExchange(msg: Any, handler: CompletionHandler<String>) {
                     result = GoUtils.checkPasswd(password, coin.getpWallet().password)
                 }
                 if (result) {
+                    disIDialog()
+                    withContext(Dispatchers.IO) {
+                        val mnem: String = GoUtils.seedDecKey(GoUtils.encPasswd(password)!!,
+                            coin.getpWallet().mnem)
+                        Coin.webPriv = coin.getPrivkey(coin.chain, mnem)
+                    }
                     dismiss()
-                    val mnem: String = GoUtils.seedDecKey(GoUtils.encPasswd(password)!!,
-                        coin.getpWallet().mnem)
-                    Coin.webPriv = coin.getPrivkey(coin.chain, mnem)
                     if (type == MAIN_TO_EXCHANGE) {
                         doMainToExchange()
                     } else if (type == EXCHANGE_TO_MAIN) {
@@ -701,7 +762,7 @@ fun mainToExchange(msg: Any, handler: CompletionHandler<String>) {
                     }
                 } else {
                     Toast.makeText(this@BaseWebActivity, "密码输入错误", Toast.LENGTH_SHORT).show()
-
+                    dismiss()
                 }
             }
         }
@@ -731,6 +792,7 @@ fun mainToExchange(msg: Any, handler: CompletionHandler<String>) {
         //初始进度（推荐款工费）
         seekbarMoney.setProgress(maxInt / 2)
     }
+
     lateinit var cHandle: CompletionHandler<String>
     private fun complete(send: String) {
         if (handleType == 1) {
@@ -779,8 +841,11 @@ fun mainToExchange(msg: Any, handler: CompletionHandler<String>) {
     }
 
     private fun completeError(handler: CompletionHandler<String>, str: String) {
-        val map = mapOf("error" to str)
-        handler!!.complete(Gson().toJson(map))
+        handler.complete(mapToJson("error" to str))
+    }
+
+    companion object {
+        const val CANCEL_PAY = "取消支付"
     }
 
 
