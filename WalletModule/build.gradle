@@ -1,9 +1,27 @@
-plugins {
-    id 'com.android.library'
-    id 'kotlin-android'
-    id 'kotlin-android-extensions'
-    id 'kotlin-kapt'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.17.0'
+    }
 }
+
+allprojects {
+    plugins.withId("com.vanniktech.maven.publish") {
+        mavenPublish {
+            sonatypeHost = "S01"
+        }
+    }
+}
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: "com.vanniktech.maven.publish"
+
+
 
 android {
     compileSdkVersion 30
@@ -76,7 +94,6 @@ dependencies {
     api "com.zhy:base-rvadapter:3.0.3"
     api "com.alibaba:fastjson:1.2.48"
     api "cn.finalteam.loadingviewfinal:ultra-pull-to-refresh:1.0.1"
-    api "com.alibaba.android:vlayout:1.2.36@aar"
     api "com.makeramen:roundedimageview:2.3.0"
     api "com.squareup.okhttp3:okhttp:3.14.9"
     api "com.squareup.retrofit2:retrofit:2.8.2"
@@ -89,4 +106,5 @@ dependencies {
     api "com.squareup.okhttp3:logging-interceptor:3.14.9"
     api "com.github.wendux:DSBridge-Android:3.0-SNAPSHOT"
 }
-//apply from: './nexus-push.gradle'
+
+
