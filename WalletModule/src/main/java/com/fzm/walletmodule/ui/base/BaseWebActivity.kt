@@ -510,7 +510,7 @@ open class BaseWebActivity : BaseActivity() {
             Log.v("doEthLock", tx.toString())
             val bCreate: ByteArray = Walletapi.ethLock(tx)
                 ?: throw NullPointerException("ethLock返回为null")
-            val create = parseCreateResult(Walletapi.byteTostring(bCreate))
+            val create = parseResult(Walletapi.byteTostring(bCreate)).result!!
             if (!TextUtils.isEmpty(extend.getTokenAddr())) {
                 val split = create.split("@").toTypedArray()
                 val sign: String =
@@ -816,15 +816,6 @@ open class BaseWebActivity : BaseActivity() {
 
     private fun parseResult(json: String): StringResult {
         return Gson().fromJson<StringResult>(json, StringResult::class.java)
-    }
-
-    private fun parseCreateResult(json: String): String {
-        if (TextUtils.isEmpty(json)) {
-            return json
-        }
-        val stringResult: StringResult =
-            JsonUtils.toObject<StringResult>(json, StringResult::class.java)
-        return stringResult.result!!
     }
 
     private fun completeError(handler: CompletionHandler<String>, str: String) {

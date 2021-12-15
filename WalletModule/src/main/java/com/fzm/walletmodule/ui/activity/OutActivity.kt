@@ -233,7 +233,7 @@ class OutActivity : BaseActivity() {
             et_note.text.toString(),
             tokensymbol
         )
-        val createRawResult: String? = parseCreateResult(createRaw!!)
+        val createRawResult: String? = parseResult(createRaw!!)?.result
         if (TextUtils.isEmpty(createRawResult)) {
             return
         }
@@ -264,13 +264,6 @@ class OutActivity : BaseActivity() {
 
     }
 
-    private fun parseCreateResult(json: String): String? {
-        if (TextUtils.isEmpty(json)) {
-            return json
-        }
-        val stringResult: StringResult = JsonUtils.toObject(json, StringResult::class.java)
-        return stringResult.result
-    }
 
     private fun parseResult(json: String): StringResult? {
         return if (TextUtils.isEmpty(json)) {

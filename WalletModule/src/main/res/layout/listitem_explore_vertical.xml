@@ -6,7 +6,7 @@
     android:layout_height="80dp"
     android:clickable="true">
 
-    <com.makeramen.roundedimageview.RoundedImageView
+    <ImageView
         android:id="@+id/iv_explore_vertical"
         android:layout_width="52dp"
         android:layout_height="52dp"
