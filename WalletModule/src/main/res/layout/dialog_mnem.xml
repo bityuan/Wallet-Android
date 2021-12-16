@@ -65,7 +65,7 @@
                 android:layout_gravity="center"
                 android:background="@color/gray_f8"
                 android:lineSpacingMultiplier="1.5"
-                android:padding="@dimen/dp_10"
+                android:padding="10dp"
                 android:text="床前明 月光疑 是地上 床前明 月光疑"
                 android:textColor="@color/gray_349"
                 android:textSize="22sp"

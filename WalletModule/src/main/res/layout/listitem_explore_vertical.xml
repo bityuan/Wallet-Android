@@ -14,7 +14,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:riv_corner_radius="8dp" />
+        />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_explore_vertical_title"

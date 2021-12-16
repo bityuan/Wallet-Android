@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.bean.Explore
-import com.fzm.walletmodule.ui.activity.WebAppDetailsActivity
 import com.fzm.walletmodule.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_explore.*
 import kotlinx.android.synthetic.main.listitem_explore_vertical.view.*
@@ -28,33 +27,6 @@ class ExploreFragment : BaseFragment() {
     }
 
     override fun initData() {
-        super.initData()
-        val list = arrayListOf<Explore>()
-        val e1 = Explore(0, "去中心化交易所", "去中心化交易所详情", R.mipmap.ic_app)
-        val e2 = Explore(1, "跨链桥", "跨链桥详情", R.mipmap.ic_app)
-        list.add(e1)
-        list.add(e2)
-        val exAdapter = ExAdapter(list)
-        exAdapter.setOnItemClickListener(object : ExAdapter.OnItemClickListener {
-            override fun onItemClick(v: View, position: Int) {
-                val ex = list[position]
-                val intent = Intent(activity, WebAppDetailsActivity::class.java)
-                when (ex.id) {
-                    0 -> {
-                        intent.putExtra(WebAppDetailsActivity.URL,"http://172.16.103.198:8078/home")
-                        intent.putExtra(WebAppDetailsActivity.TITLE, "去中心化交易所")
-                    }
-                    1 -> {
-                        intent.putExtra(WebAppDetailsActivity.URL,"http://121.40.18.70:8065/bridge")
-                        intent.putExtra(WebAppDetailsActivity.TITLE, "跨链桥")
-                    }
-                }
-                startActivity(intent)
-            }
-
-        })
-        rv_list.layoutManager = LinearLayoutManager(activity)
-        rv_list.adapter = exAdapter
 
     }
 

@@ -15,7 +15,6 @@ import com.fzm.walletmodule.event.MyWalletEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.LimitEditText
 import com.fzm.walletmodule.utils.*
-import com.qmuiteam.qmui.util.QMUIKeyboardHelper
 import com.snail.antifake.jni.EmulatorDetectUtil
 import kotlinx.android.synthetic.main.activity_import_wallet.*
 import kotlinx.android.synthetic.main.activity_import_wallet.et_mnem
