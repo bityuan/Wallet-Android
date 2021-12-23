@@ -3,9 +3,8 @@ package com.fzm.walletdemo
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
+import com.fzm.walletmodule.api.ApiEnv
 import com.fzm.walletmodule.db.entity.PWallet
 import com.fzm.walletmodule.event.MainCloseEvent
 import com.fzm.walletmodule.event.MyWalletEvent
@@ -13,7 +12,6 @@ import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.fragment.ExploreFragment
 import com.fzm.walletmodule.ui.fragment.WalletFragment
 import com.fzm.walletmodule.ui.fragment.WalletIndexFragment
-import com.fzm.walletmodule.utils.GoWallet
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
