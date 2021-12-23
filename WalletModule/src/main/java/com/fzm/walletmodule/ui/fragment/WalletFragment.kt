@@ -64,7 +64,7 @@ class WalletFragment : BaseFragment() {
         balanceTimer!!.schedule(object : TimerTask() {
             override fun run() {
                val size = mCoinList.size
-               for (index in 1..size) {
+               for (index in 0 until size) {
                    var coin = mCoinList[index]
                    val handleBalance = GoWallet.handleBalance(coin)
                    coin.balance = handleBalance
