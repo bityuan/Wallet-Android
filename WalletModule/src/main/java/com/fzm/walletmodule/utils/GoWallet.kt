@@ -125,7 +125,7 @@ class GoWallet {
          * {"id": 1,"result": {"address": "0x632d8B07CDE8B2dcc3645148d2fa76647565664","balance": "0.02091716"},"error": null}
          */
         fun getbalance(addresss: String, chain: String, tokenSymbol: String): String? {
-            return getbalance(addresss, chain, tokenSymbol, getGoURL()!!)
+            return getbalance(addresss, chain, tokenSymbol, getGoURL())
         }
 
 
@@ -146,7 +146,6 @@ class GoWallet {
                 }
             }
             val balanceStr = getbalance(lCoin.address,lCoin.chain, tokensymbol)
-            Log.e("tag", "  余额 =$balanceStr")
             if (!TextUtils.isEmpty(balanceStr)) {
                 val gson = Gson()
                 val balanceResponse = gson.fromJson(balanceStr, BalanceResponse::class.java)
@@ -563,7 +562,6 @@ class GoWallet {
                 wallet.save()
                 val mulJson = Gson().toJson(mulList)
                 val aBoolean = imortMulAddress("", APPSYMBOL_P, mulJson)
-                Log.v("gomanager：", "地址导入结果：$aBoolean")
                 uiThread {
                     listener.onSuccess()
                 }
