@@ -12,7 +12,7 @@
         android:layout_height="100dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginBottom="@dimen/dp_10"
+        android:layout_marginBottom="10dp"
         android:background="@mipmap/header_wallet_hd_wallet">
 
         <LinearLayout

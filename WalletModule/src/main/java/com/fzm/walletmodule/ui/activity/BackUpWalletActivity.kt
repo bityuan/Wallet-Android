@@ -236,20 +236,43 @@ class BackUpWalletActivity : BaseActivity() {
                 finish()
                 return@setOnClickListener
             }
-            val coinList = mutableListOf<Coin>()
-            val btyCoin = Coin()
-            btyCoin.name = "BTY"
-            btyCoin.chain = "BTY"
-            btyCoin.platform = "bty"
-            btyCoin.nickname = "比特元"
-            btyCoin.treaty = "1"
-            btyCoin.setmIcon(R.mipmap.coin_bty)
-            btyCoin.save()
-            coinList.add(btyCoin)
+            val coinList = createCoinList()
             showLoading()
             saveWallet(coinList)
 
         }
+    }
+
+    private fun createCoinList() :MutableList<Coin> {
+        val coinList = mutableListOf<Coin>()
+        val btyCoin = Coin()
+        btyCoin.name = "BTY"
+        btyCoin.chain = "BTY"
+        btyCoin.platform = "bty"
+        btyCoin.nickname = "比特元"
+        btyCoin.treaty = "1"
+        btyCoin.setmIcon(R.mipmap.coin_bty)
+        btyCoin.save()
+        val ethCoin = Coin()
+        ethCoin.name = "ETH"
+        ethCoin.chain = "ETH"
+        ethCoin.platform = "ethereum"
+        ethCoin.nickname = "以太坊"
+        ethCoin.treaty = "1"
+        ethCoin.setmIcon(R.mipmap.coin_eth)
+        ethCoin.save()
+        val usdtCoin = Coin()
+        usdtCoin.name = "USDT"
+        usdtCoin.chain = "ETH"
+        usdtCoin.platform = "ethereum"
+        usdtCoin.nickname = "ERC20"
+        usdtCoin.treaty = "1"
+        usdtCoin.setmIcon(R.mipmap.coin_usdt)
+        usdtCoin.save()
+        coinList.add(btyCoin)
+        coinList.add(ethCoin)
+        coinList.add(usdtCoin)
+        return coinList
     }
 
     private fun saveWallet(coinList: List<Coin>) {

@@ -3,24 +3,23 @@ package com.fzm.walletmodule.api
 import android.text.TextUtils
 import com.fzm.walletmodule.utils.MMkvUtil.decodeString
 
-class ApiEnv {
+open class ApiEnv {
 
-    companion object{
+    companion object {
 
-        const val ONLINE = 0
-        const val DEBUG = 1
-        const val GO_URL = "go_url"
-        const val GO_URL_DEBUG = "https://183.129.226.77:8083"
-        const val GO_URL_ONLINE = "https://go.biqianbao.net"
-        private const val goEnv = ONLINE
+        var ONLINE = 0
+        var DEBUG = 1
+        var GO_URL = "go_url"
+        var GO_URL_DEBUG = "http://172.16.100.116:8083"
+        var GO_URL_ONLINE = "https://go.biqianbao.net"
+        var GO_URL_ONLINE_IP = "https://47.242.7.153:8083"
+        var BASE_URL = "https://www.bitfeel.cn"
+        var goEnv = ONLINE
+
         @JvmStatic
-        fun getGoURL(): String? {
+        fun getGoURL(): String {
             return if (goEnv == ONLINE) {
-                val urls =
-                    decodeString(GO_URL)
-                if (!TextUtils.isEmpty(urls)) {
-                    urls
-                } else GO_URL_ONLINE
+                GO_URL_ONLINE_IP
             } else {
                 GO_URL_DEBUG
             }

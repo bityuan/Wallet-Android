@@ -7,8 +7,12 @@ import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.View
+import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
+import androidx.lifecycle.Observer
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.base.Constants
+import com.fzm.walletmodule.bean.Miner
 import com.fzm.walletmodule.bean.StringResult
 import com.fzm.walletmodule.db.entity.Coin
 import com.fzm.walletmodule.db.entity.PWallet
@@ -18,6 +22,7 @@ import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.EditDialogFragment
 import com.fzm.walletmodule.ui.widget.RemarksTipsDialogView
 import com.fzm.walletmodule.utils.*
+import com.fzm.walletmodule.vm.OutViewModel
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_out.*
 import org.greenrobot.eventbus.EventBus
@@ -25,9 +30,9 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.startActivity
+import org.koin.android.ext.android.inject
 import org.litepal.LitePal.find
 import org.litepal.LitePal.where
-import java.lang.String
 
 class OutActivity : BaseActivity() {
     private var mFrom = 0
@@ -40,8 +45,10 @@ class OutActivity : BaseActivity() {
     private var mFee: Double = 0.01   // 手续费
     private var mMoney: Double = 0.0
     private var mEditDialogFragment: EditDialogFragment? = null
-    private var mPriv: kotlin.String? = null
+    private var mPriv: String? = null
     private var mMaxEditLegth = 0
+    private var mMiner: Miner? = null
+    private val outViewModel: OutViewModel by inject()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_out)
@@ -59,7 +66,10 @@ class OutActivity : BaseActivity() {
     @SuppressLint("SetTextI18n")
     override fun initView() {
         EventBus.getDefault().register(this)
-        mMaxEditLegth = (ScreenUtils.getScreenWidth(this) - ScreenUtils.dp2px(this, 105f)) / 2 - ScreenUtils.dp2px(this, 5f)
+        mMaxEditLegth = (ScreenUtils.getScreenWidth(this) - ScreenUtils.dp2px(
+            this,
+            105f
+        )) / 2 - ScreenUtils.dp2px(this, 5f)
         tv_coin_name.text = mCoin!!.uiName + getString(R.string.home_transfer)
         btn_out.setText(R.string.home_confirm_transfer_currency)
         if (FROM_SCAN == mFrom) {
@@ -69,7 +79,7 @@ class OutActivity : BaseActivity() {
         val chainBeans = where(
             "name = ? and pwallet_id = ?",
             mCoin!!.chain,
-            String.valueOf(mCoin!!.getpWallet().id)
+            (mCoin!!.getpWallet().id).toString()
         ).find(Coin::class.java)
         if (!ListUtils.isEmpty(chainBeans)) {
             mChainBean = chainBeans[0]
@@ -82,7 +92,49 @@ class OutActivity : BaseActivity() {
     }
 
     override fun initData() {
+        outViewModel.getMiner.observe(this, Observer {
+            dismiss()
+            if (it.isSucceed()) {
+                mMiner = it.data()
+                handleFee()
+            } else {
+                ToastUtils.show(this, it.error())
+            }
+        })
+        showLoading()
+        outViewModel.getMiner(mCoin?.chain!!)
+    }
 
+    fun handleFee() {
+        val min: String? = mMiner?.low
+        val max: String? = mMiner?.high
+        val average: String? = mMiner?.average
+        val minLength: Int = DoubleUtils.dotLength(min)
+        val maxLength: Int = DoubleUtils.dotLength(max)
+        val averageLength: Int = DoubleUtils.dotLength(average)
+        val blength = if (minLength > averageLength) minLength else averageLength
+        val length = if (blength > 8) 8 else blength
+        val minInt: Int = DoubleUtils.doubleToInt(min, length)
+        val maxInt: Int = DoubleUtils.doubleToInt(max, length)
+        val averageInt: Int = DoubleUtils.doubleToInt(average, length)
+        seekbar_money.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+            override fun onProgressChanged(
+                seekBar: SeekBar,
+                progress: Int,
+                fromUser: Boolean,
+            ) {
+                mFee = DoubleUtils.intToDouble(progress + minInt, length)
+                // updateFee(progress, length)
+                tv_fee.text = DecimalUtils.subZero(DecimalUtils.formatDouble(mFee))
+                tv_fee_coin_name.text = mCoin!!.chain
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar) {}
+        })
+        seekbar_money.max = maxInt
+        //初始进度（推荐款工费）
+        seekbar_money.progress = maxInt / 2
     }
 
     override fun initListener() {
@@ -147,7 +199,7 @@ class OutActivity : BaseActivity() {
      * @param password String
      * @param localPassword String?
      */
-    private fun payCheck(password: kotlin.String, localPassword: kotlin.String?) {
+    private fun payCheck(password: String, localPassword: String?) {
         showLoading()
         doAsync {
             val result = GoWallet.checkPasswd(password, localPassword!!)
@@ -162,7 +214,7 @@ class OutActivity : BaseActivity() {
         }
     }
 
-    private fun configTransaction(password: kotlin.String) {
+    private fun configTransaction(password: String) {
         mMoney = mMoneyStr.toDouble()
         val mnem = GoWallet.decMenm(GoWallet.encPasswd(password)!!, mCoin!!.getpWallet().mnem)
         mPriv = mCoin!!.getPrivkey(mCoin!!.chain, mnem)
@@ -172,8 +224,16 @@ class OutActivity : BaseActivity() {
     private fun handleTransactions() {
         val tokensymbol = if (mCoin!!.name == mCoin!!.chain) "" else mCoin!!.name
         //构造交易
-        val createRaw = GoWallet.createTran(mCoin!!.chain, mCoin!!.address, mToAddress, mMoney, mFee, et_note.text.toString(), tokensymbol)
-        val createRawResult: kotlin.String? = parseCreateResult(createRaw!!)
+        val createRaw = GoWallet.createTran(
+            mCoin!!.chain,
+            mCoin!!.address,
+            mToAddress,
+            mMoney,
+            mFee,
+            et_note.text.toString(),
+            tokensymbol
+        )
+        val createRawResult: String? = parseResult(createRaw!!)?.result
         if (TextUtils.isEmpty(createRawResult)) {
             return
         }
@@ -204,15 +264,8 @@ class OutActivity : BaseActivity() {
 
     }
 
-    private fun parseCreateResult(json: kotlin.String): kotlin.String? {
-        if (TextUtils.isEmpty(json)) {
-            return json
-        }
-        val stringResult: StringResult = JsonUtils.toObject(json, StringResult::class.java)
-        return stringResult.result
-    }
 
-    private fun parseResult(json: kotlin.String): StringResult? {
+    private fun parseResult(json: String): StringResult? {
         return if (TextUtils.isEmpty(json)) {
             null
         } else Gson().fromJson(json, StringResult::class.java)
@@ -224,7 +277,7 @@ class OutActivity : BaseActivity() {
      * @param moneyStr String  币种数量
      * @return Boolean
      */
-    private fun checkAddressAndMoney(toAddress: kotlin.String, moneyStr: kotlin.String): Boolean {
+    private fun checkAddressAndMoney(toAddress: String, moneyStr: String): Boolean {
         if (TextUtils.isEmpty(toAddress)) {
             ToastUtils.show(this, R.string.home_please_input_receipt_address)
             return false
@@ -262,7 +315,7 @@ class OutActivity : BaseActivity() {
                     "platform = ? and treaty = ? and pwallet_id = ? ",
                     mCoin!!.platform,
                     "2",
-                    String.valueOf(mCoin!!.getpWallet().id)
+                    (mCoin!!.getpWallet().id).toString()
                 ).find(Coin::class.java)
                 if (!ListUtils.isEmpty(coins)) {
                     val coin = coins[0]
@@ -346,11 +399,11 @@ class OutActivity : BaseActivity() {
 
     fun <T> castParam(
         value: Any?,
-        from: kotlin.String,
+        from: String,
         fromPos: Int,
-        to: kotlin.String,
+        to: String,
         toPos: Int,
-        cls: Class<T>
+        cls: Class<T>,
     ): T {
         return try {
             cls.cast(value)
@@ -364,13 +417,13 @@ class OutActivity : BaseActivity() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: CaptureEvent) {
-        val text: kotlin.String = event.text
+        val text: String = event.text
         if (text.contains(",")) {
-            val split: Array<kotlin.String> = text.split(",").toTypedArray()
+            val split: Array<String> = text.split(",").toTypedArray()
             val netId = split[0]
             val money = split[1]
             val address = split[2]
-            if (!TextUtils.isEmpty(money)){
+            if (!TextUtils.isEmpty(money)) {
                 et_money.setText(money)
             }
             tv_other_address.setText(address)

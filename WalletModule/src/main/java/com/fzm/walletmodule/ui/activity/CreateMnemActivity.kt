@@ -39,6 +39,7 @@ class CreateMnemActivity : BaseActivity() {
     override fun initData() {
         try {
             mChineseMnem = GoWallet.createMnem(1)
+            mEnglishMnem = GoWallet.createMnem(2)
             tv_mnem.text = configSpace(mChineseMnem!!)
             mWallet.mnemType = PWallet.TYPE_CHINESE
         } catch (e: Exception) {

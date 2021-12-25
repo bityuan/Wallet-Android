@@ -73,7 +73,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_10"
+                android:layout_marginTop="10dp"
                 android:background="@android:color/white"
                 android:orientation="vertical"
                 android:paddingLeft="@dimen/dp_16">
@@ -88,7 +88,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/dp_10"
+                        android:layout_marginTop="10dp"
                         android:gravity="center_vertical"
                         android:paddingRight="@dimen/dp_16">
 
@@ -209,7 +209,7 @@
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_number_flag"
-                    android:paddingLeft="@dimen/dp_10"
+                    android:paddingLeft="10dp"
                     android:hint="@string/home_hint_please_input_count"
 
                     android:inputType="number|numberDecimal"
@@ -230,7 +230,117 @@
                 android:layout_marginRight="@dimen/dp_16"
                 android:background="@color/color_D9DCE9" />
 
+            <LinearLayout
+                android:id="@+id/ll_out_miner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/dp_16"
+                android:paddingTop="20dp"
+                android:paddingRight="@dimen/dp_16">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical">
+
+                    <View
+                        android:layout_width="3dp"
+                        android:layout_height="14dp"
+                        android:layout_marginRight="7dp"
+                        android:background="@color/color_7190FF" />
+
+                    <TextView
+                        android:layout_width="316dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingRight="@dimen/dp_16"
+                        android:text="@string/home_miner_fee"
+                        android:textColor="@color/color_333649" />
+
+                    <TextView
+                        android:id="@+id/tv_fee"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="0"
+                        android:textColor="@color/color_333649"
+                        android:textSize="@dimen/sp_14" />
+
+                    <TextView
+                        android:id="@+id/tv_fee_coin_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/common_null"
+                        android:textColor="@color/color_333649"
+                        android:textSize="@dimen/sp_14" />
+
+                    <TextView
+                        android:id="@+id/tv_fee_rmb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="0"
+                        android:visibility="gone"
+                        android:textColor="@color/color_333649"
+                        android:textSize="@dimen/sp_14" />
+
+                </LinearLayout>
+
+                <SeekBar
+                    android:id="@+id/seekbar_money"
+                    style="@style/CustomSeekbarStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="14dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="14dp"
+                    android:splitTrack="false" />
+
+
+                <LinearLayout
+                    android:id="@+id/ll_v_miner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="18dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="18dp"
+                    android:layout_marginBottom="14dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="@dimen/dp_16"
+                        android:text="@string/home_slow"
+                        android:textColor="@color/gray_99"
+                        android:textSize="@dimen/sp_13" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:text="@string/home_optimum"
+                        android:textColor="@color/gray_99"
+                        android:textSize="@dimen/sp_13" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/home_fast"
+                        android:textColor="@color/gray_99"
+                        android:textSize="@dimen/sp_13" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_line"
+                android:layout_marginLeft="@dimen/dp_16"
+                android:layout_marginRight="@dimen/dp_16"
+                android:background="@color/color_D9DCE9" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

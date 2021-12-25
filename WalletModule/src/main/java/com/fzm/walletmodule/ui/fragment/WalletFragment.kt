@@ -27,12 +27,13 @@ import org.jetbrains.anko.support.v4.runOnUiThread
 import org.litepal.LitePal.where
 import java.lang.String
 import java.util.*
+import java.util.concurrent.CopyOnWriteArrayList
 
 class WalletFragment : BaseFragment() {
     private var mWalletAdapter: WalletAdapter? = null
     private var mHeaderView: View? = null
     private var mPWallet: PWallet? = null
-    private val mCoinList = ArrayList<Coin>()
+    private val mCoinList = CopyOnWriteArrayList<Coin>()
     private var more: ImageView? = null
     private var name: TextView? = null
     private var mTimer: Timer? = null
@@ -62,20 +63,23 @@ class WalletFragment : BaseFragment() {
         balanceTimer = Timer()
         balanceTimer!!.schedule(object : TimerTask() {
             override fun run() {
-                for (coin in mCoinList){
-                    val handleBalance = GoWallet.handleBalance(coin)
-                    coin.balance = handleBalance
-                }
-                runOnUiThread {
-                    mWalletAdapter?.notifyDataSetChanged()
-                }
+               val size = mCoinList.size
+               for (index in 0 until size) {
+                   var coin = mCoinList[index]
+                   val handleBalance = GoWallet.handleBalance(coin)
+                   coin.balance = handleBalance
+                   runOnUiThread {
+                       mWalletAdapter?.notifyDataSetChanged()
+                   }
+               }
             }
-        },0, Constants.DELAYED_TIME)
+        }, 0, Constants.DELAYED_TIME)
     }
 
     override fun initView() {
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        mWalletAdapter = WalletAdapter(activity!!, R.layout.view_item_coin_info, mCoinList, this)
+        mWalletAdapter =
+            WalletAdapter(requireActivity(), R.layout.view_item_coin_info, mCoinList, this)
         mWalletAdapter?.setOnItemClickListener(object : WalletAdapter.ItemClickListener {
             override fun OnItemClick(view: View?, position: Int) {
                 val coinPosition = position - 1 //减去header
@@ -139,21 +143,19 @@ class WalletFragment : BaseFragment() {
                 return@setOnClickListener
             }
             val `in` = Intent()
-            `in`.setClass(activity!!, WalletDetailsActivity::class.java)
+            `in`.setClass(requireActivity(), WalletDetailsActivity::class.java)
             `in`.putExtra(PWallet::class.java.simpleName, mPWallet)
             startActivityForResult(`in`, UPDATE_WALLET)
         }
         iv_back.setOnClickListener {
-            if (activity != null) {
-                activity!!.finish()
-            }
+            requireActivity().finish()
         }
         topLeft.setOnClickListener {
             if (ClickUtils.isFastDoubleClick()) {
                 return@setOnClickListener
             }
             val intent = Intent()
-            intent.setClass(activity!!, CaptureCustomActivity::class.java)
+            intent.setClass(requireActivity(), CaptureCustomActivity::class.java)
             intent.putExtra(
                 CaptureCustomActivity.REQUST_CODE,
                 CaptureCustomActivity.REQUESTCODE_HOME
@@ -165,7 +167,7 @@ class WalletFragment : BaseFragment() {
                 return@setOnClickListener
             }
             val intent = Intent()
-            intent.setClass(activity!!, MyWalletsActivity::class.java)
+            intent.setClass(requireActivity(), MyWalletsActivity::class.java)
             startActivity(intent)
         }
         titleLayout.setOnClickListener {
@@ -251,8 +253,6 @@ class WalletFragment : BaseFragment() {
     }
 
 
-
-
     override fun onDestroy() {
         super.onDestroy()
         if (EventBus.getDefault().isRegistered(this)) {
@@ -261,7 +261,7 @@ class WalletFragment : BaseFragment() {
         if (mTimer != null) {
             mTimer!!.cancel()
         }
-        if (balanceTimer != null){
+        if (balanceTimer != null) {
             balanceTimer!!.cancel()
         }
     }
