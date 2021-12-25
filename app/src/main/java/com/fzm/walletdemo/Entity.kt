@@ -1,4 +1,4 @@
-package com.fzm.walletmodule.bean
+package com.fzm.walletdemo
 
 /**
  *@author zx

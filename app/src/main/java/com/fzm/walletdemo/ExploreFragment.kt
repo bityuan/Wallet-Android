@@ -5,9 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.fzm.walletmodule.bean.Explore
 import com.fzm.walletmodule.ui.base.BaseFragment
+import kotlinx.android.synthetic.main.fragment_explore.*
 import kotlinx.android.synthetic.main.listitem_explore_vertical.view.*
 
 
@@ -19,11 +20,14 @@ class ExploreFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initData()
-        initObserver()
     }
 
     override fun initData() {
-
+        var ex = Explore(1, "uni", "this is a small app", R.mipmap.ic_app)
+        val list = mutableListOf<Explore>(ex)
+        val exAdapter = ExAdapter(list)
+        rv_list.layoutManager = LinearLayoutManager(activity)
+        rv_list.adapter = exAdapter
     }
 
 
@@ -41,8 +45,10 @@ class ExploreFragment : BaseFragment() {
             override fun onBindViewHolder(holder: ViewHolder, position: Int) {
                 val explore = list[position]
                 holder.itemView.tv_explore_vertical_title.text = explore.name
+                holder.itemView.tv_explore_vertical_des.text = explore.des
+                holder.itemView.iv_explore_vertical.setImageResource(explore.img)
                 holder.itemView.setOnClickListener {
-                    onItemClickListener.onItemClick(holder.itemView, position)
+                    onItemClickListener?.onItemClick(holder.itemView, position)
                 }
             }
 
@@ -50,7 +56,7 @@ class ExploreFragment : BaseFragment() {
                 return list.size
             }
 
-            private lateinit var onItemClickListener: OnItemClickListener
+            private var onItemClickListener: OnItemClickListener? = null
             fun setOnItemClickListener(onItemClickListener: OnItemClickListener) {
                 this.onItemClickListener = onItemClickListener
             }
