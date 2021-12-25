@@ -62,15 +62,9 @@ class InActivity : BaseActivity() {
     }
 
     private fun configQRCode(address: String) {
-        if (TextUtils.isEmpty(mCoin!!.icon)) {
-            if (mCoin!!.getmIcon() != 0) {
-                val logoBitmap = BitmapFactory.decodeResource(resources, mCoin!!.getmIcon())
-                val qrBitmap = CodeUtils.createQRCode(address, 200, logoBitmap)
-                iv_my_wallet.setImageBitmap(qrBitmap)
-            } else {
-                val bitmap: Bitmap = CodeUtils.createQRCode(address, 190)
-                iv_my_wallet.setImageBitmap(bitmap)
-            }
+        if (TextUtils.isEmpty(mCoin?.icon)) {
+            val bitmap: Bitmap = CodeUtils.createQRCode(address, 190)
+            iv_my_wallet.setImageBitmap(bitmap)
         } else {
             Glide.with(this).asBitmap().load(mCoin!!.icon)
                 .into(object : SimpleTarget<Bitmap?>() {

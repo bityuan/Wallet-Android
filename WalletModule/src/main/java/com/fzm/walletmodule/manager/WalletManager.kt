@@ -48,7 +48,7 @@ class WalletManager {
                 holder.setText(R.id.address, coin.address)
                 val ivCoin: ImageView = holder.getView(R.id.icon)
                 if (TextUtils.isEmpty(coin.icon)){
-                    Glide.with(mContext).load(coin.getmIcon()).into(ivCoin)
+                    Glide.with(mContext).load(coin.icon).into(ivCoin)
                 }else{
                     Glide.with(mContext).load(coin.icon).into(ivCoin)
                 }
