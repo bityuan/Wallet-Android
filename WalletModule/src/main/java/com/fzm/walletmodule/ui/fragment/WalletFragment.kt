@@ -53,7 +53,10 @@ class WalletFragment : BaseFragment() {
         initHeaderView()
         initData()
         initListener()
-        startTimer()
+        if(isAdded) {
+            startTimer()
+        }
+
     }
 
     /**

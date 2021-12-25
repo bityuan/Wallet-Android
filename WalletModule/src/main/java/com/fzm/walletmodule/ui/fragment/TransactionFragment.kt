@@ -1,4 +1,4 @@
-package com.fzm.wallet.ui.fragment
+package com.fzm.walletmodule.ui.fragment
 
 import android.graphics.Color
 import android.os.Bundle
