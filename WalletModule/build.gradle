@@ -1,26 +1,10 @@
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.17.0'
-    }
-}
-
-allprojects {
-    plugins.withId("com.vanniktech.maven.publish") {
-        mavenPublish {
-            sonatypeHost = "S01"
-        }
-    }
-}
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: "com.vanniktech.maven.publish"
-
+apply plugin:'com.github.dcendents.android-maven'
+group='com.github.asmain'
 
 
 android {
@@ -75,7 +59,6 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation "com.readystatesoftware.systembartint:systembartint:1.0.3"
-    //implementation(name: 'walletapi', ext: 'aar')
     api "org.litepal.android:kotlin:3.0.0"
     api "com.google.code.gson:gson:2.8.6"
     api "org.greenrobot:eventbus:3.1.1"
