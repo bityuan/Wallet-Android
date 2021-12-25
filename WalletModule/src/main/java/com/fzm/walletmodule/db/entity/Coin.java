@@ -25,13 +25,6 @@ public class Coin extends BaseBean {
     public static WithHold withHold;
 
     private PWallet pWallet;
-    private int mIcon;
-    public int getmIcon() {
-        return mIcon;
-    }
-    public void setmIcon(int mIcon) {
-        this.mIcon = mIcon;
-    }
     //拥有量
     private String balance;
     //启用：1 禁用：0

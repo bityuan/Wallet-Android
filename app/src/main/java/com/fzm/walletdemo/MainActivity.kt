@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.FragmentTransaction
+import com.fzm.walletmodule.base.Constants
+import com.fzm.walletmodule.db.entity.Coin
 import com.fzm.walletmodule.db.entity.PWallet
 import com.fzm.walletmodule.event.MainCloseEvent
 import com.fzm.walletmodule.event.MyWalletEvent
@@ -28,6 +30,20 @@ class MainActivity : BaseActivity() {
         EventBus.getDefault().register(this)
         initView()
         setTabSelection(0)
+        Constants.setCoins(defaultCoinList())
+    }
+
+
+    private fun defaultCoinList(): MutableList<Coin> {
+        val coinList = mutableListOf<Coin>()
+        val coin = Coin()
+        coin.name = "ETH"
+        coin.chain = "ETH"
+        coin.platform = "ETH"
+        coin.nickname = "以太坊"
+        coin.treaty = "1"
+        coinList.add(coin)
+        return coinList
     }
 
      override fun initView() {

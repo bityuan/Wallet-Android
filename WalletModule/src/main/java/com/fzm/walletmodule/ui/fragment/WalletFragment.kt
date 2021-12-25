@@ -261,11 +261,14 @@ class WalletFragment : BaseFragment() {
         if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this)
         }
-        if (mTimer != null) {
-            mTimer!!.cancel()
+        if(isAdded) {
+            if (mTimer != null) {
+                mTimer!!.cancel()
+            }
+            if (balanceTimer != null) {
+                balanceTimer!!.cancel()
+            }
         }
-        if (balanceTimer != null) {
-            balanceTimer!!.cancel()
-        }
+
     }
 }

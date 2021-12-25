@@ -33,43 +33,36 @@ public class InQrCodeDialogView {
     }
 
 
-    public InQrCodeDialogView(Context context, String address, String imgUrl, int imgId) {
+    public InQrCodeDialogView(Context context, String address, String imgUrl) {
         this.context = context;
-        showNoticeDialogCustom(address, imgUrl, imgId);
+        showNoticeDialogCustom(address, imgUrl);
 
     }
 
-    private void showNoticeDialogCustom(final String address, final String imgUrl, int imgId) {
+    private void showNoticeDialogCustom(final String url, final String imgUrl) {
         lDialog = new Dialog(context,
                 android.R.style.Theme_Translucent_NoTitleBar);
         lDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         lDialog.setContentView(R.layout.dialog_in_qr_code);
         lDialog.setCancelable(true);
         final ImageView imageView = lDialog.findViewById(R.id.image);
-        if (!TextUtils.isEmpty(address)) {
+        if (!TextUtils.isEmpty(url)) {
             TextView addressTv = lDialog.findViewById(R.id.tv_address);
-            addressTv.setText(HtmlUtils.change4(address));
+            addressTv.setText(HtmlUtils.change4(url));
             Bitmap logo = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_app);
-            Bitmap bitmap = CodeUtils.createQRCode(address, 190, logo);
+            Bitmap bitmap = CodeUtils.createQRCode(url, 190, logo);
             imageView.setImageBitmap(bitmap);
             if (TextUtils.isEmpty(imgUrl)) {
-                if (imgId == 0) {
-                    GlideUtils.intoQRBitmap(imageView, address);
-                } else {
-                    Bitmap logoBitmap = BitmapFactory.decodeResource(context.getResources(), imgId);
-                    Bitmap qrBitmap = CodeUtils.createQRCode(address, 200, logoBitmap);
-                    imageView.setImageBitmap(qrBitmap);
-                }
+                GlideUtils.intoQRBitmap(imageView, url);
             } else {
-                GlideUtils.intoQRBitmap(context, imgUrl, imageView, address);
-
+                GlideUtils.intoQRBitmap(context, imgUrl, imageView, url);
             }
             addressTv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     ClipboardManager cm = (ClipboardManager) context
                             .getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData mClipData = ClipData.newPlainText("Label", address);
+                    ClipData mClipData = ClipData.newPlainText("Label", url);
                     cm.setPrimaryClip(mClipData);
                     ToastUtils.show(context, R.string.copy_success);
                 }

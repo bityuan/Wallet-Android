@@ -27,7 +27,7 @@ class WalletAdapter(context: Context, layoutId: Int, datas: List<Coin>, fragment
         val ivCoin = holder!!.getView<ImageView>(R.id.icon)
         if (TextUtils.isEmpty(baseCoin.icon)) {
             Glide.with(mContext)
-                .load(baseCoin.getmIcon())
+                .load(baseCoin.icon)
                 .into(ivCoin)
         } else {
             Glide.with(mContext)

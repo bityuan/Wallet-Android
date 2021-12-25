@@ -8,6 +8,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import com.fzm.walletmodule.R
+import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.db.entity.Coin
 import com.fzm.walletmodule.db.entity.PWallet
 import com.fzm.walletmodule.event.CaptureEvent
@@ -259,7 +260,7 @@ class ImportWalletActivity : BaseActivity() {
 
 
     private fun saveWallet() {
-        val coinList = createCoinList()
+        val coinList = Constants.getCoins()
         GoWallet.createWallet(mPWallet, coinList, object : GoWallet.CoinListener {
             override fun onSuccess() {
                 PWallet.setUsingWallet(mPWallet)
@@ -272,37 +273,6 @@ class ImportWalletActivity : BaseActivity() {
         })
     }
 
-    private fun createCoinList(): MutableList<Coin> {
-        val coinList = mutableListOf<Coin>()
-        val btyCoin = Coin()
-        btyCoin.name = "BTY"
-        btyCoin.chain = "BTY"
-        btyCoin.platform = "bty"
-        btyCoin.nickname = "比特元"
-        btyCoin.treaty = "1"
-        btyCoin.setmIcon(R.mipmap.coin_bty)
-        btyCoin.save()
-        val ethCoin = Coin()
-        ethCoin.name = "ETH"
-        ethCoin.chain = "ETH"
-        ethCoin.platform = "ethereum"
-        ethCoin.nickname = "以太坊"
-        ethCoin.treaty = "1"
-        ethCoin.setmIcon(R.mipmap.coin_eth)
-        ethCoin.save()
-        val usdtCoin = Coin()
-        usdtCoin.name = "USDT"
-        usdtCoin.chain = "ETH"
-        usdtCoin.platform = "ethereum"
-        usdtCoin.nickname = "ERC20"
-        usdtCoin.treaty = "1"
-        usdtCoin.setmIcon(R.mipmap.coin_usdt)
-        usdtCoin.save()
-        coinList.add(btyCoin)
-        coinList.add(ethCoin)
-        coinList.add(usdtCoin)
-        return coinList
-    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val menuItem = menu.add(0, 1, 0, getString(R.string.my_scan))

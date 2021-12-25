@@ -99,7 +99,7 @@ class TransactionsActivity : BaseActivity() {
         }
         iv_er_code.setOnClickListener {
             if (mDialogView == null) {
-                mDialogView = InQrCodeDialogView(this, coin.address, coin.icon, coin.getmIcon())
+                mDialogView = InQrCodeDialogView(this, coin.address, coin.icon)
             } else {
                 mDialogView?.show()
             }
@@ -161,14 +161,7 @@ class TransactionsActivity : BaseActivity() {
         tv_balance.text = DecimalUtils.subZeroAndDot(coin.balance)
         tv_address.text = coin.address
         if (TextUtils.isEmpty(coin.icon)) {
-            Glide.with(this).load(coin.getmIcon()).into(iv_b_name)
-            if (coin.getmIcon() != 0) {
-                val logoBitmap = BitmapFactory.decodeResource(resources, coin.getmIcon())
-                val qrBitmap = CodeUtils.createQRCode(coin.address, 200, logoBitmap)
-                iv_er_code.setImageBitmap(qrBitmap)
-            } else {
-                iv_er_code.setImageBitmap(CodeUtils.createQRCode(coin.address, 200))
-            }
+            iv_er_code.setImageBitmap(CodeUtils.createQRCode(coin.address, 200))
         } else {
             Glide.with(this).load(coin.icon).into(iv_b_name)
             GlideUtils.intoQRBitmap(this, coin.icon, iv_er_code, coin.address)
