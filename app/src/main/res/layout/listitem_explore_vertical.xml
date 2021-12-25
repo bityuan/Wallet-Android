@@ -25,7 +25,7 @@
         android:textSize="16sp"
         app:layout_constraintLeft_toRightOf="@+id/iv_explore_vertical"
         app:layout_constraintTop_toTopOf="@id/iv_explore_vertical"
-        tools:text="上链购" />
+        tools:text="" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_explore_vertical_des"
@@ -35,7 +35,7 @@
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="@id/iv_explore_vertical"
         app:layout_constraintLeft_toLeftOf="@id/tv_explore_vertical_title"
-        tools:text="区块链预售平台" />
+        tools:text="" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="wrap_content"
