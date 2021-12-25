@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.bumptech.glide.Glide
-import com.fzm.wallet.ui.fragment.TransactionFragment
+import com.fzm.walletmodule.ui.fragment.TransactionFragment
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.db.entity.Coin
