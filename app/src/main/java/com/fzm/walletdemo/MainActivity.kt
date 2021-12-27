@@ -3,6 +3,7 @@ package com.fzm.walletdemo
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
 import com.fzm.walletmodule.api.ApiEnv
 import com.fzm.walletmodule.db.entity.PWallet
@@ -18,13 +19,11 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.litepal.LitePal.count
 
-class MainActivity : BaseActivity() {
+class MainActivity : AppCompatActivity() {
     private var homeFragment: WalletFragment? = null
     private var mWalletIndexFragment: WalletIndexFragment? = null
     private var mExploreFragment: ExploreFragment? = null
     override fun onCreate(savedInstanceState: Bundle?) {
-        mCustomToobar = true
-        setStatusColor(R.color.color_333649)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         EventBus.getDefault().register(this)
@@ -32,7 +31,7 @@ class MainActivity : BaseActivity() {
         setTabSelection(0)
     }
 
-     override fun initView() {
+      private fun initView() {
         bottomNavigationView.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.fragment_home -> {

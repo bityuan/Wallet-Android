@@ -149,6 +149,7 @@ abstract class BaseActivity : AppCompatActivity() {
             contentView.addView(layoutToolbar)
             LayoutInflater.from(this).inflate(layoutResID, contentView, true)
             super.setContentView(contentView)
+
             setSupportActionBar(toolbar)
             toolbar.setNavigationIcon(R.drawable.ic_back)
             toolbar.setNavigationOnClickListener { onBackPressed() }

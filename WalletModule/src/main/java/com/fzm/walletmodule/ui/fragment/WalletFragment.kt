@@ -45,7 +45,7 @@ class WalletFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        StatusBarUtil.setStatusBarColor(activity, Color.TRANSPARENT, true)
+     //   StatusBarUtil.setStatusBarColor(activity, Color.TRANSPARENT, true)
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
         }
@@ -108,22 +108,27 @@ class WalletFragment : BaseFragment() {
     override fun initData() {
         mPWallet = PWallet.getUsingWallet()
         name?.text = mPWallet?.name
-        val coinList = mPWallet!!.coinList
         doAsync {
-            //获取最新的数据
             val localCoinList = where(
                 "pwallet_id = ? and status = ?", String.valueOf(mPWallet!!.id),
                 String.valueOf(Coin.STATUS_ENABLE)
             ).find(Coin::class.java, true)
-            coinList.addAll(localCoinList)
             mCoinList.clear()
             mCoinList.addAll(localCoinList)
+            refresh()
+        }
+
+    }
+
+    private fun  refresh(){
+        doAsync {
+            //获取最新的数据
             for (coin in mCoinList) {
                 val handleBalance = GoWallet.handleBalance(coin)
                 coin.balance = handleBalance
             }
             runOnUiThread {
-                if (ListUtils.isEmpty(localCoinList)) {
+                if (ListUtils.isEmpty(mCoinList)) {
                     emptyView.visibility = View.VISIBLE
                 } else {
                     emptyView.visibility = View.GONE
@@ -136,7 +141,7 @@ class WalletFragment : BaseFragment() {
     override fun initListener() {
         swl_layout.setOnRefreshListener {
             swl_layout.onRefreshComplete()
-            initData()
+            refresh()
         }
         more?.setOnClickListener {
             if (ClickUtils.isFastDoubleClick()) {

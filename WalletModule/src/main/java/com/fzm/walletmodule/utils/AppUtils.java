@@ -17,6 +17,7 @@ import android.view.WindowManager;
 
 import androidx.core.app.ActivityCompat;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fzm.walletmodule.R;
 
 import java.security.MessageDigest;
@@ -270,6 +271,16 @@ public class AppUtils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static boolean isJsonString(String str) {
+        try {
+            JSONObject jsonObject = JSONObject.parseObject(str);
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 }

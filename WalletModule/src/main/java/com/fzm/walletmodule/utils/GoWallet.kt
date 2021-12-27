@@ -13,7 +13,6 @@ import org.jetbrains.anko.uiThread
 import org.litepal.LitePal.saveAll
 import walletapi.*
 import java.util.*
-import kotlin.math.log
 
 class GoWallet {
     companion object {
@@ -145,9 +144,9 @@ class GoWallet {
                     }
                 }
             }
-            val balanceStr = getbalance(lCoin.address,lCoin.chain, tokensymbol)
+            val balanceStr = getbalance(lCoin.address, lCoin.chain, tokensymbol)
             Log.e("tag", "  余额 =$balanceStr")
-            if (!TextUtils.isEmpty(balanceStr)) {
+            if (!TextUtils.isEmpty(balanceStr) && AppUtils.isJsonString(balanceStr)) {
                 val gson = Gson()
                 val balanceResponse = gson.fromJson(balanceStr, BalanceResponse::class.java)
                 if (balanceResponse != null) {
@@ -535,9 +534,9 @@ class GoWallet {
         }
 
         fun createWallet(wallet: PWallet, coinList: List<Coin>, listener: CoinListener) {
-            val mulList: ArrayList<MulAddress> = ArrayList()
             doAsync {
-                for (coin in coinList) {
+                for (index in coinList.indices) {
+                    val coin = coinList[index]
                     val hdWallet = getHDWallet(coin.chain, wallet.mnem)
                     val pubkey = hdWallet!!.newKeyPub(0)
                     val address = hdWallet.newAddress_v2(0)
@@ -545,13 +544,6 @@ class GoWallet {
                     coin.status = Coin.STATUS_ENABLE
                     coin.pubkey = pubkeyStr
                     coin.address = address
-                    //只添加主链即可
-                    if (coin.chain == coin.name) {
-                        val mulAddress = MulAddress()
-                        mulAddress.cointype = coin.chain
-                        mulAddress.address = coin.address
-                        mulList.add(mulAddress)
-                    }
                 }
                 saveAll(coinList)
                 wallet.coinList.addAll(coinList)
@@ -561,9 +553,6 @@ class GoWallet {
                 wallet.mnem = seedEncKey
                 wallet.password = passwdHash
                 wallet.save()
-                val mulJson = Gson().toJson(mulList)
-                val aBoolean = imortMulAddress("", APPSYMBOL_P, mulJson)
-                Log.v("gomanager：", "地址导入结果：$aBoolean")
                 uiThread {
                     listener.onSuccess()
                 }

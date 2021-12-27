@@ -277,7 +277,7 @@ class WalletDetailsActivity : BaseActivity() {
                 mulList.add(mulAddress)
             }
             val mulJson = Gson().toJson(mulList)
-            val delState = GoWallet.deleteMulAddress("", GoWallet.APPSYMBOL_P, mulJson)
+          //  val delState = GoWallet.deleteMulAddress("", GoWallet.APPSYMBOL_P, mulJson)
             delete(PWallet::class.java, mPWallet!!.id)
             runOnUiThread {
                 dismiss()

@@ -141,7 +141,6 @@ class ImportWalletActivity : BaseActivity() {
                 } else {
                     mPWallet.mnem = mnem
                 }
-
                 doAsync {
                     val hdWallet = GoWallet.getHDWallet(Walletapi.TypeBtyString, mPWallet.mnem)
                     uiThread {
@@ -152,30 +151,28 @@ class ImportWalletActivity : BaseActivity() {
                             )
                             return@uiThread
                         }
+                        showLoading()
                         val pubkeyStr = GoWallet.encodeToStrings(hdWallet.newKeyPub(0))
                         val count = LitePal.where("pubkey = ?", pubkeyStr).find<Coin>(true)
-
                         if (count.isNotEmpty()) {
                             if (count[0].getpWallet().type == 2) {
+                                dismiss()
                                 ToastUtils.show(
                                     this@ImportWalletActivity,
                                     getString(R.string.import_wallet_mnem_repeat)
                                 )
                                 return@uiThread
                             }
+                            dismiss()
                         }
                         mPWallet.type = PWallet.TYPE_NOMAL
                         mPWallet.name = name
                         mPWallet.password = password
-                        showLoading()
-
                         saveWallet()
                     }
                 }
             }
         }
-
-
     }
 
 
