@@ -17,9 +17,6 @@ public class Chain33ETH {
     private String xgoOracleAddr;
 
     public String getContractTokenAddr() {
-       /* if(TextUtils.isEmpty(contractTokenAddr)) {
-            return "";
-        }*/
         return contractTokenAddr;
     }
 
@@ -108,9 +105,6 @@ public class Chain33ETH {
     }
 
     public String getTokenSymbol() {
-        if("YCC".equals(tokenSymbol)) {
-            tokenSymbol = "BYC";
-        }
         return tokenSymbol;
     }
 
