@@ -37,9 +37,9 @@ class MainActivity : BaseActivity() {
     private fun defaultCoinList(): MutableList<Coin> {
         val coinList = mutableListOf<Coin>()
         val coin = Coin()
-        coin.name = "ETH"
-        coin.chain = "ETH"
-        coin.platform = "ETH"
+        coin.name = "BTY"
+        coin.chain = "BTY"
+        coin.platform = "bty"
         coin.nickname = "以太坊"
         coin.treaty = "1"
         coinList.add(coin)

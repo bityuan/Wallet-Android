@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.lifecycle.Observer
+import com.alibaba.fastjson.JSON
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.bean.Miner
@@ -233,7 +234,8 @@ class OutActivity : BaseActivity() {
             et_note.text.toString(),
             tokensymbol
         )
-        val createRawResult: String? = parseResult(createRaw!!)?.result
+        val stringResult = JSON.parseObject(createRaw,StringResult::class.java)
+        val createRawResult: String? = stringResult.result
         if (TextUtils.isEmpty(createRawResult)) {
             return
         }
