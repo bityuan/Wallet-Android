@@ -1,26 +1,29 @@
 package com.fzm.walletmodule.base
 
+import android.text.TextUtils
 import com.fzm.walletmodule.db.entity.Coin
+import com.fzm.walletmodule.utils.MMkvUtil
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 open class Constants {
     companion object {
+        const val COINS_KEY = "coins_key"
         const val FROM = "from"
         const val PAGE_LIMIT = 20L
         var DELAYED_TIME = 8 * 1000.toLong()
 
-        var coinList = mutableListOf<Coin>()
-
 
         fun setCoins(list: MutableList<Coin>) {
-            coinList.clear()
-            coinList.addAll(list)
+            val json = Gson().toJson(list)
+            MMkvUtil.encode(COINS_KEY,json)
         }
-        fun getCoins():List<Coin> {
-            if (coinList.size == 0) {
-                coinList = defaultCoinList()
+        fun getCoins(): List<Coin> {
+            val json = MMkvUtil.decodeString(COINS_KEY)
+            if (TextUtils.isEmpty(json)) {
+                return defaultCoinList()
             }
-
-            return coinList;
+            return Gson().fromJson(json, object : TypeToken<List<Coin?>?>() {}.type);
         }
 
 
