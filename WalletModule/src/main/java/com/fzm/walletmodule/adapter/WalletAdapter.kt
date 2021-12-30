@@ -17,14 +17,14 @@ import com.zhy.adapter.recyclerview.base.ViewHolder
 class WalletAdapter(context: Context, layoutId: Int, datas: List<Coin>, fragment: Fragment) :
     CommonAdapter<Coin>(context, layoutId, datas) {
 
-    override fun convert(holder: ViewHolder?, baseCoin: Coin?, position: Int) {
-        holder!!.setText(R.id.name, baseCoin!!.uiName)
+    override fun convert(holder: ViewHolder, baseCoin: Coin, position: Int) {
+        holder.setText(R.id.name, baseCoin.uiName)
         holder.setText(
             R.id.nickName,
             if (TextUtils.isEmpty(baseCoin.nickname)) "" else "(" + baseCoin.nickname.toString() + ")"
         )
         holder.setText(R.id.balance, DecimalUtils.subZeroAndDot(baseCoin.balance))
-        val ivCoin = holder!!.getView<ImageView>(R.id.icon)
+        val ivCoin = holder.getView<ImageView>(R.id.icon)
         if (TextUtils.isEmpty(baseCoin.icon)) {
             Glide.with(mContext)
                 .load(baseCoin.getmIcon())

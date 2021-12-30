@@ -50,12 +50,12 @@ class SetPasswordActivity : BaseActivity() {
             doAsync {
                 val pWallet = PWallet()
                 val encPasswd: ByteArray? = GoWallet.encPasswd(newPassword)
-                val passwdHash: String? = GoWallet.passwdHash(encPasswd!!)
+                val passwdHash: String = GoWallet.passwdHash(encPasswd!!)
                 pWallet.password = passwdHash
                 //同时更改助记词的加密
                 val bOldPassword = GoWallet.encPasswd(mPWallet!!.password)
-                val mnem: String? = GoWallet.decMenm(bOldPassword!!, mPWallet!!.mnem)
-                val encMenm: String? = GoWallet.encMenm(encPasswd, mnem!!)
+                val mnem: String = GoWallet.decMenm(bOldPassword!!, mPWallet!!.mnem)
+                val encMenm: String = GoWallet.encMenm(encPasswd, mnem)
                 pWallet.mnem = encMenm
                 pWallet.isPutpassword = true
                 pWallet.update(mPWalletId)

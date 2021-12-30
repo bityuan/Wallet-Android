@@ -23,7 +23,7 @@ import com.zhy.adapter.recyclerview.base.ViewHolder
 
 class WalletManager {
     //选择主链
-    fun chooseChain(activity: AppCompatActivity?, data: List<Coin>) {
+    fun chooseChain(activity: AppCompatActivity, data: List<Coin>) {
         val builder = AlertDialog.Builder(activity)
         val view: View = LayoutInflater.from(activity).inflate(R.layout.dialog_choose_chain, null)
         builder.setView(view)
@@ -64,7 +64,7 @@ class WalletManager {
 
     private var mOnItemClickListener: OnItemClickListener? = null
 
-    fun setOnItemClickListener(onItemClickListener: OnItemClickListener?) {
+    fun setOnItemClickListener(onItemClickListener: OnItemClickListener) {
         mOnItemClickListener = onItemClickListener
     }
 
@@ -78,7 +78,7 @@ class WalletManager {
     }
 
     //导出私钥
-    fun exportPriv(activity: AppCompatActivity?, content: String, title: String) {
+    fun exportPriv(activity: AppCompatActivity, content: String, title: String) {
         val builder = AlertDialog.Builder(activity)
         val view: View =
             LayoutInflater.from(activity).inflate(R.layout.dialog_priv, null)
@@ -121,12 +121,12 @@ class WalletManager {
         }
     }
 
-    fun configSpace(mnem: String, isPrinter: Boolean): String? {
+    fun configSpace(mnem: String, isPrinter: Boolean): String {
         if (TextUtils.isEmpty(mnem)) {
             return ""
         }
         val chineses = mnem.replace(" ".toRegex(), "")
-        var chinese: String? = ""
+        var chinese = ""
         for (i in 0 until chineses.length) {
             val value = chineses[i].toString()
             val j = i + 1

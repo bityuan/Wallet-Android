@@ -36,7 +36,7 @@ import org.litepal.LitePal.where
 
 class OutActivity : BaseActivity() {
     private var mFrom = 0
-    private var mCoin: Coin? = null
+    private lateinit var mCoin: Coin
     private var mPWallet: PWallet? = null
     private var mChainBean: Coin? = null
     private var mEtMoneyTextSize = 0f  //记录mEtMoney的字符大小初始值,用于清空mEtMoney输入框时重心设置回原始大小
@@ -59,7 +59,7 @@ class OutActivity : BaseActivity() {
     }
 
     override fun initIntent() {
-        mCoin = intent.getSerializableExtra(Coin::class.java.simpleName) as Coin?
+        mCoin = intent.getSerializableExtra(Coin::class.java.simpleName) as Coin
         mFrom = intent.getIntExtra(Constants.FROM, -1)
     }
 
@@ -70,24 +70,24 @@ class OutActivity : BaseActivity() {
             this,
             105f
         )) / 2 - ScreenUtils.dp2px(this, 5f)
-        tv_coin_name.text = mCoin!!.uiName + getString(R.string.home_transfer)
+        tv_coin_name.text = mCoin.uiName + getString(R.string.home_transfer)
         btn_out.setText(R.string.home_confirm_transfer_currency)
         if (FROM_SCAN == mFrom) {
-            tv_other_address.setText(mCoin!!.scanAddress)
+            tv_other_address.setText(mCoin.scanAddress)
         }
-        mPWallet = find(PWallet::class.java, mCoin!!.getpWallet().id)
+        mPWallet = find(PWallet::class.java, mCoin.getpWallet().id)
         val chainBeans = where(
             "name = ? and pwallet_id = ?",
-            mCoin!!.chain,
-            (mCoin!!.getpWallet().id).toString()
+            mCoin.chain,
+            (mCoin.getpWallet().id).toString()
         ).find(Coin::class.java)
         if (!ListUtils.isEmpty(chainBeans)) {
             mChainBean = chainBeans[0]
         }
         tv_wallet_name.text = mPWallet!!.name
-        val balance = mCoin!!.balance.toDouble()
+        val balance = mCoin.balance.toDouble()
         tv_balance.text =
-            getString(R.string.home_balance, DecimalUtils.subWithNum(balance, 4), mCoin!!.uiName)
+            getString(R.string.home_balance, DecimalUtils.subWithNum(balance, 4), mCoin.uiName)
         mEtMoneyTextSize = ScreenUtils.pxTosp(this, et_money.textSize)
     }
 
@@ -102,7 +102,7 @@ class OutActivity : BaseActivity() {
             }
         })
         showLoading()
-        outViewModel.getMiner(mCoin?.chain!!)
+        outViewModel.getMiner(mCoin.chain)
     }
 
     fun handleFee() {
@@ -126,7 +126,7 @@ class OutActivity : BaseActivity() {
                 mFee = DoubleUtils.intToDouble(progress + minInt, length)
                 // updateFee(progress, length)
                 tv_fee.text = DecimalUtils.subZero(DecimalUtils.formatDouble(mFee))
-                tv_fee_coin_name.text = mCoin!!.chain
+                tv_fee_coin_name.text = mCoin.chain
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
@@ -163,9 +163,9 @@ class OutActivity : BaseActivity() {
             }
         }
         et_money.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {}
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            override fun afterTextChanged(s: Editable) {}
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 var editable =
                     castParam(s, "onTextChanged", 0, "handleMoney", 0, Editable::class.java)
                 formatEditable(editable)
@@ -181,12 +181,12 @@ class OutActivity : BaseActivity() {
             mEditDialogFragment!!.setType(1)
                 .setRightButtonStr(getString(R.string.home_confirm))
                 .setOnButtonClickListener(object : EditDialogFragment.OnButtonClickListener {
-                    override fun onLeftButtonClick(v: View?) {}
-                    override fun onRightButtonClick(v: View?) {
+                    override fun onLeftButtonClick(v: View) {}
+                    override fun onRightButtonClick(v: View) {
                         val etPassword = mEditDialogFragment!!.etInput
                         val password =
                             etPassword.text.toString().trim { it <= ' ' }
-                        val localPassword = mCoin!!.getpWallet().password
+                        val localPassword = mCoin.getpWallet().password
                         payCheck(password, localPassword)
                     }
                 })
@@ -197,12 +197,12 @@ class OutActivity : BaseActivity() {
     /**
      * 支付密码校验
      * @param password String
-     * @param localPassword String?
+     * @param localPassword String
      */
-    private fun payCheck(password: String, localPassword: String?) {
+    private fun payCheck(password: String, localPassword: String) {
         showLoading()
         doAsync {
-            val result = GoWallet.checkPasswd(password, localPassword!!)
+            val result = GoWallet.checkPasswd(password, localPassword)
             if (result) {
                 configTransaction(password)
             } else {
@@ -216,34 +216,34 @@ class OutActivity : BaseActivity() {
 
     private fun configTransaction(password: String) {
         mMoney = mMoneyStr.toDouble()
-        val mnem = GoWallet.decMenm(GoWallet.encPasswd(password)!!, mCoin!!.getpWallet().mnem)
-        mPriv = mCoin!!.getPrivkey(mCoin!!.chain, mnem)
+        val mnem = GoWallet.decMenm(GoWallet.encPasswd(password)!!, mCoin.getpWallet().mnem)
+        mPriv = mCoin.getPrivkey(mCoin.chain, mnem)
         handleTransactions()
     }
 
     private fun handleTransactions() {
-        val tokensymbol = if (mCoin!!.name == mCoin!!.chain) "" else mCoin!!.name
+        val tokensymbol = if (mCoin.name == mCoin.chain) "" else mCoin.name
         //构造交易
         val createRaw = GoWallet.createTran(
-            mCoin!!.chain,
-            mCoin!!.address,
+            mCoin.chain,
+            mCoin.address,
             mToAddress,
             mMoney,
             mFee,
             et_note.text.toString(),
             tokensymbol
         )
-        val createRawResult: String? = parseResult(createRaw!!)?.result
+        val createRawResult: String = parseResult(createRaw)?.result!!
         if (TextUtils.isEmpty(createRawResult)) {
             return
         }
         //签名交易
-        val signtx = GoWallet.signTran(mCoin!!.chain, createRawResult!!, mPriv!!)
+        val signtx = GoWallet.signTran(mCoin.chain, createRawResult, mPriv!!)
         if (TextUtils.isEmpty(signtx)) {
             return
         }
         //发送交易
-        val sendRawTransaction = GoWallet.sendTran(mCoin!!.chain, signtx!!, tokensymbol)
+        val sendRawTransaction = GoWallet.sendTran(mCoin.chain, signtx, tokensymbol)
         runOnUiThread {
             dismiss()
             val result: StringResult? = parseResult(sendRawTransaction!!)
@@ -258,7 +258,7 @@ class OutActivity : BaseActivity() {
                 return@runOnUiThread
             }
             ToastUtils.show(this, R.string.home_transfer_currency_success)
-            EventBus.getDefault().post(TransactionsEvent(mCoin!!, tv_other_address.text.toString()))
+            EventBus.getDefault().post(TransactionsEvent(mCoin, tv_other_address.text.toString()))
             finish()
         }
 
@@ -284,13 +284,13 @@ class OutActivity : BaseActivity() {
         } else if (TextUtils.isEmpty(moneyStr)) {
             ToastUtils.show(this, R.string.home_please_input_amount)
             return false
-        } else if (toAddress == mCoin!!.address) {
+        } else if (toAddress == mCoin.address) {
             ToastUtils.show(this, R.string.home_receipt_send_address_is_same)
             return false
         } else if (toAddress.length < 20 || !RegularUtils.isAddress(toAddress)) {
             ToastUtils.show(this, R.string.home_receipt_address_is_illegal)
             return false
-        } else if (!AddressCheckUtils.check(mCoin!!.chain, toAddress)) {
+        } else if (!AddressCheckUtils.check(mCoin.chain, toAddress)) {
             ToastUtils.show(this, getString(R.string.home_receipt_address_is_illegal))
             return false
         }
@@ -299,12 +299,12 @@ class OutActivity : BaseActivity() {
 
     private fun check(): Boolean {
         val money = mMoneyStr.toDouble()
-        val balance = mCoin!!.balance.toDouble()
+        val balance = mCoin.balance.toDouble()
         if (money <= 0) {
             ToastUtils.show(this, R.string.home_input_greater_than_zero_amount)
             return false
         }
-        if (mCoin?.name == mCoin?.chain) {
+        if (mCoin.name == mCoin.chain) {
             return checkBalance(money, balance)
         } else {
             //token或者coins,由于BTY是代扣的
@@ -313,9 +313,9 @@ class OutActivity : BaseActivity() {
             } else if (isBTYToken()) {
                 val coins = where(
                     "platform = ? and treaty = ? and pwallet_id = ? ",
-                    mCoin!!.platform,
+                    mCoin.platform,
                     "2",
-                    (mCoin!!.getpWallet().id).toString()
+                    (mCoin.getpWallet().id).toString()
                 ).find(Coin::class.java)
                 if (!ListUtils.isEmpty(coins)) {
                     val coin = coins[0]
@@ -341,12 +341,12 @@ class OutActivity : BaseActivity() {
     }
 
     private fun isBTYCoins(): Boolean {
-        return GoWallet.isBTYChild(mCoin!!) && "2" == mCoin!!.treaty
+        return GoWallet.isBTYChild(mCoin) && "2" == mCoin.treaty
     }
 
 
     private fun isBTYToken(): Boolean {
-        return GoWallet.isBTYChild(mCoin!!) && "1" == mCoin!!.treaty
+        return GoWallet.isBTYChild(mCoin) && "1" == mCoin.treaty
     }
 
     //判断转币金额<余额和手续费<主链余额或coins余额
@@ -398,7 +398,7 @@ class OutActivity : BaseActivity() {
 
 
     fun <T> castParam(
-        value: Any?,
+        value: Any,
         from: String,
         fromPos: Int,
         to: String,

@@ -224,7 +224,7 @@ class BackUpWalletActivity : BaseActivity() {
             if (isFastClick()) {
                 return@setOnClickListener
             }
-            val mnemString: String? = getMnemString()
+            val mnemString: String = getMnemString()
             val mnem = mnemFrom!!.replace(" ", "")
             if (mnemString != mnem) {
                 ToastUtils.show(this, getString(R.string.mnemonic_wrong))
@@ -287,7 +287,7 @@ class BackUpWalletActivity : BaseActivity() {
     }
 
 
-    private fun getMnemString(): String? {
+    private fun getMnemString(): String {
         var string = ""
         for (backUp in mMnemResultList) {
             string += backUp.mnem
@@ -306,7 +306,7 @@ class BackUpWalletActivity : BaseActivity() {
             context.startActivity(intent)
         }
 
-        fun launch(context: Context, pWallet: PWallet?, mnem: String?, from: String?) {
+        fun launch(context: Context, pWallet: PWallet, mnem: String, from: String) {
             val `in` = Intent(context, BackUpWalletActivity::class.java)
             `in`.putExtra(PWallet::class.java.simpleName, pWallet)
             `in`.putExtra(MNEM_TAG, mnem)

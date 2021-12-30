@@ -1,4 +1,4 @@
-package com.fzm.wallet.ui.fragment
+package com.fzm.walletmodule.ui.fragment
 
 import android.graphics.Color
 import android.os.Bundle
@@ -154,7 +154,7 @@ class TransactionFragment : BaseFragment() {
             } else {
                 datas =  GoWallet.getTranList(coin.address, coin.chain, coinName, mType.toLong(), index,Constants.PAGE_LIMIT)
             }
-            val query = query(datas)
+            val query = query(datas!!)
             uiThread {
                 try {
                     if (index == 0L) {
@@ -171,11 +171,11 @@ class TransactionFragment : BaseFragment() {
         }
     }
 
-    private fun getKey(coinName: String?): String {
+    private fun getKey(coinName: String): String {
         return coin.chain + coin.address + coinName + mType
     }
 
-    private fun query(datas: String?): List<Transactions>? {
+    private fun query(datas: String): List<Transactions>?? {
         val gson = Gson()
         val response = gson.fromJson(datas, TransactionResponse::class.java)
         return response.result
@@ -190,12 +190,12 @@ class TransactionFragment : BaseFragment() {
         isCanLoadMore = list.size < Constants.PAGE_LIMIT
         if (index == 0L) {
             mList.clear()
-            swl_layout?.onRefreshComplete()
+            swl_layout.onRefreshComplete()
         }
 
         addList(list)
-        rv_list?.setHasLoadMore(!isCanLoadMore)
-        rv_list?.onLoadMoreComplete()
+        rv_list.setHasLoadMore(!isCanLoadMore)
+        rv_list.onLoadMoreComplete()
         mCommonAdapter?.notifyDataSetChanged()
     }
 

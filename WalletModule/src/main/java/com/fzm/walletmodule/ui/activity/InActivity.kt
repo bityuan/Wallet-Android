@@ -29,7 +29,7 @@ import org.jetbrains.anko.doAsync
 import org.litepal.LitePal.find
 
 class InActivity : BaseActivity() {
-    private var mCoin: Coin? = null
+    private lateinit var mCoin: Coin
     private var mInputMoney = "0"
     private var mPutMoneyDialog: EditDialogFragment? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,26 +45,26 @@ class InActivity : BaseActivity() {
     }
 
     override fun initIntent() {
-        mCoin = intent.getSerializableExtra(Coin::class.java.simpleName) as Coin?
+        mCoin = intent.getSerializableExtra(Coin::class.java.simpleName) as Coin
     }
 
     @SuppressLint("SetTextI18n")
     override fun initView() {
-        tvTitle.text = mCoin!!.uiName + getString(R.string.home_receipt_currency)
-        val pWallet: PWallet = find(PWallet::class.java, mCoin!!.getpWallet().id)
+        tvTitle.text = mCoin.uiName + getString(R.string.home_receipt_currency)
+        val pWallet: PWallet = find(PWallet::class.java, mCoin.getpWallet().id)
         tv_wallet_name.text = pWallet.name
-        tv_money.text = mCoin?.balance + mCoin?.name
-        tv_address.text = mCoin?.address
-        configQRCode(mCoin!!.address)
+        tv_money.text = mCoin.balance + mCoin.name
+        tv_address.text = mCoin.address
+        configQRCode(mCoin.address)
         tv_address.text = HtmlUtils.change4(tv_address.text.toString())
-        tv_in_name.text = getString(R.string.in_p_in) + " " + mCoin!!.name
+        tv_in_name.text = getString(R.string.in_p_in) + " " + mCoin.name
         tv_bi_tip.text = getString(R.string.in_bi_tip, getString(R.string.app_name))
     }
 
     private fun configQRCode(address: String) {
-        if (TextUtils.isEmpty(mCoin!!.icon)) {
-            if (mCoin!!.getmIcon() != 0) {
-                val logoBitmap = BitmapFactory.decodeResource(resources, mCoin!!.getmIcon())
+        if (TextUtils.isEmpty(mCoin.icon)) {
+            if (mCoin.getmIcon() != 0) {
+                val logoBitmap = BitmapFactory.decodeResource(resources, mCoin.getmIcon())
                 val qrBitmap = CodeUtils.createQRCode(address, 200, logoBitmap)
                 iv_my_wallet.setImageBitmap(qrBitmap)
             } else {
@@ -72,7 +72,7 @@ class InActivity : BaseActivity() {
                 iv_my_wallet.setImageBitmap(bitmap)
             }
         } else {
-            Glide.with(this).asBitmap().load(mCoin!!.icon)
+            Glide.with(this).asBitmap().load(mCoin.icon)
                 .into(object : SimpleTarget<Bitmap?>() {
                     override fun onResourceReady(
                         resource: Bitmap,
@@ -147,12 +147,12 @@ class InActivity : BaseActivity() {
                     }
                     mPutMoneyDialog!!.dismiss()
                     mInputMoney = str
-                    tv_in_name.text = getString(R.string.in_set_money) + " " + " " + mCoin?.name
+                    tv_in_name.text = getString(R.string.in_set_money) + " " + " " + mCoin.name
                     tv_put_money.text = getString(R.string.in_r_money)
                     val qrStr: String = if (TextUtils.equals("0", mInputMoney)) {
-                        mCoin!!.address
+                        mCoin.address
                     } else {
-                        mInputMoney + "," + mCoin!!.address
+                        mInputMoney + "," + mCoin.address
                     }
                     configQRCode(qrStr)
                 }
@@ -167,9 +167,9 @@ class InActivity : BaseActivity() {
     override fun refreshBalance() {
         super.refreshBalance()
         doAsync {
-            val handleBalance = GoWallet.handleBalance(mCoin!!)
+            val handleBalance = GoWallet.handleBalance(mCoin)
             runOnUiThread {
-                tv_money.text = handleBalance + mCoin?.name
+                tv_money.text = handleBalance + mCoin.name
             }
         }
     }

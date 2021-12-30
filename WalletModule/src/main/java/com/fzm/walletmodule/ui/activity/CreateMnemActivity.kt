@@ -16,8 +16,8 @@ import kotlinx.android.synthetic.main.activity_create_mnem.*
 class CreateMnemActivity : BaseActivity() {
     private val TAG: String = "CreateMnemActivityNew"
     private lateinit var mWallet: PWallet
-    private var mEnglishMnem: String? = null
-    private var mChineseMnem: String? = null
+    private var mEnglishMnem: String = ""
+    private var mChineseMnem: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         mConfigFinish = true
@@ -39,14 +39,14 @@ class CreateMnemActivity : BaseActivity() {
     override fun initData() {
         try {
             mChineseMnem = GoWallet.createMnem(1)
-            tv_mnem.text = configSpace(mChineseMnem!!)
+            tv_mnem.text = configSpace(mChineseMnem)
             mWallet.mnemType = PWallet.TYPE_CHINESE
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    private fun configSpace(mnem: String): String? {
+    private fun configSpace(mnem: String): String {
         val chineses = mnem.replace(" ".toRegex(), "")
         var chinese = ""
         for (i in chineses.indices) {
@@ -68,10 +68,10 @@ class CreateMnemActivity : BaseActivity() {
     override fun initListener() {
         btn_replace_mnem.setOnClickListener {
             try {
-                var mnem: String? = ""
+                var mnem = ""
                 if (view_chinese.visibility == View.VISIBLE) {
                     mChineseMnem =  GoWallet.createMnem(1)
-                    mnem = configSpace(mChineseMnem!!)
+                    mnem = configSpace(mChineseMnem)
                 } else {
                     mEnglishMnem = GoWallet.createMnem(2)
                     mnem = mEnglishMnem
@@ -108,12 +108,12 @@ class CreateMnemActivity : BaseActivity() {
         tv_english.setTextColor(resources.getColor(R.color.color_8E92A3))
         view_chinese.visibility = View.VISIBLE
         view_english.visibility = View.GONE
-        tv_mnem.text = configSpace(mChineseMnem!!)
+        tv_mnem.text = configSpace(mChineseMnem)
         mWallet.mnemType = PWallet.TYPE_CHINESE
     }
 
     private fun gotoBackUpWalletActivity() {
-        var mnem: String? = ""
+        var mnem = ""
         if (view_chinese.visibility == View.VISIBLE) {
             mWallet.mnem = mChineseMnem
             mnem = mChineseMnem
@@ -124,7 +124,7 @@ class CreateMnemActivity : BaseActivity() {
         BackUpWalletActivity.launch(
             this,
             mWallet,
-            mnem!!,
+            mnem,
             CreateMnemActivity::class.java.simpleName
         )
     }

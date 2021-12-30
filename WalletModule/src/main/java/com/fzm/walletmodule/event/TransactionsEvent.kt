@@ -3,8 +3,8 @@ package com.fzm.walletmodule.event
 import com.fzm.walletmodule.db.entity.Coin
 
 class TransactionsEvent {
-    var coin: Coin? = null
-    var address: String? = null
+    var coin: Coin
+    var address: String = ""
 
     constructor(coin: Coin) {
         this.coin = coin

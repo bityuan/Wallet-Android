@@ -17,8 +17,8 @@ class BackUpWalletAdapter(layoutResId: Int, data: List<WalletBackUp>, mnemType: 
         mMnemType = mnemType
     }
 
-    override fun convert(helper: BaseViewHolder?, item: WalletBackUp?) {
-        val view = helper?.getView<TextView>(R.id.recycle_text)
+    override fun convert(helper: BaseViewHolder, item: WalletBackUp) {
+        val view = helper.getView<TextView>(R.id.recycle_text)
         if (mMnemType == PWallet.TYPE_CHINESE) {
             val pra = view?.layoutParams as LinearLayout.LayoutParams
             pra.width = ScreenUtils.dp2px(mContext, 40f)
@@ -35,7 +35,7 @@ class BackUpWalletAdapter(layoutResId: Int, data: List<WalletBackUp>, mnemType: 
             )
             view.layoutParams = pra
         }
-        helper.setText(R.id.recycle_text, item?.mnem)
+        helper.setText(R.id.recycle_text, item.mnem)
             .addOnClickListener(R.id.recycle_text)
     }
 

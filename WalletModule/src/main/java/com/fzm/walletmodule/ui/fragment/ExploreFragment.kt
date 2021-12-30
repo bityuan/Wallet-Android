@@ -1,17 +1,14 @@
 package com.fzm.walletmodule.ui.fragment
 
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.bean.Explore
 import com.fzm.walletmodule.ui.base.BaseFragment
-import kotlinx.android.synthetic.main.fragment_explore.*
 import kotlinx.android.synthetic.main.listitem_explore_vertical.view.*
 
 

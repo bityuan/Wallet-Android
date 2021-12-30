@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.bumptech.glide.Glide
-import com.fzm.wallet.ui.fragment.TransactionFragment
+import com.fzm.walletmodule.ui.fragment.TransactionFragment
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.db.entity.Coin
@@ -128,14 +128,14 @@ class TransactionsActivity : BaseActivity() {
     private fun setCustomViews() {
         for (i in 0 until tab_layout.tabCount) {
             val tab = tab_layout.getTabAt(i)
-            tab?.customView = getTabView(tab)
+            tab?.customView = getTabView(tab!!)
         }
     }
 
-    private fun getTabView(tab: TabLayout.Tab?): View {
+    private fun getTabView(tab: TabLayout.Tab): View {
         val view = LayoutInflater.from(this).inflate(R.layout.tab_view_transaction, null)
         val tvTab = view.findViewById<TextView>(R.id.tv_tab)
-        tvTab.text = tab?.text.toString()
+        tvTab.text = tab.text.toString()
         return view
     }
 
@@ -210,7 +210,7 @@ class TransactionsActivity : BaseActivity() {
             return mFragments.size
         }
 
-        override fun getPageTitle(position: Int): CharSequence? {
+        override fun getPageTitle(position: Int): CharSequence {
             return mFragmentTitles[position]
         }
     }

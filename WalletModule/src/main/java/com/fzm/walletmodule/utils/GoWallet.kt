@@ -54,20 +54,19 @@ class GoWallet {
             }
             return null
         }
-
         /**
          * 公钥转地址
          * @param chain String   主链
          * @param pub  String  公钥
-         * @return String?
+         * @return String
          */
-        fun pubToAddr(chain: String, pub: String): String? {
+        fun pubToAddr(chain: String, pub: String): String {
             try {
                 return Walletapi.pubToAddress_v2(chain, Walletapi.hexTobyte(pub))
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
-            return null
+            return ""
         }
 
         /**
@@ -92,7 +91,7 @@ class GoWallet {
          * @param chain String    主链名称，例如：“BTC”
          * @param tokenSymbol String   token名称，例如ETH下的“YCC”
          * @param goNoderUrl String    服务器节点
-         * @return String?   币种余额data数据
+         * @return String   币种余额data数据
          * 服务器挂掉{"id":1,"result":null,"error":"cointype EEE no support"}
          */
         fun getbalance(
@@ -100,7 +99,7 @@ class GoWallet {
             chain: String,
             tokenSymbol: String,
             goNoderUrl: String
-        ): String? {
+        ): String {
             try {
                 val balance = WalletBalance()
                 balance.cointype = chain
@@ -112,7 +111,7 @@ class GoWallet {
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
-            return null
+            return ""
         }
 
         /**
@@ -120,10 +119,10 @@ class GoWallet {
          * @param addresss String  币种地址
          * @param chain String    主链名称，例如：“BTC”
          * @param tokenSymbol String   token名称，例如ETH下的“YCC”
-         * @return String?   币种余额data数据
+         * @return String   币种余额data数据
          * {"id": 1,"result": {"address": "0x632d8B07CDE8B2dcc3645148d2fa76647565664","balance": "0.02091716"},"error": null}
          */
-        fun getbalance(addresss: String, chain: String, tokenSymbol: String): String? {
+        fun getbalance(addresss: String, chain: String, tokenSymbol: String): String {
             return getbalance(addresss, chain, tokenSymbol, getGoURL()!!)
         }
 
@@ -131,9 +130,9 @@ class GoWallet {
         /**
          * 获取余额
          * @param lCoin Coin   币种
-         * @return String?  余额
+         * @return String  余额
          */
-        fun handleBalance(lCoin: Coin): String? {
+        fun handleBalance(lCoin: Coin): String {
             var tokensymbol = if (lCoin.name == lCoin.chain) "" else lCoin.name
             if (!TextUtils.isEmpty(lCoin.platform) && !TextUtils.isEmpty(lCoin.chain)) {
                 if (isBTYChild(lCoin)) {
@@ -182,7 +181,7 @@ class GoWallet {
             page: Long,
             count: Long,
             goNoderUrl: String
-        ): String? {
+        ): String {
             try {
                 val walletQueryByAddr = WalletQueryByAddr()
                 val queryByPage = QueryByPage()
@@ -203,7 +202,7 @@ class GoWallet {
                 e.printStackTrace()
             }
 
-            return null
+            return ""
         }
 
         /**
@@ -223,7 +222,7 @@ class GoWallet {
             type: Long,
             page: Long,
             count: Long
-        ): String? {
+        ): String {
             return getTranList(addr, chain, tokenSymbol, type, page, count, getGoURL()!!)
         }
 
@@ -233,14 +232,14 @@ class GoWallet {
          * @param tokenSymbol String   token名称，例如ETH下的“YCC”
          * @param txid String   交易txid
          * @param goNoderUrl String   服务器节点
-         * @return String?
+         * @return String
          */
         fun getTranByTxid(
             chain: String,
             tokenSymbol: String,
             txid: String,
             goNoderUrl: String
-        ): String? {
+        ): String {
             try {
                 val walletQueryByTxid = WalletQueryByTxid()
                 walletQueryByTxid.cointype = chain
@@ -253,7 +252,7 @@ class GoWallet {
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
-            return null
+            return ""
         }
 
         /**
@@ -261,9 +260,9 @@ class GoWallet {
          * @param chain String   主链名称，例如：“BTC”
          * @param tokenSymbol String   token名称，例如ETH下的“YCC”
          * @param txid String   交易txid
-         * @return String?
+         * @return String
          */
-        fun getTranByTxid(chain: String, tokenSymbol: String, txid: String): String? {
+        fun getTranByTxid(chain: String, tokenSymbol: String, txid: String): String {
             return getTranByTxid(chain, tokenSymbol, txid, getGoURL()!!)
         }
 
@@ -276,12 +275,12 @@ class GoWallet {
          * @param fee Double
          * @param note String
          * @param tokensymbol String
-         * @return String?
+         * @return String
          */
         fun createTran(
             chain: String, fromAddr: String, toAddr: String, amount: Double, fee: Double,
             note: String, tokensymbol: String, goNoderUrl: String
-        ): String? {
+        ): String {
             try {
                 val walletTx = WalletTx()
                 walletTx.cointype = chain
@@ -301,7 +300,7 @@ class GoWallet {
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
-            return null
+            return ""
         }
 
         /**
@@ -313,12 +312,12 @@ class GoWallet {
          * @param fee Double
          * @param note String
          * @param tokensymbol String
-         * @return String?
+         * @return String
          */
         fun createTran(
             chain: String, fromAddr: String, toAddr: String, amount: Double, fee: Double,
             note: String, tokensymbol: String
-        ): String? {
+        ): String {
             return createTran(chain, fromAddr, toAddr, amount, fee, note, tokensymbol, getGoURL()!!)
         }
 
@@ -328,9 +327,9 @@ class GoWallet {
          * @param chain String     主链名称，例如：“BTC”
          * @param unSignData String   创建交易后的数据（result）
          * @param priv String     私钥
-         * @return String?
+         * @return String
          */
-        fun signTran(chain: String, unSignData: String, priv: String): String? {
+        fun signTran(chain: String, unSignData: String, priv: String): String {
             try {
                 val signRawTransaction =
                     Walletapi.signRawTransaction(chain, Walletapi.stringTobyte(unSignData), priv)
@@ -339,7 +338,7 @@ class GoWallet {
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
-            return null
+            return ""
         }
 
         /**
@@ -348,14 +347,14 @@ class GoWallet {
          * @param signData String    token名称，例如ETH下的“YCC”
          * @param tokenSymbol String   签名后的数据
          * @param goNoderUrl String    服务器节点
-         * @return String?
+         * @return String
          */
         fun sendTran(
             chain: String,
             signData: String,
             tokenSymbol: String,
             goNoderUrl: String
-        ): String? {
+        ): String{
             try {
                 val sendTx = WalletSendTx()
                 sendTx.cointype = chain
@@ -369,7 +368,7 @@ class GoWallet {
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
-            return null
+            return ""
         }
 
         /**
@@ -377,9 +376,9 @@ class GoWallet {
          * @param chain String   主链名称，例如：“BTC”
          * @param signData String    token名称，例如ETH下的“YCC”
          * @param tokenSymbol String   签名后的数据
-         * @return String?
+         * @return String
          */
-        fun sendTran(chain: String, signData: String, tokenSymbol: String): String? {
+        fun sendTran(chain: String, signData: String, tokenSymbol: String): String {
             return sendTran(chain, signData, tokenSymbol, getGoURL()!!)
         }
 
@@ -461,16 +460,16 @@ class GoWallet {
         /**
          * 把加密的密码转换成哈希密码
          * @param password ByteArray   加密后的密码
-         * @return String?
+         * @return String
          */
 
-        fun passwdHash(password: ByteArray): String? {
+        fun passwdHash(password: ByteArray): String {
             try {
                 return Walletapi.passwdHash(password)
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
-            return null
+            return ""
         }
 
 
@@ -478,9 +477,9 @@ class GoWallet {
          * 加密助记词
          * @param password ByteArray  加密后的密码
          * @param mnem String    助记词
-         * @return String?
+         * @return String
          */
-        fun encMenm(encPasswd: ByteArray, seed: String): String? {
+        fun encMenm(encPasswd: ByteArray, seed: String): String {
             try {
                 val bSeed = Walletapi.stringTobyte(seed)
                 val seedEncKey = Walletapi.seedEncKey(encPasswd, bSeed)
@@ -488,16 +487,16 @@ class GoWallet {
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
-            return null
+            return ""
         }
 
         /**
          * 解密助记词
          * @param password ByteArray  加密后的密码
          * @param mnem String      助记词
-         * @return String?
+         * @return String
          */
-        fun decMenm(encPasswd: ByteArray, seed: String): String? {
+        fun decMenm(encPasswd: ByteArray, seed: String): String {
             try {
                 val bSeed = Walletapi.hexTobyte(seed)
                 val seedDecKey = Walletapi.seedDecKey(encPasswd, bSeed)
@@ -505,7 +504,7 @@ class GoWallet {
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
-            return null
+            return ""
         }
 
         //byte[]转string 16进制
@@ -514,7 +513,7 @@ class GoWallet {
             return Walletapi.byteTohex(b)
         }
 
-        fun deleteMulAddress(appId: String, appSymbol: String, mulAddress: String): Boolean? {
+        fun deleteMulAddress(appId: String, appSymbol: String, mulAddress: String): Boolean {
             val mulAddr = WalletMulAddr()
             mulAddr.util = getUtil(getGoURL()!!)
             mulAddr.appid = appId
@@ -524,7 +523,7 @@ class GoWallet {
         }
 
 
-        fun imortMulAddress(appId: String, appSymbol: String, mulAddress: String): Boolean? {
+        fun imortMulAddress(appId: String, appSymbol: String, mulAddress: String): Boolean {
             val mulAddr = WalletMulAddr()
             mulAddr.util = getUtil(getGoURL()!!)
             mulAddr.appid = appId

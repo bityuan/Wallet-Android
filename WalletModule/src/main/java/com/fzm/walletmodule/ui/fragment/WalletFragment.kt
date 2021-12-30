@@ -32,12 +32,12 @@ import java.util.concurrent.CopyOnWriteArrayList
 class WalletFragment : BaseFragment() {
     private var mWalletAdapter: WalletAdapter? = null
     private var mHeaderView: View? = null
-    private var mPWallet: PWallet? = null
+    private lateinit var mPWallet: PWallet
     private val mCoinList = CopyOnWriteArrayList<Coin>()
     private var more: ImageView? = null
     private var name: TextView? = null
-    private var mTimer: Timer? = null
-    private var balanceTimer: Timer? = null
+    private lateinit var mTimer: Timer
+    private lateinit var balanceTimer: Timer
     private var timeCount = 0
     override fun getLayout(): Int {
         return R.layout.fragment_wallet
@@ -45,7 +45,7 @@ class WalletFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-     //   StatusBarUtil.setStatusBarColor(activity, Color.TRANSPARENT, true)
+        //   StatusBarUtil.setStatusBarColor(activity, Color.TRANSPARENT, true)
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
         }
@@ -61,17 +61,17 @@ class WalletFragment : BaseFragment() {
      */
     private fun startTimer() {
         balanceTimer = Timer()
-        balanceTimer!!.schedule(object : TimerTask() {
+        balanceTimer.schedule(object : TimerTask() {
             override fun run() {
-               val size = mCoinList.size
-               for (index in 0 until size) {
-                   var coin = mCoinList[index]
-                   val handleBalance = GoWallet.handleBalance(coin)
-                   coin.balance = handleBalance
-                   runOnUiThread {
-                       mWalletAdapter?.notifyDataSetChanged()
-                   }
-               }
+                val size = mCoinList.size
+                for (index in 0 until size) {
+                    var coin = mCoinList[index]
+                    val handleBalance = GoWallet.handleBalance(coin)
+                    coin.balance = handleBalance
+                    runOnUiThread {
+                        mWalletAdapter?.notifyDataSetChanged()
+                    }
+                }
             }
         }, 0, Constants.DELAYED_TIME)
     }
@@ -100,17 +100,17 @@ class WalletFragment : BaseFragment() {
     private fun initHeaderView() {
         mHeaderView =
             LayoutInflater.from(activity).inflate(R.layout.view_header_wallet, null, false)
-        more = mHeaderView?.findViewById<ImageView>(R.id.more)
-        name = mHeaderView?.findViewById<TextView>(R.id.name)
+        more = mHeaderView?.findViewById(R.id.more)
+        name = mHeaderView?.findViewById(R.id.name)
         recyclerView.addHeaderView(mHeaderView)
     }
 
     override fun initData() {
         mPWallet = PWallet.getUsingWallet()
-        name?.text = mPWallet?.name
+        name?.text = mPWallet.name
         doAsync {
             val localCoinList = where(
-                "pwallet_id = ? and status = ?", String.valueOf(mPWallet!!.id),
+                "pwallet_id = ? and status = ?", String.valueOf(mPWallet.id),
                 String.valueOf(Coin.STATUS_ENABLE)
             ).find(Coin::class.java, true)
             mCoinList.clear()
@@ -120,7 +120,7 @@ class WalletFragment : BaseFragment() {
 
     }
 
-    private fun  refresh(){
+    private fun refresh() {
         doAsync {
             //获取最新的数据
             for (coin in mCoinList) {
@@ -191,14 +191,14 @@ class WalletFragment : BaseFragment() {
     public fun onUpdateWalletNameEvent(event: UpdateWalletNameEvent) {
         if (event != null && event.needUpdate) {
             mPWallet = PWallet.getUsingWallet()
-            name?.text = mPWallet?.name
+            name?.text = mPWallet.name
         }
     }
 
     //回调 - 删除账户
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onWalletDeleteEvent(event: WalletDeleteEvent) {
-        if (mPWallet!!.id === event.walletId) {
+        if (mPWallet.id === event.walletId) {
             initData()
         }
     }
@@ -206,7 +206,7 @@ class WalletFragment : BaseFragment() {
     //回调 - 我的账户
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     fun onMyWalletEvent(event: MyWalletEvent) {
-        if (mPWallet != null && event.mPWallet != null && mPWallet!!.id !== event.mPWallet!!.id) {
+        if (mPWallet != null && event.mPWallet != null && mPWallet.id !== event.mPWallet.id) {
             mPWallet = event.mPWallet
             PWallet.setUsingWallet(mPWallet)
             initData()
@@ -217,10 +217,10 @@ class WalletFragment : BaseFragment() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTransactionsEvent(event: TransactionsEvent) {
         if (event != null) {
-            val coin: Coin? = event.coin
+            val coin: Coin = event.coin
             if (coin != null) {
                 mTimer = Timer()
-                mTimer!!.schedule(object : TimerTask() {
+                mTimer.schedule(object : TimerTask() {
                     override fun run() {
                         val balance = GoWallet.handleBalance(coin)
                         if (timeCount == 3 || balance != coin.balance) {
@@ -235,7 +235,7 @@ class WalletFragment : BaseFragment() {
                                     .platform + mCoinList[i].chain
                             if (oldCoinSign == coinSign) {
                                 mCoinList[i].balance = balance
-                                runOnUiThread { mWalletAdapter!!.notifyItemChanged(i) }
+                                runOnUiThread { mWalletAdapter?.notifyItemChanged(i) }
                                 break
                             }
                         }
@@ -252,7 +252,10 @@ class WalletFragment : BaseFragment() {
         val type: Int = event.type
         val text: kotlin.String = event.text
         val requstCode = event.requstCode
-        if (type == CaptureCustomActivity.RESULT_SUCCESS && requstCode == CaptureCustomActivity.REQUESTCODE_HOME && !TextUtils.isEmpty(text)) {
+        if (type == CaptureCustomActivity.RESULT_SUCCESS && requstCode == CaptureCustomActivity.REQUESTCODE_HOME && !TextUtils.isEmpty(
+                text
+            )
+        ) {
 
         }
     }
@@ -264,10 +267,10 @@ class WalletFragment : BaseFragment() {
             EventBus.getDefault().unregister(this)
         }
         if (mTimer != null) {
-            mTimer!!.cancel()
+            mTimer.cancel()
         }
         if (balanceTimer != null) {
-            balanceTimer!!.cancel()
+            balanceTimer.cancel()
         }
     }
 }

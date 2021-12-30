@@ -35,7 +35,7 @@ class ChangePasswordActivity : BaseActivity() {
     private var viewHeight = 0
     private var mPWalletId: Long = 0
     private var mPasswordHash: String? = null
-    private var mPWallet: PWallet? = null
+    private lateinit var mPWallet: PWallet
     var goChecked = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +54,7 @@ class ChangePasswordActivity : BaseActivity() {
     override fun initIntent() {
         mPWalletId = intent.getLongExtra(PWALLET_ID, 0)
         mPWallet = find(PWallet::class.java, mPWalletId)
-        mPasswordHash = mPWallet?.password
+        mPasswordHash = mPWallet.password
     }
 
     override fun initView() {
@@ -97,8 +97,8 @@ class ChangePasswordActivity : BaseActivity() {
                 pWallet.password = passwdHash
                 //同时更改助记词的加密
                 val bOldPassword = GoWallet.encPasswd(oldPassword)
-                val mnem = GoWallet.decMenm(bOldPassword!!, mPWallet!!.mnem)
-                val encMenm = GoWallet.encMenm(encPasswd, mnem!!)
+                val mnem = GoWallet.decMenm(bOldPassword!!, mPWallet.mnem)
+                val encMenm = GoWallet.encMenm(encPasswd, mnem)
                 pWallet.mnem = encMenm
                 pWallet.update(mPWalletId)
                 runOnUiThread {

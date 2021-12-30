@@ -30,7 +30,7 @@ import org.jetbrains.anko.doAsync
 class CaptureCustomActivity : BaseActivity(), EasyPermissions.PermissionCallbacks,
     OnCaptureCallback {
     private var mRequstCode = -1
-    private var mCaptureHelper: CaptureHelper? = null
+    private lateinit var mCaptureHelper: CaptureHelper
     override fun onCreate(savedInstanceState: Bundle?) {
         mCustomToobar = true
         mStatusColor = Color.TRANSPARENT
@@ -51,9 +51,9 @@ class CaptureCustomActivity : BaseActivity(), EasyPermissions.PermissionCallback
     }
 
     private fun initScanUI() {
-        mCaptureHelper = CaptureHelper(this, surfaceView!!, viewfinderView)
-        mCaptureHelper!!.onCreate()
-        mCaptureHelper!!.setOnCaptureCallback(this)
+        mCaptureHelper = CaptureHelper(this, surfaceView, viewfinderView)
+        mCaptureHelper.onCreate()
+        mCaptureHelper.setOnCaptureCallback(this)
         setCaptureHelper(true, false)
         tv_tip.text = getString(R.string.my_scan_toast)
 
@@ -61,7 +61,7 @@ class CaptureCustomActivity : BaseActivity(), EasyPermissions.PermissionCallback
     }
 
     private fun setCaptureHelper(isVibrate: Boolean, isContinuous: Boolean) {
-        mCaptureHelper!!.vibrate(isVibrate)
+        mCaptureHelper.vibrate(isVibrate)
             .fullScreenScan(true)//全屏扫码
             .supportVerticalCode(true)//支持扫垂直条码，建议有此需求时才使用。
             .continuousScan(isContinuous) //连续扫码,默认false
@@ -171,7 +171,7 @@ class CaptureCustomActivity : BaseActivity(), EasyPermissions.PermissionCallback
     override fun onResume() {
         super.onResume()
         if (EasyPermissions.hasPermissions(this, *PERMISSIONS)) {
-            mCaptureHelper!!.onResume()
+            mCaptureHelper.onResume()
         } else {
             EasyPermissions.requestPermissions(
                 this, getString(R.string.home_scan_toast),
@@ -183,16 +183,16 @@ class CaptureCustomActivity : BaseActivity(), EasyPermissions.PermissionCallback
 
     override fun onPause() {
         super.onPause()
-        mCaptureHelper!!.onPause()
+        mCaptureHelper.onPause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mCaptureHelper!!.onDestroy()
+        mCaptureHelper.onDestroy()
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        mCaptureHelper!!.onTouchEvent(event)
+        mCaptureHelper.onTouchEvent(event)
         return super.onTouchEvent(event)
     }
 

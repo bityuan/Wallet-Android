@@ -36,18 +36,18 @@ class MyWalletsActivity : BaseActivity() {
         listView.layoutManager = LinearLayoutManager(this)
 
         mAdapter = object : CommonAdapter<PWallet>(this, R.layout.view_my_wallet, ArrayList<PWallet>()) {
-                override fun convert(holder: ViewHolder?, wallet: PWallet?, position: Int) {
+                override fun convert(holder: ViewHolder, wallet: PWallet, position: Int) {
                 //    holder!!.setText(R.id.money, moneySign + DecimalUtils.subWithNum(wallet!!.amounts, 2))
-                    holder!!.setVisible(R.id.money, true)
+                    holder.setVisible(R.id.money, true)
                     holder.setVisible(R.id.walletId, true)
                     holder.setText(R.id.walletId, getString(R.string.my_wallets_mnem_walllet))
                     holder.setBackgroundRes(R.id.walletBg, R.mipmap.my_wallet_bg_black)
                     holder.setBackgroundRes(R.id.coinIcon, R.mipmap.my_wallet_coins)
-                    holder.setText(R.id.name, wallet?.name)
+                    holder.setText(R.id.name, wallet.name)
                     holder.setTextColorRes(R.id.name, R.color.white)
                     holder.setTextColorRes(R.id.money, R.color.white)
                     holder.setTextColorRes(R.id.walletId, R.color.color_80ffffff)
-                    if (wallet?.id == mSelectedId) {
+                    if (wallet.id == mSelectedId) {
                         holder.setVisible(R.id.currentWallet, true)
                     } else {
                         holder.setVisible(R.id.currentWallet, false)

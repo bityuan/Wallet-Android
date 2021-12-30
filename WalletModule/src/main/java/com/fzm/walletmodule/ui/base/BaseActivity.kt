@@ -221,23 +221,23 @@ abstract class BaseActivity : AppCompatActivity() {
 
     }
 
-    internal var activities: MutableList<AppCompatActivity>? = ArrayList()
+    internal var activities: MutableList<AppCompatActivity> = ArrayList()
 
     fun addAcitivity(activity: AppCompatActivity) {
-        activities!!.add(activity)
+        activities.add(activity)
     }
 
     fun removeAcitivity(activity: AppCompatActivity) {
-        activities!!.remove(activity)
+        activities.remove(activity)
     }
 
     fun clearActivity() {
         if (activities != null) {
-            for (activity in activities!!) {
+            for (activity in activities) {
                 activity.finish()
             }
         }
-        activities!!.clear()
+        activities.clear()
     }
 
     open fun hideKeyboard() {

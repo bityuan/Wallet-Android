@@ -106,27 +106,27 @@ class CreateWalletActivity : BaseActivity() {
         var checked = true
 
         if (TextUtils.isEmpty(name)) {
-            ToastUtils.show(this, getString(R.string.my_wallet_detail_name),Gravity.CENTER)
+            ToastUtils.show(this, getString(R.string.my_wallet_detail_name), Gravity.CENTER)
             checked = false
         } else if (!ListUtils.isEmpty(pWallets)) {
-            ToastUtils.show(this, getString(R.string.my_wallet_detail_name_exist),Gravity.CENTER)
+            ToastUtils.show(this, getString(R.string.my_wallet_detail_name_exist), Gravity.CENTER)
             checked = false
         } else if (TextUtils.isEmpty(password)) {
-            ToastUtils.show(this, getString(R.string.my_wallet_set_password),Gravity.CENTER)
+            ToastUtils.show(this, getString(R.string.my_wallet_set_password), Gravity.CENTER)
             checked = false
         } else if (password.length < 8 || password.length > 16) {
-            ToastUtils.show(this, getString(R.string.my_create_letter),Gravity.CENTER)
+            ToastUtils.show(this, getString(R.string.my_create_letter), Gravity.CENTER)
             checked = false
             tv_prompt.setTextColor(resources.getColor(R.color.color_EA2551))
         } else if (TextUtils.isEmpty(passwordAgain)) {
-            ToastUtils.show(this, getString(R.string.my_change_password_again),Gravity.CENTER)
+            ToastUtils.show(this, getString(R.string.my_change_password_again), Gravity.CENTER)
             checked = false
         } else if (password != passwordAgain) {
-            ToastUtils.show(this, getString(R.string.my_set_password_different),Gravity.CENTER)
+            ToastUtils.show(this, getString(R.string.my_set_password_different), Gravity.CENTER)
             tv_tip_error.visibility = View.VISIBLE
             checked = false
         } else if (!AppUtils.ispassWord(password) || !AppUtils.ispassWord(passwordAgain)) {
-            ToastUtils.show(this, getString(R.string.my_set_password_number_letter),Gravity.CENTER)
+            ToastUtils.show(this, getString(R.string.my_set_password_number_letter), Gravity.CENTER)
             checked = false
         }
         return checked
@@ -155,12 +155,13 @@ class CreateWalletActivity : BaseActivity() {
 
     }
 
-    private fun hideLargeTitle(tvLargeTitle: TextView?, string: String) {
-        tvLargeTitle!!.visibility = View.GONE
+    private fun hideLargeTitle(tvLargeTitle: TextView, string: String) {
+        tvLargeTitle.visibility = View.GONE
         tvTitle.text = string
     }
-    private fun showLargeTitle(tvLargeTitle: TextView?, s: String) {
-        tvLargeTitle!!.visibility = View.VISIBLE
+
+    private fun showLargeTitle(tvLargeTitle: TextView, s: String) {
+        tvLargeTitle.visibility = View.VISIBLE
         tvTitle.text = s
     }
 
@@ -168,13 +169,13 @@ class CreateWalletActivity : BaseActivity() {
         if (mLayoutBtn == null) {
             mLayoutBtn =
                 LayoutInflater.from(this@CreateWalletActivity).inflate(R.layout.layout_btn, null)
-            val btnCreate = mLayoutBtn?.findViewById<Button>(R.id.btn_create)
+            val btnCreate = mLayoutBtn!!.findViewById<Button>(R.id.btn_create)
             val layoutParams = RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
             layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-            btnCreate?.setOnClickListener { finishTask() }
+            btnCreate.setOnClickListener { finishTask() }
             rl_root.addView(mLayoutBtn, layoutParams)
         } else {
             mLayoutBtn?.visibility = View.VISIBLE
@@ -190,7 +191,7 @@ class CreateWalletActivity : BaseActivity() {
     }
 
     private var currentLocation: IntArray? = null
-    var currentView: View? = null
+    private var currentView: View? = null
     private val mEtPasswordLocation = IntArray(2)
     private val mEtPasswordAgainLocation = IntArray(2)
 
@@ -200,13 +201,13 @@ class CreateWalletActivity : BaseActivity() {
         et_password.getLocationOnScreen(mEtPasswordLocation)
         et_password_again.getLocationOnScreen(mEtPasswordAgainLocation)
 
-        et_password.setOnTouchListener(View.OnTouchListener { v: View?, event: MotionEvent? ->
+        et_password.setOnTouchListener(View.OnTouchListener { v: View, event: MotionEvent ->
             currentLocation = mEtPasswordLocation
             currentView = et_password
             false
         })
 
-        et_password_again.setOnTouchListener(View.OnTouchListener { v: View?, event: MotionEvent? ->
+        et_password_again.setOnTouchListener(View.OnTouchListener { v: View, event: MotionEvent ->
             currentLocation = mEtPasswordAgainLocation
             currentView = et_password_again
             false

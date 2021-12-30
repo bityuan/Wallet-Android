@@ -1,6 +1,5 @@
 package com.fzm.walletmodule.utils
 
-import android.content.Context
 import android.util.Log
 import com.fzm.walletmodule.api.ApiEnv
 import com.fzm.walletmodule.db.entity.Coin
@@ -37,7 +36,7 @@ object GoUtils {
     }
 
 
-    fun checkPasswd(password: String?, passwdHash: String?): Boolean {
+    fun checkPasswd(password: String, passwdHash: String): Boolean {
         var checked = false
         try {
             checked = Walletapi.checkPasswd(password, passwdHash)
@@ -84,12 +83,12 @@ object GoUtils {
     }
 
     fun signTxGroup(
-        execer: String?,
-        createTx: String?,
-        tsPriv: String?,
-        feePriv: String?,
+        execer: String,
+        createTx: String,
+        tsPriv: String,
+        feePriv: String,
         btyfee: Double,
-    ): String? {
+    ): String {
         try {
             val gWithoutTx = GWithoutTx()
             gWithoutTx.noneExecer = execer
@@ -103,7 +102,7 @@ object GoUtils {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        return null
+        return ""
     }
 
     //发送交易

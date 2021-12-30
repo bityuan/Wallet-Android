@@ -38,7 +38,7 @@ import java.util.concurrent.Executors
  * 账户详情页面
  */
 class WalletDetailsActivity : BaseActivity() {
-    private var mPWallet: PWallet? = null
+    private lateinit var mPWallet: PWallet
     private var mEditDialogFragment: EditDialogFragment? = null
     private var mPasswordDialogFragment: EditDialogFragment? = null
     private var mCommonDialogFragment: CommonDialogFragment? = null
@@ -61,16 +61,16 @@ class WalletDetailsActivity : BaseActivity() {
     override fun initListener() {
         tv_forget_password.setOnClickListener {
             val `in` = Intent(this, CheckMnemActivity::class.java)
-            `in`.putExtra(PWallet.PWALLET_ID, mPWallet!!.id)
+            `in`.putExtra(PWallet.PWALLET_ID, mPWallet.id)
             startActivity(`in`)
         }
         updatePassword.setOnClickListener {
             val intent = Intent()
             intent.setClass(
                 this,
-                if (TextUtils.isEmpty(mPWallet!!.password)) SetPasswordActivity::class.java else ChangePasswordActivity::class.java
+                if (TextUtils.isEmpty(mPWallet.password)) SetPasswordActivity::class.java else ChangePasswordActivity::class.java
             )
-            intent.putExtra(ChangePasswordActivity.PWALLET_ID, mPWallet!!.id)
+            intent.putExtra(ChangePasswordActivity.PWALLET_ID, mPWallet.id)
             startActivity(intent)
         }
         outPriv.setOnClickListener {
@@ -92,7 +92,7 @@ class WalletDetailsActivity : BaseActivity() {
         if (mEditDialogFragment == null) {
             mEditDialogFragment = EditDialogFragment()
             mEditDialogFragment!!.setTitle(getString(R.string.my_wallet_detail_name))
-            mEditDialogFragment!!.setInput(mPWallet!!.name)
+            mEditDialogFragment!!.setInput(mPWallet.name)
             mEditDialogFragment!!.type = 1
             mEditDialogFragment!!.setInputType(InputType.TYPE_CLASS_TEXT)
             mEditDialogFragment!!.setRightButtonStr(getString(R.string.ok))
@@ -115,8 +115,8 @@ class WalletDetailsActivity : BaseActivity() {
                         )
                         return
                     }
-                    mPWallet!!.name = input
-                    mPWallet!!.update(mPWallet!!.id)
+                    mPWallet.name = input
+                    mPWallet.update(mPWallet.id)
                     needUpdate = true
                     EventBus.getDefault().post(UpdateWalletNameEvent(needUpdate))
                     ToastUtils.show(
@@ -162,7 +162,7 @@ class WalletDetailsActivity : BaseActivity() {
                     return
                 }
                 mPasswordDialogFragment?.dismiss()
-                val localPassword = mPWallet?.password
+                val localPassword = mPWallet.password
                 showLoading()
                 doAsync {
                     val result = GoWallet.checkPasswd(password, localPassword!!)
@@ -190,7 +190,7 @@ class WalletDetailsActivity : BaseActivity() {
         when (type) {
             1 -> {
                 val mnem = getMnem(password)
-                outPriv(mnem!!, password)
+                outPriv(mnem, password)
             }
             2 -> {
                 runOnUiThread {
@@ -201,15 +201,15 @@ class WalletDetailsActivity : BaseActivity() {
                 val mnem = getMnem(password)
                 runOnUiThread {
                     dismiss()
-                    WalletManager().exportMnem(this@WalletDetailsActivity, mnem!!, mPWallet!!)
+                    WalletManager().exportMnem(this@WalletDetailsActivity, mnem, mPWallet)
                 }
 
             }
         }
     }
 
-    private fun getMnem(password: String): String? {
-        return GoWallet.decMenm(GoWallet.encPasswd(password)!!, mPWallet!!.mnem)
+    private fun getMnem(password: String): String {
+        return GoWallet.decMenm(GoWallet.encPasswd(password)!!, mPWallet.mnem)
     }
 
     private fun handleDelete() {
@@ -236,7 +236,7 @@ class WalletDetailsActivity : BaseActivity() {
 
     fun outPriv(mnem: String, password: String) {
         val coinList: List<Coin> =
-            select().where("pwallet_id = ?", java.lang.String.valueOf(mPWallet!!.id))
+            select().where("pwallet_id = ?", java.lang.String.valueOf(mPWallet.id))
                 .find(Coin::class.java)
         if (!ListUtils.isEmpty(coinList)) {
             runOnUiThread {
@@ -268,7 +268,7 @@ class WalletDetailsActivity : BaseActivity() {
         singleThreadExecutor.execute {
             val coinList = select().where(
                 "pwallet_id = ? group by chain",
-                java.lang.String.valueOf(mPWallet!!.id)
+                java.lang.String.valueOf(mPWallet.id)
             ).find(Coin::class.java)
             for (coin in coinList) {
                 val mulAddress = MulAddress()
@@ -278,10 +278,10 @@ class WalletDetailsActivity : BaseActivity() {
             }
             val mulJson = Gson().toJson(mulList)
           //  val delState = GoWallet.deleteMulAddress("", GoWallet.APPSYMBOL_P, mulJson)
-            delete(PWallet::class.java, mPWallet!!.id)
+            delete(PWallet::class.java, mPWallet.id)
             runOnUiThread {
                 dismiss()
-                EventBus.getDefault().post(WalletDeleteEvent(mPWallet!!.id))
+                EventBus.getDefault().post(WalletDeleteEvent(mPWallet.id))
                 needUpdate = true
                 finish()
             }
@@ -291,14 +291,14 @@ class WalletDetailsActivity : BaseActivity() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public fun onUpdatePasswordEvent(event: UpdatePasswordEvent) {
-        mPWallet = find(PWallet::class.java, mPWallet!!.id)
-        mPWallet!!.update(mPWallet!!.id)
+        mPWallet = find(PWallet::class.java, mPWallet.id)
+        mPWallet.update(mPWallet.id)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public fun onCheckMnemEvent(event: CheckMnemEvent) {
-        mPWallet = find(PWallet::class.java, mPWallet!!.id)
-        mPWallet!!.update(mPWallet!!.id)
+        mPWallet = find(PWallet::class.java, mPWallet.id)
+        mPWallet.update(mPWallet.id)
     }
 
     override fun finish() {
