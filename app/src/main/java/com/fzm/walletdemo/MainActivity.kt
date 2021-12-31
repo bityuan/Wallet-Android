@@ -24,7 +24,7 @@ class MainActivity : BaseActivity() {
     private var mExploreFragment: ExploreFragment? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         mCustomToobar = true
-        setStatusColor(R.color.color_333649)
+        setStatusColor(android.R.color.transparent)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         EventBus.getDefault().register(this)
