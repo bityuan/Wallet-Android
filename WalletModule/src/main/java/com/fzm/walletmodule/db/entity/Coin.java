@@ -47,6 +47,15 @@ public class Coin extends BaseBean {
     private String optionalName;
     @Column(ignore = true)
     private String scanAddress;
+    private float rmb;
+
+    public float getRmb() {
+        return rmb;
+    }
+
+    public void setRmb(float rmb) {
+        this.rmb = rmb;
+    }
 
     public String getScanAddress() {
         return scanAddress;
