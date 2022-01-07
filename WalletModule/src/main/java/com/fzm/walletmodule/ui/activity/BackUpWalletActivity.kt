@@ -14,8 +14,10 @@ import com.fzm.walletmodule.R
 import com.fzm.walletmodule.adapter.BackUpWalletAdapter
 import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.bean.WalletBackUp
-import com.fzm.walletmodule.db.entity.Coin
-import com.fzm.walletmodule.db.entity.PWallet
+import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.utils.GoWallet
+import com.fzm.walletmodule.utils.WalletUtils
 import com.fzm.walletmodule.event.BackUpEvent
 import com.fzm.walletmodule.event.MyWalletEvent
 import com.fzm.walletmodule.manager.WalletManager
@@ -245,10 +247,10 @@ class BackUpWalletActivity : BaseActivity() {
 
 
     private fun saveWallet(coinList: List<Coin>) {
-        GoWallet.createWallet(mPWallet,coinList,object :GoWallet.CoinListener{
+        GoWallet.createWallet(mPWallet,coinList,object : GoWallet.CoinListener{
             override fun onSuccess() {
                 dismiss()
-                PWallet.setUsingWallet(mPWallet)
+                WalletUtils.setUsingWallet(mPWallet)
                 EventBus.getDefault().postSticky(MyWalletEvent(mPWallet))
                 closeSomeActivitys()
             }

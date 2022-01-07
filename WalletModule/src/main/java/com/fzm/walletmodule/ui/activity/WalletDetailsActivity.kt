@@ -6,9 +6,9 @@ import android.text.InputType
 import android.text.TextUtils
 import android.view.View
 import com.fzm.walletmodule.R
-import com.fzm.walletmodule.bean.MulAddress
-import com.fzm.walletmodule.db.entity.Coin
-import com.fzm.walletmodule.db.entity.PWallet
+import com.fzm.wallet.sdk.bean.MulAddress
+import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.walletmodule.event.CheckMnemEvent
 import com.fzm.walletmodule.event.UpdatePasswordEvent
 import com.fzm.walletmodule.event.UpdateWalletNameEvent
@@ -17,7 +17,7 @@ import com.fzm.walletmodule.manager.WalletManager
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.CommonDialogFragment
 import com.fzm.walletmodule.ui.widget.EditDialogFragment
-import com.fzm.walletmodule.utils.GoWallet
+import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.utils.ListUtils
 import com.fzm.walletmodule.utils.ToastUtils
 import com.google.gson.Gson

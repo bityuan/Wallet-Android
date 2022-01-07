@@ -5,8 +5,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.FragmentTransaction
 import com.fzm.walletmodule.base.Constants
-import com.fzm.walletmodule.db.entity.Coin
-import com.fzm.walletmodule.db.entity.PWallet
+import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.walletmodule.utils.WalletUtils
 import com.fzm.walletmodule.event.MainCloseEvent
 import com.fzm.walletmodule.event.MyWalletEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
@@ -164,7 +165,7 @@ class MainActivity : BaseActivity() {
         } else {
             setTabSelection(0)
             mPWallet = event.mPWallet
-            PWallet.setUsingWallet(mPWallet)
+            WalletUtils.setUsingWallet(mPWallet)
         }
     }
 

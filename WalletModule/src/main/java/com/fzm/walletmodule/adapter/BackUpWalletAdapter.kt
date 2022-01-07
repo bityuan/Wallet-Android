@@ -6,7 +6,7 @@ import com.chad.library.adapter.base.BaseItemDraggableAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.bean.WalletBackUp
-import com.fzm.walletmodule.db.entity.PWallet
+import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.walletmodule.utils.ScreenUtils
 
 class BackUpWalletAdapter(layoutResId: Int, data: List<WalletBackUp>, mnemType: Int) :

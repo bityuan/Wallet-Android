@@ -13,10 +13,14 @@ import androidx.lifecycle.Observer
 import com.alibaba.fastjson.JSON
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.base.Constants
-import com.fzm.walletmodule.bean.Miner
+import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.walletmodule.bean.StringResult
-import com.fzm.walletmodule.db.entity.Coin
-import com.fzm.walletmodule.db.entity.PWallet
+import com.fzm.wallet.sdk.utils.AddressCheckUtils
+import com.fzm.wallet.sdk.utils.RegularUtils
+import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.net.walletQualifier
+import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.event.CaptureEvent
 import com.fzm.walletmodule.event.TransactionsEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
@@ -49,7 +53,7 @@ class OutActivity : BaseActivity() {
     private var mPriv: String? = null
     private var mMaxEditLegth = 0
     private var mMiner: Miner? = null
-    private val outViewModel: OutViewModel by inject()
+    private val outViewModel: OutViewModel by inject(walletQualifier)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_out)
@@ -234,7 +238,7 @@ class OutActivity : BaseActivity() {
             et_note.text.toString(),
             tokensymbol
         )
-        val stringResult = JSON.parseObject(createRaw,StringResult::class.java)
+        val stringResult = JSON.parseObject(createRaw, StringResult::class.java)
         val createRawResult: String? = stringResult.result
         if (TextUtils.isEmpty(createRawResult)) {
             return

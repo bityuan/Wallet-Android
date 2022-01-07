@@ -1,7 +1,6 @@
 package com.fzm.walletmodule.ui.fragment
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -12,8 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.adapter.WalletAdapter
 import com.fzm.walletmodule.base.Constants
-import com.fzm.walletmodule.db.entity.Coin
-import com.fzm.walletmodule.db.entity.PWallet
+import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.utils.GoWallet
+import com.fzm.walletmodule.utils.WalletUtils
 import com.fzm.walletmodule.event.*
 import com.fzm.walletmodule.ui.activity.*
 import com.fzm.walletmodule.ui.base.BaseFragment
@@ -108,7 +109,7 @@ class WalletFragment : BaseFragment() {
     }
 
     override fun initData() {
-        mPWallet = PWallet.getUsingWallet()
+        mPWallet = WalletUtils.getUsingWallet()
         name?.text = mPWallet?.name
         val coinList = mPWallet!!.coinList
         doAsync {
@@ -187,7 +188,7 @@ class WalletFragment : BaseFragment() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public fun onUpdateWalletNameEvent(event: UpdateWalletNameEvent) {
         if (event != null && event.needUpdate) {
-            mPWallet = PWallet.getUsingWallet()
+            mPWallet = WalletUtils.getUsingWallet()
             name?.text = mPWallet?.name
         }
     }
@@ -205,7 +206,7 @@ class WalletFragment : BaseFragment() {
     fun onMyWalletEvent(event: MyWalletEvent) {
         if (mPWallet != null && event.mPWallet != null && mPWallet!!.id !== event.mPWallet!!.id) {
             mPWallet = event.mPWallet
-            PWallet.setUsingWallet(mPWallet)
+            WalletUtils.setUsingWallet(mPWallet)
             initData()
         }
     }

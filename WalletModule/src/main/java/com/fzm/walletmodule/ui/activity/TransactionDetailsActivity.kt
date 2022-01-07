@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.text.TextUtils
 import com.fzm.walletmodule.R
 
-import com.fzm.walletmodule.bean.Transactions
-import com.fzm.walletmodule.db.entity.Coin
+import com.fzm.wallet.sdk.bean.Transactions
+import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.*
 import kotlinx.android.synthetic.main.activity_transaction_details.*
