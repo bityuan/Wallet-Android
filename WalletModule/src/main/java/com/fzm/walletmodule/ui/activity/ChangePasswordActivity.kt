@@ -15,13 +15,13 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.RelativeLayout
 import com.fzm.walletmodule.R
-import com.fzm.walletmodule.db.entity.Coin
-import com.fzm.walletmodule.db.entity.PWallet
+import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.walletmodule.event.UpdatePasswordEvent
 import com.fzm.walletmodule.listener.SoftKeyBoardListener
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.AppUtils
-import com.fzm.walletmodule.utils.GoWallet
+import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.utils.ToastUtils
 import kotlinx.android.synthetic.main.activity_change_password.*
 import org.greenrobot.eventbus.EventBus

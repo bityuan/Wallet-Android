@@ -4,12 +4,12 @@ import android.os.Bundle
 import com.fzm.walletmodule.R
 import android.text.TextUtils
 import androidx.core.widget.doOnTextChanged
-import com.fzm.walletmodule.db.entity.Coin
-import com.fzm.walletmodule.db.entity.PWallet
+import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.walletmodule.event.CheckMnemEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.LimitEditText
-import com.fzm.walletmodule.utils.GoWallet
+import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.utils.ToastUtils
 import kotlinx.android.synthetic.main.activity_check_mnem.*
 import kotlinx.android.synthetic.main.view_import0.*

@@ -4,7 +4,6 @@ import android.util.Log
 import com.google.gson.Gson
 import org.json.JSONException
 import org.json.JSONObject
-import walletapi.Walletapi
 import java.security.MessageDigest
 
 private var lastClickTime: Long = 0
@@ -34,12 +33,6 @@ fun isFastClick(): Boolean {
     }
     lastTime = curClickTime
     return flag
-}
-
-fun toMD5(intput: String): String {
-    val instance = MessageDigest.getInstance("MD5")
-    val digest = instance.digest(intput.toByteArray())
-    return Walletapi.byteTohex(digest)
 }
 
 

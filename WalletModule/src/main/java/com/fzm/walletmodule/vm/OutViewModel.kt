@@ -3,11 +3,11 @@ package com.fzm.walletmodule.vm
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.fzm.walletmodule.bean.Miner
-import com.fzm.walletmodule.net.HttpResult
-import com.fzm.walletmodule.repo.OutRepository
+import com.fzm.wallet.sdk.bean.Miner
+import com.fzm.wallet.sdk.net.HttpResult
+import com.fzm.wallet.sdk.repo.OutRepository
 import androidx.lifecycle.viewModelScope
-import com.fzm.walletmodule.bean.WithHold
+import com.fzm.wallet.sdk.bean.WithHold
 import kotlinx.coroutines.launch
 
 class OutViewModel constructor(private val outRepository: OutRepository) : ViewModel() {

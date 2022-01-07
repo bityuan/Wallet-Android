@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Vibrator
 import android.provider.MediaStore
@@ -12,7 +11,6 @@ import android.text.TextUtils
 import android.view.MotionEvent
 import android.view.View
 import com.fzm.walletmodule.R
-import com.fzm.walletmodule.db.entity.PWallet
 import com.fzm.walletmodule.event.CaptureEvent
 import com.fzm.walletmodule.manager.PermissionManager
 import com.fzm.walletmodule.ui.base.BaseActivity

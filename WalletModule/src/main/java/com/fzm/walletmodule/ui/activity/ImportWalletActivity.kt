@@ -9,8 +9,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.base.Constants
-import com.fzm.walletmodule.db.entity.Coin
-import com.fzm.walletmodule.db.entity.PWallet
+import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.utils.GoWallet
+import com.fzm.walletmodule.utils.WalletUtils
 import com.fzm.walletmodule.event.CaptureEvent
 import com.fzm.walletmodule.event.MyWalletEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
@@ -263,7 +265,7 @@ class ImportWalletActivity : BaseActivity() {
         val coinList = Constants.getCoins()
         GoWallet.createWallet(mPWallet, coinList, object : GoWallet.CoinListener {
             override fun onSuccess() {
-                PWallet.setUsingWallet(mPWallet)
+                WalletUtils.setUsingWallet(mPWallet)
                 EventBus.getDefault().postSticky(MyWalletEvent(mPWallet))
                 dismiss()
                 ToastUtils.show(this@ImportWalletActivity, getString(R.string.my_import_success))
