@@ -5,7 +5,11 @@ import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.bean.response.TransactionResponse
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.net.HttpResult
+import com.fzm.wallet.sdk.net.rootScope
 import com.fzm.wallet.sdk.net.walletNetModule
+import com.fzm.wallet.sdk.net.walletQualifier
+import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.google.gson.Gson
@@ -15,7 +19,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import org.koin.core.module.Module
 import org.litepal.LitePal
-import java.util.ArrayDeque
+import java.util.*
 
 /**
  * @author zhengjy
@@ -25,6 +29,7 @@ import java.util.ArrayDeque
 internal class WalletServiceImpl : WalletService {
 
     private val gson = Gson()
+    private val walletRepository by rootScope.inject<WalletRepository>(walletQualifier)
 
     override fun init(context: Context, module: Module?) {
         module?.walletNetModule()
@@ -56,7 +61,7 @@ internal class WalletServiceImpl : WalletService {
     }
 
     override fun getCoinBalance(
-        walletId: String,
+        walletId: Long,
         initialDelay: Long,
         period: Long,
         requireQuotation: Boolean
@@ -65,7 +70,7 @@ internal class WalletServiceImpl : WalletService {
         while (true) {
             coroutineScope {
                 val deferred = ArrayDeque<Deferred<Unit>>()
-                val coins = LitePal.where("pwallet_id = ? and status = ?", walletId, Coin.STATUS_ENABLE.toString())
+                val coins = LitePal.where("pwallet_id = ? and status = ?", walletId.toString(), Coin.STATUS_ENABLE.toString())
                     .find(Coin::class.java, true)
                 for (coin in coins) {
                     deferred.add(async(Dispatchers.IO) {
@@ -76,13 +81,32 @@ internal class WalletServiceImpl : WalletService {
                         }
                     })
                 }
-                val quotationDeferred: Deferred<Any>? = if (requireQuotation) {
-                    TODO("获取币种行情")
+                val quotationDeferred: Deferred<HttpResult<List<Coin>>>? = if (requireQuotation) {
+                    // 查询资产行情等
+                    async { walletRepository.getCoinList(coins.map { "${it.name},${it.platform}" }) }
                 } else null
                 while (deferred.isNotEmpty()) {
                     deferred.poll()?.await()
                 }
-                quotationDeferred?.await()
+                quotationDeferred?.await()?.dataOrNull()?.also { coinMeta ->
+                    val coinMap = coins.associateBy { "${it.chain}-${it.name}-${it.platform}" }
+                    for (meta in coinMeta) {
+                        coinMap["${meta.chain}-${meta.name}-${meta.platform}"]?.apply {
+                            if (meta.balance == "0") {
+                                setToDefault("balance")
+                            } else {
+                                this.balance = meta.balance
+                            }
+                            if (meta.rmb == 0f) {
+                                setToDefault("rmb")
+                            } else {
+                                this.rmb = meta.rmb
+                            }
+                            this.icon = meta.icon
+                            save()
+                        }
+                    }
+                }
                 emit(coins)
             }
             delay(period.coerceAtLeast(1000L))

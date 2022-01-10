@@ -4,12 +4,12 @@ import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.bean.WithHold
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.HttpResponse
-import okhttp3.RequestBody
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
 
+@JvmSuppressWildcards
 interface Apis {
 
     //获取矿工费
@@ -26,5 +26,5 @@ interface Apis {
 
 
     @POST("interface/wallet-coin")
-    suspend fun getCoinList(@Body body: RequestBody): HttpResponse<List<Coin>>
+    suspend fun getCoinList(@Body body: Map<String, Any>): HttpResponse<List<Coin>>
 }

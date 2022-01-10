@@ -59,6 +59,15 @@
                 android:textSize="18sp"
                 tools:text="2.1000" />
 
+            <TextView
+                android:id="@+id/rmb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:textColor="@color/gray_99"
+                android:textSize="14sp"
+                tools:text="2.1000" />
+
         </LinearLayout>
 
     </LinearLayout>

@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
-import com.fzm.walletmodule.R
 import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.walletmodule.R
 import com.fzm.walletmodule.utils.DecimalUtils
 import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
@@ -23,8 +23,9 @@ class WalletAdapter(context: Context, layoutId: Int, datas: List<Coin>, fragment
             R.id.nickName,
             if (TextUtils.isEmpty(baseCoin.nickname)) "" else "(" + baseCoin.nickname.toString() + ")"
         )
+        holder.setText(R.id.rmb, DecimalUtils.subZeroAndDot(baseCoin.rmb))
         holder.setText(R.id.balance, DecimalUtils.subZeroAndDot(baseCoin.balance))
-        val ivCoin = holder!!.getView<ImageView>(R.id.icon)
+        val ivCoin = holder.getView<ImageView>(R.id.icon)
         if (TextUtils.isEmpty(baseCoin.icon)) {
             Glide.with(mContext)
                 .load(baseCoin.icon)

@@ -11,7 +11,7 @@ open class Constants {
         const val COINS_KEY = "coins_key"
         const val FROM = "from"
         const val PAGE_LIMIT = 20L
-        var DELAYED_TIME = 8 * 1000.toLong()
+        const val DELAYED_TIME = 8 * 1000.toLong()
 
 
         fun setCoins(list: MutableList<Coin>) {

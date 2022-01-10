@@ -6,7 +6,6 @@ import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import kotlinx.coroutines.flow.Flow
 import org.koin.core.module.Module
-import kotlin.jvm.Throws
 
 /**
  * @author zhengjy
@@ -49,7 +48,7 @@ interface WalletService {
      * @param period            查询间隔
      * @param requireQuotation  是否查询市场行情
      */
-    fun getCoinBalance(walletId: String, initialDelay: Long, period: Long, requireQuotation: Boolean): Flow<List<Coin>>
+    fun getCoinBalance(walletId: Long, initialDelay: Long, period: Long, requireQuotation: Boolean): Flow<List<Coin>>
 
     /**
      * 获取交易列表
