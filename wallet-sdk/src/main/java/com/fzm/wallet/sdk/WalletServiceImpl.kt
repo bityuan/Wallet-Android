@@ -4,6 +4,7 @@ import android.content.Context
 import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.bean.response.TransactionResponse
 import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.net.walletNetModule
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.MMkvUtil
@@ -29,22 +30,43 @@ internal class WalletServiceImpl : WalletService {
         module?.walletNetModule()
     }
 
-    override suspend fun getCoinList(walletId: String): List<Coin> {
-        return withContext(Dispatchers.IO) {
-            LitePal.where("pwallet_id = ? and status = ?", walletId, Coin.STATUS_ENABLE.toString())
-                .find(Coin::class.java, true)
+    override suspend fun importMnem(mnem: String, mnemType: Int, walletName: String, password: String): PWallet {
+        if (mnem.isEmpty()) {
+            throw Exception("助记词不能为空")
         }
+        if (walletName.isEmpty()) {
+            throw Exception("钱包名称不能为空")
+        }
+        if (password.isEmpty()) {
+            throw Exception("钱包密码不能为空")
+        }
+        val wallet = PWallet().apply {
+            this.mnemType = mnemType
+            if (mnemType == PWallet.TYPE_CHINESE) {
+                this.mnem = getChineseMnem(mnem)
+            } else {
+                this.mnem = mnem
+            }
+            this.type = PWallet.TYPE_NOMAL
+            this.name = walletName
+            this.password = password
+        }
+
+        return GoWallet.createWallet(wallet, emptyList())
     }
 
     override fun getCoinBalance(
-        coins: List<Coin>,
+        walletId: String,
         initialDelay: Long,
-        period: Long
+        period: Long,
+        requireQuotation: Boolean
     ): Flow<List<Coin>> = flow {
         if (initialDelay > 0) delay(initialDelay)
         while (true) {
             coroutineScope {
                 val deferred = ArrayDeque<Deferred<Unit>>()
+                val coins = LitePal.where("pwallet_id = ? and status = ?", walletId, Coin.STATUS_ENABLE.toString())
+                    .find(Coin::class.java, true)
                 for (coin in coins) {
                     deferred.add(async(Dispatchers.IO) {
                         try {
@@ -54,11 +76,15 @@ internal class WalletServiceImpl : WalletService {
                         }
                     })
                 }
+                val quotationDeferred: Deferred<Any>? = if (requireQuotation) {
+                    TODO("获取币种行情")
+                } else null
                 while (deferred.isNotEmpty()) {
                     deferred.poll()?.await()
                 }
+                quotationDeferred?.await()
+                emit(coins)
             }
-            emit(coins)
             delay(period.coerceAtLeast(1000L))
         }
     }.flowOn(Dispatchers.IO)
@@ -105,6 +131,11 @@ internal class WalletServiceImpl : WalletService {
         }
     }
 
+    private fun getChineseMnem(mnem: String): String {
+        val afterString = mnem.replace(" ", "")
+        val afterString2 = afterString.replace("\n", "")
+        return afterString2.replace("", " ").trim()
+    }
 
     private fun getKey(coin: Coin, type: Long): String =
         "${coin.chain}${coin.address}${coin.name}$type}"

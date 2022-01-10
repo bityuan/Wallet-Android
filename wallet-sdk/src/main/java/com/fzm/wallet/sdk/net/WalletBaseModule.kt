@@ -54,8 +54,6 @@ fun Module.walletNetModule() {
         }
     }
 
-    single(walletQualifier) { OutRepository(get(walletQualifier)) }
-
     single<Retrofit>(walletQualifier) {
         Retrofit.Builder()
             .baseUrl(ApiEnv.BASE_URL)
@@ -65,4 +63,6 @@ fun Module.walletNetModule() {
     }
 
     single(walletQualifier) { get<Retrofit>(walletQualifier).create(Apis::class.java) }
+
+    single(walletQualifier) { OutRepository(get(walletQualifier)) }
 }
