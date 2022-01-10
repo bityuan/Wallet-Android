@@ -14,8 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import cn.finalteam.loadingviewfinal.RecyclerViewFinal
 import com.bumptech.glide.Glide
 import com.fzm.walletmodule.R
-import com.fzm.walletmodule.db.entity.Coin
-import com.fzm.walletmodule.db.entity.PWallet
+import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.walletmodule.utils.ClipboardUtils
 import com.fzm.walletmodule.utils.GlideUtils
 import com.zhy.adapter.recyclerview.CommonAdapter

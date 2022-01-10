@@ -1,8 +1,8 @@
 package com.fzm.walletmodule.base
 
 import android.text.TextUtils
-import com.fzm.walletmodule.db.entity.Coin
-import com.fzm.walletmodule.utils.MMkvUtil
+import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 

@@ -6,9 +6,11 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.base.Constants
-import com.fzm.walletmodule.bean.Transactions
-import com.fzm.walletmodule.bean.response.TransactionResponse
-import com.fzm.walletmodule.db.entity.Coin
+import com.fzm.wallet.sdk.bean.Transactions
+import com.fzm.wallet.sdk.bean.response.TransactionResponse
+import com.fzm.wallet.sdk.utils.MMkvUtil
+import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.ui.activity.TransactionDetailsActivity
 import com.fzm.walletmodule.ui.base.BaseFragment
 import com.fzm.walletmodule.utils.*
@@ -115,7 +117,8 @@ class TransactionFragment : BaseFragment() {
                 break
             }
         }
-        startActivity<TransactionDetailsActivity>(Transactions::class.java.simpleName to transactions,Coin::class.java.simpleName to coin, Constants.FROM to "list" )
+        startActivity<TransactionDetailsActivity>(Transactions::class.java.simpleName to transactions,
+            Coin::class.java.simpleName to coin, Constants.FROM to "list" )
     }
 
     override fun initRefresh() {
@@ -147,12 +150,14 @@ class TransactionFragment : BaseFragment() {
             var datas: String?
             if (index == 0L) {
                 if (!NetWorkUtils.isConnected(context)) {
-                    datas =MMkvUtil.decodeString( getKey(coinName))
+                    datas = MMkvUtil.decodeString( getKey(coinName))
                 } else {
-                    datas = GoWallet.getTranList( coin.address,coin.chain, coinName, mType.toLong(), index,Constants.PAGE_LIMIT)
+                    datas = GoWallet.getTranList( coin.address,coin.chain, coinName, mType.toLong(), index,
+                        Constants.PAGE_LIMIT)
                 }
             } else {
-                datas =  GoWallet.getTranList(coin.address, coin.chain, coinName, mType.toLong(), index,Constants.PAGE_LIMIT)
+                datas =  GoWallet.getTranList(coin.address, coin.chain, coinName, mType.toLong(), index,
+                    Constants.PAGE_LIMIT)
             }
             val query = query(datas)
             uiThread {

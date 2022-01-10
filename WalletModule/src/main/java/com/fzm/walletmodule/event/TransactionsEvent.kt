@@ -1,6 +1,6 @@
 package com.fzm.walletmodule.event
 
-import com.fzm.walletmodule.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.Coin
 
 class TransactionsEvent {
     var coin: Coin? = null

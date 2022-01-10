@@ -1,6 +1,5 @@
 package com.fzm.walletmodule.ui.activity
 
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Handler
 import android.text.TextUtils
@@ -14,7 +13,8 @@ import com.bumptech.glide.Glide
 import com.fzm.walletmodule.ui.fragment.TransactionFragment
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.base.Constants
-import com.fzm.walletmodule.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.event.CaptureEvent
 import com.fzm.walletmodule.event.TransactionsEvent
 import com.fzm.walletmodule.ui.base.BaseActivity

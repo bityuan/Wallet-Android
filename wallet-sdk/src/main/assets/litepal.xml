@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<litepal>
+    <dbname value="pwallet"></dbname>
+    <version value="2"></version>
+
+    <list>
+        <mapping class="com.fzm.wallet.sdk.db.entity.PWallet"></mapping>
+        <mapping class="com.fzm.wallet.sdk.db.entity.Coin"></mapping>
+    </list>
+</litepal>  
