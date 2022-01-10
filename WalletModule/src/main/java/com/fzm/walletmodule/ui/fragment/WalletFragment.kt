@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fzm.wallet.sdk.WalletService
@@ -20,7 +22,9 @@ import com.fzm.walletmodule.ui.activity.*
 import com.fzm.walletmodule.ui.base.BaseFragment
 import com.fzm.walletmodule.utils.*
 import kotlinx.android.synthetic.main.fragment_wallet.*
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -35,6 +39,28 @@ class WalletFragment : BaseFragment() {
     private var more: ImageView? = null
     private var name: TextView? = null
     private var timeCount = 0
+
+    private var job: Job? = null
+
+    private val observer = LifecycleEventObserver { _, event ->
+        if (event == Lifecycle.Event.ON_RESUME) {
+            // FIXME: 最好使用lifecycle2.4.0提供的repeatOnLifecycle方法
+            job = lifecycleScope.launch {
+                val wallet = mPWallet
+                if (wallet != null) {
+                    WalletService.get().getCoinBalance(wallet.id, 0, Constants.DELAYED_TIME, true)
+                        .collect {
+                            mCoinList.clear()
+                            mCoinList.addAll(it)
+                            mWalletAdapter?.notifyDataSetChanged()
+                        }
+                }
+            }
+        } else if (event == Lifecycle.Event.ON_PAUSE) {
+            job?.cancel()
+        }
+    }
+
     override fun getLayout(): Int {
         return R.layout.fragment_wallet
     }
@@ -48,18 +74,7 @@ class WalletFragment : BaseFragment() {
         initHeaderView()
         initData()
         initListener()
-        // FIXME: 最好使用lifecycle2.4.0提供的repeatOnLifecycle方法
-        lifecycleScope.launchWhenResumed {
-            val wallet = mPWallet
-            if (wallet != null) {
-                WalletService.get().getCoinBalance(wallet.id, 0, Constants.DELAYED_TIME, true)
-                    .collect {
-                        mCoinList.clear()
-                        mCoinList.addAll(it)
-                        mWalletAdapter?.notifyDataSetChanged()
-                    }
-            }
-        }
+        viewLifecycleOwner.lifecycle.addObserver(observer)
 
     }
 
@@ -185,6 +200,11 @@ class WalletFragment : BaseFragment() {
         if (type == CaptureCustomActivity.RESULT_SUCCESS && requstCode == CaptureCustomActivity.REQUESTCODE_HOME && !TextUtils.isEmpty(text)) {
 
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        job?.cancel()
     }
 
 

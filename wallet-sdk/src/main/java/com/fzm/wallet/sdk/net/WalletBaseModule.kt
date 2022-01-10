@@ -46,7 +46,6 @@ fun Module.walletNetModule() {
                 .header("Accept", "application/json")
                 .header("Fzm-Request-Source", "wallet")
                 .header("FZM-REQUEST-OS", "android")
-                .header("FZM-REQUEST-UUID", ToolUtils.getMyUUID(get()))
                 .header("FZM-PLATFORM-ID", "1")
                 .header(
                     "version",
