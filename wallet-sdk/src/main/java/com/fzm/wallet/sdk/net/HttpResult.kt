@@ -33,6 +33,10 @@ sealed class HttpResult<out T> {
         return (this as Success<T>).data
     }
 
+    fun dataOrNull(): T? {
+        return (this as? Success<T>)?.data
+    }
+
     fun isSucceed(): Boolean {
         return this is Success
     }
