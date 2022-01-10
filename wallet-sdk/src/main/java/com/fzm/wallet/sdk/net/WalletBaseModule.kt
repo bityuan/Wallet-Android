@@ -2,6 +2,7 @@ package com.fzm.wallet.sdk.net
 
 import com.fzm.wallet.sdk.api.ApiEnv
 import com.fzm.wallet.sdk.api.Apis
+import com.fzm.wallet.sdk.base.BWallet
 import com.fzm.wallet.sdk.repo.OutRepository
 import com.fzm.wallet.sdk.utils.ToolUtils
 import okhttp3.Interceptor
@@ -13,11 +14,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-val walletQualifier = _q("BWallet")
+val walletQualifier = _q(BWallet)
 
-val walletBaseModules = module {
-    walletNetModule()
-}
+val walletBaseModules = module { walletNetModule() }
 
 fun Module.walletNetModule() {
 

@@ -19,8 +19,12 @@ class GoWallet {
         const val BTY = "BTY"
         const val PLATFORM_BTY = "bty"
         const val APPSYMBOL_P = "p"
+
+        private val gson = Gson()
+
+        private val util = Util()
+
         fun getUtil(goNoderUrl: String): Util {
-            val util = Util()
             util.node = goNoderUrl
             return util
         }
@@ -146,7 +150,6 @@ class GoWallet {
             }
             val balanceStr = getbalance(lCoin.address,lCoin.chain, tokensymbol)
             if (!TextUtils.isEmpty(balanceStr)) {
-                val gson = Gson()
                 val balanceResponse = gson.fromJson(balanceStr, BalanceResponse::class.java)
                 if (balanceResponse != null) {
                     val balance = balanceResponse.result
@@ -263,7 +266,7 @@ class GoWallet {
          * @return String?
          */
         fun getTranByTxid(chain: String, tokenSymbol: String, txid: String): String? {
-            return getTranByTxid(chain, tokenSymbol, txid, getGoURL()!!)
+            return getTranByTxid(chain, tokenSymbol, txid, getGoURL())
         }
 
         /**
@@ -559,7 +562,7 @@ class GoWallet {
                 wallet.mnem = seedEncKey
                 wallet.password = passwdHash
                 wallet.save()
-                val mulJson = Gson().toJson(mulList)
+                val mulJson = gson.toJson(mulList)
                 val aBoolean = imortMulAddress("", APPSYMBOL_P, mulJson)
                 uiThread {
                     listener.onSuccess()

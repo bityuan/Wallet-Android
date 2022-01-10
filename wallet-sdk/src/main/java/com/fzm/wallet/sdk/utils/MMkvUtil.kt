@@ -1,6 +1,7 @@
 package com.fzm.wallet.sdk.utils
 
 import android.os.Parcelable
+import com.fzm.wallet.sdk.base.BWallet
 import com.tencent.mmkv.MMKV
 import java.util.Collections.emptySet
 
@@ -8,7 +9,7 @@ object MMkvUtil {
     var mmkv: MMKV? = null
 
     init {
-        mmkv = MMKV.defaultMMKV()
+        mmkv = MMKV.mmkvWithID(BWallet)
     }
 
     fun encode(key: String, value: Any?) {
