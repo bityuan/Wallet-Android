@@ -6,11 +6,8 @@ import com.tencent.mmkv.MMKV
 import java.util.Collections.emptySet
 
 object MMkvUtil {
-    var mmkv: MMKV? = null
 
-    init {
-        mmkv = MMKV.mmkvWithID(BWallet)
-    }
+    private val mmkv = MMKV.mmkvWithID(BWallet)
 
     fun encode(key: String, value: Any?) {
         when (value) {
@@ -21,7 +18,7 @@ object MMkvUtil {
             is Long -> mmkv?.encode(key, value)
             is Double -> mmkv?.encode(key, value)
             is ByteArray -> mmkv?.encode(key, value)
-            is Nothing -> return
+            else -> return
         }
     }
 
@@ -36,58 +33,58 @@ object MMkvUtil {
         if (sets == null) {
             return
         }
-        mmkv?.encode(key, sets)
+        mmkv.encode(key, sets)
     }
 
-    fun decodeInt(key: String): Int? {
-        return mmkv?.decodeInt(key, 0)
+    fun decodeInt(key: String): Int {
+        return mmkv.decodeInt(key, 0)
     }
 
-    fun decodeDouble(key: String): Double? {
-        return mmkv?.decodeDouble(key, 0.00)
+    fun decodeDouble(key: String): Double {
+        return mmkv.decodeDouble(key, 0.00)
     }
 
-    fun decodeLong(key: String): Long? {
-        return mmkv?.decodeLong(key, 0L)
+    fun decodeLong(key: String): Long {
+        return mmkv.decodeLong(key, 0L)
     }
 
-    fun decodeBoolean(key: String): Boolean? {
-        return mmkv?.decodeBool(key, false)
+    fun decodeBoolean(key: String): Boolean {
+        return mmkv.decodeBool(key, false)
     }
 
-    fun decodeFloat(key: String): Float? {
-        return mmkv?.decodeFloat(key, 0F)
+    fun decodeFloat(key: String): Float {
+        return mmkv.decodeFloat(key, 0F)
     }
 
-    fun decodeFloat(key: String, default: Float): Float? {
-        return mmkv?.decodeFloat(key, default)
+    fun decodeFloat(key: String, default: Float): Float {
+        return mmkv.decodeFloat(key, default)
     }
 
     fun decodeByteArray(key: String): ByteArray? {
-        return mmkv?.decodeBytes(key)
+        return mmkv.decodeBytes(key)
     }
 
-    fun decodeString(key: String): String? {
-        return mmkv?.decodeString(key, "")
+    fun decodeString(key: String): String {
+        return mmkv.decodeString(key, "") ?: ""
     }
 
-    fun decodeString(key: String, default: String): String? {
-        return mmkv?.decodeString(key, default)
+    fun decodeString(key: String, default: String): String {
+        return mmkv.decodeString(key, default) ?: ""
     }
 
     fun <T : Parcelable> decodeParcelable(key: String, tClass: Class<T>): T? {
-        return mmkv?.decodeParcelable(key, tClass)
+        return mmkv.decodeParcelable(key, tClass)
     }
 
-    fun decodeStringSet(key: String): Set<String>? {
-        return mmkv?.decodeStringSet(key, emptySet())
+    fun decodeStringSet(key: String): Set<String> {
+        return mmkv.decodeStringSet(key, emptySet()) ?: emptySet()
     }
 
     fun removeKey(key: String) {
-        mmkv?.removeValueForKey(key)
+        mmkv.removeValueForKey(key)
     }
 
     fun clearAll() {
-        mmkv?.clearAll()
+        mmkv.clearAll()
     }
 }

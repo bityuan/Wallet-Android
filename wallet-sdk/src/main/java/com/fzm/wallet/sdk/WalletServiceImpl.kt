@@ -35,7 +35,7 @@ internal class WalletServiceImpl : WalletService {
         module?.walletNetModule()
     }
 
-    override suspend fun importMnem(mnem: String, mnemType: Int, walletName: String, password: String): PWallet {
+    override suspend fun importMnem(user: String, mnem: String, mnemType: Int, walletName: String, password: String, coins: List<Coin>): PWallet {
         if (mnem.isEmpty()) {
             throw Exception("助记词不能为空")
         }
@@ -57,7 +57,21 @@ internal class WalletServiceImpl : WalletService {
             this.password = password
         }
 
-        return GoWallet.createWallet(wallet, emptyList())
+        return GoWallet.createWallet(wallet, coins).also { setCurrentWalletId(user, it.id) }
+    }
+
+    override suspend fun getCurrentWallet(user: String): PWallet? {
+        val id = MMkvUtil.decodeLong("${user}${PWallet.PWALLET_ID}")
+        return withContext(Dispatchers.IO) {
+            LitePal.find(PWallet::class.java, id)
+                ?: LitePal.findFirst(PWallet::class.java)?.also {
+                    setCurrentWalletId(user, it.id)
+                }
+        }
+    }
+
+    override fun setCurrentWalletId(user: String, id: Long) {
+        MMkvUtil.encode("${user}${PWallet.PWALLET_ID}", id)
     }
 
     override fun getCoinBalance(
@@ -103,6 +117,7 @@ internal class WalletServiceImpl : WalletService {
                                 this.rmb = meta.rmb
                             }
                             this.icon = meta.icon
+                            this.nickname = meta.nickname
                             save()
                         }
                     }
