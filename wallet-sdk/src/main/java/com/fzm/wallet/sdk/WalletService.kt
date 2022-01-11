@@ -32,13 +32,30 @@ interface WalletService {
     /**
      * 导入钱包
      *
+     * @param user          用户唯一标识符
      * @param mnem          助记词
      * @param mnemType      助记词类型
      * @param walletName    钱包名称
      * @param password      钱包密码
+     * @param coins         币种列表
      */
     @Throws(Exception::class)
-    suspend fun importMnem(mnem: String, mnemType: Int, walletName: String, password: String): PWallet
+    suspend fun importMnem(user: String, mnem: String, mnemType: Int, walletName: String, password: String, coins: List<Coin>): PWallet
+
+    /**
+     * 获取当前正在使用的钱包
+     *
+     * @param user  用户
+     */
+    suspend fun getCurrentWallet(user: String = ""): PWallet?
+
+    /**
+     * 设置当前正在使用的钱包id
+     *
+     * @param user  用户
+     * @param id    钱包id
+     */
+    fun setCurrentWalletId(user: String, id: Long)
 
     /**
      * 获取资产余额列表

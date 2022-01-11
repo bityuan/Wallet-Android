@@ -1,4 +1,4 @@
-package com.fzm.walletmodule.bean
+package com.fzm.wallet.sdk.bean
 
 import android.util.Log
 import okhttp3.MediaType

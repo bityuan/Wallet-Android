@@ -14,7 +14,7 @@ open class Constants {
         const val DELAYED_TIME = 8 * 1000.toLong()
 
 
-        fun setCoins(list: MutableList<Coin>) {
+        fun setCoins(list: List<Coin>) {
             val json = Gson().toJson(list)
             MMkvUtil.encode(COINS_KEY,json)
         }
