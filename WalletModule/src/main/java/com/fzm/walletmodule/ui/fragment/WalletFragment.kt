@@ -11,7 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.fzm.wallet.sdk.WalletService
+import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.walletmodule.R
@@ -35,6 +35,10 @@ class WalletFragment : BaseFragment() {
     private var mWalletAdapter: WalletAdapter? = null
     private var mHeaderView: View? = null
     private var mPWallet: PWallet? = null
+        set(value) {
+            BWallet.get().changeWallet(value)
+            field = value
+        }
     private val mCoinList = CopyOnWriteArrayList<Coin>()
     private var more: ImageView? = null
     private var name: TextView? = null
@@ -46,15 +50,12 @@ class WalletFragment : BaseFragment() {
         if (event == Lifecycle.Event.ON_RESUME) {
             // FIXME: 最好使用lifecycle2.4.0提供的repeatOnLifecycle方法
             job = lifecycleScope.launch {
-                val wallet = mPWallet
-                if (wallet != null) {
-                    WalletService.get().getCoinBalance(wallet.id, 0, Constants.DELAYED_TIME, true)
-                        .collect {
-                            mCoinList.clear()
-                            mCoinList.addAll(it)
-                            mWalletAdapter?.notifyDataSetChanged()
-                        }
-                }
+                BWallet.get().getCoinBalance(0, Constants.DELAYED_TIME, true)
+                    .collect {
+                        mCoinList.clear()
+                        mCoinList.addAll(it)
+                        mWalletAdapter?.notifyDataSetChanged()
+                    }
             }
         } else if (event == Lifecycle.Event.ON_PAUSE) {
             job?.cancel()
@@ -114,7 +115,6 @@ class WalletFragment : BaseFragment() {
     override fun initListener() {
         swl_layout.setOnRefreshListener {
             swl_layout.onRefreshComplete()
-            initData()
         }
         more?.setOnClickListener {
             if (ClickUtils.isFastDoubleClick()) {
@@ -171,7 +171,9 @@ class WalletFragment : BaseFragment() {
     //回调 - 删除账户
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onWalletDeleteEvent(event: WalletDeleteEvent) {
-        if (mPWallet!!.id === event.walletId) {
+        if (mPWallet?.id == event.walletId) {
+            mCoinList.clear()
+            mWalletAdapter?.notifyDataSetChanged()
             initData()
         }
     }
@@ -179,10 +181,11 @@ class WalletFragment : BaseFragment() {
     //回调 - 我的账户
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     fun onMyWalletEvent(event: MyWalletEvent) {
-        if (mPWallet != null && event.mPWallet != null && mPWallet!!.id !== event.mPWallet!!.id) {
+        if (event.mPWallet != null && mPWallet?.id != event.mPWallet?.id) {
+            mCoinList.clear()
+            mWalletAdapter?.notifyDataSetChanged()
             mPWallet = event.mPWallet
             WalletUtils.setUsingWallet(mPWallet)
-            initData()
         }
     }
 
