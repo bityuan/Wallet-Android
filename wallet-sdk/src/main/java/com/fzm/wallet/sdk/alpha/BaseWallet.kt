@@ -1,13 +1,11 @@
-package com.fzm.wallet.sdk
+package com.fzm.wallet.sdk.alpha
 
-import android.content.Context
 import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.bean.response.TransactionResponse
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.net.HttpResult
 import com.fzm.wallet.sdk.net.rootScope
-import com.fzm.wallet.sdk.net.walletNetModule
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.utils.GoWallet
@@ -17,65 +15,66 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import org.koin.core.module.Module
 import org.litepal.LitePal
 import java.util.*
 
 /**
  * @author zhengjy
- * @since 2022/01/07
+ * @since 2022/01/12
  * Description:
  */
-internal class WalletServiceImpl : WalletService {
+abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
 
-    private val gson = Gson()
-    private val walletRepository by rootScope.inject<WalletRepository>(walletQualifier)
+    protected val gson by lazy { Gson() }
+    protected val walletRepository by rootScope.inject<WalletRepository>(walletQualifier)
 
-    override fun init(context: Context, module: Module?) {
-        module?.walletNetModule()
+    override suspend fun delete(password: suspend () -> String) {
+        TODO("Not yet implemented")
     }
 
-    override suspend fun importMnem(user: String, mnem: String, mnemType: Int, walletName: String, password: String, coins: List<Coin>): PWallet {
-        if (mnem.isEmpty()) {
-            throw Exception("助记词不能为空")
-        }
-        if (walletName.isEmpty()) {
-            throw Exception("钱包名称不能为空")
-        }
-        if (password.isEmpty()) {
-            throw Exception("钱包密码不能为空")
-        }
-        val wallet = PWallet().apply {
-            this.mnemType = mnemType
-            if (mnemType == PWallet.TYPE_CHINESE) {
-                this.mnem = getChineseMnem(mnem)
-            } else {
-                this.mnem = mnem
-            }
-            this.type = PWallet.TYPE_NOMAL
-            this.name = walletName
-            this.password = password
-        }
-
-        return GoWallet.createWallet(wallet, coins).also { setCurrentWalletId(user, it.id) }
+    override suspend fun transfer(coin: Coin, amount: Long) {
+        TODO("Not yet implemented")
     }
 
-    override suspend fun getCurrentWallet(user: String): PWallet? {
-        val id = MMkvUtil.decodeLong("${user}${PWallet.PWALLET_ID}")
-        return withContext(Dispatchers.IO) {
-            LitePal.find(PWallet::class.java, id)
-                ?: LitePal.findFirst(PWallet::class.java)?.also {
-                    setCurrentWalletId(user, it.id)
+    override suspend fun addCoins(coins: List<Coin>, password: suspend () -> String) {
+        var cachePass = ""
+        coins.forEach {
+            checkCoin(it) {
+                cachePass.ifEmpty {
+                    withContext(Dispatchers.Main.immediate) {
+                        password().also { p -> cachePass = p }
+                    }
                 }
+            }
+        }
+
+        val existCoins = LitePal.where("pwallet_id = ?", wallet.id.toString())
+            .find(Coin::class.java, true)
+    }
+
+    private suspend fun checkCoin(coin: Coin, password: suspend () -> String) {
+        if (coin.chain == null) return
+        val sameChainCoin =
+            LitePal.select().where("chain = ? and pwallet_id = ?", coin.chain, wallet.id.toString())
+                .findFirst(Coin::class.java)
+        if (sameChainCoin != null) {
+            coin.address = sameChainCoin.address
+            coin.pubkey = sameChainCoin.pubkey
+            coin.setPrivkey(sameChainCoin.encPrivkey)
+        } else {
+            val pass = password()
+
         }
     }
 
-    override fun setCurrentWalletId(user: String, id: Long) {
-        MMkvUtil.encode("${user}${PWallet.PWALLET_ID}", id)
+    override suspend fun deleteCoins(coins: List<Coin>) {
+        coins.forEach {
+            it.status = Coin.STATUS_DISABLE
+            it.update(it.id)
+        }
     }
 
     override fun getCoinBalance(
-        walletId: Long,
         initialDelay: Long,
         period: Long,
         requireQuotation: Boolean
@@ -84,7 +83,7 @@ internal class WalletServiceImpl : WalletService {
         while (true) {
             coroutineScope {
                 val deferred = ArrayDeque<Deferred<Unit>>()
-                val coins = LitePal.where("pwallet_id = ? and status = ?", walletId.toString(), Coin.STATUS_ENABLE.toString())
+                val coins = LitePal.where("pwallet_id = ? and status = ?", wallet.id.toString(), Coin.STATUS_ENABLE.toString())
                     .find(Coin::class.java, true)
                 for (coin in coins) {
                     deferred.add(async(Dispatchers.IO) {
@@ -118,7 +117,7 @@ internal class WalletServiceImpl : WalletService {
                             }
                             this.icon = meta.icon
                             this.nickname = meta.nickname
-                            save()
+                            update(id)
                         }
                     }
                 }
@@ -170,12 +169,12 @@ internal class WalletServiceImpl : WalletService {
         }
     }
 
-    private fun getChineseMnem(mnem: String): String {
+    protected fun getChineseMnem(mnem: String): String {
         val afterString = mnem.replace(" ", "")
         val afterString2 = afterString.replace("\n", "")
         return afterString2.replace("", " ").trim()
     }
 
-    private fun getKey(coin: Coin, type: Long): String =
+    protected fun getKey(coin: Coin, type: Long): String =
         "${coin.chain}${coin.address}${coin.name}$type}"
 }

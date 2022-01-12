@@ -18,6 +18,7 @@ import walletapi.Walletapi;
 public class Coin extends BaseBean {
 
     public static final int STATUS_ENABLE = 1;
+    public static final int STATUS_DISABLE = -1;
     //静态的私钥
     public static String mPriv;
     public static String webPriv;
