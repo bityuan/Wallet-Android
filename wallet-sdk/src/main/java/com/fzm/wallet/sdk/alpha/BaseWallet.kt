@@ -80,6 +80,7 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
         requireQuotation: Boolean
     ): Flow<List<Coin>> = flow {
         if (initialDelay > 0) delay(initialDelay)
+        var initEmit = true
         while (true) {
             coroutineScope {
                 val deferred = ArrayDeque<Deferred<Unit>>()
@@ -98,6 +99,11 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                     // 查询资产行情等
                     async { walletRepository.getCoinList(coins.map { "${it.name},${it.platform}" }) }
                 } else null
+                if (initEmit) {
+                    initEmit = false
+                    // 第一次订阅时先提前发射本地缓存数据
+                    emit(coins)
+                }
                 while (deferred.isNotEmpty()) {
                     deferred.poll()?.await()
                 }
@@ -105,16 +111,10 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                     val coinMap = coins.associateBy { "${it.chain}-${it.name}-${it.platform}" }
                     for (meta in coinMeta) {
                         coinMap["${meta.chain}-${meta.name}-${meta.platform}"]?.apply {
-                            if (meta.balance == "0") {
-                                setToDefault("balance")
-                            } else {
-                                this.balance = meta.balance
-                            }
                             if (meta.rmb == 0f) {
                                 setToDefault("rmb")
-                            } else {
-                                this.rmb = meta.rmb
                             }
+                            this.rmb = meta.rmb
                             this.icon = meta.icon
                             this.nickname = meta.nickname
                             update(id)

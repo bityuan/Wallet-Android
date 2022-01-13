@@ -58,8 +58,8 @@ internal class BWalletImpl : BWallet {
         MMkvUtil.encode("${user}${PWallet.PWALLET_ID}", id)
     }
 
-    override suspend fun importNormalWallet(user: String, mnem: String, mnemType: Int, walletName: String, password: String, coins: List<Coin>): String {
-        return wallet.init(user, mnem, mnemType, walletName, password, coins)
+    override suspend fun importWallet(configuration: WalletConfiguration): String {
+        return wallet.init(configuration)
     }
 
     override suspend fun deleteWallet(password: suspend () -> String) {

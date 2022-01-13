@@ -52,15 +52,10 @@ interface BWallet {
     /**
      * 导入钱包
      *
-     * @param user          用户唯一标识符
-     * @param mnem          助记词
-     * @param mnemType      助记词类型
-     * @param walletName    钱包名称
-     * @param password      钱包密码
-     * @param coins         币种列表
+     * @param configuration     导入钱包参数配置
      */
     @Throws(Exception::class)
-    suspend fun importNormalWallet(user: String, mnem: String, mnemType: Int, walletName: String, password: String, coins: List<Coin>): String
+    suspend fun importWallet(configuration: WalletConfiguration): String
 
     /**
      * 删除当前钱包

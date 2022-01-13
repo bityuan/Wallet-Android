@@ -172,8 +172,6 @@ class WalletFragment : BaseFragment() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onWalletDeleteEvent(event: WalletDeleteEvent) {
         if (mPWallet?.id == event.walletId) {
-            mCoinList.clear()
-            mWalletAdapter?.notifyDataSetChanged()
             initData()
         }
     }
@@ -182,8 +180,6 @@ class WalletFragment : BaseFragment() {
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     fun onMyWalletEvent(event: MyWalletEvent) {
         if (event.mPWallet != null && mPWallet?.id != event.mPWallet?.id) {
-            mCoinList.clear()
-            mWalletAdapter?.notifyDataSetChanged()
             mPWallet = event.mPWallet
             WalletUtils.setUsingWallet(mPWallet)
         }

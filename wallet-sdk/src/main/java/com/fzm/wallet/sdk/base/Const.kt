@@ -34,3 +34,4 @@ internal val DEFAULT_COINS = listOf(
     }
 )
 
+const val REGEX_CHINESE = "[\u4e00-\u9fa5]+"
