@@ -90,6 +90,8 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                     deferred.add(async(Dispatchers.IO) {
                         try {
                             coin.balance = GoWallet.handleBalance(coin)
+                            coin.update(coin.id)
+                            return@async
                         } catch (e: Exception) {
                             // 资产获取异常
                         }
@@ -104,9 +106,6 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                     // 第一次订阅时先提前发射本地缓存数据
                     emit(coins)
                 }
-                while (deferred.isNotEmpty()) {
-                    deferred.poll()?.await()
-                }
                 quotationDeferred?.await()?.dataOrNull()?.also { coinMeta ->
                     val coinMap = coins.associateBy { "${it.chain}-${it.name}-${it.platform}" }
                     for (meta in coinMeta) {
@@ -120,6 +119,10 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                             update(id)
                         }
                     }
+                    emit(coins)
+                }
+                while (deferred.isNotEmpty()) {
+                    deferred.poll()?.await()
                 }
                 emit(coins)
             }

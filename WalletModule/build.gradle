@@ -58,6 +58,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation "com.readystatesoftware.systembartint:systembartint:1.0.3"
     api project(":wallet-sdk")
+    debugImplementation 'com.guolindev.glance:glance:1.1.0'
 
     api "org.litepal.android:kotlin:3.0.0"
     api "com.google.code.gson:gson:2.8.6"

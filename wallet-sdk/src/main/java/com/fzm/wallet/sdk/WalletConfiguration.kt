@@ -1,6 +1,7 @@
 package com.fzm.wallet.sdk
 
 import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.PWallet
 
 /**
  * @author zhengjy
@@ -8,6 +9,8 @@ import com.fzm.wallet.sdk.db.entity.Coin
  * Description:
  */
 class WalletConfiguration {
+
+    var type: Int = 0
 
     /**
      * 助记词
@@ -62,6 +65,7 @@ class WalletConfiguration {
             user: String,
             coins: List<Coin>
         ) = WalletConfiguration().apply {
+            this.type = PWallet.TYPE_NOMAL
             this.mnemonic = mnemonic
             this.walletName = walletName
             this.password = password

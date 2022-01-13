@@ -42,6 +42,13 @@ interface BWallet {
     fun getCurrentWallet(user: String = ""): PWallet?
 
     /**
+     * 获取指定id的钱包
+     *
+     * @param id    钱包id
+     */
+    fun findWallet(id: String?): PWallet?
+
+    /**
      * 设置当前正在使用的钱包id
      *
      * @param user  用户

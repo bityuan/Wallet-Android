@@ -54,11 +54,20 @@ internal class BWalletImpl : BWallet {
             }
     }
 
+    override fun findWallet(id: String?): PWallet? {
+        if (id.isNullOrEmpty()) return null
+        return LitePal.find(PWallet::class.java, id.toLong())
+    }
+
     override fun setCurrentWalletId(user: String, id: Long) {
         MMkvUtil.encode("${user}${PWallet.PWALLET_ID}", id)
     }
 
     override suspend fun importWallet(configuration: WalletConfiguration): String {
+        val wallet = when (configuration.type) {
+            PWallet.TYPE_NOMAL -> NormalWallet(PWallet())
+            else -> NormalWallet(PWallet())
+        }
         return wallet.init(configuration)
     }
 
@@ -81,7 +90,6 @@ internal class BWalletImpl : BWallet {
     ): Flow<List<Coin>> = walletState.flatMapLatest {
         wallet.getCoinBalance(initialDelay, period, requireQuotation)
     }
-
 
     override suspend fun getTransactionList(coin: Coin, type: Long, index: Long, size: Long): List<Transactions> {
         return wallet.getTransactionList(coin, type, index, size)

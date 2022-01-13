@@ -574,7 +574,6 @@ class GoWallet {
 
         internal suspend fun createWallet(wallet: PWallet, coinList: List<Coin>): PWallet {
             return withContext(Dispatchers.IO) {
-                val mulList: ArrayList<MulAddress> = ArrayList()
                 for (coin in coinList) {
                     val hdWallet = getHDWallet(coin.chain, wallet.mnem)
                     val pubkey = hdWallet!!.newKeyPub(0)
@@ -583,21 +582,12 @@ class GoWallet {
                     coin.status = Coin.STATUS_ENABLE
                     coin.pubkey = pubkeyStr
                     coin.address = address
-                    //只添加主链即可
-                    if (coin.chain == coin.name) {
-                        val mulAddress = MulAddress()
-                        mulAddress.cointype = coin.chain
-                        mulAddress.address = coin.address
-                        mulList.add(mulAddress)
-                    }
                 }
                 saveAll(coinList)
                 wallet.coinList.addAll(coinList)
                 val bpassword = encPasswd(wallet.password)
-                val passwdHash = passwdHash(bpassword!!)
-                val seedEncKey = encMenm(bpassword, wallet.mnem)
-                wallet.mnem = seedEncKey
-                wallet.password = passwdHash
+                wallet.mnem = encMenm(bpassword!!, wallet.mnem)
+                wallet.password = passwdHash(bpassword)
                 wallet.save()
                 return@withContext wallet
             }
