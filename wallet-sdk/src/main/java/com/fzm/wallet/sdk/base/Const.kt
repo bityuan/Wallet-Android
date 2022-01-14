@@ -11,26 +11,33 @@ import com.fzm.wallet.sdk.db.entity.Coin
 /**
  * 默认币种列表
  */
-internal val DEFAULT_COINS = listOf(
-    Coin().apply {
-        chain = "BTY"
-        name = "BTY"
-    },
-    Coin().apply {
-        chain = "ETH"
-        name = "ETH"
-    },
-    Coin().apply {
-        chain = "BTC"
-        name = "BTC"
-    },
-    Coin().apply {
-        chain = "ETH"
-        name = "YCC"
-    },
-    Coin().apply {
-        chain = "DCR"
-        name = "DCR"
-    }
-)
+internal val DEFAULT_COINS
+    get() = listOf(
+        Coin().apply {
+            chain = "BTY"
+            name = "BTY"
+            platform = "bty"
+        },
+        Coin().apply {
+            chain = "ETH"
+            name = "ETH"
+            platform = "ethereum"
+        },
+        Coin().apply {
+            chain = "BTC"
+            name = "BTC"
+            platform = "btc"
+        },
+        Coin().apply {
+            chain = "ETH"
+            name = "YCC"
+            platform = "ethereum"
+        },
+        Coin().apply {
+            chain = "DCR"
+            name = "DCR"
+            platform = "dcr"
+        }
+    )
 
+const val REGEX_CHINESE = "[\u4e00-\u9fa5]+"

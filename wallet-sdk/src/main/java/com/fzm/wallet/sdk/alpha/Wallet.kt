@@ -1,7 +1,7 @@
 package com.fzm.wallet.sdk.alpha
 
+import com.fzm.wallet.sdk.WalletConfiguration
 import com.fzm.wallet.sdk.bean.Transactions
-import com.fzm.wallet.sdk.db.entity.Coin
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -14,12 +14,19 @@ interface Wallet<T> {
     /**
      * 初始化钱包方法
      */
-    suspend fun init(user: String, mnem: String, mnemType: Int, walletName: String, password: String, coins: List<Coin>): String
+    suspend fun init(configuration: WalletConfiguration): String
 
     /**
      * 删除钱包
+     *
+     * @param password      钱包密码
+     * @param confirmation  获取用户确认，默认允许
      */
-    suspend fun delete(password: suspend () -> String)
+    @Throws(Exception::class)
+    suspend fun delete(
+        password: String,
+        confirmation: suspend () -> Boolean
+    )
 
     /**
      * 转账方法
@@ -29,7 +36,10 @@ interface Wallet<T> {
     /**
      * 添加币种
      *
+     * @param coins     需要添加的币种
+     * @param password  获取用户密码（因为密码是可选项，因此用挂起函数形式）
      */
+    @Throws(Exception::class)
     suspend fun addCoins(coins: List<T>, password: suspend () -> String)
 
     /**

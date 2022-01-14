@@ -7,12 +7,12 @@ import android.view.MenuItem
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
-import com.fzm.walletmodule.R
-import com.fzm.walletmodule.base.Constants
-import com.fzm.wallet.sdk.db.entity.Coin
+import androidx.lifecycle.lifecycleScope
+import com.fzm.wallet.sdk.BWallet
+import com.fzm.wallet.sdk.WalletConfiguration
 import com.fzm.wallet.sdk.db.entity.PWallet
-import com.fzm.wallet.sdk.utils.GoWallet
-import com.fzm.walletmodule.utils.WalletUtils
+import com.fzm.wallet.sdk.exception.ImportWalletException
+import com.fzm.walletmodule.R
 import com.fzm.walletmodule.event.CaptureEvent
 import com.fzm.walletmodule.event.InitPasswordEvent
 import com.fzm.walletmodule.event.MyWalletEvent
@@ -21,27 +21,23 @@ import com.fzm.walletmodule.ui.widget.LimitEditText
 import com.fzm.walletmodule.utils.*
 import com.snail.antifake.jni.EmulatorDetectUtil
 import kotlinx.android.synthetic.main.activity_import_wallet.*
-import kotlinx.android.synthetic.main.activity_import_wallet.et_mnem
-
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.uiThread
-
 import org.litepal.LitePal
 import org.litepal.extension.count
 import org.litepal.extension.find
-import walletapi.Walletapi
 
 /**
  * 导入账户页面
  */
 class ImportWalletActivity : BaseActivity() {
 
-    private var mPWallet: PWallet = PWallet()
     private var isOK: Boolean = false
+
+    private val wallet: BWallet get() = BWallet.get()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +49,6 @@ class ImportWalletActivity : BaseActivity() {
     }
 
     override fun initData() {
-        mPWallet.mnemType = PWallet.TYPE_ENGLISH
         val count = LitePal.count<PWallet>()
         val name = getString(R.string.import_wallet_wallet_name) + (count + 1)
         walletName.setText(name)
@@ -138,48 +133,33 @@ class ImportWalletActivity : BaseActivity() {
         val mnem = et_mnem.text.toString()
         if (checkMnem(mnem)) {
             if (checked(name, password, passwordAgain)) {
-                val first = mnem.substring(0, 1)
-                if (first.matches(LimitEditText.REGEX_CHINESE.toRegex())) {
-                    mPWallet.mnemType = PWallet.TYPE_CHINESE
-                    mPWallet.mnem = getChineseMnem(mnem)
-                } else {
-                    mPWallet.mnem = mnem
-                }
                 EventBus.getDefault().post(InitPasswordEvent(password))
-                doAsync {
-                    val hdWallet = GoWallet.getHDWallet(Walletapi.TypeBtyString, mPWallet.mnem)
-                    uiThread {
-                        if (null == hdWallet) {
-                            ToastUtils.show(
-                                this@ImportWalletActivity,
-                                getString(R.string.my_import_backup_none)
-                            )
-                            return@uiThread
-                        }
-                        val pubkeyStr = GoWallet.encodeToStrings(hdWallet.newKeyPub(0))
-                        val count = LitePal.where("pubkey = ?", pubkeyStr).find<Coin>(true)
-
-                        if (count.isNotEmpty()) {
-                            if (count[0].getpWallet().type == 2) {
-                                ToastUtils.show(
-                                    this@ImportWalletActivity,
-                                    getString(R.string.import_wallet_mnem_repeat)
-                                )
-                                return@uiThread
-                            }
-                        }
-                        mPWallet.type = PWallet.TYPE_NOMAL
-                        mPWallet.name = name
-                        mPWallet.password = password
+                lifecycleScope.launch {
+                    try {
                         showLoading()
-
-                        saveWallet()
+                        val id = wallet.importWallet(
+                            WalletConfiguration.mnemonicWallet(
+                                mnem,
+                                name,
+                                password,
+                                "",
+                                emptyList()
+                            )
+                        )
+                        val pWallet = wallet.findWallet(id)
+                        wallet.changeWallet(pWallet)
+                        dismiss()
+                        EventBus.getDefault().postSticky(MyWalletEvent(pWallet))
+                        ToastUtils.show(this@ImportWalletActivity, getString(R.string.my_import_success))
+                        closeSomeActivitys()
+                        finish()
+                    } catch (e: ImportWalletException) {
+                        dismiss()
+                        ToastUtils.show(this@ImportWalletActivity, e.message)
                     }
                 }
             }
         }
-
-
     }
 
 
@@ -260,22 +240,6 @@ class ImportWalletActivity : BaseActivity() {
         }
         return checked
     }
-
-
-    private fun saveWallet() {
-        val coinList = Constants.getCoins()
-        GoWallet.createWallet(mPWallet, coinList, object : GoWallet.CoinListener {
-            override fun onSuccess() {
-                WalletUtils.setUsingWallet(mPWallet)
-                EventBus.getDefault().postSticky(MyWalletEvent(mPWallet))
-                dismiss()
-                ToastUtils.show(this@ImportWalletActivity, getString(R.string.my_import_success))
-                closeSomeActivitys()
-                finish()
-            }
-        })
-    }
-
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val menuItem = menu.add(0, 1, 0, getString(R.string.my_scan))

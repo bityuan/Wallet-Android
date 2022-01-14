@@ -1,6 +1,7 @@
 package com.fzm.wallet.sdk
 
 import android.content.Context
+import com.fzm.wallet.sdk.alpha.Wallet
 import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
@@ -21,6 +22,8 @@ interface BWallet {
         fun get(): BWallet = wallet
     }
 
+    val current: Flow<Wallet<Coin>>
+
     /**
      * SDK初始化方法
      *
@@ -32,7 +35,7 @@ interface BWallet {
     /**
      * 切换钱包
      */
-    fun changeWallet(wallet: PWallet?): Boolean
+    fun changeWallet(wallet: PWallet?, user: String = ""): Boolean
 
     /**
      * 获取当前正在使用的钱包
@@ -42,32 +45,26 @@ interface BWallet {
     fun getCurrentWallet(user: String = ""): PWallet?
 
     /**
-     * 设置当前正在使用的钱包id
+     * 获取指定id的钱包
      *
-     * @param user  用户
      * @param id    钱包id
      */
-    fun setCurrentWalletId(user: String, id: Long)
+    fun findWallet(id: String?): PWallet?
 
     /**
      * 导入钱包
      *
-     * @param user          用户唯一标识符
-     * @param mnem          助记词
-     * @param mnemType      助记词类型
-     * @param walletName    钱包名称
-     * @param password      钱包密码
-     * @param coins         币种列表
+     * @param configuration     导入钱包参数配置
      */
     @Throws(Exception::class)
-    suspend fun importNormalWallet(user: String, mnem: String, mnemType: Int, walletName: String, password: String, coins: List<Coin>): String
+    suspend fun importWallet(configuration: WalletConfiguration): String
 
     /**
      * 删除当前钱包
      *
      * @param password  钱包密码
      */
-    suspend fun deleteWallet(password: suspend ()->String)
+    suspend fun deleteWallet(password: String, confirmation: suspend () -> Boolean = { true })
 
     /**
      * 添加币种

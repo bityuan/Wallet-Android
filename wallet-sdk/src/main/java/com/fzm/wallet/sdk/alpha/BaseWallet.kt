@@ -4,7 +4,6 @@ import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.bean.response.TransactionResponse
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
-import com.fzm.wallet.sdk.net.HttpResult
 import com.fzm.wallet.sdk.net.rootScope
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.repo.WalletRepository
@@ -28,8 +27,22 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
     protected val gson by lazy { Gson() }
     protected val walletRepository by rootScope.inject<WalletRepository>(walletQualifier)
 
-    override suspend fun delete(password: suspend () -> String) {
-        TODO("Not yet implemented")
+    override suspend fun delete(password: String, confirmation: suspend () -> Boolean) {
+        val verified = withContext(Dispatchers.IO) {
+            GoWallet.checkPasswd(password, wallet.password)
+        }
+        if (verified) {
+            if (confirmation()) {
+                withContext(Dispatchers.IO) {
+                    val coins = LitePal.select()
+                        .where("pwallet_id = ? group by chain", wallet.id.toString())
+                        .find(Coin::class.java)
+                    LitePal.delete(PWallet::class.java, wallet.id)
+                }
+            }
+        } else {
+            throw IllegalArgumentException("密码输入错误")
+        }
     }
 
     override suspend fun transfer(coin: Coin, amount: Long) {
@@ -52,6 +65,7 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
             .find(Coin::class.java, true)
     }
 
+    @Throws(Exception::class)
     private suspend fun checkCoin(coin: Coin, password: suspend () -> String) {
         if (coin.chain == null) return
         val sameChainCoin =
@@ -63,6 +77,7 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
             coin.setPrivkey(sameChainCoin.encPrivkey)
         } else {
             val pass = password()
+            if (pass.isEmpty()) return
 
         }
     }
@@ -80,6 +95,7 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
         requireQuotation: Boolean
     ): Flow<List<Coin>> = flow {
         if (initialDelay > 0) delay(initialDelay)
+        var initEmit = true
         while (true) {
             coroutineScope {
                 val deferred = ArrayDeque<Deferred<Unit>>()
@@ -89,37 +105,36 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                     deferred.add(async(Dispatchers.IO) {
                         try {
                             coin.balance = GoWallet.handleBalance(coin)
+                            coin.update(coin.id)
+                            return@async
                         } catch (e: Exception) {
                             // 资产获取异常
                         }
                     })
                 }
-                val quotationDeferred: Deferred<HttpResult<List<Coin>>>? = if (requireQuotation) {
+                val quotationDeferred = if (requireQuotation || coins.any { it.nickname.isNullOrEmpty() }) {
                     // 查询资产行情等
                     async { walletRepository.getCoinList(coins.map { "${it.name},${it.platform}" }) }
                 } else null
-                while (deferred.isNotEmpty()) {
-                    deferred.poll()?.await()
+                if (initEmit) {
+                    initEmit = false
+                    // 第一次订阅时先提前发射本地缓存数据
+                    emit(coins)
                 }
                 quotationDeferred?.await()?.dataOrNull()?.also { coinMeta ->
                     val coinMap = coins.associateBy { "${it.chain}-${it.name}-${it.platform}" }
                     for (meta in coinMeta) {
                         coinMap["${meta.chain}-${meta.name}-${meta.platform}"]?.apply {
-                            if (meta.balance == "0") {
-                                setToDefault("balance")
-                            } else {
-                                this.balance = meta.balance
-                            }
-                            if (meta.rmb == 0f) {
-                                setToDefault("rmb")
-                            } else {
-                                this.rmb = meta.rmb
-                            }
+                            this.rmb = meta.rmb
                             this.icon = meta.icon
                             this.nickname = meta.nickname
                             update(id)
                         }
                     }
+                    emit(coins)
+                }
+                while (deferred.isNotEmpty()) {
+                    deferred.poll()?.await()
                 }
                 emit(coins)
             }
