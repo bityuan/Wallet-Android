@@ -1,6 +1,7 @@
 package com.fzm.wallet.sdk
 
 import android.content.Context
+import com.fzm.wallet.sdk.alpha.Wallet
 import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
@@ -21,6 +22,8 @@ interface BWallet {
         fun get(): BWallet = wallet
     }
 
+    val current: Flow<Wallet<Coin>>
+
     /**
      * SDK初始化方法
      *
@@ -32,7 +35,7 @@ interface BWallet {
     /**
      * 切换钱包
      */
-    fun changeWallet(wallet: PWallet?): Boolean
+    fun changeWallet(wallet: PWallet?, user: String = ""): Boolean
 
     /**
      * 获取当前正在使用的钱包
@@ -49,14 +52,6 @@ interface BWallet {
     fun findWallet(id: String?): PWallet?
 
     /**
-     * 设置当前正在使用的钱包id
-     *
-     * @param user  用户
-     * @param id    钱包id
-     */
-    fun setCurrentWalletId(user: String, id: Long)
-
-    /**
      * 导入钱包
      *
      * @param configuration     导入钱包参数配置
@@ -69,7 +64,7 @@ interface BWallet {
      *
      * @param password  钱包密码
      */
-    suspend fun deleteWallet(password: suspend ()->String)
+    suspend fun deleteWallet(password: String, confirmation: suspend () -> Boolean = { true })
 
     /**
      * 添加币种

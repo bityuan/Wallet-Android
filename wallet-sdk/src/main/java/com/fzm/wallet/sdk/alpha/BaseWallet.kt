@@ -28,8 +28,22 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
     protected val gson by lazy { Gson() }
     protected val walletRepository by rootScope.inject<WalletRepository>(walletQualifier)
 
-    override suspend fun delete(password: suspend () -> String) {
-        TODO("Not yet implemented")
+    override suspend fun delete(password: String, confirmation: suspend () -> Boolean) {
+        val verified = withContext(Dispatchers.IO) {
+            GoWallet.checkPasswd(password, wallet.password)
+        }
+        if (verified) {
+            if (confirmation()) {
+                withContext(Dispatchers.IO) {
+                    val coins = LitePal.select()
+                        .where("pwallet_id = ? group by chain", wallet.id.toString())
+                        .find(Coin::class.java)
+                    LitePal.delete(PWallet::class.java, wallet.id)
+                }
+            }
+        } else {
+            throw IllegalArgumentException("密码输入错误")
+        }
     }
 
     override suspend fun transfer(coin: Coin, amount: Long) {
@@ -52,6 +66,7 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
             .find(Coin::class.java, true)
     }
 
+    @Throws(Exception::class)
     private suspend fun checkCoin(coin: Coin, password: suspend () -> String) {
         if (coin.chain == null) return
         val sameChainCoin =
@@ -63,6 +78,7 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
             coin.setPrivkey(sameChainCoin.encPrivkey)
         } else {
             val pass = password()
+            if (pass.isEmpty()) return
 
         }
     }
@@ -110,9 +126,6 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                     val coinMap = coins.associateBy { "${it.chain}-${it.name}-${it.platform}" }
                     for (meta in coinMeta) {
                         coinMap["${meta.chain}-${meta.name}-${meta.platform}"]?.apply {
-                            if (meta.rmb == 0f) {
-                                setToDefault("rmb")
-                            }
                             this.rmb = meta.rmb
                             this.icon = meta.icon
                             this.nickname = meta.nickname

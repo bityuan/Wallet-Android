@@ -23,26 +23,30 @@ import org.litepal.LitePal
  */
 internal class BWalletImpl : BWallet {
 
-    private val walletState = MutableStateFlow(0)
-    private var _wallet: Wallet<Coin>? = null
-
     private val wallet: Wallet<Coin>
         get() = _wallet ?: EmptyWallet
 
+    private var _wallet: Wallet<Coin>? = null
+
     private var pWallet: PWallet? = null
+
+    override val current: Flow<Wallet<Coin>>
+        get() = _current
+
+    private val _current = MutableStateFlow<Wallet<Coin>>(EmptyWallet)
 
     override fun init(context: Context, module: Module?) {
         module?.walletNetModule()
     }
 
-    override fun changeWallet(wallet: PWallet?): Boolean {
+    override fun changeWallet(wallet: PWallet?, user: String): Boolean {
         if (wallet == null || pWallet?.id == wallet.id) return false
+        MMkvUtil.encode("${user}${PWallet.PWALLET_ID}", wallet.id)
         this.pWallet = wallet
         this._wallet = when (wallet.type) {
             PWallet.TYPE_NOMAL -> NormalWallet(wallet)
             else -> NormalWallet(wallet)
-        }
-        walletState.update { it + 1 }
+        }.also { w -> _current.update { w } }
         return true
     }
 
@@ -50,17 +54,13 @@ internal class BWalletImpl : BWallet {
         val id = MMkvUtil.decodeLong("${user}${PWallet.PWALLET_ID}")
         return LitePal.find(PWallet::class.java, id)
             ?: LitePal.findFirst(PWallet::class.java)?.also {
-                setCurrentWalletId(user, it.id)
+                changeWallet(it, user)
             }
     }
 
     override fun findWallet(id: String?): PWallet? {
         if (id.isNullOrEmpty()) return null
         return LitePal.find(PWallet::class.java, id.toLong())
-    }
-
-    override fun setCurrentWalletId(user: String, id: Long) {
-        MMkvUtil.encode("${user}${PWallet.PWALLET_ID}", id)
     }
 
     override suspend fun importWallet(configuration: WalletConfiguration): String {
@@ -71,8 +71,8 @@ internal class BWalletImpl : BWallet {
         return wallet.init(configuration)
     }
 
-    override suspend fun deleteWallet(password: suspend () -> String) {
-        wallet.delete(password)
+    override suspend fun deleteWallet(password: String, confirmation: suspend () -> Boolean) {
+        wallet.delete(password, confirmation)
     }
 
     override suspend fun addCoins(coins: List<Coin>, password: suspend () -> String) {
@@ -87,8 +87,8 @@ internal class BWalletImpl : BWallet {
         initialDelay: Long,
         period: Long,
         requireQuotation: Boolean
-    ): Flow<List<Coin>> = walletState.flatMapLatest {
-        wallet.getCoinBalance(initialDelay, period, requireQuotation)
+    ): Flow<List<Coin>> = _current.flatMapLatest {
+        it.getCoinBalance(initialDelay, period, requireQuotation)
     }
 
     override suspend fun getTransactionList(coin: Coin, type: Long, index: Long, size: Long): List<Transactions> {

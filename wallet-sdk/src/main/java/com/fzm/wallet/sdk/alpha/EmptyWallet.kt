@@ -4,7 +4,7 @@ import com.fzm.wallet.sdk.WalletConfiguration
 import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.db.entity.Coin
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.emptyFlow
 
 /**
  * @author zhengjy
@@ -17,7 +17,7 @@ object EmptyWallet : Wallet<Coin> {
         return ""
     }
 
-    override suspend fun delete(password: suspend () -> String) {
+    override suspend fun delete(password: String, confirmation: suspend () -> Boolean) {
 
     }
 
@@ -37,9 +37,7 @@ object EmptyWallet : Wallet<Coin> {
         initialDelay: Long,
         period: Long,
         requireQuotation: Boolean
-    ): Flow<List<Coin>> {
-        return flow { }
-    }
+    ): Flow<List<Coin>> = emptyFlow()
 
     override suspend fun getTransactionList(
         coin: Coin,

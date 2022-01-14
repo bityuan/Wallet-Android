@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.text.InputType
 import android.text.TextUtils
 import android.view.View
-import com.fzm.walletmodule.R
-import com.fzm.wallet.sdk.bean.MulAddress
+import androidx.lifecycle.lifecycleScope
+import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.utils.GoWallet
+import com.fzm.walletmodule.R
 import com.fzm.walletmodule.event.CheckMnemEvent
 import com.fzm.walletmodule.event.UpdatePasswordEvent
 import com.fzm.walletmodule.event.UpdateWalletNameEvent
@@ -17,22 +19,21 @@ import com.fzm.walletmodule.manager.WalletManager
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.CommonDialogFragment
 import com.fzm.walletmodule.ui.widget.EditDialogFragment
-import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.utils.ListUtils
 import com.fzm.walletmodule.utils.ToastUtils
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_wallet_details.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.litepal.LitePal
-import org.litepal.LitePal.delete
 import org.litepal.LitePal.find
 import org.litepal.LitePal.select
 import java.util.*
-import java.util.concurrent.Executors
+import kotlin.coroutines.resume
 
 /**
  * 账户详情页面
@@ -193,8 +194,12 @@ class WalletDetailsActivity : BaseActivity() {
                 outPriv(mnem!!, password)
             }
             2 -> {
-                runOnUiThread {
-                    handleDelete()
+                lifecycleScope.launch {
+                    BWallet.get().deleteWallet(password) { handleDelete() }
+                    dismiss()
+                    EventBus.getDefault().post(WalletDeleteEvent(mPWallet!!.id))
+                    needUpdate = true
+                    finish()
                 }
             }
             3 -> {
@@ -212,7 +217,7 @@ class WalletDetailsActivity : BaseActivity() {
         return GoWallet.decMenm(GoWallet.encPasswd(password)!!, mPWallet!!.mnem)
     }
 
-    private fun handleDelete() {
+    private suspend fun handleDelete() = suspendCancellableCoroutine<Boolean> { cont ->
         dismiss()
         if (mCommonDialogFragment == null) {
             mCommonDialogFragment = CommonDialogFragment()
@@ -221,10 +226,14 @@ class WalletDetailsActivity : BaseActivity() {
                 .setResultDetails(getString(R.string.my_wallet_detail_delete_message))
                 .setLeftButtonStr(getString(R.string.cancel))
                 .setRightButtonStr(getString(R.string.ok))
+                .setOnDismissListener { cont.resume(false) }
                 .setOnButtonClickListener(object : CommonDialogFragment.OnButtonClickListener {
-                    override fun onLeftButtonClick(v: View?) {}
+                    override fun onLeftButtonClick(v: View?) {
+                        cont.resume(false)
+                    }
+
                     override fun onRightButtonClick(v: View?) {
-                        deleteWallet()
+                        cont.resume(true)
                     }
                 })
         }
@@ -257,36 +266,6 @@ class WalletDetailsActivity : BaseActivity() {
             }
 
         }
-    }
-
-    private val mulList: ArrayList<MulAddress> = ArrayList()
-
-    private fun deleteWallet() {
-        showLoading()
-        mulList.clear()
-        val singleThreadExecutor = Executors.newSingleThreadExecutor()
-        singleThreadExecutor.execute {
-            val coinList = select().where(
-                "pwallet_id = ? group by chain",
-                java.lang.String.valueOf(mPWallet!!.id)
-            ).find(Coin::class.java)
-            for (coin in coinList) {
-                val mulAddress = MulAddress()
-                mulAddress.cointype = coin.chain
-                mulAddress.address = coin.address
-                mulList.add(mulAddress)
-            }
-            val mulJson = Gson().toJson(mulList)
-            val delState = GoWallet.deleteMulAddress("", GoWallet.APPSYMBOL_P, mulJson)
-            delete(PWallet::class.java, mPWallet!!.id)
-            runOnUiThread {
-                dismiss()
-                EventBus.getDefault().post(WalletDeleteEvent(mPWallet!!.id))
-                needUpdate = true
-                finish()
-            }
-        }
-        singleThreadExecutor.shutdown()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

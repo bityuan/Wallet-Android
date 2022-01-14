@@ -18,8 +18,15 @@ interface Wallet<T> {
 
     /**
      * 删除钱包
+     *
+     * @param password      钱包密码
+     * @param confirmation  获取用户确认，默认允许
      */
-    suspend fun delete(password: suspend () -> String)
+    @Throws(Exception::class)
+    suspend fun delete(
+        password: String,
+        confirmation: suspend () -> Boolean
+    )
 
     /**
      * 转账方法
@@ -29,7 +36,10 @@ interface Wallet<T> {
     /**
      * 添加币种
      *
+     * @param coins     需要添加的币种
+     * @param password  获取用户密码（因为密码是可选项，因此用挂起函数形式）
      */
+    @Throws(Exception::class)
     suspend fun addCoins(coins: List<T>, password: suspend () -> String)
 
     /**

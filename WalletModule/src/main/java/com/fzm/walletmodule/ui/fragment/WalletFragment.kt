@@ -181,7 +181,6 @@ class WalletFragment : BaseFragment() {
     fun onMyWalletEvent(event: MyWalletEvent) {
         if (event.mPWallet != null && mPWallet?.id != event.mPWallet?.id) {
             mPWallet = event.mPWallet
-            WalletUtils.setUsingWallet(mPWallet)
         }
     }
 
