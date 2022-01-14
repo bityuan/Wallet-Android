@@ -150,7 +150,7 @@ class GoWallet {
                     }
                 }
             }
-            val balanceStr = getbalance(lCoin.address,lCoin.chain, tokensymbol)
+            val balanceStr = getbalance(lCoin.address, lCoin.chain, tokensymbol)
             if (!TextUtils.isEmpty(balanceStr)) {
                 val balanceResponse = gson.fromJson(balanceStr, BalanceResponse::class.java)
                 if (balanceResponse != null) {
@@ -545,6 +545,9 @@ class GoWallet {
                     val pubkey = hdWallet!!.newKeyPub(0)
                     val address = hdWallet.newAddress_v2(0)
                     val pubkeyStr = encodeToStrings(pubkey)
+                    if (Walletapi.TypeBtyString == coin.chain) {
+                        wallet.btyPrivkey = encodeToStrings(hdWallet.newKeyPriv(0))
+                    }
                     coin.status = Coin.STATUS_ENABLE
                     coin.pubkey = pubkeyStr
                     coin.address = address

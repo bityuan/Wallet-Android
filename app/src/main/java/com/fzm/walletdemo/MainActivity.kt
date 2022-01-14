@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentTransaction
 import com.fzm.walletmodule.base.Constants
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.walletmodule.event.InitPasswordEvent
 import com.fzm.walletmodule.utils.WalletUtils
 import com.fzm.walletmodule.event.MainCloseEvent
 import com.fzm.walletmodule.event.MyWalletEvent
@@ -167,6 +168,11 @@ class MainActivity : BaseActivity() {
             mPWallet = event.mPWallet
             WalletUtils.setUsingWallet(mPWallet)
         }
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onInitPasswordEvent(event: InitPasswordEvent) {
+        val password = event.password
+        Log.v("zx",password)
     }
 
 

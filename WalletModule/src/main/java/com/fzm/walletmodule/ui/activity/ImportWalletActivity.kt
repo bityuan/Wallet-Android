@@ -14,6 +14,7 @@ import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.exception.ImportWalletException
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.event.CaptureEvent
+import com.fzm.walletmodule.event.InitPasswordEvent
 import com.fzm.walletmodule.event.MyWalletEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.LimitEditText
@@ -34,7 +35,6 @@ import org.litepal.extension.find
  */
 class ImportWalletActivity : BaseActivity() {
 
-    private var mPWallet: PWallet = PWallet()
     private var isOK: Boolean = false
 
     private val wallet: BWallet get() = BWallet.get()
@@ -49,7 +49,6 @@ class ImportWalletActivity : BaseActivity() {
     }
 
     override fun initData() {
-        mPWallet.mnemType = PWallet.TYPE_ENGLISH
         val count = LitePal.count<PWallet>()
         val name = getString(R.string.import_wallet_wallet_name) + (count + 1)
         walletName.setText(name)
@@ -134,6 +133,7 @@ class ImportWalletActivity : BaseActivity() {
         val mnem = et_mnem.text.toString()
         if (checkMnem(mnem)) {
             if (checked(name, password, passwordAgain)) {
+                EventBus.getDefault().post(InitPasswordEvent(password))
                 lifecycleScope.launch {
                     try {
                         showLoading()

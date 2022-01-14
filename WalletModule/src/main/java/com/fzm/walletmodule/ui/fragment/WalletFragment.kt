@@ -110,6 +110,7 @@ class WalletFragment : BaseFragment() {
 
     override fun initData() {
         mPWallet = WalletUtils.getUsingWallet()
+        name?.text = mPWallet?.name
     }
 
     override fun initListener() {
@@ -181,6 +182,7 @@ class WalletFragment : BaseFragment() {
     fun onMyWalletEvent(event: MyWalletEvent) {
         if (event.mPWallet != null && mPWallet?.id != event.mPWallet?.id) {
             mPWallet = event.mPWallet
+            name?.text = mPWallet?.name
         }
     }
 

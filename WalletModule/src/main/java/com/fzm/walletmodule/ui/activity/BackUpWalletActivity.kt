@@ -19,6 +19,7 @@ import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.utils.WalletUtils
 import com.fzm.walletmodule.event.BackUpEvent
+import com.fzm.walletmodule.event.InitPasswordEvent
 import com.fzm.walletmodule.event.MyWalletEvent
 import com.fzm.walletmodule.manager.WalletManager
 import com.fzm.walletmodule.ui.base.BaseActivity
@@ -238,6 +239,8 @@ class BackUpWalletActivity : BaseActivity() {
                 finish()
                 return@setOnClickListener
             }
+
+            EventBus.getDefault().post(InitPasswordEvent(mPWallet.password))
             val coinList = Constants.getCoins()
             showLoading()
             saveWallet(coinList)
