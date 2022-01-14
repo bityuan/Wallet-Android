@@ -57,7 +57,7 @@ class MyWalletsActivity : BaseActivity() {
         listView.adapter = mAdapter
         listView.setOnItemClickListener { holder, position ->
             val wallet = mAdapter!!.datas[position] as PWallet
-            EventBus.getDefault().post(MyWalletEvent(wallet))
+            EventBus.getDefault().post(MyWalletEvent(wallet,true))
             finish()
         }
     }
