@@ -4,7 +4,6 @@ import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.bean.response.TransactionResponse
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
-import com.fzm.wallet.sdk.net.HttpResult
 import com.fzm.wallet.sdk.net.rootScope
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.repo.WalletRepository
@@ -113,7 +112,7 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                         }
                     })
                 }
-                val quotationDeferred: Deferred<HttpResult<List<Coin>>>? = if (requireQuotation) {
+                val quotationDeferred = if (requireQuotation || coins.any { it.nickname.isNullOrEmpty() }) {
                     // 查询资产行情等
                     async { walletRepository.getCoinList(coins.map { "${it.name},${it.platform}" }) }
                 } else null

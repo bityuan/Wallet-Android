@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.utils.totalAsset
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.adapter.WalletAdapter
 import com.fzm.walletmodule.base.Constants
@@ -42,6 +43,7 @@ class WalletFragment : BaseFragment() {
     private val mCoinList = CopyOnWriteArrayList<Coin>()
     private var more: ImageView? = null
     private var name: TextView? = null
+    private var money: TextView? = null
     private var timeCount = 0
 
     private var job: Job? = null
@@ -55,6 +57,7 @@ class WalletFragment : BaseFragment() {
                         mCoinList.clear()
                         mCoinList.addAll(it)
                         mWalletAdapter?.notifyDataSetChanged()
+                        money?.text = DecimalUtils.subWithNum(it.sumOf { c-> c.totalAsset }, 2)
                     }
             }
         } else if (event == Lifecycle.Event.ON_PAUSE) {
@@ -105,6 +108,7 @@ class WalletFragment : BaseFragment() {
             LayoutInflater.from(activity).inflate(R.layout.view_header_wallet, null, false)
         more = mHeaderView?.findViewById<ImageView>(R.id.more)
         name = mHeaderView?.findViewById<TextView>(R.id.name)
+        money = mHeaderView?.findViewById<TextView>(R.id.money)
         recyclerView.addHeaderView(mHeaderView)
     }
 

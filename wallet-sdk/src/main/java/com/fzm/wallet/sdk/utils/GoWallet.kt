@@ -585,6 +585,9 @@ class GoWallet {
                     coin.status = Coin.STATUS_ENABLE
                     coin.pubkey = pubkeyStr
                     coin.address = address
+                    if (Walletapi.TypeBtyString == coin.chain) {
+                        wallet.btyPrivkey = encodeToStrings(hdWallet.newKeyPriv(0))
+                    }
                 }
                 saveAll(coinList)
                 wallet.coinList.addAll(coinList)
