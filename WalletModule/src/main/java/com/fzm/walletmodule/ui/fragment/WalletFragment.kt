@@ -110,6 +110,7 @@ class WalletFragment : BaseFragment() {
 
     override fun initData() {
         mPWallet = WalletUtils.getUsingWallet()
+        name?.text = mPWallet?.name
     }
 
     override fun initListener() {
@@ -186,6 +187,7 @@ class WalletFragment : BaseFragment() {
             mWalletAdapter?.notifyDataSetChanged()
             mPWallet = event.mPWallet
             WalletUtils.setUsingWallet(mPWallet)
+            name?.text = mPWallet?.name
         }
     }
 

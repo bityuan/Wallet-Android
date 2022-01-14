@@ -14,6 +14,7 @@ import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.utils.WalletUtils
 import com.fzm.walletmodule.event.CaptureEvent
+import com.fzm.walletmodule.event.InitPasswordEvent
 import com.fzm.walletmodule.event.MyWalletEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.LimitEditText
@@ -144,7 +145,7 @@ class ImportWalletActivity : BaseActivity() {
                 } else {
                     mPWallet.mnem = mnem
                 }
-
+                EventBus.getDefault().post(InitPasswordEvent(password))
                 doAsync {
                     val hdWallet = GoWallet.getHDWallet(Walletapi.TypeBtyString, mPWallet.mnem)
                     uiThread {
