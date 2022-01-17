@@ -1,0 +1,13 @@
+R_DEF: Internal format may change without notice
+local
+string basic_error_certificate
+string basic_error_connect
+string basic_error_data_structure
+string basic_error_network
+string basic_error_network1
+string basic_error_request
+string basic_error_response_parse
+string basic_error_service
+string basic_error_service1
+string basic_error_service_domain
+string basic_error_unknown

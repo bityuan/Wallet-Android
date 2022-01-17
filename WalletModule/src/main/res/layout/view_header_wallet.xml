@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -12,7 +11,7 @@
         android:layout_height="100dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginBottom="@dimen/dp_10"
+        android:layout_marginBottom="10dp"
         android:background="@mipmap/header_wallet_hd_wallet">
 
         <LinearLayout
@@ -47,7 +46,6 @@
             android:layout_marginLeft="20dp"
             android:layout_marginTop="44dp"
             android:textColor="#fff5f5f5"
-            android:visibility="gone"
             android:textSize="36sp"
             tools:text="69373.53" />
 
@@ -60,9 +58,9 @@
             android:ellipsize="middle"
             android:singleLine="true"
             android:text="schdhuvhdduhduvhdug21easygug"
-            android:visibility="gone"
             android:textColor="#80ffffff"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/more"
@@ -74,6 +72,16 @@
             android:scaleType="center"
             android:src="@mipmap/header_wallet_more" />
 
+        <ImageView
+            android:id="@+id/addCoin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="@dimen/dp_10"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:scaleType="center"
+            android:src="@mipmap/header_wallet_add" />
     </RelativeLayout>
 
 
