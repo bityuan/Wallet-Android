@@ -1,5 +1,7 @@
 package com.fzm.wallet.sdk.db.entity;
 
+import org.litepal.annotation.Column;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +23,16 @@ public class PWallet extends BaseBean {
     private int mnemType;
     private List<Coin> coinList = new ArrayList<>();
     private boolean putpassword;
+    @Column(ignore = true)
+    private String btyPrivkey;
+
+    public String getBtyPrivkey() {
+        return btyPrivkey;
+    }
+
+    public void setBtyPrivkey(String btyPrivkey) {
+        this.btyPrivkey = btyPrivkey;
+    }
 
     public boolean isPutpassword() {
         return putpassword;

@@ -2,22 +2,27 @@ package com.fzm.wallet.sdk.net
 
 import com.fzm.wallet.sdk.api.ApiEnv
 import com.fzm.wallet.sdk.api.Apis
+import com.fzm.wallet.sdk.base.BWallet
 import com.fzm.wallet.sdk.repo.OutRepository
+import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.utils.ToolUtils
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import org.koin.core.context.KoinContextHandler
 import org.koin.core.module.Module
 import org.koin.core.qualifier._q
+import org.koin.core.scope.Scope
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-val walletQualifier = _q("BWallet")
+val rootScope: Scope
+    get() = KoinContextHandler.get()._scopeRegistry.rootScope
 
-val walletBaseModules = module {
-    walletNetModule()
-}
+val walletQualifier = _q(BWallet)
+
+val walletBaseModules = module { walletNetModule() }
 
 fun Module.walletNetModule() {
 
@@ -25,8 +30,8 @@ fun Module.walletNetModule() {
         OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
-//            .addNetworkInterceptor(HttpLoggingInterceptor())
             .addInterceptor(get(walletQualifier))
+//            .addInterceptor(HttpLoggingInterceptor())
             .build()
     }
 
@@ -41,7 +46,7 @@ fun Module.walletNetModule() {
                 .header("Accept", "application/json")
                 .header("Fzm-Request-Source", "wallet")
                 .header("FZM-REQUEST-OS", "android")
-                .header("FZM-REQUEST-UUID", ToolUtils.getMyUUID(get()))
+                .header("FZM-PLATFORM-ID", "1")
                 .header(
                     "version",
                     "${ToolUtils.getVersionName(get())},${ToolUtils.getVersionCode(get())}"
@@ -55,8 +60,6 @@ fun Module.walletNetModule() {
         }
     }
 
-    single(walletQualifier) { OutRepository(get(walletQualifier)) }
-
     single<Retrofit>(walletQualifier) {
         Retrofit.Builder()
             .baseUrl(ApiEnv.BASE_URL)
@@ -66,4 +69,8 @@ fun Module.walletNetModule() {
     }
 
     single(walletQualifier) { get<Retrofit>(walletQualifier).create(Apis::class.java) }
+
+    single(walletQualifier) { OutRepository(get(walletQualifier)) }
+
+    single(walletQualifier) { WalletRepository(get(walletQualifier)) }
 }

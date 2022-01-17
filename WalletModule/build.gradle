@@ -3,8 +3,6 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin:'com.github.dcendents.android-maven'
-group='com.github.asmain'
 
 
 android {
@@ -60,6 +58,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation "com.readystatesoftware.systembartint:systembartint:1.0.3"
     api project(":wallet-sdk")
+    debugImplementation 'com.guolindev.glance:glance:1.1.0'
 
     api "org.litepal.android:kotlin:3.0.0"
     api "com.google.code.gson:gson:2.8.6"
@@ -83,7 +82,8 @@ dependencies {
     api "org.koin:koin-androidx-fragment:2.1.5"
     api "org.koin:koin-androidx-ext:2.1.5"
     api "com.squareup.retrofit2:converter-gson:2.8.2"
-    api  "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
+    api "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
+    api "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0"
     api "com.squareup.okhttp3:logging-interceptor:3.14.9"
     api "com.alibaba:fastjson:1.1.68.android"
 

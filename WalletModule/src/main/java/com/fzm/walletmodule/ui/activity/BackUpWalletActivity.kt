@@ -6,19 +6,20 @@ import android.graphics.Color
 import android.os.Bundle
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback
 import com.chad.library.adapter.base.listener.OnItemDragListener
+import com.fzm.wallet.sdk.BWallet
+import com.fzm.wallet.sdk.WalletConfiguration
+import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.adapter.BackUpWalletAdapter
 import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.bean.WalletBackUp
-import com.fzm.wallet.sdk.db.entity.Coin
-import com.fzm.wallet.sdk.db.entity.PWallet
-import com.fzm.wallet.sdk.utils.GoWallet
-import com.fzm.walletmodule.utils.WalletUtils
 import com.fzm.walletmodule.event.BackUpEvent
+import com.fzm.walletmodule.event.InitPasswordEvent
 import com.fzm.walletmodule.event.MyWalletEvent
 import com.fzm.walletmodule.manager.WalletManager
 import com.fzm.walletmodule.ui.base.BaseActivity
@@ -29,6 +30,7 @@ import com.fzm.walletmodule.utils.*
 import com.zhy.adapter.abslistview.CommonAdapter
 import com.zhy.adapter.abslistview.ViewHolder
 import kotlinx.android.synthetic.main.activity_back_up_wallet.*
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import java.util.*
 
@@ -238,25 +240,31 @@ class BackUpWalletActivity : BaseActivity() {
                 finish()
                 return@setOnClickListener
             }
-            val coinList = Constants.getCoins()
+
+            EventBus.getDefault().post(InitPasswordEvent(mPWallet.password))
             showLoading()
-            saveWallet(coinList)
+
+            lifecycleScope.launch {
+                val id = BWallet.get().importWallet(
+                    WalletConfiguration.mnemonicWallet(
+                        mnem,
+                        mPWallet.name,
+                        mPWallet.password,
+                        "",
+                        emptyList()
+                    )
+                )
+                val pWallet = BWallet.get().findWallet(id)
+                BWallet.get().changeWallet(pWallet)
+
+                dismiss()
+                WalletUtils.setUsingWallet(pWallet)
+                EventBus.getDefault().postSticky(MyWalletEvent(pWallet))
+                closeSomeActivitys()
+            }
 
         }
     }
-
-
-    private fun saveWallet(coinList: List<Coin>) {
-        GoWallet.createWallet(mPWallet,coinList,object : GoWallet.CoinListener{
-            override fun onSuccess() {
-                dismiss()
-                WalletUtils.setUsingWallet(mPWallet)
-                EventBus.getDefault().postSticky(MyWalletEvent(mPWallet))
-                closeSomeActivitys()
-            }
-        })
-    }
-
 
     private fun getMnemString(): String? {
         var string = ""

@@ -2,6 +2,7 @@ package com.fzm.walletmodule.ui.widget;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -29,6 +30,7 @@ public class CommonDialogFragment extends DialogFragment {
     private String mResultDetails;
     private String mLeftButtonStr;
     private String mRightButtonStr;
+    private DialogInterface.OnDismissListener mOnDismissListener;
     private int type = 2;  // 1= 1个按钮  2= 2个按钮
     private int resultColor = -1;
     private View mVMiddleLine;
@@ -86,6 +88,11 @@ public class CommonDialogFragment extends DialogFragment {
 
     public CommonDialogFragment setRightButtonStr(String rightButtonStr) {
         this.mRightButtonStr = rightButtonStr;
+        return this;
+    }
+
+    public CommonDialogFragment setOnDismissListener(DialogInterface.OnDismissListener listener) {
+        this.mOnDismissListener = listener;
         return this;
     }
 
@@ -170,6 +177,7 @@ public class CommonDialogFragment extends DialogFragment {
             mBtnRight.setBackgroundResource(R.drawable.selector_dialog_btn_right);
         }
         mAlertDialog = builder.create();
+        mAlertDialog.setOnDismissListener(mOnDismissListener);
         mAlertDialog.getWindow().setBackgroundDrawableResource(R.color.transparent);
         //alertDialog.show();
         return mAlertDialog;

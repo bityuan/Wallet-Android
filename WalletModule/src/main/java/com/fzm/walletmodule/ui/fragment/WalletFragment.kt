@@ -7,26 +7,28 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.fzm.wallet.sdk.BWallet
+import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.utils.totalAsset
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.adapter.WalletAdapter
 import com.fzm.walletmodule.base.Constants
-import com.fzm.wallet.sdk.db.entity.Coin
-import com.fzm.wallet.sdk.db.entity.PWallet
-import com.fzm.wallet.sdk.utils.GoWallet
-import com.fzm.walletmodule.utils.WalletUtils
 import com.fzm.walletmodule.event.*
 import com.fzm.walletmodule.ui.activity.*
 import com.fzm.walletmodule.ui.base.BaseFragment
 import com.fzm.walletmodule.utils.*
 import kotlinx.android.synthetic.main.fragment_wallet.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.support.v4.runOnUiThread
-import org.litepal.LitePal.where
-import java.lang.String
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -34,12 +36,35 @@ class WalletFragment : BaseFragment() {
     private var mWalletAdapter: WalletAdapter? = null
     private var mHeaderView: View? = null
     private var mPWallet: PWallet? = null
+        set(value) {
+            BWallet.get().changeWallet(value)
+            field = value
+        }
     private val mCoinList = CopyOnWriteArrayList<Coin>()
     private var more: ImageView? = null
     private var name: TextView? = null
-    private var mTimer: Timer? = null
-    private var balanceTimer: Timer? = null
+    private var money: TextView? = null
     private var timeCount = 0
+
+    private var job: Job? = null
+
+    private val observer = LifecycleEventObserver { _, event ->
+        if (event == Lifecycle.Event.ON_RESUME) {
+            // FIXME: 最好使用lifecycle2.4.0提供的repeatOnLifecycle方法
+            job = lifecycleScope.launch {
+                BWallet.get().getCoinBalance(0, Constants.DELAYED_TIME, true)
+                    .collect {
+                        mCoinList.clear()
+                        mCoinList.addAll(it)
+                        mWalletAdapter?.notifyDataSetChanged()
+                        money?.text = DecimalUtils.subWithNum(it.sumOf { c-> c.totalAsset }, 2)
+                    }
+            }
+        } else if (event == Lifecycle.Event.ON_PAUSE) {
+            job?.cancel()
+        }
+    }
+
     override fun getLayout(): Int {
         return R.layout.fragment_wallet
     }
@@ -53,30 +78,8 @@ class WalletFragment : BaseFragment() {
         initHeaderView()
         initData()
         initListener()
-        if(isAdded) {
-            startTimer()
-        }
+        viewLifecycleOwner.lifecycle.addObserver(observer)
 
-    }
-
-    /**
-     * 开启定时器  定时更新余额
-     */
-    private fun startTimer() {
-        balanceTimer = Timer()
-        balanceTimer!!.schedule(object : TimerTask() {
-            override fun run() {
-               val size = mCoinList.size
-               for (index in 0 until size) {
-                   var coin = mCoinList[index]
-                   val handleBalance = GoWallet.handleBalance(coin)
-                   coin.balance = handleBalance
-                   runOnUiThread {
-                       mWalletAdapter?.notifyDataSetChanged()
-                   }
-               }
-            }
-        }, 0, Constants.DELAYED_TIME)
     }
 
     override fun initView() {
@@ -105,41 +108,18 @@ class WalletFragment : BaseFragment() {
             LayoutInflater.from(activity).inflate(R.layout.view_header_wallet, null, false)
         more = mHeaderView?.findViewById<ImageView>(R.id.more)
         name = mHeaderView?.findViewById<TextView>(R.id.name)
+        money = mHeaderView?.findViewById<TextView>(R.id.money)
         recyclerView.addHeaderView(mHeaderView)
     }
 
     override fun initData() {
         mPWallet = WalletUtils.getUsingWallet()
         name?.text = mPWallet?.name
-        val coinList = mPWallet!!.coinList
-        doAsync {
-            //获取最新的数据
-            val localCoinList = where(
-                "pwallet_id = ? and status = ?", String.valueOf(mPWallet!!.id),
-                String.valueOf(Coin.STATUS_ENABLE)
-            ).find(Coin::class.java, true)
-            coinList.addAll(localCoinList)
-            mCoinList.clear()
-            mCoinList.addAll(localCoinList)
-            for (coin in mCoinList) {
-                val handleBalance = GoWallet.handleBalance(coin)
-                coin.balance = handleBalance
-            }
-            runOnUiThread {
-                if (ListUtils.isEmpty(localCoinList)) {
-                    emptyView.visibility = View.VISIBLE
-                } else {
-                    emptyView.visibility = View.GONE
-                }
-                mWalletAdapter?.notifyDataSetChanged()
-            }
-        }
     }
 
     override fun initListener() {
         swl_layout.setOnRefreshListener {
             swl_layout.onRefreshComplete()
-            initData()
         }
         more?.setOnClickListener {
             if (ClickUtils.isFastDoubleClick()) {
@@ -196,7 +176,7 @@ class WalletFragment : BaseFragment() {
     //回调 - 删除账户
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onWalletDeleteEvent(event: WalletDeleteEvent) {
-        if (mPWallet!!.id === event.walletId) {
+        if (mPWallet?.id == event.walletId) {
             initData()
         }
     }
@@ -204,44 +184,15 @@ class WalletFragment : BaseFragment() {
     //回调 - 我的账户
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     fun onMyWalletEvent(event: MyWalletEvent) {
-        if (mPWallet != null && event.mPWallet != null && mPWallet!!.id !== event.mPWallet!!.id) {
+        if (event.mPWallet != null && mPWallet?.id != event.mPWallet?.id) {
             mPWallet = event.mPWallet
-            WalletUtils.setUsingWallet(mPWallet)
-            initData()
+            name?.text = mPWallet?.name
         }
     }
 
     //回调 - 我的账户
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTransactionsEvent(event: TransactionsEvent) {
-        if (event != null) {
-            val coin: Coin? = event.coin
-            if (coin != null) {
-                mTimer = Timer()
-                mTimer!!.schedule(object : TimerTask() {
-                    override fun run() {
-                        val balance = GoWallet.handleBalance(coin)
-                        if (timeCount == 3 || balance != coin.balance) {
-                            cancel()
-                            timeCount = 0
-                        }
-                        for (i in mCoinList.indices) {
-                            val coinSign =
-                                coin.name + coin.platform + coin.chain
-                            val oldCoinSign =
-                                mCoinList[i].name + mCoinList[i]
-                                    .platform + mCoinList[i].chain
-                            if (oldCoinSign == coinSign) {
-                                mCoinList[i].balance = balance
-                                runOnUiThread { mWalletAdapter!!.notifyItemChanged(i) }
-                                break
-                            }
-                        }
-                        timeCount++
-                    }
-                }, 2000, 2000)
-            }
-        }
     }
 
     //扫码回调
@@ -255,19 +206,16 @@ class WalletFragment : BaseFragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        job?.cancel()
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
         if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this)
-        }
-        if(isAdded) {
-            if (mTimer != null) {
-                mTimer!!.cancel()
-            }
-            if (balanceTimer != null) {
-                balanceTimer!!.cancel()
-            }
         }
 
     }

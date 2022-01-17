@@ -8,6 +8,8 @@ import com.fzm.wallet.sdk.bean.response.BalanceResponse
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.litepal.LitePal.saveAll
@@ -19,8 +21,12 @@ class GoWallet {
         const val BTY = "BTY"
         const val PLATFORM_BTY = "bty"
         const val APPSYMBOL_P = "p"
+
+        private val gson = Gson()
+
+        private val util = Util()
+
         fun getUtil(goNoderUrl: String): Util {
-            val util = Util()
             util.node = goNoderUrl
             return util
         }
@@ -144,9 +150,8 @@ class GoWallet {
                     }
                 }
             }
-            val balanceStr = getbalance(lCoin.address,lCoin.chain, tokensymbol)
+            val balanceStr = getbalance(lCoin.address, lCoin.chain, tokensymbol)
             if (!TextUtils.isEmpty(balanceStr)) {
-                val gson = Gson()
                 val balanceResponse = gson.fromJson(balanceStr, BalanceResponse::class.java)
                 if (balanceResponse != null) {
                     val balance = balanceResponse.result
@@ -263,7 +268,7 @@ class GoWallet {
          * @return String?
          */
         fun getTranByTxid(chain: String, tokenSymbol: String, txid: String): String? {
-            return getTranByTxid(chain, tokenSymbol, txid, getGoURL()!!)
+            return getTranByTxid(chain, tokenSymbol, txid, getGoURL())
         }
 
         /**
@@ -540,6 +545,9 @@ class GoWallet {
                     val pubkey = hdWallet!!.newKeyPub(0)
                     val address = hdWallet.newAddress_v2(0)
                     val pubkeyStr = encodeToStrings(pubkey)
+                    if (Walletapi.TypeBtyString == coin.chain) {
+                        wallet.btyPrivkey = encodeToStrings(hdWallet.newKeyPriv(0))
+                    }
                     coin.status = Coin.STATUS_ENABLE
                     coin.pubkey = pubkeyStr
                     coin.address = address
@@ -559,11 +567,35 @@ class GoWallet {
                 wallet.mnem = seedEncKey
                 wallet.password = passwdHash
                 wallet.save()
-                val mulJson = Gson().toJson(mulList)
+                val mulJson = gson.toJson(mulList)
                 val aBoolean = imortMulAddress("", APPSYMBOL_P, mulJson)
                 uiThread {
                     listener.onSuccess()
                 }
+            }
+        }
+
+        internal suspend fun createWallet(wallet: PWallet, coinList: List<Coin>): PWallet {
+            return withContext(Dispatchers.IO) {
+                for (coin in coinList) {
+                    val hdWallet = getHDWallet(coin.chain, wallet.mnem)
+                    val pubkey = hdWallet!!.newKeyPub(0)
+                    val address = hdWallet.newAddress_v2(0)
+                    val pubkeyStr = encodeToStrings(pubkey)
+                    coin.status = Coin.STATUS_ENABLE
+                    coin.pubkey = pubkeyStr
+                    coin.address = address
+                    if (Walletapi.TypeBtyString == coin.chain) {
+                        wallet.btyPrivkey = encodeToStrings(hdWallet.newKeyPriv(0))
+                    }
+                }
+                saveAll(coinList)
+                wallet.coinList.addAll(coinList)
+                val bpassword = encPasswd(wallet.password)
+                wallet.mnem = encMenm(bpassword!!, wallet.mnem)
+                wallet.password = passwdHash(bpassword)
+                wallet.save()
+                return@withContext wallet
             }
         }
     }
