@@ -251,7 +251,7 @@ class BackUpWalletActivity : BaseActivity() {
                         mPWallet.name,
                         mPWallet.password,
                         "",
-                        emptyList()
+                        Constants.getCoins()
                     )
                 )
                 val pWallet = BWallet.get().findWallet(id)

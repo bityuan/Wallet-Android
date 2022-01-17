@@ -280,7 +280,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:text="0"
-                        android:visibility="gone"
                         android:textColor="@color/color_333649"
                         android:textSize="@dimen/sp_14" />
 

@@ -36,27 +36,56 @@ class MainActivity : BaseActivity() {
     }
 
 
-    private fun defaultCoinList(): MutableList<Coin> {
-        val coinList = mutableListOf<Coin>()
-        val coin = Coin()
-        coin.name = "BTY"
-        coin.chain = "BTY"
-        coin.platform = "bty"
-        coin.nickname = "以太坊"
-        coin.treaty = "1"
-        coinList.add(coin)
-        return coinList
-    }
+    private fun defaultCoinList() = listOf(
+        Coin().apply {
+            name = "BTY"
+            chain = "BTY"
+            platform = "bty"
+        },
+        Coin().apply {
+            name = "BTC"
+            chain = "BTC"
+            platform = "btc"
+        },
+        Coin().apply {
+            name = "BNB"
+            chain = "BNB"
+            platform = "bnb"
+        },
 
-     override fun initView() {
+        Coin().apply {
+            name = "TRX"
+            chain = "TRX"
+            platform = "trx"
+        },
+        Coin().apply {
+            name = "USDT"
+            chain = "TRX"
+            platform = "trx"
+        },
+        Coin().apply {
+            name = "USDT"
+            chain = "BTC"
+            platform = "btc"
+        },
+        Coin().apply {
+            name = "USDT"
+            chain = "BNB"
+            platform = "bnb"
+        }
+
+
+    )
+
+    override fun initView() {
         bottomNavigationView.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.fragment_home -> {
-                    Log.e("MainAc","fragment_home")
+                    Log.e("MainAc", "fragment_home")
                     setTabSelection(0)
                 }
                 R.id.fragment_explore -> {
-                    Log.e("MainAc","fragment_explore")
+                    Log.e("MainAc", "fragment_explore")
                     setTabSelection(1)
                 }
             }
@@ -169,10 +198,11 @@ class MainActivity : BaseActivity() {
             WalletUtils.setUsingWallet(mPWallet)
         }
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onInitPasswordEvent(event: InitPasswordEvent) {
         val password = event.password
-        Log.v("zx",password)
+        Log.v("zx", password)
     }
 
 
