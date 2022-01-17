@@ -47,7 +47,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="4dp"
                 android:layout_weight="1"
-                android:visibility="invisible"
                 android:textColor="#ff8e92a3"
                 android:textSize="12sp"
                 tools:text="以太坊" />

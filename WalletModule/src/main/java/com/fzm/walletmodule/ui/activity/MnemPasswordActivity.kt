@@ -5,11 +5,12 @@ import android.text.TextUtils
 
 import android.view.View
 import com.fzm.walletmodule.R
-import com.fzm.walletmodule.db.entity.PWallet
+import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.walletmodule.event.CheckMnemEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.AppUtils
-import com.fzm.walletmodule.utils.GoWallet
+import com.fzm.wallet.sdk.utils.GoWallet
+import com.fzm.walletmodule.utils.WalletUtils
 import com.fzm.walletmodule.utils.ToastUtils
 import kotlinx.android.synthetic.main.activity_set_password.*
 
@@ -34,7 +35,8 @@ class MnemPasswordActivity : BaseActivity() {
             if (checked(newPassword, passwordAgain)) {
                 showLoading()
                 doAsync {
-                    val pWallet = PWallet.getUsingWallet()
+                    val pWallet =
+                        WalletUtils.getUsingWallet()
                     val encPasswd = GoWallet.encPasswd(newPassword)
                     val passwdHash = GoWallet.passwdHash(encPasswd!!)
                     val encMnem = GoWallet.encMenm(encPasswd, mnem!!)

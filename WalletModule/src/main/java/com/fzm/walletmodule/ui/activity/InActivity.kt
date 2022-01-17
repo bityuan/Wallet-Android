@@ -5,7 +5,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
@@ -17,8 +16,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.fzm.walletmodule.R
-import com.fzm.walletmodule.db.entity.Coin
-import com.fzm.walletmodule.db.entity.PWallet
+import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.EditDialogFragment
 import com.fzm.walletmodule.utils.*
@@ -62,15 +62,9 @@ class InActivity : BaseActivity() {
     }
 
     private fun configQRCode(address: String) {
-        if (TextUtils.isEmpty(mCoin!!.icon)) {
-            if (mCoin!!.getmIcon() != 0) {
-                val logoBitmap = BitmapFactory.decodeResource(resources, mCoin!!.getmIcon())
-                val qrBitmap = CodeUtils.createQRCode(address, 200, logoBitmap)
-                iv_my_wallet.setImageBitmap(qrBitmap)
-            } else {
-                val bitmap: Bitmap = CodeUtils.createQRCode(address, 190)
-                iv_my_wallet.setImageBitmap(bitmap)
-            }
+        if (TextUtils.isEmpty(mCoin?.icon)) {
+            val bitmap: Bitmap = CodeUtils.createQRCode(address, 190)
+            iv_my_wallet.setImageBitmap(bitmap)
         } else {
             Glide.with(this).asBitmap().load(mCoin!!.icon)
                 .into(object : SimpleTarget<Bitmap?>() {

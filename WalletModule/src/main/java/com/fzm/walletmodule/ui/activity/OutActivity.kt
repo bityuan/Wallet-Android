@@ -10,12 +10,17 @@ import android.view.View
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.lifecycle.Observer
+import com.alibaba.fastjson.JSON
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.base.Constants
-import com.fzm.walletmodule.bean.Miner
+import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.walletmodule.bean.StringResult
-import com.fzm.walletmodule.db.entity.Coin
-import com.fzm.walletmodule.db.entity.PWallet
+import com.fzm.wallet.sdk.utils.AddressCheckUtils
+import com.fzm.wallet.sdk.utils.RegularUtils
+import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.net.walletQualifier
+import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.event.CaptureEvent
 import com.fzm.walletmodule.event.TransactionsEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
@@ -48,7 +53,7 @@ class OutActivity : BaseActivity() {
     private var mPriv: String? = null
     private var mMaxEditLegth = 0
     private var mMiner: Miner? = null
-    private val outViewModel: OutViewModel by inject()
+    private val outViewModel: OutViewModel by inject(walletQualifier)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_out)
@@ -79,7 +84,7 @@ class OutActivity : BaseActivity() {
         val chainBeans = where(
             "name = ? and pwallet_id = ?",
             mCoin!!.chain,
-           (mCoin!!.getpWallet().id).toString()
+            (mCoin!!.getpWallet().id).toString()
         ).find(Coin::class.java)
         if (!ListUtils.isEmpty(chainBeans)) {
             mChainBean = chainBeans[0]
@@ -121,11 +126,9 @@ class OutActivity : BaseActivity() {
             override fun onProgressChanged(
                 seekBar: SeekBar,
                 progress: Int,
-                fromUser: Boolean
+                fromUser: Boolean,
             ) {
-                var progress = progress
-                progress += minInt
-                mFee = DoubleUtils.intToDouble(progress, length)
+                mFee = DoubleUtils.intToDouble(progress + minInt, length)
                 // updateFee(progress, length)
                 tv_fee.text = DecimalUtils.subZero(DecimalUtils.formatDouble(mFee))
                 tv_fee_coin_name.text = mCoin!!.chain
@@ -134,9 +137,9 @@ class OutActivity : BaseActivity() {
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
             override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
-        seekbar_money.max = maxInt - minInt
+        seekbar_money.max = maxInt
         //初始进度（推荐款工费）
-        seekbar_money.progress = averageInt - minInt
+        seekbar_money.progress = maxInt / 2
     }
 
     override fun initListener() {
@@ -235,7 +238,8 @@ class OutActivity : BaseActivity() {
             et_note.text.toString(),
             tokensymbol
         )
-        val createRawResult: String? = parseCreateResult(createRaw!!)
+        val stringResult = JSON.parseObject(createRaw, StringResult::class.java)
+        val createRawResult: String? = stringResult.result
         if (TextUtils.isEmpty(createRawResult)) {
             return
         }
@@ -266,13 +270,6 @@ class OutActivity : BaseActivity() {
 
     }
 
-    private fun parseCreateResult(json: String): String? {
-        if (TextUtils.isEmpty(json)) {
-            return json
-        }
-        val stringResult: StringResult = JsonUtils.toObject(json, StringResult::class.java)
-        return stringResult.result
-    }
 
     private fun parseResult(json: String): StringResult? {
         return if (TextUtils.isEmpty(json)) {
@@ -412,7 +409,7 @@ class OutActivity : BaseActivity() {
         fromPos: Int,
         to: String,
         toPos: Int,
-        cls: Class<T>
+        cls: Class<T>,
     ): T {
         return try {
             cls.cast(value)

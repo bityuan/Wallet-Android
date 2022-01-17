@@ -247,5 +247,14 @@ abstract class BaseActivity : AppCompatActivity() {
         )
     }
 
+    open fun hideKeyboard(view: View): Boolean {
+        if (null == view) return false
+        val inputManager = view.context.applicationContext
+            .getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        // 即使当前焦点不在editText，也是可以隐藏的。
+        return inputManager.hideSoftInputFromWindow(view.windowToken,
+            InputMethodManager.HIDE_NOT_ALWAYS)
+    }
+
 
 }

@@ -8,14 +8,16 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import com.fzm.walletmodule.R
-import com.fzm.walletmodule.db.entity.Coin
-import com.fzm.walletmodule.db.entity.PWallet
+import com.fzm.walletmodule.base.Constants
+import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.utils.GoWallet
+import com.fzm.walletmodule.utils.WalletUtils
 import com.fzm.walletmodule.event.CaptureEvent
 import com.fzm.walletmodule.event.MyWalletEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.LimitEditText
 import com.fzm.walletmodule.utils.*
-import com.qmuiteam.qmui.util.QMUIKeyboardHelper
 import com.snail.antifake.jni.EmulatorDetectUtil
 import kotlinx.android.synthetic.main.activity_import_wallet.*
 import kotlinx.android.synthetic.main.activity_import_wallet.et_mnem
@@ -114,7 +116,7 @@ class ImportWalletActivity : BaseActivity() {
         }
 
         btnImport.setOnClickListener {
-            QMUIKeyboardHelper.hideKeyboard(btnImport)
+            hideKeyboard(btnImport)
             if (EmulatorDetectUtil.isEmulator(this)) {
                 ToastUtils.show(this, "检测到您使用模拟器创建账户，请切换到真机")
             } else {
@@ -260,10 +262,10 @@ class ImportWalletActivity : BaseActivity() {
 
 
     private fun saveWallet() {
-        val coinList = createCoinList()
+        val coinList = Constants.getCoins()
         GoWallet.createWallet(mPWallet, coinList, object : GoWallet.CoinListener {
             override fun onSuccess() {
-                PWallet.setUsingWallet(mPWallet)
+                WalletUtils.setUsingWallet(mPWallet)
                 EventBus.getDefault().postSticky(MyWalletEvent(mPWallet))
                 dismiss()
                 ToastUtils.show(this@ImportWalletActivity, getString(R.string.my_import_success))
@@ -273,37 +275,6 @@ class ImportWalletActivity : BaseActivity() {
         })
     }
 
-    private fun createCoinList(): MutableList<Coin> {
-        val coinList = mutableListOf<Coin>()
-        val btyCoin = Coin()
-        btyCoin.name = "BTY"
-        btyCoin.chain = "BTY"
-        btyCoin.platform = "bty"
-        btyCoin.nickname = "比特元"
-        btyCoin.treaty = "1"
-        btyCoin.setmIcon(R.mipmap.coin_bty)
-        btyCoin.save()
-        val ethCoin = Coin()
-        ethCoin.name = "ETH"
-        ethCoin.chain = "ETH"
-        ethCoin.platform = "ethereum"
-        ethCoin.nickname = "以太坊"
-        ethCoin.treaty = "1"
-        ethCoin.setmIcon(R.mipmap.coin_eth)
-        ethCoin.save()
-        val usdtCoin = Coin()
-        usdtCoin.name = "USDT"
-        usdtCoin.chain = "ETH"
-        usdtCoin.platform = "ethereum"
-        usdtCoin.nickname = "ERC20"
-        usdtCoin.treaty = "1"
-        usdtCoin.setmIcon(R.mipmap.coin_usdt)
-        usdtCoin.save()
-        coinList.add(btyCoin)
-        coinList.add(ethCoin)
-        coinList.add(usdtCoin)
-        return coinList
-    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val menuItem = menu.add(0, 1, 0, getString(R.string.my_scan))

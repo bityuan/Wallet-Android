@@ -1,7 +1,9 @@
 package com.fzm.walletmodule.utils
 
 import android.util.Log
-import walletapi.Walletapi
+import com.google.gson.Gson
+import org.json.JSONException
+import org.json.JSONObject
 import java.security.MessageDigest
 
 private var lastClickTime: Long = 0
@@ -33,8 +35,41 @@ fun isFastClick(): Boolean {
     return flag
 }
 
- fun toMD5(intput: String): String {
-    val instance = MessageDigest.getInstance("MD5")
-    val digest = instance.digest(intput.toByteArray())
-    return Walletapi.byteTohex(digest)
+
+fun jsonToMap(jsonString: String): HashMap<String, Any>? {
+    val jsonObject: JSONObject
+    try {
+        jsonObject = JSONObject(jsonString)
+        val keyIter: Iterator<String> = jsonObject.keys()
+        var key: String
+        var value: Any
+        val valueMap = HashMap<String, Any>()
+        while (keyIter.hasNext()) {
+            key = keyIter.next()
+            value = jsonObject[key] as Any
+            valueMap[key] = value
+        }
+        return valueMap
+    } catch (e: JSONException) {
+        e.printStackTrace()
+    }
+    return null
 }
+
+fun mapToJson(vararg params: Pair<String, Any?>): String {
+    val param = JSONObject()
+    for (i in params) {
+        val value = if (i.second == null) "" else i.second
+        param.put(i.first, value)
+    }
+    return param.toString()
+}
+
+/*
+fun mapOftoJson(vararg pairs: Pair<String, Any?>): String {
+    val map = mapOf(pairs)
+    return Gson().toJson(map)
+
+      val map = mapOf("error" to str,"" to "")
+        handler.complete(Gson().toJson(map))
+}*/

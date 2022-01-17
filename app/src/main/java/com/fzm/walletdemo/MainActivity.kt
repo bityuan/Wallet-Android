@@ -3,35 +3,51 @@ package com.fzm.walletdemo
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
-import com.fzm.walletmodule.db.entity.PWallet
+import com.fzm.walletmodule.base.Constants
+import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.walletmodule.utils.WalletUtils
 import com.fzm.walletmodule.event.MainCloseEvent
 import com.fzm.walletmodule.event.MyWalletEvent
-import com.fzm.walletmodule.ui.fragment.ExploreFragment
+import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.fragment.WalletFragment
 import com.fzm.walletmodule.ui.fragment.WalletIndexFragment
-import com.fzm.walletmodule.utils.GoWallet
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.litepal.LitePal.count
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
     private var homeFragment: WalletFragment? = null
     private var mWalletIndexFragment: WalletIndexFragment? = null
     private var mExploreFragment: ExploreFragment? = null
     override fun onCreate(savedInstanceState: Bundle?) {
+        mCustomToobar = true
+        setStatusColor(android.R.color.transparent)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         EventBus.getDefault().register(this)
         initView()
         setTabSelection(0)
+        Constants.setCoins(defaultCoinList())
     }
 
-    private fun initView() {
+
+    private fun defaultCoinList(): MutableList<Coin> {
+        val coinList = mutableListOf<Coin>()
+        val coin = Coin()
+        coin.name = "BTY"
+        coin.chain = "BTY"
+        coin.platform = "bty"
+        coin.nickname = "以太坊"
+        coin.treaty = "1"
+        coinList.add(coin)
+        return coinList
+    }
+
+     override fun initView() {
         bottomNavigationView.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.fragment_home -> {
@@ -149,7 +165,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             setTabSelection(0)
             mPWallet = event.mPWallet
-            PWallet.setUsingWallet(mPWallet)
+            WalletUtils.setUsingWallet(mPWallet)
         }
     }
 

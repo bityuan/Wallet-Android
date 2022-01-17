@@ -1,7 +1,6 @@
 package com.fzm.walletmodule.ui.fragment
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -12,8 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.adapter.WalletAdapter
 import com.fzm.walletmodule.base.Constants
-import com.fzm.walletmodule.db.entity.Coin
-import com.fzm.walletmodule.db.entity.PWallet
+import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.utils.GoWallet
+import com.fzm.walletmodule.utils.WalletUtils
 import com.fzm.walletmodule.event.*
 import com.fzm.walletmodule.ui.activity.*
 import com.fzm.walletmodule.ui.base.BaseFragment
@@ -27,12 +28,13 @@ import org.jetbrains.anko.support.v4.runOnUiThread
 import org.litepal.LitePal.where
 import java.lang.String
 import java.util.*
+import java.util.concurrent.CopyOnWriteArrayList
 
 class WalletFragment : BaseFragment() {
     private var mWalletAdapter: WalletAdapter? = null
     private var mHeaderView: View? = null
     private var mPWallet: PWallet? = null
-    private val mCoinList = ArrayList<Coin>()
+    private val mCoinList = CopyOnWriteArrayList<Coin>()
     private var more: ImageView? = null
     private var name: TextView? = null
     private var mTimer: Timer? = null
@@ -44,7 +46,6 @@ class WalletFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        StatusBarUtil.setStatusBarColor(activity, Color.TRANSPARENT, true)
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
         }
@@ -52,7 +53,10 @@ class WalletFragment : BaseFragment() {
         initHeaderView()
         initData()
         initListener()
-        startTimer()
+        if(isAdded) {
+            startTimer()
+        }
+
     }
 
     /**
@@ -62,20 +66,23 @@ class WalletFragment : BaseFragment() {
         balanceTimer = Timer()
         balanceTimer!!.schedule(object : TimerTask() {
             override fun run() {
-                for (coin in mCoinList){
-                    val handleBalance = GoWallet.handleBalance(coin)
-                    coin.balance = handleBalance
-                }
-                runOnUiThread {
-                    mWalletAdapter?.notifyDataSetChanged()
-                }
+               val size = mCoinList.size
+               for (index in 0 until size) {
+                   var coin = mCoinList[index]
+                   val handleBalance = GoWallet.handleBalance(coin)
+                   coin.balance = handleBalance
+                   runOnUiThread {
+                       mWalletAdapter?.notifyDataSetChanged()
+                   }
+               }
             }
-        },0, Constants.DELAYED_TIME)
+        }, 0, Constants.DELAYED_TIME)
     }
 
     override fun initView() {
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        mWalletAdapter = WalletAdapter(activity!!, R.layout.view_item_coin_info, mCoinList, this)
+        mWalletAdapter =
+            WalletAdapter(requireActivity(), R.layout.view_item_coin_info, mCoinList, this)
         mWalletAdapter?.setOnItemClickListener(object : WalletAdapter.ItemClickListener {
             override fun OnItemClick(view: View?, position: Int) {
                 val coinPosition = position - 1 //减去header
@@ -102,7 +109,7 @@ class WalletFragment : BaseFragment() {
     }
 
     override fun initData() {
-        mPWallet = PWallet.getUsingWallet()
+        mPWallet = WalletUtils.getUsingWallet()
         name?.text = mPWallet?.name
         val coinList = mPWallet!!.coinList
         doAsync {
@@ -139,21 +146,19 @@ class WalletFragment : BaseFragment() {
                 return@setOnClickListener
             }
             val `in` = Intent()
-            `in`.setClass(activity!!, WalletDetailsActivity::class.java)
+            `in`.setClass(requireActivity(), WalletDetailsActivity::class.java)
             `in`.putExtra(PWallet::class.java.simpleName, mPWallet)
             startActivityForResult(`in`, UPDATE_WALLET)
         }
         iv_back.setOnClickListener {
-            if (activity != null) {
-                activity!!.finish()
-            }
+            requireActivity().finish()
         }
         topLeft.setOnClickListener {
             if (ClickUtils.isFastDoubleClick()) {
                 return@setOnClickListener
             }
             val intent = Intent()
-            intent.setClass(activity!!, CaptureCustomActivity::class.java)
+            intent.setClass(requireActivity(), CaptureCustomActivity::class.java)
             intent.putExtra(
                 CaptureCustomActivity.REQUST_CODE,
                 CaptureCustomActivity.REQUESTCODE_HOME
@@ -165,7 +170,7 @@ class WalletFragment : BaseFragment() {
                 return@setOnClickListener
             }
             val intent = Intent()
-            intent.setClass(activity!!, MyWalletsActivity::class.java)
+            intent.setClass(requireActivity(), MyWalletsActivity::class.java)
             startActivity(intent)
         }
         titleLayout.setOnClickListener {
@@ -183,7 +188,7 @@ class WalletFragment : BaseFragment() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public fun onUpdateWalletNameEvent(event: UpdateWalletNameEvent) {
         if (event != null && event.needUpdate) {
-            mPWallet = PWallet.getUsingWallet()
+            mPWallet = WalletUtils.getUsingWallet()
             name?.text = mPWallet?.name
         }
     }
@@ -201,7 +206,7 @@ class WalletFragment : BaseFragment() {
     fun onMyWalletEvent(event: MyWalletEvent) {
         if (mPWallet != null && event.mPWallet != null && mPWallet!!.id !== event.mPWallet!!.id) {
             mPWallet = event.mPWallet
-            PWallet.setUsingWallet(mPWallet)
+            WalletUtils.setUsingWallet(mPWallet)
             initData()
         }
     }
@@ -251,18 +256,19 @@ class WalletFragment : BaseFragment() {
     }
 
 
-
-
     override fun onDestroy() {
         super.onDestroy()
         if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this)
         }
-        if (mTimer != null) {
-            mTimer!!.cancel()
+        if(isAdded) {
+            if (mTimer != null) {
+                mTimer!!.cancel()
+            }
+            if (balanceTimer != null) {
+                balanceTimer!!.cancel()
+            }
         }
-        if (balanceTimer != null){
-            balanceTimer!!.cancel()
-        }
+
     }
 }

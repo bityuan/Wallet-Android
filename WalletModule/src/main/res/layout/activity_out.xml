@@ -73,7 +73,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_10"
+                android:layout_marginTop="10dp"
                 android:background="@android:color/white"
                 android:orientation="vertical"
                 android:paddingLeft="@dimen/dp_16">
@@ -88,7 +88,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/dp_10"
+                        android:layout_marginTop="10dp"
                         android:gravity="center_vertical"
                         android:paddingRight="@dimen/dp_16">
 
@@ -209,7 +209,7 @@
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_number_flag"
-                    android:paddingLeft="@dimen/dp_10"
+                    android:paddingLeft="10dp"
                     android:hint="@string/home_hint_please_input_count"
 
                     android:inputType="number|numberDecimal"
