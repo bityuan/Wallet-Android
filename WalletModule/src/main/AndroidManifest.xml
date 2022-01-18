@@ -15,9 +15,12 @@
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application>
-<!--        <activity-->
-<!--            android:name=".ui.activity.WebAppDetailsActivity"-->
-<!--            android:exported="false" />-->
+        <activity
+            android:name=".ui.activity.ExchangeActivity"
+            android:exported="false" />
+        <!-- <activity -->
+        <!-- android:name=".ui.activity.WebAppDetailsActivity" -->
+        <!-- android:exported="false" /> -->
         <activity
             android:name=".ui.activity.InActivity"
             android:label=""

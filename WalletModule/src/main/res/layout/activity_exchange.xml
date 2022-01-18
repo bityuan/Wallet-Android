@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    tools:context=".ui.activity.ExchangeActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="兑换数量"
+            android:textColor="@color/color_ex" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="余额 3000 USDT（TRC20)"
+            android:textColor="@color/color_ex_value" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:gravity="center_vertical"
+        app:bl_corners_radius="15dp"
+        app:bl_solid_color="#F6F7F9"
+        app:bl_stroke_color="#E5E5E5"
+        app:bl_stroke_width="1dp">
+
+        <EditText
+            android:text="0.1"
+            android:id="@+id/et_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="9dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:hint="0.00"
+            android:textColorHint="#D2D2D2"
+            android:textSize="24dp" />
+
+        <TextView
+            android:id="@+id/tv_max"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="12dp"
+            android:padding="5dp"
+            android:text="最大"
+            app:bl_corners_radius="4dp"
+            app:bl_solid_color="#CADCE9" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="单次限额"
+            android:textColor="@color/color_ex" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5000 USDT"
+            android:textColor="@color/color_ex_value" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:gravity="center_vertical"
+        app:bl_corners_radius="15dp"
+        app:bl_solid_color="#F6F7F9"
+        app:bl_stroke_color="#E5E5E5"
+        app:bl_stroke_width="1dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="9dp"
+            android:layout_weight="1"
+            android:text="是否兑换0.02 BNB"
+            android:textColor="@color/color_ex"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/iv_check"
+            android:src="@mipmap/ic_ex_sel"
+            android:padding="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="12dp" />
+
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="接收地址 (BEP20)"
+        android:textColor="@color/color_ex"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tv_bsc_address"
+        android:layout_width="match_parent"
+        android:paddingLeft="9dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
+        android:text="0x---"
+        android:textColor="@color/color_ex"
+        android:textSize="14sp"
+        app:bl_corners_radius="15dp"
+        app:bl_solid_color="#F6F7F9"
+        app:bl_stroke_color="#E5E5E5"
+        app:bl_stroke_width="1dp" />
+
+    <Button
+        android:id="@+id/btn_exchange"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        android:text="兑换"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:bl_corners_radius="15dp"
+        app:bl_solid_color="#5B88A7"
+        app:bl_stroke_color="#E5E5E5"
+        app:bl_stroke_width="1dp" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:text="温馨提示："
+        android:textColor="@color/color_ex"
+        android:textSize="14sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="1.由于闪兑需要操作区块链转账，一般处理时间为3~5分钟；\n2.遇到大量交易时，商家账户有时会稍有延迟，请您耐心等待；\n3.如有疑问，请联系客服，客服号：1234567"
+        android:textColor="@color/color_ex_value"
+        android:textSize="14sp" />
+</LinearLayout>

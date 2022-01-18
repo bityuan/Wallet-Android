@@ -4,10 +4,9 @@ import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.bean.WithHold
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.HttpResponse
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Query
+import okhttp3.RequestBody
+import retrofit2.Call
+import retrofit2.http.*
 
 @JvmSuppressWildcards
 interface Apis {
@@ -22,9 +21,19 @@ interface Apis {
     @GET("interface/coin/get-with-hold")
     suspend fun getWithHold(
         @Query("platform") paltform: String,
-        @Query("coinname") coinName: String): HttpResponse<WithHold>
+        @Query("coinname") coinName: String
+    ): HttpResponse<WithHold>
 
 
     @POST("interface/wallet-coin")
     suspend fun getCoinList(@Body body: Map<String, Any>): HttpResponse<List<Coin>>
+
+
+    @POST("https://159.138.88.29:18084/")
+    suspend fun flashExchange(
+        @Header("Authorization") token: String,
+        @Body body: RequestBody
+    ): HttpResponse<String>
+
+
 }

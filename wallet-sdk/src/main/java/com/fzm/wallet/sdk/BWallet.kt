@@ -43,6 +43,12 @@ interface BWallet {
      * @param user  用户
      */
     fun getCurrentWallet(user: String = ""): PWallet?
+    /**
+     * 获取当前正在使用的钱包
+     *
+     * @param user  用户
+     */
+    fun getCurrentWalletId(user: String = ""): Long
 
     /**
      * 获取指定id的钱包
@@ -107,4 +113,11 @@ interface BWallet {
      * @param hash          交易hash
      */
     suspend fun getTransactionByHash(chain: String, tokenSymbol: String, hash: String): Transactions?
+
+    /**
+     * 根据主链获取地址
+     *
+     * @param chain         链名
+     */
+    suspend fun getAddress(chain: String): String
 }

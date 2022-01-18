@@ -29,5 +29,7 @@
     <color name="color_DD2E41">#DD2E41</color>
     <color name="color_80ffffff">#80ffffff</color>
     <color name="color_bg">#F8F8FA</color>
+    <color name="color_ex">#8093A7</color>
+    <color name="color_ex_value">#516379</color>
 
 </resources>

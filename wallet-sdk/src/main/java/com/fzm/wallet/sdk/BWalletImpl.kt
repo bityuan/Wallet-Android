@@ -15,6 +15,8 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
 import org.koin.core.module.Module
 import org.litepal.LitePal
+import org.litepal.LitePal.select
+import org.litepal.extension.find
 
 /**
  * @author zhengjy
@@ -58,6 +60,10 @@ internal class BWalletImpl : BWallet {
             }
     }
 
+    override fun getCurrentWalletId(user: String): Long {
+        return MMkvUtil.decodeLong("${user}${PWallet.PWALLET_ID}")
+    }
+
     override fun findWallet(id: String?): PWallet? {
         if (id.isNullOrEmpty()) return null
         return LitePal.find(PWallet::class.java, id.toLong())
@@ -91,11 +97,31 @@ internal class BWalletImpl : BWallet {
         it.getCoinBalance(initialDelay, period, requireQuotation)
     }
 
-    override suspend fun getTransactionList(coin: Coin, type: Long, index: Long, size: Long): List<Transactions> {
+    override suspend fun getTransactionList(
+        coin: Coin,
+        type: Long,
+        index: Long,
+        size: Long
+    ): List<Transactions> {
         return wallet.getTransactionList(coin, type, index, size)
     }
 
-    override suspend fun getTransactionByHash(chain: String, tokenSymbol: String, hash: String): Transactions? {
+    override suspend fun getTransactionByHash(
+        chain: String,
+        tokenSymbol: String,
+        hash: String
+    ): Transactions? {
         return wallet.getTransactionByHash(chain, tokenSymbol, hash)
     }
+
+    override suspend fun getAddress(chain: String): String {
+        val id: Long = getCurrentWalletId()
+        val coinList = select()
+            .where("chain = ? and pwallet_id = ?", chain, id.toString())
+            .find<Coin>(true)
+        return coinList.let {
+            it[0].address
+        }
+    }
+
 }

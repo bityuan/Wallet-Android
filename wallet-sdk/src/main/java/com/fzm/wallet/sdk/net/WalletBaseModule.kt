@@ -3,11 +3,14 @@ package com.fzm.wallet.sdk.net
 import com.fzm.wallet.sdk.api.ApiEnv
 import com.fzm.wallet.sdk.api.Apis
 import com.fzm.wallet.sdk.base.BWallet
+import com.fzm.wallet.sdk.net.security.SSLSocketClient
+import com.fzm.wallet.sdk.repo.ExchangeRepository
 import com.fzm.wallet.sdk.repo.OutRepository
 import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.utils.ToolUtils
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.context.KoinContextHandler
 import org.koin.core.module.Module
 import org.koin.core.qualifier._q
@@ -31,7 +34,9 @@ fun Module.walletNetModule() {
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .addInterceptor(get(walletQualifier))
-//            .addInterceptor(HttpLoggingInterceptor())
+            //.addNetworkInterceptor(HttpLoggingInterceptor())
+            .sslSocketFactory(SSLSocketClient.getSSLSocketFactory(), SSLSocketClient.getTrustManager())
+            .hostnameVerifier(SSLSocketClient.getHostnameVerifier())
             .build()
     }
 
@@ -73,4 +78,6 @@ fun Module.walletNetModule() {
     single(walletQualifier) { OutRepository(get(walletQualifier)) }
 
     single(walletQualifier) { WalletRepository(get(walletQualifier)) }
+
+    single(walletQualifier) { ExchangeRepository(get(walletQualifier)) }
 }
