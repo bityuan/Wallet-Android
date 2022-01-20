@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import com.alibaba.fastjson.JSON
 import com.fzm.wallet.sdk.BWallet
@@ -29,6 +30,7 @@ import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
 import walletapi.Walletapi
+import java.math.BigDecimal
 
 class ExchangeActivity : BaseActivity() {
 
@@ -38,6 +40,7 @@ class ExchangeActivity : BaseActivity() {
     private lateinit var bnbAddress: String
     private val exchangeViewModel: ExchangeViewModel by inject(walletQualifier)
     private var checked = true
+    private var exFee = 0.0
 
     companion object {
         val TOADDRESS = "TPKLQtd9s7eZJtWPy4H63hCckhbbzmtStn"
@@ -71,6 +74,27 @@ class ExchangeActivity : BaseActivity() {
                 toast(it.error())
             }
         })
+
+        exchangeViewModel.getExLimit.observe(this, Observer {
+            if (it.isSucceed()) {
+                tv_limit.text = it.data().toString()
+            }else {
+                toast(it.error())
+            }
+        })
+        exchangeViewModel.getExFee.observe(this, Observer {
+            if (it.isSucceed()) {
+                it.data().let {
+                    exFee = it?.gasFeeUsdt!!
+
+                    val bigDecimal = BigDecimal(it.gasFeeAmount).setScale(4, BigDecimal.ROUND_DOWN);
+                    val gasChain = bigDecimal.toString()
+                    tv_ex_fee.text = "$exFee USDT"
+                    tv_ex_chain.text = "是否兑换 $gasChain BNB"
+                    tv_re_chain.text = "$gasChain BNB"
+                }
+            }
+        })
     }
 
     override fun initListener() {
@@ -90,6 +114,12 @@ class ExchangeActivity : BaseActivity() {
 
         tv_max.setOnClickListener {
             et_value.setText(balance)
+        }
+
+
+        et_value.addTextChangedListener {
+            val input = it.toString().toDouble()
+            tv_re_value.text = (input - exFee).toString()
         }
     }
 
@@ -175,6 +205,8 @@ class ExchangeActivity : BaseActivity() {
     private fun getAddress() {
         mainScope.launch(Dispatchers.IO) {
             bnbAddress = BWallet.get().getAddress(Walletapi.TypeBnbString)
+            exchangeViewModel.getExLimit(bnbAddress)
+            exchangeViewModel.getExFee()
             withContext(Dispatchers.Main) {
                 tv_bsc_address.text = bnbAddress
             }
@@ -182,7 +214,7 @@ class ExchangeActivity : BaseActivity() {
         }
     }
 
-    private var balance:String = "0"
+    private var balance: String = "0"
     private fun getBalance() {
         mainScope.launch(Dispatchers.IO) {
             while (true) {

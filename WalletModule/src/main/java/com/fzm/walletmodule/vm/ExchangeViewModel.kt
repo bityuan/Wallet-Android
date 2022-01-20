@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fzm.wallet.sdk.bean.ExchangeFee
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.HttpResult
 import com.fzm.wallet.sdk.repo.ExchangeRepository
@@ -15,6 +16,14 @@ class ExchangeViewModel constructor(private val exchangeRepository: ExchangeRepo
     private val _flashExchange = MutableLiveData<HttpResult<String>>()
     val flashExchange: LiveData<HttpResult<String>>
         get() = _flashExchange
+
+    private val _getExLimit = MutableLiveData<HttpResult<Long>>()
+    val getExLimit: LiveData<HttpResult<Long>>
+        get() = _getExLimit
+
+    private val _getExFee = MutableLiveData<HttpResult<ExchangeFee>>()
+    val getExFee: LiveData<HttpResult<ExchangeFee>>
+        get() = _getExFee
 
     fun flashExchange(
         cointype: String,
@@ -36,5 +45,19 @@ class ExchangeViewModel constructor(private val exchangeRepository: ExchangeRepo
                 gasfee
             )
         }
+    }
+
+    fun getExLimit(address: String) {
+        viewModelScope.launch {
+            _getExLimit.value = exchangeRepository.getExLimit(address)
+        }
+
+    }
+
+    fun getExFee() {
+        viewModelScope.launch {
+            _getExFee.value = exchangeRepository.getExFee()
+        }
+
     }
 }

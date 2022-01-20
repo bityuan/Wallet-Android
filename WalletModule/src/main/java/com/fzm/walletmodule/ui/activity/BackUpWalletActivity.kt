@@ -9,7 +9,6 @@ import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.chad.library.adapter.base.callback.ItemDragAndSwipeCallback
 import com.chad.library.adapter.base.listener.OnItemDragListener
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.WalletConfiguration
@@ -193,6 +192,7 @@ class BackUpWalletActivity : BaseActivity() {
 
         // 设置适配器
         mMnemResultAdapter = BackUpWalletAdapter(
+            this@BackUpWalletActivity,
             R.layout.activity_back_up_wallet_item,
             mMnemResultList,
             mPWallet.mnemType
@@ -200,15 +200,15 @@ class BackUpWalletActivity : BaseActivity() {
         //给RecyclerView设置适配器
         ftl_mnem_result.adapter = mMnemResultAdapter
         mMnemResultAdapter?.notifyDataSetChanged()
-        val itemDragAndSwipeCallback = ItemDragAndSwipeCallback(mMnemResultAdapter)
-        val itemTouchHelper = ItemTouchHelper(itemDragAndSwipeCallback)
-        itemTouchHelper.attachToRecyclerView(ftl_mnem_result)
+        //val itemDragAndSwipeCallback = ItemDragAndSwipeCallback(mMnemResultAdapter)
+        //val itemTouchHelper = ItemTouchHelper(itemDragAndSwipeCallback)
+        //itemTouchHelper.attachToRecyclerView(ftl_mnem_result)
 
         // 开启拖拽
-        mMnemResultAdapter?.enableDragItem(itemTouchHelper, R.id.recycle_text, true)
-        mMnemResultAdapter?.setOnItemDragListener(onItemDragListener)
+        //mMnemResultAdapter?.enableDragItem(itemTouchHelper, R.id.recycle_text, true)
+        //mMnemResultAdapter?.setOnItemDragListener(onItemDragListener)
 
-        mMnemResultAdapter?.setOnItemChildClickListener { adapter, view, position ->
+        mMnemResultAdapter?.setOnItemClickListener { adapter, view, position ->
             val backUp = adapter.getItem(position) as WalletBackUp
             backUp.select = WalletBackUp.UN_SELECTED
             updateMenm(backUp)

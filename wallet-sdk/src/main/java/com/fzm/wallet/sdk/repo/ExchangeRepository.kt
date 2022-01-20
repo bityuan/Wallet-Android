@@ -1,6 +1,7 @@
 package com.fzm.wallet.sdk.repo
 
 import com.fzm.wallet.sdk.api.Apis
+import com.fzm.wallet.sdk.bean.ExchangeFee
 import com.fzm.wallet.sdk.bean.toRequestBody
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.HttpResult
@@ -34,6 +35,15 @@ class ExchangeRepository constructor(private val apis: Apis) {
         return goCall {
             apis.flashExchange(token, body)
         }
+    }
+
+
+    suspend fun getExLimit(address: String): HttpResult<Long> {
+        return apiCall { apis.getExLimit(address) }
+    }
+
+    suspend fun getExFee(): HttpResult<ExchangeFee> {
+        return apiCall { apis.getExFee() }
     }
 
 

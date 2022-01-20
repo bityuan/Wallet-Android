@@ -1,5 +1,6 @@
 package com.fzm.wallet.sdk.net
 
+import com.fzm.wallet.sdk.BuildConfig
 import com.fzm.wallet.sdk.api.ApiEnv
 import com.fzm.wallet.sdk.api.Apis
 import com.fzm.wallet.sdk.base.BWallet
@@ -34,7 +35,14 @@ fun Module.walletNetModule() {
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .addInterceptor(get(walletQualifier))
-            //.addNetworkInterceptor(HttpLoggingInterceptor())
+            .addNetworkInterceptor(
+                HttpLoggingInterceptor().apply {
+                    level = when (BuildConfig.DEBUG) {
+                        true -> HttpLoggingInterceptor.Level.BODY
+                        false -> HttpLoggingInterceptor.Level.NONE
+                    }
+                }
+            )
             .sslSocketFactory(SSLSocketClient.getSSLSocketFactory(), SSLSocketClient.getTrustManager())
             .hostnameVerifier(SSLSocketClient.getHostnameVerifier())
             .build()

@@ -75,9 +75,10 @@
             android:textColor="@color/color_ex" />
 
         <TextView
+            android:id="@+id/tv_limit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="5000 USDT"
+            android:text="- USDT"
             android:textColor="@color/color_ex_value" />
     </LinearLayout>
 
@@ -94,11 +95,12 @@
         app:bl_stroke_width="1dp">
 
         <TextView
+            android:id="@+id/tv_ex_chain"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="9dp"
             android:layout_weight="1"
-            android:text="是否兑换0.02 BNB"
+            android:text="是否兑换- BNB"
             android:textColor="@color/color_ex"
             android:textSize="14sp" />
 
@@ -182,7 +184,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/tv_re_fee"
+        android:id="@+id/tv_re_chain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
