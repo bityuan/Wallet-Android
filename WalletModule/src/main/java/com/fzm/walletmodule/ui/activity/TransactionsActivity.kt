@@ -86,12 +86,18 @@ class TransactionsActivity : BaseActivity() {
             }
         })
         ll_out.setOnClickListener {
+            if (isFastClick()){
+                return@setOnClickListener
+            }
             startActivity<OutActivity>(
                 Pair(Constants.FROM, OutActivity.FROM_TRANSACTION),
                 Coin::class.java.simpleName to coin
             )
         }
         ll_in.setOnClickListener {
+            if (isFastClick()){
+                return@setOnClickListener
+            }
             startActivity<InActivity>(Coin::class.java.simpleName to coin)
         }
         tv_address.setOnClickListener {
@@ -105,6 +111,9 @@ class TransactionsActivity : BaseActivity() {
             }
         }
         iv_t_scan.setOnClickListener {
+            if (isFastClick()){
+                return@setOnClickListener
+            }
             startActivity<CaptureCustomActivity>(CaptureCustomActivity.REQUST_CODE to CaptureCustomActivity.REQUESTCODE_TRANSACTIONS)
         }
     }

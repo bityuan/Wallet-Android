@@ -12,6 +12,7 @@ import com.fzm.walletmodule.utils.AppUtils
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.utils.WalletUtils
 import com.fzm.walletmodule.utils.ToastUtils
+import com.fzm.walletmodule.utils.isFastClick
 import kotlinx.android.synthetic.main.activity_set_password.*
 
 
@@ -30,6 +31,9 @@ class MnemPasswordActivity : BaseActivity() {
         mnem = intent.getStringExtra(PWallet.PWALLET_MNEM)
         walletId = intent.getLongExtra(PWallet.PWALLET_ID, -1)
         btn_sure.setOnClickListener {
+            if (isFastClick()){
+                return@setOnClickListener
+            }
             val newPassword = et_password.text.toString()
             val passwordAgain = et_password_again.text.toString()
             if (checked(newPassword, passwordAgain)) {

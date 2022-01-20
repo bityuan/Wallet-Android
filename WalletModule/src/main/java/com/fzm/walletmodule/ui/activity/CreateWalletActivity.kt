@@ -13,10 +13,7 @@ import com.fzm.walletmodule.R
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.walletmodule.listener.SoftKeyBoardListener
 import com.fzm.walletmodule.ui.base.BaseActivity
-import com.fzm.walletmodule.utils.AppUtils
-import com.fzm.walletmodule.utils.ListUtils
-import com.fzm.walletmodule.utils.ScreenUtils
-import com.fzm.walletmodule.utils.ToastUtils
+import com.fzm.walletmodule.utils.*
 import com.snail.antifake.jni.EmulatorDetectUtil
 import kotlinx.android.synthetic.main.activity_create_wallet.*
 import org.litepal.LitePal
@@ -72,6 +69,9 @@ class CreateWalletActivity : BaseActivity() {
     override fun initListener() {
         super.initListener()
         btn_create.setOnClickListener {
+            if (isFastClick()){
+                return@setOnClickListener
+            }
             hideKeyboard()
             gotoFinishTask()
         }
