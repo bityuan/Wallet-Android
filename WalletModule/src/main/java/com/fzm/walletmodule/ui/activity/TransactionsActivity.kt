@@ -252,7 +252,8 @@ class TransactionsActivity : BaseActivity() {
         doAsync {
             val balance = GoWallet.handleBalance(coin)
             uiThread {
-                tv_balance.text = DecimalUtils.subZeroAndDot(balance)
+                coin.balance = balance
+                tv_balance.text = DecimalUtils.subZeroAndDot(coin.balance)
             }
         }
     }

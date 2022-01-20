@@ -5,6 +5,7 @@ import com.fzm.wallet.sdk.bean.toRequestBody
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.HttpResult
 import com.fzm.wallet.sdk.net.apiCall
+import com.fzm.wallet.sdk.net.goCall
 
 class ExchangeRepository constructor(private val apis: Apis) {
     companion object {
@@ -30,7 +31,7 @@ class ExchangeRepository constructor(private val apis: Apis) {
             "to" to to,
             "gasfee" to gasfee
         )
-        return apiCall {
+        return goCall {
             apis.flashExchange(token, body)
         }
     }

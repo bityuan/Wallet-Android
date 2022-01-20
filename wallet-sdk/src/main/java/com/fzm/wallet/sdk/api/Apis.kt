@@ -3,6 +3,7 @@ package com.fzm.wallet.sdk.api
 import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.bean.WithHold
 import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.net.GoResponse
 import com.fzm.wallet.sdk.net.HttpResponse
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -33,7 +34,7 @@ interface Apis {
     suspend fun flashExchange(
         @Header("Authorization") token: String,
         @Body body: RequestBody
-    ): HttpResponse<String>
+    ): GoResponse<String>
 
 
 }

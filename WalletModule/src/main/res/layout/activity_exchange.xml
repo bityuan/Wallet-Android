@@ -20,9 +20,10 @@
             android:textColor="@color/color_ex" />
 
         <TextView
+            android:id="@+id/tv_balance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="余额 3000 USDT（TRC20)"
+            android:text="余额 - USDT（TRC20)"
             android:textColor="@color/color_ex_value" />
     </LinearLayout>
 
@@ -39,7 +40,6 @@
         app:bl_stroke_width="1dp">
 
         <EditText
-            android:text="0.1"
             android:id="@+id/et_value"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -104,11 +104,11 @@
 
         <ImageView
             android:id="@+id/iv_check"
-            android:src="@mipmap/ic_ex_sel"
-            android:padding="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="12dp" />
+            android:layout_marginRight="12dp"
+            android:padding="10dp"
+            android:src="@mipmap/ic_ex_sel" />
 
 
     </LinearLayout>
@@ -124,10 +124,10 @@
     <TextView
         android:id="@+id/tv_bsc_address"
         android:layout_width="match_parent"
-        android:paddingLeft="9dp"
         android:layout_height="48dp"
         android:layout_marginTop="10dp"
         android:gravity="center_vertical"
+        android:paddingLeft="9dp"
         android:text="0x---"
         android:textColor="@color/color_ex"
         android:textSize="14sp"
@@ -136,15 +136,69 @@
         app:bl_stroke_color="#E5E5E5"
         app:bl_stroke_width="1dp" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="兑换手续费"
+            android:textColor="@color/color_ex" />
+
+        <TextView
+            android:id="@+id/tv_ex_fee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-USDT"
+            android:textColor="@color/color_ex_value" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:background="#F6F7F9" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="实际到账"
+            android:textColor="@color/color_ex" />
+
+        <TextView
+            android:id="@+id/tv_re_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-USDT"
+            android:textColor="@color/color_ex_value" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_re_fee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="-BNB"
+        android:textColor="@color/color_ex_value" />
+
+
     <Button
         android:id="@+id/btn_exchange"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="22dp"
         android:text="兑换"
-        android:textStyle="bold"
         android:textColor="@android:color/white"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:bl_corners_radius="15dp"
         app:bl_solid_color="#5B88A7"
         app:bl_stroke_color="#E5E5E5"

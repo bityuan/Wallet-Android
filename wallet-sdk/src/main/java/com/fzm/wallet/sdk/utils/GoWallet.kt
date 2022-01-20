@@ -139,7 +139,7 @@ class GoWallet {
          * @param lCoin Coin   币种
          * @return String?  余额
          */
-        fun handleBalance(lCoin: Coin): String? {
+        fun handleBalance(lCoin: Coin): String {
             var tokensymbol = if (lCoin.name == lCoin.chain) "" else lCoin.name
             if (!TextUtils.isEmpty(lCoin.platform) && !TextUtils.isEmpty(lCoin.chain)) {
                 if (isBTYChild(lCoin)) {

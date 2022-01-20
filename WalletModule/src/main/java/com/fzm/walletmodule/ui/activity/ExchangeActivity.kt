@@ -14,15 +14,19 @@ import com.fzm.walletmodule.R
 import com.fzm.walletmodule.bean.StringResult
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.EditDialogFragment
+import com.fzm.walletmodule.utils.DecimalUtils
 import com.fzm.walletmodule.utils.ToastUtils
 import com.fzm.walletmodule.vm.ExchangeViewModel
 import com.fzm.walletmodule.vm.OutViewModel
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_exchange.*
-import kotlinx.android.synthetic.main.activity_out.*
+import kotlinx.android.synthetic.main.activity_exchange.tv_balance
+import kotlinx.android.synthetic.main.activity_transactions.*
+import kotlinx.android.synthetic.main.view_header_wallet.*
 import kotlinx.coroutines.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
+import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
 import walletapi.Walletapi
 
@@ -50,6 +54,7 @@ class ExchangeActivity : BaseActivity() {
 
     override fun initIntent() {
         mCoin = intent.getSerializableExtra(Coin::class.java.simpleName) as Coin
+        tv_balance.text = "余额 ${mCoin.balance} USDT (TRC20)"
     }
 
     override fun initObserver() {
@@ -57,9 +62,12 @@ class ExchangeActivity : BaseActivity() {
         exchangeViewModel.flashExchange.observe(this, Observer {
             if (it.isSucceed()) {
                 val result = it.data()
+                Log.v("zx", "res = " + result)
+                dismiss()
                 toast("操作成功")
-
+                getBalance()
             } else {
+                dismiss()
                 toast(it.error())
             }
         })
@@ -68,10 +76,10 @@ class ExchangeActivity : BaseActivity() {
     override fun initListener() {
         super.initListener()
         iv_check.setOnClickListener {
-            if(checked) {
+            if (checked) {
                 iv_check.setImageResource(R.mipmap.ic_ex_nomal)
                 checked = false
-            }else {
+            } else {
                 iv_check.setImageResource(R.mipmap.ic_ex_sel)
                 checked = true
             }
@@ -79,18 +87,15 @@ class ExchangeActivity : BaseActivity() {
         btn_exchange.setOnClickListener {
             showPasswordDialog()
         }
+
+        tv_max.setOnClickListener {
+            et_value.setText(balance)
+        }
     }
 
     override fun initData() {
         super.initData()
-        mainScope.launch(Dispatchers.IO) {
-            bnbAddress = BWallet.get().getAddress(Walletapi.TypeBnbString)
-            withContext(Dispatchers.Main) {
-                tv_bsc_address.text = bnbAddress
-            }
-        }
-
-
+        getAddress()
     }
 
 
@@ -119,7 +124,6 @@ class ExchangeActivity : BaseActivity() {
         doAsync {
             val result = GoWallet.checkPasswd(password, localPassword)
             if (result) {
-                dismiss()
                 configTransaction(password)
             } else {
                 runOnUiThread {
@@ -165,6 +169,31 @@ class ExchangeActivity : BaseActivity() {
             TOADDRESS, checked
         )
 
+    }
+
+
+    private fun getAddress() {
+        mainScope.launch(Dispatchers.IO) {
+            bnbAddress = BWallet.get().getAddress(Walletapi.TypeBnbString)
+            withContext(Dispatchers.Main) {
+                tv_bsc_address.text = bnbAddress
+            }
+
+        }
+    }
+
+    private var balance:String = "0"
+    private fun getBalance() {
+        mainScope.launch(Dispatchers.IO) {
+            while (true) {
+                delay(3000)
+                balance = GoWallet.handleBalance(mCoin)
+                withContext(Dispatchers.Main) {
+                    tv_balance.text = "余额 $balance USDT (TRC20)"
+                }
+            }
+
+        }
     }
 
     override fun onDestroy() {
