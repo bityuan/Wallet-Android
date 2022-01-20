@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/fl_search"
+        android:layout_width="match_parent"
+        android:layout_height="39dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:id="@+id/ll_search"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="49dp"
+            android:layout_marginRight="49dp"
+            android:gravity="center"
+            android:clickable="true"
+            android:background="@drawable/shape_round_gray_edit"
+            android:visibility="visible"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:drawableLeft="@mipmap/icon_search_coin"
+                android:drawablePadding="8dp"
+                android:gravity="center"
+                android:text="@string/my_wallet_search_coin"
+                android:textColor="@color/gray_8e"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/ll_show_search"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingLeft="13dp"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/et_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="49dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:inputType="text"
+                android:background="@drawable/shape_round_gray_edit"
+                android:drawableLeft="@mipmap/icon_search_coin"
+                android:paddingLeft="8dp"
+                android:drawablePadding="8dp"
+                android:hint="@string/my_wallet_search_coin"
+                android:textColor="@color/gray_33"
+                android:textColorHint="@color/gray_99"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/tv_add_coin_cancel"
+                android:layout_width="69dp"
+                android:layout_height="41dp"
+                android:gravity="center"
+                android:clickable="false"
+                android:text="@string/cancel"
+                android:textColor="@color/color_8E92A3"
+                android:textSize="15sp"/>
+
+            <!--<ImageView
+                android:id="@+id/iv_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingLeft="5dp"
+                android:paddingRight="13dp"
+                android:src="@mipmap/icon_delete" />-->
+
+        </LinearLayout>
+
+
+    </FrameLayout>
+
+
+</LinearLayout>

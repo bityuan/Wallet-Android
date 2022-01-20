@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="70dp">
+
+    <ImageView
+        android:id="@+id/iv_addcoin_icon"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="17dp" />
+    <TextView
+        android:id="@+id/tv_addcoin_name"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="13dp"
+        android:layout_marginLeft="61dp"
+        android:textColor="@color/color_333649"
+        android:textSize="16sp"
+        android:gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/tv_addcoin_name_cn"
+        android:layout_width="wrap_content"
+        android:layout_height="17dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="38dp"
+        android:layout_marginLeft="61dp"
+        android:textColor="@color/color_8e92a3"
+        android:textSize="12sp"
+        android:gravity="center"
+        />
+
+    <ImageView
+        android:id="@+id/iv_add_remove_coin"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:src="@mipmap/icon_removecoin"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingLeft="21dp"
+        android:paddingRight="21dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>

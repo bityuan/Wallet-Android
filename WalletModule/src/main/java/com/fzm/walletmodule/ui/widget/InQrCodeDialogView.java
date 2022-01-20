@@ -1,5 +1,6 @@
 package com.fzm.walletmodule.ui.widget;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -20,7 +21,7 @@ import com.king.zxing.util.CodeUtils;
 
 public class InQrCodeDialogView {
 
-    private Context context;
+    private Activity context;
 
     private Dialog lDialog;
 
@@ -28,12 +29,12 @@ public class InQrCodeDialogView {
         return context;
     }
 
-    public void setContext(Context context) {
+    public void setContext(Activity context) {
         this.context = context;
     }
 
 
-    public InQrCodeDialogView(Context context, String address, String imgUrl) {
+    public InQrCodeDialogView(Activity context, String address, String imgUrl) {
         this.context = context;
         showNoticeDialogCustom(address, imgUrl);
 

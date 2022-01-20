@@ -501,7 +501,7 @@ class GoWallet {
          * @param mnem String      助记词
          * @return String?
          */
-        fun decMenm(encPasswd: ByteArray, seed: String): String? {
+        fun decMenm(encPasswd: ByteArray, seed: String): String {
             try {
                 val bSeed = Walletapi.hexTobyte(seed)
                 val seedDecKey = Walletapi.seedDecKey(encPasswd, bSeed)
@@ -509,7 +509,7 @@ class GoWallet {
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
-            return null
+            return ""
         }
 
         //byte[]转string 16进制
