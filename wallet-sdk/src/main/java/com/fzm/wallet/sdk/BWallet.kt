@@ -120,4 +120,11 @@ interface BWallet {
      * @param chain         链名
      */
     suspend fun getAddress(chain: String): String
+
+    /**
+     * 获取临时私钥
+     */
+
+     fun getBtyPrikey(): String?
+
 }

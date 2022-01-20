@@ -2,6 +2,8 @@ package com.fzm.wallet.sdk.utils
 
 import android.text.TextUtils
 import android.util.Log
+import com.fzm.wallet.sdk.BWallet
+import com.fzm.wallet.sdk.BWalletImpl
 import com.fzm.wallet.sdk.api.ApiEnv.Companion.getGoURL
 import com.fzm.wallet.sdk.bean.MulAddress
 import com.fzm.wallet.sdk.bean.response.BalanceResponse
@@ -537,43 +539,6 @@ class GoWallet {
             return Walletapi.imortMulAddress(mulAddr)
         }
 
-        fun createWallet(wallet: PWallet, coinList: List<Coin>, listener: CoinListener) {
-            val mulList: ArrayList<MulAddress> = ArrayList()
-            doAsync {
-                for (coin in coinList) {
-                    val hdWallet = getHDWallet(coin.chain, wallet.mnem)
-                    val pubkey = hdWallet!!.newKeyPub(0)
-                    val address = hdWallet.newAddress_v2(0)
-                    val pubkeyStr = encodeToStrings(pubkey)
-                    if (Walletapi.TypeBtyString == coin.chain) {
-                        wallet.btyPrivkey = encodeToStrings(hdWallet.newKeyPriv(0))
-                    }
-                    coin.status = Coin.STATUS_ENABLE
-                    coin.pubkey = pubkeyStr
-                    coin.address = address
-                    //只添加主链即可
-                    if (coin.chain == coin.name) {
-                        val mulAddress = MulAddress()
-                        mulAddress.cointype = coin.chain
-                        mulAddress.address = coin.address
-                        mulList.add(mulAddress)
-                    }
-                }
-                saveAll(coinList)
-                wallet.coinList.addAll(coinList)
-                val bpassword = encPasswd(wallet.password)
-                val passwdHash = passwdHash(bpassword!!)
-                val seedEncKey = encMenm(bpassword, wallet.mnem)
-                wallet.mnem = seedEncKey
-                wallet.password = passwdHash
-                wallet.save()
-                val mulJson = gson.toJson(mulList)
-                val aBoolean = imortMulAddress("", APPSYMBOL_P, mulJson)
-                uiThread {
-                    listener.onSuccess()
-                }
-            }
-        }
 
         internal suspend fun createWallet(wallet: PWallet, coinList: List<Coin>): PWallet {
             return withContext(Dispatchers.IO) {
@@ -586,7 +551,8 @@ class GoWallet {
                     coin.pubkey = pubkeyStr
                     coin.address = address
                     if (Walletapi.TypeBtyString == coin.chain) {
-                        wallet.btyPrivkey = encodeToStrings(hdWallet.newKeyPriv(0))
+                        val bWalletImpl = BWallet.get() as BWalletImpl
+                        bWalletImpl.setBtyPrivkey(encodeToStrings(hdWallet.newKeyPriv(0)))
                     }
                 }
                 saveAll(coinList)

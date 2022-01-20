@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.FragmentTransaction
+import com.fzm.wallet.sdk.BWallet
 import com.fzm.walletmodule.base.Constants
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
@@ -197,7 +198,14 @@ class MainActivity : BaseActivity() {
             mPWallet = event.mPWallet
             WalletUtils.setUsingWallet(mPWallet)
         }
+
+        if(!event.isChoose) {
+            BWallet.get()
+            val privkey = BWallet.get().getBtyPrikey()
+            Log.v("tag", privkey+"")
+        }
     }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onInitPasswordEvent(event: InitPasswordEvent) {

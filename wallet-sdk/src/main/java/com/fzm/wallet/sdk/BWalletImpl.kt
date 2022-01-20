@@ -37,6 +37,9 @@ internal class BWalletImpl : BWallet {
 
     private val _current = MutableStateFlow<Wallet<Coin>>(EmptyWallet)
 
+    private var btyPrivkey: String = ""
+
+
     override fun init(context: Context, module: Module?) {
         module?.walletNetModule()
     }
@@ -124,4 +127,12 @@ internal class BWalletImpl : BWallet {
         }
     }
 
+
+    fun setBtyPrivkey(value: String) {
+        this.btyPrivkey = value
+    }
+
+    override fun getBtyPrikey(): String {
+        return btyPrivkey
+    }
 }
