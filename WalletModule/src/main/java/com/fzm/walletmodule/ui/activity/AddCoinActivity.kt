@@ -188,15 +188,16 @@ class AddCoinActivity : BaseActivity() {
             platform = if (homeData[0] != null) homeData[0].platform else ""
         }
         for (coin in homeData) {
-            mStatusMap[coin.netId] = coin.status
-            mCoinsMap[coin.netId] = coin
+            if (coin.netId != null) {
+                mStatusMap[coin.netId] = coin.status
+                mCoinsMap[coin.netId] = coin
+            }
         }
         walletViewModel.getTabData()
     }
 
     override fun initListener() {
         et_search.doOnTextChanged { text, start, before, count ->
-            Log.e("addCoin","doOnTextChanged")
             val string: String = text.toString()
             if (mDelaySearchHandler!!.hasMessages(MSG_SEARCH)) {
                 mDelaySearchHandler!!.removeMessages(MSG_SEARCH)
@@ -272,7 +273,6 @@ class AddCoinActivity : BaseActivity() {
 
         walletViewModel.searchCoinList.observe(this, Observer {
             if (it.isSucceed()) {
-                Log.e("addCoin","请求成功")
                 val coinList = it.data()
                 tv_search_tip.visibility = View.GONE
                 feedBackLayout.visibility = View.GONE
@@ -285,10 +285,8 @@ class AddCoinActivity : BaseActivity() {
                     if (data.size <= 0) {
                         data.addAll(list)
                         swipeLayout.visibility = View.VISIBLE
-                        //                mCommonAdapter.notifyDataSetChanged();
                     } else {
                         data.addAll(list)
-                        //                mCommonAdapter.notifyDataSetChanged();
                     }
                 } else { //本次请求没有数据
                     // 并且本来的列表也没有数据，说明数据为空。
@@ -312,7 +310,7 @@ class AddCoinActivity : BaseActivity() {
                 }
                 mCommonAdapter!!.notifyDataSetChanged()
             } else {
-                Log.e("addCoin","请求失败${it.error()}")
+                Log.e("addCoin", "请求失败${it.error()}")
                 toast(it.error())
             }
         })
@@ -376,7 +374,7 @@ class AddCoinActivity : BaseActivity() {
             val chainCoin = select().where(
                 "chain = ? and pwallet_id = ?",
                 coin.chain,
-              mPWallet.id.toString()
+                mPWallet.id.toString()
             ).findFirst(
                 Coin::class.java
             )
@@ -452,7 +450,7 @@ class AddCoinActivity : BaseActivity() {
     inner class DelaySearchHandler : Handler() {
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
-            Log.e("addCoin","handleMessage")
+            Log.e("addCoin", "handleMessage")
             page = 1
             walletViewModel.searchCoinList(
                 page,
