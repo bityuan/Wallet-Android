@@ -188,8 +188,10 @@ class AddCoinActivity : BaseActivity() {
             platform = if (homeData[0] != null) homeData[0].platform else ""
         }
         for (coin in homeData) {
-            mStatusMap[coin.netId] = coin.status
-            mCoinsMap[coin.netId] = coin
+            if (coin.netId != null){
+                mStatusMap[coin.netId] = coin.status
+                mCoinsMap[coin.netId] = coin
+            }
         }
         walletViewModel.getTabData()
     }
