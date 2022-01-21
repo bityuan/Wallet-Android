@@ -40,13 +40,16 @@
         app:bl_stroke_width="1dp">
 
         <EditText
+            android:maxLength="12"
+            android:cursorVisible="false"
             android:id="@+id/et_value"
-            android:layout_width="0dp"
+            android:layout_width="317dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="9dp"
             android:layout_weight="1"
             android:background="@null"
             android:hint="0.00"
+            android:inputType="number|numberDecimal"
             android:textColorHint="#D2D2D2"
             android:textSize="24dp" />
 
@@ -125,12 +128,14 @@
 
     <TextView
         android:id="@+id/tv_bsc_address"
+        android:ellipsize="middle"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginTop="10dp"
+        android:singleLine="true"
         android:gravity="center_vertical"
         android:paddingLeft="9dp"
-        android:text="0x---"
+        android:text="-"
         android:textColor="@color/color_ex"
         android:textSize="14sp"
         app:bl_corners_radius="15dp"
@@ -139,6 +144,7 @@
         app:bl_stroke_width="1dp" />
 
     <LinearLayout
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -178,15 +184,15 @@
         <TextView
             android:id="@+id/tv_re_value"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="-USDT"
+            android:layout_height="match_parent"
+            android:text="0 USDT"
             android:textColor="@color/color_ex_value" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/tv_re_chain"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="22dp"
         android:layout_gravity="right"
         android:text="-BNB"
         android:textColor="@color/color_ex_value" />

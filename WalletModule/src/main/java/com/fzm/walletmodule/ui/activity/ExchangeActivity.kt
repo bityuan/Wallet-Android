@@ -40,7 +40,15 @@ class ExchangeActivity : BaseActivity() {
     private lateinit var bnbAddress: String
     private val exchangeViewModel: ExchangeViewModel by inject(walletQualifier)
     private var checked = true
+
+    //兑换手续费
     private var exFee = 0.0
+
+    //兑换BNB消耗的USDT
+    private var gasFeeUsdt = 0.0
+
+    //总扣减手续费
+    private var countFee = 0.0
 
     companion object {
         val TOADDRESS = "TPKLQtd9s7eZJtWPy4H63hCckhbbzmtStn"
@@ -58,6 +66,7 @@ class ExchangeActivity : BaseActivity() {
     override fun initIntent() {
         mCoin = intent.getSerializableExtra(Coin::class.java.simpleName) as Coin
         tv_balance.text = "余额 ${mCoin.balance} USDT (TRC20)"
+        balance = mCoin.balance
     }
 
     override fun initObserver() {
@@ -77,15 +86,17 @@ class ExchangeActivity : BaseActivity() {
 
         exchangeViewModel.getExLimit.observe(this, Observer {
             if (it.isSucceed()) {
-                tv_limit.text = it.data().toString()
-            }else {
+                tv_limit.text = "${it.data().toString()} USDT"
+            } else {
                 toast(it.error())
             }
         })
         exchangeViewModel.getExFee.observe(this, Observer {
             if (it.isSucceed()) {
                 it.data().let {
-                    exFee = it?.gasFeeUsdt!!
+                    exFee = it?.fee!!
+                    gasFeeUsdt = it.gasFeeUsdt
+                    countFee = exFee + gasFeeUsdt
 
                     val bigDecimal = BigDecimal(it.gasFeeAmount).setScale(4, BigDecimal.ROUND_DOWN);
                     val gasChain = bigDecimal.toString()
@@ -109,17 +120,54 @@ class ExchangeActivity : BaseActivity() {
             }
         }
         btn_exchange.setOnClickListener {
+            val value = et_value.text.toString()
+            if (TextUtils.isEmpty(value)) {
+                toast("请输入兑换数量")
+                return@setOnClickListener
+            }
+            if (value.toDouble() <= countFee) {
+                toast("请输入足够的兑换数量")
+                return@setOnClickListener
+            }
             showPasswordDialog()
         }
 
         tv_max.setOnClickListener {
-            et_value.setText(balance)
+            if (!TextUtils.isEmpty(balance)) {
+                et_value.setText(balance)
+            }
+
         }
 
 
         et_value.addTextChangedListener {
-            val input = it.toString().toDouble()
-            tv_re_value.text = (input - exFee).toString()
+            try {
+                val str = it.toString()
+                if (!TextUtils.isEmpty(str)) {
+                    val input = str.toDouble()
+                    if (input > countFee) {
+
+                        val inputstr = BigDecimal(input).setScale(2, BigDecimal.ROUND_DOWN)
+                        val countFeeStr = BigDecimal(countFee).setScale(2, BigDecimal.ROUND_DOWN)
+
+                        val value = inputstr.subtract(countFeeStr)
+
+                        Log.v("zx","数据 = "+input)
+                        Log.v("zx","数据 = "+countFee)
+                        Log.v("zx","数据 = "+value)
+
+                        tv_re_value.text = "${value} USDT"
+                    }
+                } else {
+                    tv_re_value.text = "0 USDT"
+                }
+
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+
         }
     }
 
@@ -218,11 +266,11 @@ class ExchangeActivity : BaseActivity() {
     private fun getBalance() {
         mainScope.launch(Dispatchers.IO) {
             while (true) {
-                delay(3000)
                 balance = GoWallet.handleBalance(mCoin)
                 withContext(Dispatchers.Main) {
                     tv_balance.text = "余额 $balance USDT (TRC20)"
                 }
+                delay(3000)
             }
 
         }

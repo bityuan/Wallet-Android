@@ -7,7 +7,6 @@ import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.GoResponse
 import com.fzm.wallet.sdk.net.HttpResponse
 import okhttp3.RequestBody
-import retrofit2.Call
 import retrofit2.http.*
 
 @JvmSuppressWildcards
@@ -49,7 +48,7 @@ interface Apis {
      * @param address trc20 usdt地址
      */
     @GET("$EXCHANGE_Manager/public/limit")
-    suspend fun getExLimit(@Query("address") address: String): HttpResponse<Long>
+    suspend fun getExLimit(@Query("address") address: String): HttpResponse<Double>
 
     /**
      * 获取闪兑需要的手续费

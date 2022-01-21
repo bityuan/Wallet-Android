@@ -17,6 +17,7 @@
     <application>
         <activity
             android:name=".ui.activity.ExchangeActivity"
+            android:label="@string/label_exchange"
             android:exported="false" />
         <!-- <activity -->
         <!-- android:name=".ui.activity.WebAppDetailsActivity" -->
