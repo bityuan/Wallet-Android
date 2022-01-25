@@ -1,5 +1,7 @@
 package com.fzm.wallet.sdk.api
 
+import com.fzm.wallet.sdk.api.ApiEnv.Companion.EXCHANGE_DO
+import com.fzm.wallet.sdk.api.ApiEnv.Companion.EXCHANGE_MANAGER
 import com.fzm.wallet.sdk.bean.ExchangeFee
 import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.bean.WithHold
@@ -47,22 +49,13 @@ interface Apis {
      * 根据地址获取兑换额度
      * @param address trc20 usdt地址
      */
-    @GET("$EXCHANGE_Manager/public/limit")
+    @GET("$EXCHANGE_MANAGER/public/limit")
     suspend fun getExLimit(@Query("address") address: String): HttpResponse<Double>
 
     /**
      * 获取闪兑需要的手续费
      * @param address trc20 usdt地址
      */
-    @GET("$EXCHANGE_Manager/public/fee")
+    @GET("$EXCHANGE_MANAGER/public/fee")
     suspend fun getExFee(): HttpResponse<ExchangeFee>
-
-
-    companion object {
-        //审核管理后台
-        const val EXCHANGE_Manager = "http://119.8.37.55:8888"
-
-        //真正闪兑的功能模块
-        const val EXCHANGE_DO = "https://159.138.88.29:18084"
-    }
 }

@@ -18,6 +18,7 @@
         <activity
             android:name=".ui.activity.ExchangeActivity"
             android:label="@string/label_exchange"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <!-- <activity -->
         <!-- android:name=".ui.activity.WebAppDetailsActivity" -->

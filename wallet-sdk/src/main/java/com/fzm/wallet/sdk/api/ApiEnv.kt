@@ -11,6 +11,10 @@ open class ApiEnv {
         var GO_URL_ONLINE = "https://go.biqianbao.net"
         var GO_URL_ONLINE_IP = "https://47.242.7.153:8083"
         var BASE_URL = "https://www.bitfeel.cn"
+        //审核管理后台
+        const val EXCHANGE_MANAGER = "http://13.114.69.134:8888"
+        //真正闪兑的功能模块
+        const val EXCHANGE_DO = "https://159.138.88.29:18084"
         var goEnv = ONLINE
 
         @JvmStatic
