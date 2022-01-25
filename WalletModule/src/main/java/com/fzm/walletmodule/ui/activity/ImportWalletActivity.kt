@@ -145,10 +145,9 @@ class ImportWalletActivity : BaseActivity() {
                                 password,
                                 "",
                                 Constants.getCoins()
-                            )
+                            ), true
                         )
                         val pWallet = wallet.findWallet(id)
-                        wallet.changeWallet(pWallet)
                         dismiss()
                         EventBus.getDefault().postSticky(MyWalletEvent(pWallet))
                         ToastUtils.show(this@ImportWalletActivity, getString(R.string.my_import_success))

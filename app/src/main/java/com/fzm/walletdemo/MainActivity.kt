@@ -4,18 +4,21 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.lifecycleScope
 import com.fzm.wallet.sdk.BWallet
-import com.fzm.walletmodule.base.Constants
+import com.fzm.wallet.sdk.alpha.EmptyWallet
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.event.InitPasswordEvent
-import com.fzm.walletmodule.utils.WalletUtils
 import com.fzm.walletmodule.event.MainCloseEvent
 import com.fzm.walletmodule.event.MyWalletEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.fragment.WalletFragment
 import com.fzm.walletmodule.ui.fragment.WalletIndexFragment
+import com.fzm.walletmodule.utils.WalletUtils
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.flow.collect
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -34,6 +37,13 @@ class MainActivity : BaseActivity() {
         initView()
         setTabSelection(0)
         Constants.setCoins(defaultCoinList())
+        lifecycleScope.launchWhenResumed {
+            BWallet.get().current.collect {
+                if (it is EmptyWallet) {
+                    setTabSelection(0)
+                }
+            }
+        }
     }
 
 
@@ -200,7 +210,6 @@ class MainActivity : BaseActivity() {
         }
 
         if(!event.isChoose) {
-            BWallet.get()
             val privkey = BWallet.get().getBtyPrikey()
             Log.v("tag", privkey+"")
         }

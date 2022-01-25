@@ -54,9 +54,8 @@ class WalletDetailsActivity : BaseActivity() {
     }
 
     override fun initIntent() {
-        val pWallet: PWallet =
-            intent.getSerializableExtra(PWallet::class.java.simpleName) as PWallet
-        mPWallet = find(PWallet::class.java, pWallet.id)
+        val pWalletId = intent.getLongExtra(PWallet.PWALLET_ID, 0L)
+        mPWallet = find(PWallet::class.java, pWalletId)
     }
 
     override fun initListener() {

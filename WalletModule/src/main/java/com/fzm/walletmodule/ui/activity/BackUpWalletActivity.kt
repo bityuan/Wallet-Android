@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter.base.listener.OnItemDragListener
 import com.fzm.wallet.sdk.BWallet
@@ -252,10 +251,9 @@ class BackUpWalletActivity : BaseActivity() {
                         mPWallet.password,
                         "",
                         Constants.getCoins()
-                    )
+                    ), true
                 )
                 val pWallet = BWallet.get().findWallet(id)
-                BWallet.get().changeWallet(pWallet)
 
                 dismiss()
                 WalletUtils.setUsingWallet(pWallet)

@@ -35,35 +35,56 @@ interface BWallet {
     /**
      * 切换钱包
      */
-    fun changeWallet(wallet: PWallet?, user: String = ""): Boolean
+    fun changeWallet(wallet: WalletBean?): Boolean
+
+    /**
+     * 切换钱包
+     */
+    fun changeWallet(id: String): Boolean
 
     /**
      * 获取当前正在使用的钱包
      *
-     * @param user  用户
      */
-    fun getCurrentWallet(user: String = ""): PWallet?
+    fun getCurrentWallet(): WalletBean?
+
     /**
-     * 获取当前正在使用的钱包
-     *
-     * @param user  用户
+     * 获取用户所有的钱包
      */
-    fun getCurrentWalletId(user: String = ""): Long
+    suspend fun getAllWallet(user: String): List<WalletBean>
 
     /**
      * 获取指定id的钱包
      *
      * @param id    钱包id
      */
+    @Deprecated(
+        level = DeprecationLevel.WARNING,
+        message = "外部调用不需要用到PWallet内部类，PWallet内部类未来会不对外暴露",
+        replaceWith = ReplaceWith("this.getWallet(id)")
+    )
     fun findWallet(id: String?): PWallet?
+
+    /**
+     * 获取指定id的钱包
+     *
+     * @param id    钱包id
+     */
+    fun getWallet(id: String?): WalletBean?
 
     /**
      * 导入钱包
      *
      * @param configuration     导入钱包参数配置
+     * @param switch            是否自动切换到新钱包
      */
     @Throws(Exception::class)
-    suspend fun importWallet(configuration: WalletConfiguration): String
+    suspend fun importWallet(configuration: WalletConfiguration, switch: Boolean): String
+
+    /**
+     * 修改钱包名称
+     */
+    suspend fun changeWalletName(name: String)
 
     /**
      * 删除当前钱包
@@ -126,7 +147,7 @@ interface BWallet {
      *
      * @param chain         链名
      */
-    suspend fun getChain(chain: String): Coin
+    suspend fun getChain(chain: String): Coin?
 
     /**
      * 获取临时私钥

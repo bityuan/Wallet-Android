@@ -1,5 +1,6 @@
 package com.fzm.wallet.sdk.alpha
 
+import com.fzm.wallet.sdk.WalletBean
 import com.fzm.wallet.sdk.WalletConfiguration
 import com.fzm.wallet.sdk.bean.Transactions
 import kotlinx.coroutines.flow.Flow
@@ -17,6 +18,21 @@ interface Wallet<T> {
     suspend fun init(configuration: WalletConfiguration): String
 
     /**
+     * 获取钱包id
+     */
+    fun getId(): String
+
+    /**
+     * 钱包信息
+     */
+    val walletInfo: WalletBean
+
+    /**
+     * 修改钱包密码
+     */
+    suspend fun changeWalletName(name: String)
+
+    /**
      * 删除钱包
      *
      * @param password      钱包密码
@@ -26,7 +42,7 @@ interface Wallet<T> {
     suspend fun delete(
         password: String,
         confirmation: suspend () -> Boolean
-    )
+    ): Boolean
 
     /**
      * 转账方法
@@ -71,4 +87,11 @@ interface Wallet<T> {
      * @param hash          交易hash
      */
     suspend fun getTransactionByHash(chain: String, tokenSymbol: String, hash: String): Transactions?
+
+    /**
+     * 根据主链获取地址
+     *
+     * @param chain         链名
+     */
+    suspend fun getAddress(chain: String): String?
 }

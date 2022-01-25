@@ -55,6 +55,7 @@ class NormalWallet(wallet: PWallet) : BaseWallet(wallet) {
                 it.type = PWallet.TYPE_NOMAL
                 it.name = walletName
                 it.password = password
+                it.user = configuration.user
             }
 
             GoWallet.createWallet(wallet, coins.ifEmpty { DEFAULT_COINS }).id.toString()

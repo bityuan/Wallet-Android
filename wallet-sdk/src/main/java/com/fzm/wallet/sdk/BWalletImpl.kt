@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
 import org.koin.core.module.Module
 import org.litepal.LitePal
-import org.litepal.LitePal.select
 import org.litepal.extension.find
 
 /**
@@ -25,12 +24,14 @@ import org.litepal.extension.find
  */
 internal class BWalletImpl : BWallet {
 
+    companion object {
+        const val CURRENT_USER = "CURRENT_USER"
+    }
+
     private val wallet: Wallet<Coin>
         get() = _wallet ?: EmptyWallet
 
     private var _wallet: Wallet<Coin>? = null
-
-    private var pWallet: PWallet? = null
 
     override val current: Flow<Wallet<Coin>>
         get() = _current
@@ -42,29 +43,40 @@ internal class BWalletImpl : BWallet {
 
     override fun init(context: Context, module: Module?) {
         module?.walletNetModule()
+        val user = MMkvUtil.decodeString(CURRENT_USER, "")
+        val id = MMkvUtil.decodeString("${user}${PWallet.PWALLET_ID}", "").ifEmpty {
+            MMkvUtil.decodeLong(PWallet.PWALLET_ID).toString()
+        }
+        changeWallet(getWallet(id))
     }
 
-    override fun changeWallet(wallet: PWallet?, user: String): Boolean {
-        if (wallet == null || pWallet?.id == wallet.id) return false
-        MMkvUtil.encode("${user}${PWallet.PWALLET_ID}", wallet.id)
-        this.pWallet = wallet
-        this._wallet = when (wallet.type) {
-            PWallet.TYPE_NOMAL -> NormalWallet(wallet)
-            else -> NormalWallet(wallet)
-        }.also { w -> _current.update { w } }
+    override fun changeWallet(wallet: WalletBean?): Boolean {
+        if (wallet == null || this.wallet.getId() == wallet.id.toString()) return false
+        MMkvUtil.encode(CURRENT_USER, wallet.user)
+        MMkvUtil.encode("${wallet.user}${PWallet.PWALLET_ID}", wallet.id.toString())
+        val local = LitePal.find(PWallet::class.java, wallet.id) ?: return false
+        when (wallet.type) {
+            PWallet.TYPE_NOMAL -> NormalWallet(local)
+            else -> NormalWallet(local)
+        }.also { w -> updateWalletFlow(w) }
         return true
     }
 
-    override fun getCurrentWallet(user: String): PWallet? {
-        val id = MMkvUtil.decodeLong("${user}${PWallet.PWALLET_ID}")
-        return LitePal.find(PWallet::class.java, id)
-            ?: LitePal.findFirst(PWallet::class.java)?.also {
-                changeWallet(it, user)
-            }
+    override fun changeWallet(id: String): Boolean {
+        return changeWallet(getWallet(id))
     }
 
-    override fun getCurrentWalletId(user: String): Long {
-        return MMkvUtil.decodeLong("${user}${PWallet.PWALLET_ID}")
+    private fun updateWalletFlow(wallet: Wallet<Coin>) {
+        _wallet = wallet
+        _current.update { wallet }
+    }
+
+    override fun  getCurrentWallet(): WalletBean? {
+        return getWallet(wallet.getId())
+    }
+
+    override suspend fun getAllWallet(user: String): List<WalletBean> {
+        return LitePal.select("user = ?", user).find(PWallet::class.java).map { it.toWalletBean() }
     }
 
     override fun findWallet(id: String?): PWallet? {
@@ -72,16 +84,43 @@ internal class BWalletImpl : BWallet {
         return LitePal.find(PWallet::class.java, id.toLong())
     }
 
-    override suspend fun importWallet(configuration: WalletConfiguration): String {
+    override fun getWallet(id: String?): WalletBean? {
+        if (id.isNullOrEmpty()) return null
+        return LitePal.find(PWallet::class.java, id.toLong())?.toWalletBean()
+    }
+
+    override suspend fun importWallet(configuration: WalletConfiguration, switch: Boolean): String {
         val wallet = when (configuration.type) {
             PWallet.TYPE_NOMAL -> NormalWallet(PWallet())
             else -> NormalWallet(PWallet())
         }
-        return wallet.init(configuration)
+        return wallet.init(configuration).also { id ->
+            if (switch) {
+                MMkvUtil.encode(CURRENT_USER, configuration.user)
+                MMkvUtil.encode("${configuration.user}${PWallet.PWALLET_ID}", id)
+                updateWalletFlow(wallet)
+            }
+        }
+    }
+
+    override suspend fun changeWalletName(name: String) {
+        wallet.changeWalletName(name)
     }
 
     override suspend fun deleteWallet(password: String, confirmation: suspend () -> Boolean) {
-        wallet.delete(password, confirmation)
+        val user = wallet.walletInfo.user
+        if (wallet.delete(password, confirmation)) {
+            val newWallet = LitePal.where("user = ?", user)
+                .find(PWallet::class.java, true)
+                .firstOrNull()
+            if (newWallet != null) {
+                changeWallet(newWallet.toWalletBean())
+            } else {
+                MMkvUtil.encode(CURRENT_USER, "")
+                MMkvUtil.encode(PWallet.PWALLET_ID, "")
+                updateWalletFlow(EmptyWallet)
+            }
+        }
     }
 
     override suspend fun addCoins(coins: List<Coin>, password: suspend () -> String) {
@@ -118,20 +157,12 @@ internal class BWalletImpl : BWallet {
     }
 
     override suspend fun getAddress(chain: String): String {
-        val id: Long = getCurrentWalletId()
-        val coinList = select()
-            .where("chain = ? and pwallet_id = ?", chain, id.toString())
-            .find<Coin>(true)
-        return coinList.let {
-            it[0].address
-        }
+        return wallet.getAddress(chain) ?: ""
     }
 
-    override suspend fun getChain(chain: String): Coin {
-        val coinList = select().where("chain = ? and pwallet_id = ?", chain, getCurrentWalletId().toString()).find<Coin>()
-        return coinList.let {
-            it[0]
-        }
+    override suspend fun getChain(chain: String): Coin? {
+        val coinList = LitePal.select().where("chain = ? and pwallet_id = ?", chain, wallet.getId()).find<Coin>()
+        return coinList.firstOrNull()
     }
 
 

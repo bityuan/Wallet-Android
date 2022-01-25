@@ -1,7 +1,5 @@
 package com.fzm.wallet.sdk.db.entity;
 
-import org.litepal.annotation.Column;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +14,7 @@ public class PWallet extends BaseBean {
     public static final int TYPE_NOMAL = 2;
     public static final int TYPE_NONE = 6;
     private int type;
+    private String user;
     private String name;
     private String password;
     private String mnem;
@@ -38,6 +37,14 @@ public class PWallet extends BaseBean {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public String getUser() {
+        return user == null ? "" : user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public String getName() {

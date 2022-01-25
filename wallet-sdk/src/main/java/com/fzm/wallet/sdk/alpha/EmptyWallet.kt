@@ -1,5 +1,6 @@
 package com.fzm.wallet.sdk.alpha
 
+import com.fzm.wallet.sdk.WalletBean
 import com.fzm.wallet.sdk.WalletConfiguration
 import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.db.entity.Coin
@@ -17,8 +18,19 @@ object EmptyWallet : Wallet<Coin> {
         return ""
     }
 
-    override suspend fun delete(password: String, confirmation: suspend () -> Boolean) {
+    override fun getId(): String {
+        return "0"
+    }
 
+    override val walletInfo: WalletBean
+        get() = WalletBean(0L, "", "", 0)
+
+    override suspend fun changeWalletName(name: String) {
+
+    }
+
+    override suspend fun delete(password: String, confirmation: suspend () -> Boolean): Boolean {
+        return false
     }
 
     override suspend fun transfer(coin: Coin, amount: Long) {
@@ -53,6 +65,10 @@ object EmptyWallet : Wallet<Coin> {
         tokenSymbol: String,
         hash: String
     ): Transactions? {
+        return null
+    }
+
+    override suspend fun getAddress(chain: String): String? {
         return null
     }
 }

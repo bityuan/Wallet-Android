@@ -1,5 +1,6 @@
 package com.fzm.wallet.sdk.alpha
 
+import com.fzm.wallet.sdk.WalletBean
 import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.bean.response.TransactionResponse
 import com.fzm.wallet.sdk.db.entity.Coin
@@ -7,6 +8,7 @@ import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.net.rootScope
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.repo.WalletRepository
+import com.fzm.wallet.sdk.toWalletBean
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.google.gson.Gson
@@ -15,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import org.litepal.LitePal
+import org.litepal.extension.find
 import java.util.*
 
 /**
@@ -25,21 +28,31 @@ import java.util.*
 abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
 
     protected val gson by lazy { Gson() }
-    protected val walletRepository by rootScope.inject<WalletRepository>(walletQualifier)
+    protected val walletRepository by lazy { rootScope.get<WalletRepository>(walletQualifier) }
 
-    override suspend fun delete(password: String, confirmation: suspend () -> Boolean) {
+    override fun getId(): String {
+        return wallet.id.toString()
+    }
+
+    override val walletInfo: WalletBean
+        get() = wallet.toWalletBean()
+
+    override suspend fun changeWalletName(name: String) {
+
+    }
+
+    override suspend fun delete(password: String, confirmation: suspend () -> Boolean): Boolean {
         val verified = withContext(Dispatchers.IO) {
             GoWallet.checkPasswd(password, wallet.password)
         }
         if (verified) {
             if (confirmation()) {
                 withContext(Dispatchers.IO) {
-                    val coins = LitePal.select()
-                        .where("pwallet_id = ? group by chain", wallet.id.toString())
-                        .find(Coin::class.java)
                     LitePal.delete(PWallet::class.java, wallet.id)
                 }
+                return true
             }
+            return false
         } else {
             throw IllegalArgumentException("密码输入错误")
         }
@@ -184,6 +197,13 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
         }
     }
 
+    override suspend fun getAddress(chain: String): String? {
+        val coinList = LitePal.select()
+            .where("chain = ? and pwallet_id = ?", chain, wallet.id.toString())
+            .find<Coin>(true)
+        return coinList.let { it.firstOrNull()?.address }
+    }
+
     protected fun getChineseMnem(mnem: String): String {
         val afterString = mnem.replace(" ", "")
         val afterString2 = afterString.replace("\n", "")
@@ -192,4 +212,21 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
 
     protected fun getKey(coin: Coin, type: Long): String =
         "${coin.chain}${coin.address}${coin.name}$type}"
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as BaseWallet
+
+        if (wallet != other.wallet) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return wallet.hashCode()
+    }
+
+
 }
