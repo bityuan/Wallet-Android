@@ -247,7 +247,7 @@ class BackUpWalletActivity : BaseActivity() {
             lifecycleScope.launch {
                 val id = BWallet.get().importWallet(
                     WalletConfiguration.mnemonicWallet(
-                        mnem,
+                        mnemFrom!!,
                         mPWallet.name,
                         mPWallet.password,
                         "",

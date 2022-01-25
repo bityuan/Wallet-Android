@@ -29,6 +29,7 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
+import org.litepal.LitePal
 import walletapi.Walletapi
 import java.math.BigDecimal
 
@@ -49,6 +50,9 @@ class ExchangeActivity : BaseActivity() {
 
     //总扣减手续费
     private var countFee = 0.0
+
+    //今日限额
+    private var limit = 0.0
 
     companion object {
         val TOADDRESS = "TPKLQtd9s7eZJtWPy4H63hCckhbbzmtStn"
@@ -86,13 +90,17 @@ class ExchangeActivity : BaseActivity() {
 
         exchangeViewModel.getExLimit.observe(this, Observer {
             if (it.isSucceed()) {
-                tv_limit.text = "${it.data().toString()} USDT"
+                limit = it.data()!!
+                tv_limit.text = "$limit USDT"
             } else {
-                toast(it.error())
+                limit = 5000.0
+                tv_limit.text = "5000 USDT"
+                //toast(it.error())
             }
         })
         exchangeViewModel.getExFee.observe(this, Observer {
             if (it.isSucceed()) {
+                disInLoading()
                 it.data().let {
                     exFee = it?.fee!!
                     gasFeeUsdt = it.gasFeeUsdt
@@ -120,16 +128,28 @@ class ExchangeActivity : BaseActivity() {
             }
         }
         btn_exchange.setOnClickListener {
-            val value = et_value.text.toString()
-            if (TextUtils.isEmpty(value)) {
-                toast("请输入兑换数量")
-                return@setOnClickListener
+            CoroutineScope(Dispatchers.Main).launch {
+                val value = et_value.text.toString()
+              /*  if (TextUtils.isEmpty(value)) {
+                    toast("请输入兑换数量")
+                    return@launch
+                } else if (value.toDouble() <= countFee) {
+                    toast("请输入足够的兑换数量")
+                    return@launch
+                } else if (value.toDouble() > balance.toDouble() || value.toDouble() > limit) {
+                    toast("余额不足")
+                    return@launch
+                }*/
+                var trx: Coin?
+                withContext(Dispatchers.IO) {
+                    trx = BWallet.get().getChain(Walletapi.TypeTrxString)
+                }
+                if (trx?.balance?.toDouble()!! < 10) {
+                    toast("最低矿工费为10TRX")
+                } else {
+                    showPasswordDialog()
+                }
             }
-            if (value.toDouble() <= countFee) {
-                toast("请输入足够的兑换数量")
-                return@setOnClickListener
-            }
-            showPasswordDialog()
         }
 
         tv_max.setOnClickListener {
@@ -142,6 +162,30 @@ class ExchangeActivity : BaseActivity() {
 
         et_value.addTextChangedListener {
             try {
+
+                //如果第一个数字为0，第二个不为点，就不允许输入
+                if (it.toString().startsWith("0") && it.toString().trim().length > 1) {
+                    if (!it.toString().substring(1, 2).equals(".")) {
+                        et_value.setText(it?.subSequence(0, 1));
+                        et_value.setSelection(1);
+                        return@addTextChangedListener;
+                    }
+                }
+                //如果第一为点，直接显示0.
+                if (it.toString().startsWith(".")) {
+                    et_value.setText("0.");
+                    et_value.setSelection(2);
+                    return@addTextChangedListener;
+                }
+                //限制输入小数位数(2位)
+                if (it.toString().contains(".")) {
+                    if (it?.length!! - 1 - it.toString().indexOf(".") > 4) {
+                        val s = it.toString().subSequence(0, it.toString().indexOf(".") + 4 + 1);
+                        et_value.setText(s);
+                        et_value.setSelection(s.length);
+                    }
+
+                }
                 val str = it.toString()
                 if (!TextUtils.isEmpty(str)) {
                     val input = str.toDouble()
@@ -151,11 +195,6 @@ class ExchangeActivity : BaseActivity() {
                         val countFeeStr = BigDecimal(countFee).setScale(2, BigDecimal.ROUND_DOWN)
 
                         val value = inputstr.subtract(countFeeStr)
-
-                        Log.v("zx","数据 = "+input)
-                        Log.v("zx","数据 = "+countFee)
-                        Log.v("zx","数据 = "+value)
-
                         tv_re_value.text = "${value} USDT"
                     }
                 } else {
@@ -187,8 +226,11 @@ class ExchangeActivity : BaseActivity() {
                     override fun onLeftButtonClick(v: View?) {}
                     override fun onRightButtonClick(v: View?) {
                         val etPassword = mEditDialogFragment?.etInput
-                        val password =
-                            etPassword?.text.toString().trim { it <= ' ' }
+                        val password = etPassword?.text.toString()
+                        if (TextUtils.isEmpty(password)) {
+                            toast("请输入账户密码")
+                            return
+                        }
                         val localPassword = mCoin.getpWallet().password
                         payCheck(password, localPassword)
                     }
@@ -229,7 +271,7 @@ class ExchangeActivity : BaseActivity() {
             TOADDRESS,
             amount,
             0.001,
-            "闪兑测试",
+            "exchange",
             tokensymbol
         )
         val stringResult = JSON.parseObject(createRaw, StringResult::class.java)
@@ -251,6 +293,7 @@ class ExchangeActivity : BaseActivity() {
 
 
     private fun getAddress() {
+        showInLoading()
         mainScope.launch(Dispatchers.IO) {
             bnbAddress = BWallet.get().getAddress(Walletapi.TypeBnbString)
             exchangeViewModel.getExLimit(bnbAddress)

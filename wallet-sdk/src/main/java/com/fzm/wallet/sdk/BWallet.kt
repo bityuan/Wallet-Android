@@ -122,6 +122,13 @@ interface BWallet {
     suspend fun getAddress(chain: String): String
 
     /**
+     * 根据主链获取币种
+     *
+     * @param chain         链名
+     */
+    suspend fun getChain(chain: String): Coin
+
+    /**
      * 获取临时私钥
      */
 
