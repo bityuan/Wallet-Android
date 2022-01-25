@@ -13,8 +13,6 @@ import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.event.CheckMnemEvent
 import com.fzm.walletmodule.event.UpdatePasswordEvent
-import com.fzm.walletmodule.event.UpdateWalletNameEvent
-import com.fzm.walletmodule.event.WalletDeleteEvent
 import com.fzm.walletmodule.manager.WalletManager
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.CommonDialogFragment
@@ -29,7 +27,6 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import org.litepal.LitePal
 import org.litepal.LitePal.find
 import org.litepal.LitePal.select
 import java.util.*
@@ -107,22 +104,24 @@ class WalletDetailsActivity : BaseActivity() {
                         )
                         return
                     }
-                    val pWallets = LitePal.where("name = ?", input).find(PWallet::class.java)
-                    if (!ListUtils.isEmpty(pWallets)) {
-                        ToastUtils.show(
-                            this@WalletDetailsActivity,
-                            getString(R.string.my_wallet_detail_name_exist)
-                        )
-                        return
+                    lifecycleScope.launch {
+                        try {
+                            BWallet.get().changeWalletName(input)
+                            needUpdate = true
+                            ToastUtils.show(
+                                this@WalletDetailsActivity,
+                                getString(R.string.my_wallet_modified_success)
+                            )
+                        } catch (e: Exception) {
+//                            ToastUtils.show(
+//                                this@WalletDetailsActivity,
+//                                getString(R.string.my_wallet_detail_name_exist)
+//                            )
+                            ToastUtils.show(this@WalletDetailsActivity, e.message)
+                            return@launch
+                        }
                     }
-                    mPWallet!!.name = input
-                    mPWallet!!.update(mPWallet!!.id)
-                    needUpdate = true
-                    EventBus.getDefault().post(UpdateWalletNameEvent(needUpdate))
-                    ToastUtils.show(
-                        this@WalletDetailsActivity,
-                        getString(R.string.my_wallet_modified_success)
-                    )
+
                 }
 
                 override fun onLeftButtonClick(v: View?) {
@@ -196,7 +195,6 @@ class WalletDetailsActivity : BaseActivity() {
                 lifecycleScope.launch {
                     BWallet.get().deleteWallet(password) { handleDelete() }
                     dismiss()
-                    EventBus.getDefault().post(WalletDeleteEvent(mPWallet!!.id))
                     needUpdate = true
                     finish()
                 }

@@ -15,11 +15,8 @@ import com.fzm.walletmodule.R
 import com.fzm.walletmodule.bean.StringResult
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.EditDialogFragment
-import com.fzm.walletmodule.utils.DecimalUtils
 import com.fzm.walletmodule.utils.ToastUtils
 import com.fzm.walletmodule.vm.ExchangeViewModel
-import com.fzm.walletmodule.vm.OutViewModel
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_exchange.*
 import kotlinx.android.synthetic.main.activity_exchange.tv_balance
 import kotlinx.android.synthetic.main.activity_transactions.*
@@ -27,9 +24,7 @@ import kotlinx.android.synthetic.main.view_header_wallet.*
 import kotlinx.coroutines.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
-import org.litepal.LitePal
 import walletapi.Walletapi
 import java.math.BigDecimal
 
@@ -140,9 +135,8 @@ class ExchangeActivity : BaseActivity() {
                     toast("余额不足")
                     return@launch
                 }*/
-                var trx: Coin?
-                withContext(Dispatchers.IO) {
-                    trx = BWallet.get().getChain(Walletapi.TypeTrxString)
+                val trx = withContext(Dispatchers.IO) {
+                    BWallet.get().getChain(Walletapi.TypeTrxString)
                 }
                 if (trx?.balance?.toDouble()!! < 10) {
                     toast("最低矿工费为10TRX")

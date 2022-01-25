@@ -164,29 +164,6 @@ class WalletFragment : BaseFragment() {
         const val UPDATE_WALLET = 1000
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public fun onUpdateWalletNameEvent(event: UpdateWalletNameEvent) {
-        if (event != null && event.needUpdate) {
-            mPWallet = WalletUtils.getUsingWallet()
-            name?.text = mPWallet?.name
-        }
-    }
-
-    //回调 - 删除账户
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onWalletDeleteEvent(event: WalletDeleteEvent) {
-        if (mPWallet?.id == event.walletId) {
-
-        }
-    }
-
-    //回调 - 我的账户
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    fun onMyWalletEvent(event: MyWalletEvent) {
-        if (event.mPWallet != null && mPWallet?.id != event.mPWallet?.id) {
-            mPWallet = event.mPWallet
-        }
-    }
 
     //回调 - 我的账户
     @Subscribe(threadMode = ThreadMode.MAIN)

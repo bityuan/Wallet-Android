@@ -3,6 +3,7 @@ package com.fzm.wallet.sdk.alpha
 import com.fzm.wallet.sdk.WalletBean
 import com.fzm.wallet.sdk.WalletConfiguration
 import com.fzm.wallet.sdk.bean.Transactions
+import com.fzm.wallet.sdk.db.entity.Coin
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -10,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
  * @since 2022/01/12
  * Description:
  */
-interface Wallet<T> {
+interface Wallet<T> : Cloneable {
 
     /**
      * 初始化钱包方法
@@ -30,7 +31,8 @@ interface Wallet<T> {
     /**
      * 修改钱包密码
      */
-    suspend fun changeWalletName(name: String)
+    @Throws(Exception::class)
+    suspend fun changeWalletName(name: String): Boolean
 
     /**
      * 删除钱包
@@ -94,4 +96,6 @@ interface Wallet<T> {
      * @param chain         链名
      */
     suspend fun getAddress(chain: String): String?
+
+    public override fun clone(): Wallet<Coin>
 }

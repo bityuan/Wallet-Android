@@ -1,12 +1,14 @@
 package com.fzm.wallet.sdk.db.entity;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by ZX on 2018/5/24.
  */
-public class PWallet extends BaseBean {
+public class PWallet extends BaseBean implements Cloneable {
     public static final String PWALLET_ID = "pwallet_id";
     public static final String PWALLET_MNEM = "pwallet_mnem";
     public static final int TYPE_CHINESE = 1;
@@ -101,5 +103,21 @@ public class PWallet extends BaseBean {
                 ", coinList=" + coinList +
                 ", putpassword=" + putpassword +
                 '}';
+    }
+
+    @NonNull
+    @Override
+    public PWallet clone() {
+        PWallet pWallet = new PWallet();
+        pWallet.setId(getId());
+        pWallet.setCoinList(getCoinList());
+        pWallet.setMnem(getMnem());
+        pWallet.setMnemType(getMnemType());
+        pWallet.setPassword(getPassword());
+        pWallet.setName(getName());
+        pWallet.setPutpassword(isPutpassword());
+        pWallet.setUser(getUser());
+        pWallet.setType(getType());
+        return pWallet;
     }
 }

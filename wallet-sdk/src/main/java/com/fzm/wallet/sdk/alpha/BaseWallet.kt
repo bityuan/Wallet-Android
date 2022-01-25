@@ -37,8 +37,13 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
     override val walletInfo: WalletBean
         get() = wallet.toWalletBean()
 
-    override suspend fun changeWalletName(name: String) {
-
+    override suspend fun changeWalletName(name: String): Boolean {
+        val wallets = LitePal.where("name = ?", name).find(PWallet::class.java)
+        if (!wallets.isNullOrEmpty()) {
+            throw Exception("账户名称重复")
+        }
+        wallet.name = name
+        return wallet.update(wallet.id) != 0
     }
 
     override suspend fun delete(password: String, confirmation: suspend () -> Boolean): Boolean {

@@ -9,10 +9,12 @@ import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.net.walletNetModule
 import com.fzm.wallet.sdk.utils.MMkvUtil
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.withContext
 import org.koin.core.module.Module
 import org.litepal.LitePal
 import org.litepal.extension.find
@@ -75,8 +77,8 @@ internal class BWalletImpl : BWallet {
         return getWallet(wallet.getId())
     }
 
-    override suspend fun getAllWallet(user: String): List<WalletBean> {
-        return LitePal.select("user = ?", user).find(PWallet::class.java).map { it.toWalletBean() }
+    override suspend fun getAllWallet(user: String) = withContext(Dispatchers.IO) {
+        LitePal.select("user = ?", user).find(PWallet::class.java).map { it.toWalletBean() }
     }
 
     override fun findWallet(id: String?): PWallet? {
@@ -103,8 +105,12 @@ internal class BWalletImpl : BWallet {
         }
     }
 
-    override suspend fun changeWalletName(name: String) {
-        wallet.changeWalletName(name)
+    override suspend fun changeWalletName(name: String): Boolean {
+        if (wallet.changeWalletName(name)) {
+            updateWalletFlow(wallet.clone())
+            return true
+        }
+        return false
     }
 
     override suspend fun deleteWallet(password: String, confirmation: suspend () -> Boolean) {
@@ -161,7 +167,9 @@ internal class BWalletImpl : BWallet {
     }
 
     override suspend fun getChain(chain: String): Coin? {
-        val coinList = LitePal.select().where("chain = ? and pwallet_id = ?", chain, wallet.getId()).find<Coin>()
+        val coinList = withContext(Dispatchers.IO) {
+            LitePal.select().where("chain = ? and pwallet_id = ?", chain, wallet.getId()).find<Coin>()
+        }
         return coinList.firstOrNull()
     }
 

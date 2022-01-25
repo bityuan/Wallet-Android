@@ -18,4 +18,8 @@ class AddressWallet(wallet: PWallet) : BaseWallet(wallet) {
     override suspend fun transfer(coin: Coin, amount: Long) {
         throw UnsupportedOperationException("观察钱包不支持转账")
     }
+
+    override fun clone(): AddressWallet {
+        return AddressWallet(wallet.clone())
+    }
 }

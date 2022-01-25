@@ -84,7 +84,8 @@ interface BWallet {
     /**
      * 修改钱包名称
      */
-    suspend fun changeWalletName(name: String)
+    @Throws(Exception::class)
+    suspend fun changeWalletName(name: String): Boolean
 
     /**
      * 删除当前钱包

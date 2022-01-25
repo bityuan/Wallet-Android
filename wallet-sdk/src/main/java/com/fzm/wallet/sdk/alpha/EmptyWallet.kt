@@ -25,8 +25,8 @@ object EmptyWallet : Wallet<Coin> {
     override val walletInfo: WalletBean
         get() = WalletBean(0L, "", "", 0)
 
-    override suspend fun changeWalletName(name: String) {
-
+    override suspend fun changeWalletName(name: String): Boolean {
+        return false
     }
 
     override suspend fun delete(password: String, confirmation: suspend () -> Boolean): Boolean {
@@ -70,5 +70,9 @@ object EmptyWallet : Wallet<Coin> {
 
     override suspend fun getAddress(chain: String): String? {
         return null
+    }
+
+    override fun clone(): Wallet<Coin> {
+        return this
     }
 }
