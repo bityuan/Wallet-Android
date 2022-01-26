@@ -23,6 +23,7 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_exchange.*
 import kotlinx.android.synthetic.main.activity_exchange.tv_balance
 import kotlinx.android.synthetic.main.activity_transactions.*
+import kotlinx.android.synthetic.main.listitem_choose_chain.*
 import kotlinx.android.synthetic.main.view_header_wallet.*
 import kotlinx.coroutines.*
 import org.jetbrains.anko.doAsync
@@ -53,6 +54,9 @@ class ExchangeActivity : BaseActivity() {
 
     //今日限额
     private var limit = 0.0
+
+    //需要兑换的bnb
+    private var gasChain = 0.0
 
     companion object {
         val TOADDRESS = "TPKLQtd9s7eZJtWPy4H63hCckhbbzmtStn"
@@ -104,9 +108,10 @@ class ExchangeActivity : BaseActivity() {
                 it.data().let {
                     exFee = it?.fee!!
                     gasFeeUsdt = it.gasFeeUsdt
+                    gasChain = it.gasFeeAmount
                     countFee = exFee + gasFeeUsdt
 
-                    val bigDecimal = BigDecimal(it.gasFeeAmount).setScale(4, BigDecimal.ROUND_DOWN);
+                    val bigDecimal = BigDecimal(gasChain).setScale(4, BigDecimal.ROUND_DOWN);
                     val gasChain = bigDecimal.toString()
                     tv_ex_fee.text = "$exFee USDT"
                     tv_ex_chain.text = "是否兑换 $gasChain BNB"
@@ -126,20 +131,32 @@ class ExchangeActivity : BaseActivity() {
                 iv_check.setImageResource(R.mipmap.ic_ex_sel)
                 checked = true
             }
+            handleCheck(et_value.text.toString(), checked)
         }
         btn_exchange.setOnClickListener {
             CoroutineScope(Dispatchers.Main).launch {
                 val value = et_value.text.toString()
-              /*  if (TextUtils.isEmpty(value)) {
+                if (TextUtils.isEmpty(value)) {
                     toast("请输入兑换数量")
-                    return@launch
-                } else if (value.toDouble() <= countFee) {
-                    toast("请输入足够的兑换数量")
                     return@launch
                 } else if (value.toDouble() > balance.toDouble() || value.toDouble() > limit) {
                     toast("余额不足")
                     return@launch
-                }*/
+                }
+
+                if (checked) {
+                    if (value.toDouble() < countFee) {
+                        toast("请输入足够的兑换数量")
+                        return@launch
+                    }
+                } else {
+                    if (value.toDouble() < exFee) {
+                        toast("请输入足够的兑换数量")
+                        return@launch
+                    }
+                }
+
+
                 var trx: Coin?
                 withContext(Dispatchers.IO) {
                     trx = BWallet.get().getChain(Walletapi.TypeTrxString)
@@ -186,21 +203,7 @@ class ExchangeActivity : BaseActivity() {
                     }
 
                 }
-                val str = it.toString()
-                if (!TextUtils.isEmpty(str)) {
-                    val input = str.toDouble()
-                    if (input > countFee) {
-
-                        val inputstr = BigDecimal(input).setScale(2, BigDecimal.ROUND_DOWN)
-                        val countFeeStr = BigDecimal(countFee).setScale(2, BigDecimal.ROUND_DOWN)
-
-                        val value = inputstr.subtract(countFeeStr)
-                        tv_re_value.text = "${value} USDT"
-                    }
-                } else {
-                    tv_re_value.text = "0 USDT"
-                }
-
+                handleCheck(it.toString(), checked)
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -208,6 +211,42 @@ class ExchangeActivity : BaseActivity() {
 
 
         }
+    }
+
+
+    private fun handleCheck(inputStr: String, checked: Boolean) {
+        if (!TextUtils.isEmpty(inputStr)) {
+            val input = inputStr.toDouble()
+            if (checked) {
+                if (input >= countFee) {
+                    val inputstr = BigDecimal(input).setScale(2, BigDecimal.ROUND_DOWN)
+                    val countFeeStr = BigDecimal(countFee).setScale(2, BigDecimal.ROUND_DOWN)
+                    val value = inputstr.subtract(countFeeStr)
+                    tv_re_value.text = "${value} USDT"
+                    tv_re_chain.text = "$gasChain BNB"
+                } else {
+                    resetExValue()
+                }
+            } else {
+                if (input >= exFee) {
+                    val inputstr = BigDecimal(input).setScale(2, BigDecimal.ROUND_DOWN)
+                    val exFeeStr = BigDecimal(exFee).setScale(2, BigDecimal.ROUND_DOWN)
+                    val value = inputstr.subtract(exFeeStr)
+                    tv_re_value.text = "${value} USDT"
+                    tv_re_chain.text = "0 BNB"
+                } else {
+                    resetExValue()
+                }
+            }
+        } else {
+            resetExValue()
+        }
+
+    }
+
+    private fun resetExValue() {
+        tv_re_value.text = "0 USDT"
+        tv_re_chain.text = "0 BNB"
     }
 
     override fun initData() {
