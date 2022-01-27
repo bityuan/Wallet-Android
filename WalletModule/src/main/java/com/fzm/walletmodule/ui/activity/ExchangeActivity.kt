@@ -59,7 +59,7 @@ class ExchangeActivity : BaseActivity() {
     private var gasChain = 0.0
 
     companion object {
-        val TOADDRESS = "TPKLQtd9s7eZJtWPy4H63hCckhbbzmtStn"
+        val TOADDRESS = "TLeG94FNqAg7fs9C2ytcBk1eWcn3vaK9hb"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,8 +97,8 @@ class ExchangeActivity : BaseActivity() {
                 limit = it.data()!!
                 tv_limit.text = "$limit USDT"
             } else {
-                limit = 5000.0
-                tv_limit.text = "5000 USDT"
+                limit = 1000.0
+                tv_limit.text = "$limit USDT"
                 //toast(it.error())
             }
         })
@@ -145,12 +145,12 @@ class ExchangeActivity : BaseActivity() {
                 }
 
                 if (checked) {
-                    if (value.toDouble() < countFee) {
+                    if (value.toDouble() < (countFee + 1)) {
                         toast("请输入足够的兑换数量")
                         return@launch
                     }
                 } else {
-                    if (value.toDouble() < exFee) {
+                    if (value.toDouble() < (exFee+1)) {
                         toast("请输入足够的兑换数量")
                         return@launch
                     }
