@@ -43,19 +43,14 @@ class ExchangeActivity : BaseActivity() {
     private val exchangeViewModel: ExchangeViewModel by inject(walletQualifier)
     private var checked = true
 
-    //兑换手续费
     private var exFee = 0.0
 
-    //兑换BNB消耗的USDT
     private var gasFeeUsdt = 0.0
 
-    //总扣减手续费
     private var countFee = 0.0
 
-    //今日限额
     private var limit = 0.0
 
-    //需要兑换的bnb
     private var gasChain = 0.0
 
     companion object {
@@ -114,7 +109,7 @@ class ExchangeActivity : BaseActivity() {
                     val bigDecimal = BigDecimal(gasChain).setScale(4, BigDecimal.ROUND_DOWN);
                     val gasChain = bigDecimal.toString()
                     tv_ex_fee.text = "$exFee USDT"
-                    tv_ex_chain.text = "是否兑换 $gasChain BNB"
+                    tv_ex_chain.text = "是否消耗$gasFeeUsdt USDT 兑换 $gasChain BNB"
                     tv_re_chain.text = "$gasChain BNB"
                 }
             }
