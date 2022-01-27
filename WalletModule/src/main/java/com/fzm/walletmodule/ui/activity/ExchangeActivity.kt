@@ -196,8 +196,8 @@ class ExchangeActivity : BaseActivity() {
                 }
                 //限制输入小数位数(2位)
                 if (it.toString().contains(".")) {
-                    if (it?.length!! - 1 - it.toString().indexOf(".") > 4) {
-                        val s = it.toString().subSequence(0, it.toString().indexOf(".") + 4 + 1);
+                    if (it?.length!! - 1 - it.toString().indexOf(".") > 2) {
+                        val s = it.toString().subSequence(0, it.toString().indexOf(".") + 2 + 1);
                         et_value.setText(s);
                         et_value.setSelection(s.length);
                     }
@@ -219,9 +219,9 @@ class ExchangeActivity : BaseActivity() {
             val input = inputStr.toDouble()
             if (checked) {
                 if (input >= countFee) {
-                    val inputstr = BigDecimal(input).setScale(2, BigDecimal.ROUND_DOWN)
+                    val inputb = BigDecimal(inputStr).setScale(2, BigDecimal.ROUND_DOWN)
                     val countFeeStr = BigDecimal(countFee).setScale(2, BigDecimal.ROUND_DOWN)
-                    val value = inputstr.subtract(countFeeStr)
+                    val value = inputb.subtract(countFeeStr)
                     tv_re_value.text = "${value} USDT"
                     tv_re_chain.text = "$gasChain BNB"
                 } else {
@@ -229,9 +229,9 @@ class ExchangeActivity : BaseActivity() {
                 }
             } else {
                 if (input >= exFee) {
-                    val inputstr = BigDecimal(input).setScale(2, BigDecimal.ROUND_DOWN)
+                    val inputb = BigDecimal(inputStr).setScale(2, BigDecimal.ROUND_DOWN)
                     val exFeeStr = BigDecimal(exFee).setScale(2, BigDecimal.ROUND_DOWN)
-                    val value = inputstr.subtract(exFeeStr)
+                    val value = inputb.subtract(exFeeStr)
                     tv_re_value.text = "${value} USDT"
                     tv_re_chain.text = "0 BNB"
                 } else {
