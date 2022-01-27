@@ -14,7 +14,7 @@ open class ApiEnv {
         //审核管理后台
         const val EXCHANGE_MANAGER = "http://13.114.69.134:8888"
         //真正闪兑的功能模块
-        const val EXCHANGE_DO = "https://159.138.88.29:28083"
+        const val EXCHANGE_DO = "https://18.181.228.127:28083"
         var goEnv = ONLINE
 
         @JvmStatic
