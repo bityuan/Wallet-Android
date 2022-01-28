@@ -5,6 +5,8 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'maven-publish'
 
+group = 'com.github.bityuan'
+version = '1.3.5'
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
@@ -89,6 +91,7 @@ dependencies {
     api "com.github.JavaNoober.BackgroundLibrary:libraryx:1.7.3"
 
 }
+
 
 
 
