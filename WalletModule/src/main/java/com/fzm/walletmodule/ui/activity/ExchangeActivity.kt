@@ -109,7 +109,7 @@ class ExchangeActivity : BaseActivity() {
                     val bigDecimal = BigDecimal(gasChain).setScale(4, BigDecimal.ROUND_DOWN);
                     val gasChain = bigDecimal.toString()
                     tv_ex_fee.text = "$exFee USDT"
-                    tv_ex_chain.text = "是否消耗$gasFeeUsdt USDT 兑换 $gasChain BNB"
+                    tv_ex_chain.text = "是否使用$gasFeeUsdt USDT兑换BNB ≈$gasChain BNB"
                     tv_re_chain.text = "$gasChain BNB"
                 }
             }
