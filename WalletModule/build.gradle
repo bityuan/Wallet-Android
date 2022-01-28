@@ -99,8 +99,8 @@ afterEvaluate {
             release(MavenPublication) {
                 from components.release
                 groupId = 'com.github.bityuan'
-                artifactId = 'Wallet-Android'
-                version = '1.3.2'
+                artifactId = 'Wallet-Android:ui'
+                version = '1.3.3'
             }
         }
     }
