@@ -11,7 +11,7 @@ import com.fzm.wallet.sdk.net.goCall
 
 class ExchangeRepository constructor(private val apis: Apis) {
     companion object {
-        const val token = "Basic MzNleGNoYW5nZTpleGNoYW5nZWZsYXNoMjAyMjAxMTg="
+        const val token = "Basic Zmxhc2hFeGNoYW5nZUBicWI6YmpAYnFiQDIwMjJAMTAyNQ=="
     }
 
     suspend fun flashExchange(

@@ -15,16 +15,22 @@ import com.fzm.walletmodule.R
 import com.fzm.walletmodule.bean.StringResult
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.EditDialogFragment
+import com.fzm.walletmodule.utils.DecimalUtils
 import com.fzm.walletmodule.utils.ToastUtils
 import com.fzm.walletmodule.vm.ExchangeViewModel
+import com.fzm.walletmodule.vm.OutViewModel
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_exchange.*
 import kotlinx.android.synthetic.main.activity_exchange.tv_balance
 import kotlinx.android.synthetic.main.activity_transactions.*
+import kotlinx.android.synthetic.main.listitem_choose_chain.*
 import kotlinx.android.synthetic.main.view_header_wallet.*
 import kotlinx.coroutines.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
+import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
+import org.litepal.LitePal
 import walletapi.Walletapi
 import java.math.BigDecimal
 
@@ -37,20 +43,18 @@ class ExchangeActivity : BaseActivity() {
     private val exchangeViewModel: ExchangeViewModel by inject(walletQualifier)
     private var checked = true
 
-    //兑换手续费
     private var exFee = 0.0
 
-    //兑换BNB消耗的USDT
     private var gasFeeUsdt = 0.0
 
-    //总扣减手续费
     private var countFee = 0.0
 
-    //今日限额
     private var limit = 0.0
 
+    private var gasChain = 0.0
+
     companion object {
-        val TOADDRESS = "TPKLQtd9s7eZJtWPy4H63hCckhbbzmtStn"
+        val TOADDRESS = "TLeG94FNqAg7fs9C2ytcBk1eWcn3vaK9hb"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,8 +92,8 @@ class ExchangeActivity : BaseActivity() {
                 limit = it.data()!!
                 tv_limit.text = "$limit USDT"
             } else {
-                limit = 5000.0
-                tv_limit.text = "5000 USDT"
+                limit = 1000.0
+                tv_limit.text = "$limit USDT"
                 //toast(it.error())
             }
         })
@@ -99,12 +103,13 @@ class ExchangeActivity : BaseActivity() {
                 it.data().let {
                     exFee = it?.fee!!
                     gasFeeUsdt = it.gasFeeUsdt
+                    gasChain = it.gasFeeAmount
                     countFee = exFee + gasFeeUsdt
 
-                    val bigDecimal = BigDecimal(it.gasFeeAmount).setScale(4, BigDecimal.ROUND_DOWN);
+                    val bigDecimal = BigDecimal(gasChain).setScale(4, BigDecimal.ROUND_DOWN);
                     val gasChain = bigDecimal.toString()
                     tv_ex_fee.text = "$exFee USDT"
-                    tv_ex_chain.text = "是否兑换 $gasChain BNB"
+                    tv_ex_chain.text = "是否使用$gasFeeUsdt USDT兑换BNB ≈$gasChain BNB"
                     tv_re_chain.text = "$gasChain BNB"
                 }
             }
@@ -121,22 +126,35 @@ class ExchangeActivity : BaseActivity() {
                 iv_check.setImageResource(R.mipmap.ic_ex_sel)
                 checked = true
             }
+            handleCheck(et_value.text.toString(), checked)
         }
         btn_exchange.setOnClickListener {
             CoroutineScope(Dispatchers.Main).launch {
                 val value = et_value.text.toString()
-              /*  if (TextUtils.isEmpty(value)) {
+                if (TextUtils.isEmpty(value)) {
                     toast("请输入兑换数量")
-                    return@launch
-                } else if (value.toDouble() <= countFee) {
-                    toast("请输入足够的兑换数量")
                     return@launch
                 } else if (value.toDouble() > balance.toDouble() || value.toDouble() > limit) {
                     toast("余额不足")
                     return@launch
-                }*/
-                val trx = withContext(Dispatchers.IO) {
-                    BWallet.get().getChain(Walletapi.TypeTrxString)
+                }
+
+                if (checked) {
+                    if (value.toDouble() < (countFee + 1)) {
+                        toast("请输入足够的兑换数量")
+                        return@launch
+                    }
+                } else {
+                    if (value.toDouble() < (exFee+1)) {
+                        toast("请输入足够的兑换数量")
+                        return@launch
+                    }
+                }
+
+
+                var trx: Coin?
+                withContext(Dispatchers.IO) {
+                    trx = BWallet.get().getChain(Walletapi.TypeTrxString)
                 }
                 if (trx?.balance?.toDouble()!! < 10) {
                     toast("最低矿工费为10TRX")
@@ -173,28 +191,14 @@ class ExchangeActivity : BaseActivity() {
                 }
                 //限制输入小数位数(2位)
                 if (it.toString().contains(".")) {
-                    if (it?.length!! - 1 - it.toString().indexOf(".") > 4) {
-                        val s = it.toString().subSequence(0, it.toString().indexOf(".") + 4 + 1);
+                    if (it?.length!! - 1 - it.toString().indexOf(".") > 2) {
+                        val s = it.toString().subSequence(0, it.toString().indexOf(".") + 2 + 1);
                         et_value.setText(s);
                         et_value.setSelection(s.length);
                     }
 
                 }
-                val str = it.toString()
-                if (!TextUtils.isEmpty(str)) {
-                    val input = str.toDouble()
-                    if (input > countFee) {
-
-                        val inputstr = BigDecimal(input).setScale(2, BigDecimal.ROUND_DOWN)
-                        val countFeeStr = BigDecimal(countFee).setScale(2, BigDecimal.ROUND_DOWN)
-
-                        val value = inputstr.subtract(countFeeStr)
-                        tv_re_value.text = "${value} USDT"
-                    }
-                } else {
-                    tv_re_value.text = "0 USDT"
-                }
-
+                handleCheck(it.toString(), checked)
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -202,6 +206,42 @@ class ExchangeActivity : BaseActivity() {
 
 
         }
+    }
+
+
+    private fun handleCheck(inputStr: String, checked: Boolean) {
+        if (!TextUtils.isEmpty(inputStr)) {
+            val input = inputStr.toDouble()
+            if (checked) {
+                if (input >= countFee) {
+                    val inputb = BigDecimal(inputStr).setScale(2, BigDecimal.ROUND_DOWN)
+                    val countFeeStr = BigDecimal(countFee).setScale(2, BigDecimal.ROUND_DOWN)
+                    val value = inputb.subtract(countFeeStr)
+                    tv_re_value.text = "${value} USDT"
+                    tv_re_chain.text = "$gasChain BNB"
+                } else {
+                    resetExValue()
+                }
+            } else {
+                if (input >= exFee) {
+                    val inputb = BigDecimal(inputStr).setScale(2, BigDecimal.ROUND_DOWN)
+                    val exFeeStr = BigDecimal(exFee).setScale(2, BigDecimal.ROUND_DOWN)
+                    val value = inputb.subtract(exFeeStr)
+                    tv_re_value.text = "${value} USDT"
+                    tv_re_chain.text = "0 BNB"
+                } else {
+                    resetExValue()
+                }
+            }
+        } else {
+            resetExValue()
+        }
+
+    }
+
+    private fun resetExValue() {
+        tv_re_value.text = "0 USDT"
+        tv_re_chain.text = "0 BNB"
     }
 
     override fun initData() {

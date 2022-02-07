@@ -69,8 +69,8 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
 
     override suspend fun addCoins(coins: List<Coin>, password: suspend () -> String) {
         var cachePass = ""
-        coins.forEach {
-            checkCoin(it) {
+        for (c in coins) {
+            checkCoin(c) {
                 cachePass.ifEmpty {
                     withContext(Dispatchers.Main.immediate) {
                         password().also { p -> cachePass = p }
@@ -101,9 +101,9 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
     }
 
     override suspend fun deleteCoins(coins: List<Coin>) {
-        coins.forEach {
-            it.status = Coin.STATUS_DISABLE
-            it.update(it.id)
+        for (c in coins) {
+            c.status = Coin.STATUS_DISABLE
+            c.update(c.id)
         }
     }
 
@@ -117,7 +117,11 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
         while (true) {
             coroutineScope {
                 val deferred = ArrayDeque<Deferred<Unit>>()
-                val coins = LitePal.where("pwallet_id = ? and status = ?", wallet.id.toString(), Coin.STATUS_ENABLE.toString())
+                val coins = LitePal.where(
+                    "pwallet_id = ? and status = ?",
+                    wallet.id.toString(),
+                    Coin.STATUS_ENABLE.toString()
+                )
                     .find(Coin::class.java, true)
                 for (coin in coins) {
                     deferred.add(async(Dispatchers.IO) {
@@ -130,10 +134,11 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                         }
                     })
                 }
-                val quotationDeferred = if (requireQuotation || coins.any { it.nickname.isNullOrEmpty() }) {
-                    // 查询资产行情等
-                    async { walletRepository.getCoinList(coins.map { "${it.name},${it.platform}" }) }
-                } else null
+                val quotationDeferred =
+                    if (requireQuotation || coins.any { it.nickname.isNullOrEmpty() }) {
+                        // 查询资产行情等
+                        async { walletRepository.getCoinList(coins.map { "${it.name},${it.platform}" }) }
+                    } else null
                 if (initEmit) {
                     initEmit = false
                     // 第一次订阅时先提前发射本地缓存数据

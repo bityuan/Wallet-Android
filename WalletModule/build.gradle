@@ -3,6 +3,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'maven-publish'
 
 
 android {
@@ -89,6 +90,25 @@ dependencies {
     api "com.github.JavaNoober.BackgroundLibrary:libraryx:1.7.3"
 
 }
+
+
+//注意放置位置，复制此段代码稍加修改即可
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                //和你的仓库地址的反写一致，此处不会修改最终发布的组件依赖名
+                groupId = 'com.github.wallet'
+                //单组件时和你的仓库名一致，多组件时根据实际起自己的名字
+                artifactId = 'ui'
+            }
+        }
+    }
+}
+
+
+
 
 
 
