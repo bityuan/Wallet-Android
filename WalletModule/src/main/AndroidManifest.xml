@@ -19,7 +19,7 @@
             android:name=".ui.activity.ExchangeActivity"
             android:label="@string/label_exchange"
             android:screenOrientation="portrait"
-            android:exported="false" />
+            android:windowSoftInputMode="adjustResize" />
         <!-- <activity -->
         <!-- android:name=".ui.activity.WebAppDetailsActivity" -->
         <!-- android:exported="false" /> -->
@@ -67,7 +67,7 @@
         <activity
             android:name=".ui.activity.CreateWalletActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|stateUnchanged" />
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.activity.MnemPasswordActivity"
             android:label="@string/title_set_pwd" />
