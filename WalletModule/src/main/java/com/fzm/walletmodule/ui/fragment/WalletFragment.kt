@@ -61,7 +61,7 @@ class WalletFragment : BaseFragment() {
                       //  Log.e("wallet","getCoinBalance")
                         mCoinList.clear()
                         mCoinList.addAll(it)
-                        mCoinList.sort()
+                        //mCoinList.sort()
                         mWalletAdapter?.notifyDataSetChanged()
                         money?.text = DecimalUtils.subWithNum(it.sumOf { c -> c.totalAsset }, 2)
                     }
