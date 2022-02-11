@@ -57,6 +57,7 @@ dependencies {
 
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
+    api "me.jessyan:retrofit-url-manager:1.4.0"
 }
 
 //注意放置位置，复制此段代码稍加修改即可
