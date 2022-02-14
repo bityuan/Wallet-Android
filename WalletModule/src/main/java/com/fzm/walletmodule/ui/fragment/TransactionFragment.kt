@@ -34,7 +34,6 @@ class TransactionFragment : BaseFragment() {
     private var isCanLoadMore = false
 
 
-
     companion object {
         private val TYPE = "type"
         private val COIN = "coin"
@@ -71,41 +70,53 @@ class TransactionFragment : BaseFragment() {
     override fun initData() {
         super.initData()
         rv_list.layoutManager = LinearLayoutManager(activity)
-        mCommonAdapter = object : CommonAdapter<Transactions>(activity, R.layout.listitem_coin_details, mList) {
-            override fun convert(holder: ViewHolder, transaction: Transactions, position: Int) {
+        mCommonAdapter =
+            object : CommonAdapter<Transactions>(activity, R.layout.listitem_coin_details, mList) {
+                override fun convert(holder: ViewHolder, transaction: Transactions, position: Int) {
 
-                holder.setVisible(R.id.tv_time, transaction.blocktime != 0L)
-                //时间
-                holder.setText(R.id.tv_time, TimeUtils.getTime(transaction.blocktime * 1000L))
-                //金额
-                val inOut = if (transaction.type == Transactions.TYPE_SEND) Transactions.OUT_STR else Transactions.IN_STR
-                holder.setText(R.id.tv_money, inOut + transaction.value + " " + coin.uiName)
-                //地址
-                val otherAddress = if (transaction.type == Transactions.TYPE_SEND) transaction.to else transaction.from
-                holder.setText(R.id.tv_address, otherAddress)
+                    holder.setVisible(R.id.tv_time, transaction.blocktime != 0L)
+                    //时间
+                    holder.setText(R.id.tv_time, TimeUtils.getTime(transaction.blocktime * 1000L))
+                    //金额
+                    val inOut =
+                        if (transaction.type == Transactions.TYPE_SEND) Transactions.OUT_STR else Transactions.IN_STR
+                    holder.setText(R.id.tv_money, inOut + transaction.value + " " + coin.uiName)
+                    //地址
+                    val otherAddress =
+                        if (transaction.type == Transactions.TYPE_SEND) transaction.to else transaction.from
+                    holder.setText(R.id.tv_address, otherAddress)
 
-                //状态
-                val pedding = Color.parseColor("#7190FF")
-                val success = Color.parseColor("#37AEC4")
-                val fail = Color.parseColor("#EC5151")
+                    //状态
+                    val pedding = Color.parseColor("#7190FF")
+                    val success = Color.parseColor("#37AEC4")
+                    val fail = Color.parseColor("#EC5151")
 
-                when (transaction.status) {
-                    -1 -> handleStatus(holder, getString(R.string.home_transaction_fails), fail)
-                    0 -> handleStatus(holder, getString(R.string.home_confirming), pedding)
-                    1 -> handleStatus(holder, getString(R.string.home_transaction_success), success)
+                    when (transaction.status) {
+                        -1 -> handleStatus(holder, getString(R.string.home_transaction_fails), fail)
+                        0 -> handleStatus(holder, getString(R.string.home_confirming), pedding)
+                        1 -> handleStatus(
+                            holder,
+                            getString(R.string.home_transaction_success),
+                            success
+                        )
+                    }
                 }
+
+                private fun handleStatus(holder: ViewHolder, status: String, color: Int) {
+                    holder.setTextColor(R.id.tv_status, color)
+                    holder.setText(R.id.tv_status, status)
+
+                }
+
             }
-
-            private fun handleStatus(holder: ViewHolder, status: String, color: Int) {
-                holder.setTextColor(R.id.tv_status, color)
-                holder.setText(R.id.tv_status, status)
-
-            }
-
-        }
         rv_list.adapter = mCommonAdapter
 
-        rv_list.setOnItemClickListener { holder, position -> handleOnItemClick(position) }
+        rv_list.setOnItemClickListener { holder, position ->
+            if (isFastClick()) {
+                return@setOnItemClickListener
+            }
+            handleOnItemClick(position)
+        }
     }
 
     private fun handleOnItemClick(position: Int) {
@@ -117,8 +128,10 @@ class TransactionFragment : BaseFragment() {
                 break
             }
         }
-        startActivity<TransactionDetailsActivity>(Transactions::class.java.simpleName to transactions,
-            Coin::class.java.simpleName to coin, Constants.FROM to "list" )
+        startActivity<TransactionDetailsActivity>(
+            Transactions::class.java.simpleName to transactions,
+            Coin::class.java.simpleName to coin, Constants.FROM to "list"
+        )
     }
 
     override fun initRefresh() {
@@ -132,8 +145,6 @@ class TransactionFragment : BaseFragment() {
             getDatas(mIndex)
         }
     }
-
-
 
 
     fun getDatas(index: Long) {
@@ -150,14 +161,18 @@ class TransactionFragment : BaseFragment() {
             var datas: String?
             if (index == 0L) {
                 if (!NetWorkUtils.isConnected(context)) {
-                    datas = MMkvUtil.decodeString( getKey(coinName))
+                    datas = MMkvUtil.decodeString(getKey(coinName))
                 } else {
-                    datas = GoWallet.getTranList( coin.address,coin.chain, coinName, mType.toLong(), index,
-                        Constants.PAGE_LIMIT)
+                    datas = GoWallet.getTranList(
+                        coin.address, coin.chain, coinName, mType.toLong(), index,
+                        Constants.PAGE_LIMIT
+                    )
                 }
             } else {
-                datas =  GoWallet.getTranList(coin.address, coin.chain, coinName, mType.toLong(), index,
-                    Constants.PAGE_LIMIT)
+                datas = GoWallet.getTranList(
+                    coin.address, coin.chain, coinName, mType.toLong(), index,
+                    Constants.PAGE_LIMIT
+                )
             }
             val query = query(datas)
             uiThread {
@@ -201,7 +216,7 @@ class TransactionFragment : BaseFragment() {
         addList(list)
         rv_list?.setHasLoadMore(!isCanLoadMore)
         rv_list?.onLoadMoreComplete()
-        mCommonAdapter?.notifyDataSetChanged()
+        mCommonAdapter.notifyDataSetChanged()
     }
 
 
@@ -209,8 +224,9 @@ class TransactionFragment : BaseFragment() {
         if (GoWallet.isBTYChild(coin)) {
             for (transactions in list) {
                 if (transactions.type == "send"
-                        && transactions.note == "token fee"
-                        && transactions.status == 1) {//发送的手续费记录
+                    && transactions.note == "token fee"
+                    && transactions.status == 1
+                ) {//发送的手续费记录
                     mTokenFeeList.add(transactions)
                     continue
                 }

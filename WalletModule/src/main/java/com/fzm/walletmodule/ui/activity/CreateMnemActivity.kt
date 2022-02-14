@@ -8,6 +8,7 @@ import com.fzm.walletmodule.R
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.wallet.sdk.utils.GoWallet
+import com.fzm.walletmodule.utils.isFastClick
 import kotlinx.android.synthetic.main.activity_create_mnem.*
 
 /**
@@ -83,15 +84,16 @@ class CreateMnemActivity : BaseActivity() {
             }
         }
         btn_ok.setOnClickListener {
+            if (isFastClick()){
+                return@setOnClickListener
+            }
             gotoBackUpWalletActivity()
         }
         lv_chinese.setOnClickListener {
             showChineseView()
-
         }
         lv_english.setOnClickListener {
             showEnglishView()
-
         }
     }
 

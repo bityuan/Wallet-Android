@@ -310,7 +310,7 @@ class AddCoinActivity : BaseActivity() {
                 }
                 mCommonAdapter!!.notifyDataSetChanged()
             } else {
-                Log.e("addCoin", "请求失败${it.error()}")
+                Log.e("addCoin","请求失败${it.error()}")
                 toast(it.error())
             }
         })
@@ -374,7 +374,7 @@ class AddCoinActivity : BaseActivity() {
             val chainCoin = select().where(
                 "chain = ? and pwallet_id = ?",
                 coin.chain,
-                mPWallet.id.toString()
+              mPWallet.id.toString()
             ).findFirst(
                 Coin::class.java
             )
@@ -450,7 +450,7 @@ class AddCoinActivity : BaseActivity() {
     inner class DelaySearchHandler : Handler() {
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
-            Log.e("addCoin", "handleMessage")
+            Log.e("addCoin","handleMessage")
             page = 1
             walletViewModel.searchCoinList(
                 page,

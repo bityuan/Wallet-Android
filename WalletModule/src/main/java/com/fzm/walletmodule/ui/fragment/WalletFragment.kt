@@ -94,6 +94,9 @@ class WalletFragment : BaseFragment() {
             WalletAdapter(requireActivity(), R.layout.view_item_coin_info, mCoinList, this)
         mWalletAdapter?.setOnItemClickListener(object : WalletAdapter.ItemClickListener {
             override fun OnItemClick(view: View?, position: Int) {
+                if (isFastClick()){
+                    return
+                }
                 val coinPosition = position - 1 //减去header
                 if (ListUtils.isEmpty(mCoinList) || coinPosition < 0 || coinPosition >= mCoinList.size) {
                     return
