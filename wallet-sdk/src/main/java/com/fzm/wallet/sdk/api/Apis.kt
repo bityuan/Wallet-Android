@@ -17,7 +17,6 @@ import retrofit2.http.*
 interface Apis {
 
 
-    //获取矿工费
     @GET("/goapi/interface/fees/recommended")
     suspend fun getMinerList(
         @Query("name") name: String
@@ -41,12 +40,11 @@ interface Apis {
     @POST("interface/recommend-coin")
     suspend fun getTabData(): HttpResponse<List<AddCoinTabBean>>
 
-    //---------------------------闪兑接口-------------------------------
-
+    //---------------------------exchange-------------------------------
 
     /**
-     * 发起USDT兑换申请
-     * @param token 接口权限
+     * apply
+     * @param token
      */
     @Headers("$DOMAIN_NAME_HEADER$DOMAIN_EXCHANGE_DO")
     suspend fun flashExchange(
@@ -55,7 +53,7 @@ interface Apis {
     ): GoResponse<String>
 
     /**
-     * 根据地址获取兑换额度
+     * exchange limit
      * @param address trc20 usdt地址
      */
     @Headers("$DOMAIN_NAME_HEADER$DOMAIN_EXCHANGE_MANAGER")
@@ -63,8 +61,8 @@ interface Apis {
     suspend fun getExLimit(@Query("address") address: String): HttpResponse<Double>
 
     /**
-     * 获取闪兑需要的手续费
-     * @param address trc20 usdt地址
+     * exchange fee
+     * @param address trc20 usdt
      */
     @Headers("$DOMAIN_NAME_HEADER$DOMAIN_EXCHANGE_MANAGER")
     @GET("public/fee")
