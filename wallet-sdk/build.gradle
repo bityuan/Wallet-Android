@@ -59,6 +59,12 @@ dependencies {
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
 }
 
+// 打包sourcesJar任务
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
 //注意放置位置，复制此段代码稍加修改即可
 afterEvaluate {
     publishing {
@@ -69,6 +75,7 @@ afterEvaluate {
                 groupId = 'com.github.wallet'
                 //单组件时和你的仓库名一致，多组件时根据实际起自己的名字
                 artifactId = 'sdk'
+                artifact sourcesJar
             }
         }
     }
