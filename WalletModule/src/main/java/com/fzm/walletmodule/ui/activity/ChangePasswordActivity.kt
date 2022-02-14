@@ -23,6 +23,7 @@ import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.AppUtils
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.utils.ToastUtils
+import com.fzm.walletmodule.utils.isFastClick
 import kotlinx.android.synthetic.main.activity_change_password.*
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.doAsync
@@ -144,6 +145,9 @@ class ChangePasswordActivity : BaseActivity() {
 
     override fun initListener() {
         btn_sure.setOnClickListener {
+            if (isFastClick()){
+                return@setOnClickListener
+            }
             changePassword()
         }
     }

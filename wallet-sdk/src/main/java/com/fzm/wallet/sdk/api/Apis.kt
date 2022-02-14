@@ -3,6 +3,7 @@ package com.fzm.wallet.sdk.api
 import com.fzm.wallet.sdk.bean.ExchangeFee
 import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.bean.WithHold
+import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.GoResponse
 import com.fzm.wallet.sdk.net.HttpResponse
@@ -32,6 +33,13 @@ interface Apis {
 
     @POST("interface/wallet-coin")
     suspend fun getCoinList(@Body body: Map<String, Any>): HttpResponse<List<Coin>>
+
+    @POST("interface/wallet-coin/search")
+    suspend fun searchCoinList(@Body body: RequestBody): HttpResponse<List<Coin>>
+
+
+    @POST("interface/recommend-coin")
+    suspend fun getTabData(): HttpResponse<List<AddCoinTabBean>>
 
     //---------------------------闪兑接口-------------------------------
 

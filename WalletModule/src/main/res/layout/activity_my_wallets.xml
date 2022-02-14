@@ -56,7 +56,7 @@
                     android:id="@+id/walletCreate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
+                    android:layout_centerVertical="true"
                     android:drawableLeft="@mipmap/my_wallets_create_icon"
                     android:drawablePadding="3dp"
                     android:gravity="center"
