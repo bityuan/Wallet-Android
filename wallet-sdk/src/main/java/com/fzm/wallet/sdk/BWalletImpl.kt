@@ -145,6 +145,10 @@ internal class BWalletImpl : BWallet {
         it.getCoinBalance(initialDelay, period, requireQuotation)
     }
 
+    override suspend fun getCoinBalance(coin: Coin, requireQuotation: Boolean): Coin {
+        return wallet.getCoinBalance(coin, requireQuotation)
+    }
+
     override suspend fun getTransactionList(
         coin: Coin,
         type: Long,

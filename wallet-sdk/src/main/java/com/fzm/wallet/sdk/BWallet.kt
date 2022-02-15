@@ -118,6 +118,14 @@ interface BWallet {
     fun getCoinBalance(initialDelay: Long, period: Long, requireQuotation: Boolean): Flow<List<Coin>>
 
     /**
+     * 获取单个币种的资产余额与行情
+     *
+     * @param coin              币种
+     * @param requireQuotation  是否查询市场行情
+     */
+    suspend fun getCoinBalance(coin: Coin, requireQuotation: Boolean): Coin
+
+    /**
      * 获取交易列表
      *
      * @param coin      币种
