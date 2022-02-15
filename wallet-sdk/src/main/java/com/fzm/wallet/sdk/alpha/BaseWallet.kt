@@ -165,6 +165,27 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
         }
     }.flowOn(Dispatchers.IO)
 
+    override suspend fun getCoinBalance(coin: Coin, requireQuotation: Boolean): Coin {
+        return withContext(Dispatchers.IO) {
+            try {
+                coin.balance = GoWallet.handleBalance(coin)
+            } catch (e: Exception) {
+                // 资产获取异常
+            }
+            if (requireQuotation || coin.nickname.isNullOrEmpty()) {
+                // 查询资产行情等
+                val result = walletRepository.getCoinList(listOf("${coin.name},${coin.platform}"))
+                result.dataOrNull()?.firstOrNull()?.also { meta ->
+                    coin.rmb = meta.rmb
+                    coin.icon = meta.icon
+                    coin.nickname = meta.nickname
+                }
+            }
+            coin.update(coin.id)
+            coin
+        }
+    }
+
     override suspend fun getTransactionList(
         coin: Coin,
         type: Long,

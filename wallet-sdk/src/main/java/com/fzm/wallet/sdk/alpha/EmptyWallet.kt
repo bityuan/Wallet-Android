@@ -75,4 +75,8 @@ object EmptyWallet : Wallet<Coin> {
     override fun clone(): Wallet<Coin> {
         return this
     }
+
+    override suspend fun getCoinBalance(coin: Coin, requireQuotation: Boolean): Coin {
+        return coin
+    }
 }
