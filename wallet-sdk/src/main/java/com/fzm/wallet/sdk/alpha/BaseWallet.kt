@@ -171,26 +171,28 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
         index: Long,
         size: Long
     ): List<Transactions> {
-        var coinName = coin.name
-        if (GoWallet.isBTYChild(coin)) {
-            coinName =
-                if (coin.treaty == "1") "${coin.platform}.${coin.name}" else "${coin.platform}.coins"
-        }
+        return withContext(Dispatchers.IO) {
+            var coinName = coin.name
+            if (GoWallet.isBTYChild(coin)) {
+                coinName =
+                    if (coin.treaty == "1") "${coin.platform}.${coin.name}" else "${coin.platform}.coins"
+            }
 
-        val data = if (index == 0L) {
-            GoWallet.getTranList(coin.address, coin.chain, coinName, type, index, size)
-        } else {
-            GoWallet.getTranList(coin.address, coin.chain, coinName, type, index, size)
+            val data = if (index == 0L) {
+                GoWallet.getTranList(coin.address, coin.chain, coinName, type, index, size)
+            } else {
+                GoWallet.getTranList(coin.address, coin.chain, coinName, type, index, size)
+            }
+            if (data.isNullOrEmpty()) {
+                val local = MMkvUtil.decodeString(getKey(coin, type))
+                return@withContext gson.fromJson(local, TransactionResponse::class.java).result ?: emptyList()
+            }
+            if (index == 0L) {
+                // 缓存第一页数据
+                MMkvUtil.encode(getKey(coin, type), data)
+            }
+            return@withContext gson.fromJson(data, TransactionResponse::class.java).result ?: emptyList()
         }
-        if (data.isNullOrEmpty()) {
-            val local = MMkvUtil.decodeString(getKey(coin, type))
-            return gson.fromJson(local, TransactionResponse::class.java).result ?: emptyList()
-        }
-        if (index == 0L) {
-            // 缓存第一页数据
-            MMkvUtil.encode(getKey(coin, type), data)
-        }
-        return gson.fromJson(data, TransactionResponse::class.java).result ?: emptyList()
     }
 
     override suspend fun getTransactionByHash(
@@ -198,12 +200,14 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
         tokenSymbol: String,
         hash: String
     ): Transactions? {
-        val data = GoWallet.getTranByTxid(chain, tokenSymbol, hash)
-        if (data.isNullOrEmpty()) return null
-        return try {
-            gson.fromJson(data, Transactions::class.java)
-        } catch (e: Exception) {
-            null
+        return withContext(Dispatchers.IO) {
+            val data = GoWallet.getTranByTxid(chain, tokenSymbol, hash)
+            if (data.isNullOrEmpty()) return@withContext null
+            try {
+                gson.fromJson(data, Transactions::class.java)
+            } catch (e: Exception) {
+                null
+            }
         }
     }
 
@@ -221,7 +225,7 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
     }
 
     protected fun getKey(coin: Coin, type: Long): String =
-        "${coin.chain}${coin.address}${coin.name}$type}"
+        "${coin.chain}${coin.address}${coin.name}$type"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

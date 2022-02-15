@@ -5,15 +5,12 @@ import android.util.Log
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.BWalletImpl
 import com.fzm.wallet.sdk.api.ApiEnv.Companion.getGoURL
-import com.fzm.wallet.sdk.bean.MulAddress
 import com.fzm.wallet.sdk.bean.response.BalanceResponse
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 import org.litepal.LitePal.saveAll
 import walletapi.*
 import java.util.*
@@ -250,7 +247,7 @@ class GoWallet {
             try {
                 val walletQueryByTxid = WalletQueryByTxid()
                 walletQueryByTxid.cointype = chain
-                walletQueryByTxid.tokenSymbol = tokenSymbol
+                walletQueryByTxid.tokenSymbol = if (chain == tokenSymbol) "" else tokenSymbol
                 walletQueryByTxid.txid = txid
                 walletQueryByTxid.util = getUtil(goNoderUrl)
                 val transaction =
