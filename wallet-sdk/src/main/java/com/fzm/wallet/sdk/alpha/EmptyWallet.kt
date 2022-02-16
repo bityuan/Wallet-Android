@@ -68,8 +68,8 @@ object EmptyWallet : Wallet<Coin> {
         chain: String,
         tokenSymbol: String,
         hash: String
-    ): Transactions? {
-        return null
+    ): Transactions {
+        throw UnsupportedOperationException("查询失败")
     }
 
     override suspend fun getAddress(chain: String): String? {
