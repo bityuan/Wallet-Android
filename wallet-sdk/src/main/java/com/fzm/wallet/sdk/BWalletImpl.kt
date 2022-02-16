@@ -78,7 +78,7 @@ internal class BWalletImpl : BWallet {
     }
 
     override suspend fun getAllWallet(user: String) = withContext(Dispatchers.IO) {
-        LitePal.select("user = ?", user).find(PWallet::class.java).map { it.toWalletBean() }
+        LitePal.where("user = ?", user).find(PWallet::class.java).map { it.toWalletBean() }
     }
 
     override fun findWallet(id: String?): PWallet? {
