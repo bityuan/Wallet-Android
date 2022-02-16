@@ -47,7 +47,14 @@ class BackUpWalletActivity : BaseActivity() {
     private var mMnemResultAdapter: BackUpWalletAdapter? = null
     var onItemDragListener: OnItemDragListener = object : OnItemDragListener {
         override fun onItemDragStart(viewHolder: RecyclerView.ViewHolder, pos: Int) {}
-        override fun onItemDragMoving(source: RecyclerView.ViewHolder, from: Int, target: RecyclerView.ViewHolder, to: Int) {}
+        override fun onItemDragMoving(
+            source: RecyclerView.ViewHolder,
+            from: Int,
+            target: RecyclerView.ViewHolder,
+            to: Int
+        ) {
+        }
+
         override fun onItemDragEnd(viewHolder: RecyclerView.ViewHolder, pos: Int) {}
     }
 
@@ -251,7 +258,7 @@ class BackUpWalletActivity : BaseActivity() {
                         mPWallet.name,
                         mPWallet.password,
                         "",
-                        emptyList()
+                        Constants.getCoins()
                     )
                 )
                 val pWallet = BWallet.get().findWallet(id)

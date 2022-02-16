@@ -32,21 +32,28 @@ class MainActivity : BaseActivity() {
         EventBus.getDefault().register(this)
         initView()
         setTabSelection(0)
-        Constants.setCoins(defaultCoinList())
+        Constants.setCoins(DEFAULT_COINS)
     }
 
 
-    private fun defaultCoinList(): MutableList<Coin> {
-        val coinList = mutableListOf<Coin>()
-        val coin = Coin()
-        coin.name = "BTY"
-        coin.chain = "BTY"
-        coin.platform = "bty"
-        coin.nickname = "以太坊"
-        coin.treaty = "1"
-        coinList.add(coin)
-        return coinList
-    }
+    internal val DEFAULT_COINS
+        get() = listOf(
+            Coin().apply {
+                chain = "BTY"
+                name = "BTY"
+                platform = "bty"
+            },
+            Coin().apply {
+                chain = "ETH"
+                name = "ETH"
+                platform = "ethereum"
+            },
+            Coin().apply {
+                chain = "BTC"
+                name = "BTC"
+                platform = "btc"
+            },
+        )
 
      override fun initView() {
         bottomNavigationView.setOnNavigationItemSelectedListener {
