@@ -29,10 +29,16 @@ interface Wallet<T> : Cloneable {
     val walletInfo: WalletBean
 
     /**
-     * 修改钱包密码
+     * 修改钱包名称
      */
     @Throws(Exception::class)
     suspend fun changeWalletName(name: String): Boolean
+
+    /**
+     * 修改钱包密码
+     */
+    @Throws(Exception::class)
+    suspend fun changeWalletPassword(old: String, password: String): Boolean
 
     /**
      * 删除钱包

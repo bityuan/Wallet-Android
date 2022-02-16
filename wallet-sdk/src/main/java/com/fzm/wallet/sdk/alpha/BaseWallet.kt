@@ -46,6 +46,49 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
         return wallet.update(wallet.id) != 0
     }
 
+    override suspend fun changeWalletPassword(old: String, password: String): Boolean {
+        return withContext(Dispatchers.IO) {
+            if (wallet.password.isNullOrEmpty()) {
+                setPassword(password)
+            } else {
+                changePassword(old, password)
+            }
+        }
+    }
+
+    private fun setPassword(password: String): Boolean {
+        val pWallet = PWallet()
+        val encPasswd = GoWallet.encPasswd(password) ?: return false
+        val passwdHash = GoWallet.passwdHash(encPasswd) ?: return false
+        pWallet.password = passwdHash
+        // 同时更改助记词的加密
+        val bOldPassword = GoWallet.encPasswd(wallet.password) ?: return false
+        val mnem = GoWallet.decMenm(bOldPassword, wallet.mnem) ?: return false
+        val encMenm = GoWallet.encMenm(encPasswd, mnem) ?: return false
+        pWallet.mnem = encMenm
+        pWallet.isPutpassword = true
+        pWallet.update(wallet.id)
+        return true
+    }
+
+    private fun changePassword(old: String, password: String): Boolean {
+        if (!GoWallet.checkPasswd(old, password)) {
+            throw Exception("密码错误")
+        }
+        val pWallet = PWallet()
+        val encPasswd = GoWallet.encPasswd(password) ?: return false
+        val passwdHash = GoWallet.passwdHash(encPasswd) ?: return false
+        pWallet.password = passwdHash
+        // 同时更改助记词的加密
+        val bOldPassword = GoWallet.encPasswd(old) ?: return false
+        val mnem = GoWallet.decMenm(bOldPassword, wallet.mnem) ?: return false
+        val encMenm = GoWallet.encMenm(encPasswd, mnem) ?: return false
+        pWallet.mnem = encMenm
+        pWallet.isPutpassword = true
+        pWallet.update(wallet.id)
+        return true
+    }
+
     override suspend fun delete(password: String, confirmation: suspend () -> Boolean): Boolean {
         val verified = withContext(Dispatchers.IO) {
             GoWallet.checkPasswd(password, wallet.password)

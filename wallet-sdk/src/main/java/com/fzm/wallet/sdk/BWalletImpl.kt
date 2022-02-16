@@ -113,6 +113,14 @@ internal class BWalletImpl : BWallet {
         return false
     }
 
+    override suspend fun changeWalletPassword(old: String, password: String): Boolean {
+        if (wallet.changeWalletPassword(old, password)) {
+            updateWalletFlow(wallet.clone())
+            return true
+        }
+        return false
+    }
+
     override suspend fun deleteWallet(password: String, confirmation: suspend () -> Boolean) {
         val user = wallet.walletInfo.user
         if (wallet.delete(password, confirmation)) {
@@ -175,6 +183,12 @@ internal class BWalletImpl : BWallet {
             LitePal.select().where("chain = ? and pwallet_id = ?", chain, wallet.getId()).find<Coin>()
         }
         return coinList.firstOrNull()
+    }
+
+    override fun close() {
+        MMkvUtil.encode(CURRENT_USER, "")
+        MMkvUtil.encode(PWallet.PWALLET_ID, "")
+        updateWalletFlow(EmptyWallet)
     }
 
 

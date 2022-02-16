@@ -88,6 +88,12 @@ interface BWallet {
     suspend fun changeWalletName(name: String): Boolean
 
     /**
+     * 修改钱包密码
+     */
+    @Throws(Exception::class)
+    suspend fun changeWalletPassword(old: String, password: String): Boolean
+
+    /**
      * 删除当前钱包
      *
      * @param password  钱包密码
@@ -157,6 +163,11 @@ interface BWallet {
      * @param chain         链名
      */
     suspend fun getChain(chain: String): Coin?
+
+    /**
+     * 关闭钱包
+     */
+    fun close()
 
     /**
      * 获取临时私钥

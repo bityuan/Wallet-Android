@@ -29,6 +29,10 @@ object EmptyWallet : Wallet<Coin> {
         return false
     }
 
+    override suspend fun changeWalletPassword(old: String, password: String): Boolean {
+        return false
+    }
+
     override suspend fun delete(password: String, confirmation: suspend () -> Boolean): Boolean {
         return false
     }
