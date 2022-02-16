@@ -170,7 +170,7 @@ internal class BWalletImpl : BWallet {
         chain: String,
         tokenSymbol: String,
         hash: String
-    ): Transactions? {
+    ): Transactions {
         return wallet.getTransactionByHash(chain, tokenSymbol, hash)
     }
 

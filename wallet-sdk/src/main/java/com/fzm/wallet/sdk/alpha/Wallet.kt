@@ -99,7 +99,8 @@ interface Wallet<T> : Cloneable {
      * @param tokenSymbol   币种symbol
      * @param hash          交易hash
      */
-    suspend fun getTransactionByHash(chain: String, tokenSymbol: String, hash: String): Transactions?
+    @Throws(Exception::class)
+    suspend fun getTransactionByHash(chain: String, tokenSymbol: String, hash: String): Transactions
 
     /**
      * 根据主链获取地址

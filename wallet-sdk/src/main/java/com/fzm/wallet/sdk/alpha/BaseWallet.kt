@@ -5,6 +5,7 @@ import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.bean.response.TransactionResponse
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.net.GoResponse
 import com.fzm.wallet.sdk.net.rootScope
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.repo.WalletRepository
@@ -12,6 +13,7 @@ import com.fzm.wallet.sdk.toWalletBean
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -263,14 +265,18 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
         chain: String,
         tokenSymbol: String,
         hash: String
-    ): Transactions? {
+    ): Transactions {
         return withContext(Dispatchers.IO) {
             val data = GoWallet.getTranByTxid(chain, tokenSymbol, hash)
-            if (data.isNullOrEmpty()) return@withContext null
-            try {
-                gson.fromJson(data, Transactions::class.java)
-            } catch (e: Exception) {
-                null
+            if (data.isNullOrEmpty()) throw Exception("查询数据为空")
+            val response = gson.fromJson<GoResponse<Transactions>>(
+                data,
+                object : TypeToken<GoResponse<Transactions>>() {}.type
+            )
+            if (response.error == null) {
+                response.result ?: throw Exception("查询结果为空")
+            } else {
+                throw Exception(response.error)
             }
         }
     }
