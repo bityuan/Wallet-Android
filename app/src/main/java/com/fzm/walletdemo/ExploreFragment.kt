@@ -1,6 +1,7 @@
 package com.fzm.walletdemo
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +29,12 @@ class ExploreFragment : BaseFragment() {
         val exAdapter = ExAdapter(list)
         rv_list.layoutManager = LinearLayoutManager(activity)
         rv_list.adapter = exAdapter
+        exAdapter.setOnItemClickListener(object : ExAdapter.OnItemClickListener {
+            override fun onItemClick(v: View, position: Int) {
+                startActivity(Intent(activity,WConnectActivity::class.java))
+            }
+
+        })
     }
 
 
