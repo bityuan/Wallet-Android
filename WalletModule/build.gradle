@@ -85,7 +85,6 @@ dependencies {
     api "com.squareup.retrofit2:converter-gson:2.8.2"
     api "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
     api "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0"
-    api "com.squareup.okhttp3:logging-interceptor:3.14.9"
     api "com.alibaba:fastjson:1.1.68.android"
     api "com.github.JavaNoober.BackgroundLibrary:libraryx:1.7.3"
 
