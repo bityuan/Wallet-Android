@@ -38,6 +38,7 @@ import org.jetbrains.anko.startActivity
 import org.koin.android.ext.android.inject
 import org.litepal.LitePal.find
 import org.litepal.LitePal.where
+import java.math.BigDecimal
 
 class OutActivity : BaseActivity() {
     private var mFrom = 0
@@ -97,6 +98,10 @@ class OutActivity : BaseActivity() {
     }
 
     override fun initData() {
+        if ("TRX" == mCoin!!.chain) {
+            ll_out_miner.visibility = View.GONE
+            mFee = 0.0
+        }
         outViewModel.getMiner.observe(this, Observer {
             dismiss()
             if (it.isSucceed()) {
@@ -129,9 +134,13 @@ class OutActivity : BaseActivity() {
                 fromUser: Boolean,
             ) {
                 mFee = DoubleUtils.intToDouble(progress + minInt, length)
+                val rmb: Double = mChainBean?.rmb!! * mFee
+                val rmbValue = BigDecimal(rmb.toString()).setScale(4, BigDecimal.ROUND_DOWN)
+
                 // updateFee(progress, length)
                 tv_fee.text = DecimalUtils.subZero(DecimalUtils.formatDouble(mFee))
                 tv_fee_coin_name.text = mCoin!!.chain
+                tv_fee_rmb.text = " ≈ ¥${rmbValue}"
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {}

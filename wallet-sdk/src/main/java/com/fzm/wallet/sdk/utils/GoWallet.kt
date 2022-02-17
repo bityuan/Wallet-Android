@@ -2,16 +2,15 @@ package com.fzm.wallet.sdk.utils
 
 import android.text.TextUtils
 import android.util.Log
-import com.fzm.wallet.sdk.api.ApiEnv.Companion.getGoURL
-import com.fzm.wallet.sdk.bean.MulAddress
+import com.fzm.wallet.sdk.BWallet
+import com.fzm.wallet.sdk.BWalletImpl
 import com.fzm.wallet.sdk.bean.response.BalanceResponse
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.net.UrlConfig
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 import org.litepal.LitePal.saveAll
 import walletapi.*
 import java.util.*
@@ -130,7 +129,7 @@ class GoWallet {
          * {"id": 1,"result": {"address": "0x632d8B07CDE8B2dcc3645148d2fa76647565664","balance": "0.02091716"},"error": null}
          */
         fun getbalance(addresss: String, chain: String, tokenSymbol: String): String? {
-            return getbalance(addresss, chain, tokenSymbol, getGoURL())
+            return getbalance(addresss, chain, tokenSymbol, UrlConfig.GO_URL)
         }
 
 
@@ -139,7 +138,7 @@ class GoWallet {
          * @param lCoin Coin   币种
          * @return String?  余额
          */
-        fun handleBalance(lCoin: Coin): String? {
+        fun handleBalance(lCoin: Coin): String {
             var tokensymbol = if (lCoin.name == lCoin.chain) "" else lCoin.name
             if (!TextUtils.isEmpty(lCoin.platform) && !TextUtils.isEmpty(lCoin.chain)) {
                 if (isBTYChild(lCoin)) {
@@ -228,7 +227,7 @@ class GoWallet {
             page: Long,
             count: Long
         ): String? {
-            return getTranList(addr, chain, tokenSymbol, type, page, count, getGoURL()!!)
+            return getTranList(addr, chain, tokenSymbol, type, page, count, UrlConfig.GO_URL!!)
         }
 
         /**
@@ -268,7 +267,7 @@ class GoWallet {
          * @return String?
          */
         fun getTranByTxid(chain: String, tokenSymbol: String, txid: String): String? {
-            return getTranByTxid(chain, tokenSymbol, txid, getGoURL())
+            return getTranByTxid(chain, tokenSymbol, txid, UrlConfig.GO_URL)
         }
 
         /**
@@ -323,7 +322,7 @@ class GoWallet {
             chain: String, fromAddr: String, toAddr: String, amount: Double, fee: Double,
             note: String, tokensymbol: String
         ): String? {
-            return createTran(chain, fromAddr, toAddr, amount, fee, note, tokensymbol, getGoURL()!!)
+            return createTran(chain, fromAddr, toAddr, amount, fee, note, tokensymbol, UrlConfig.GO_URL!!)
         }
 
 
@@ -384,7 +383,7 @@ class GoWallet {
          * @return String?
          */
         fun sendTran(chain: String, signData: String, tokenSymbol: String): String? {
-            return sendTran(chain, signData, tokenSymbol, getGoURL()!!)
+            return sendTran(chain, signData, tokenSymbol, UrlConfig.GO_URL!!)
         }
 
         /**
@@ -520,7 +519,7 @@ class GoWallet {
 
         fun deleteMulAddress(appId: String, appSymbol: String, mulAddress: String): Boolean? {
             val mulAddr = WalletMulAddr()
-            mulAddr.util = getUtil(getGoURL()!!)
+            mulAddr.util = getUtil(UrlConfig.GO_URL!!)
             mulAddr.appid = appId
             mulAddr.appSymbol = appSymbol
             mulAddr.mulAddr = mulAddress
@@ -530,50 +529,13 @@ class GoWallet {
 
         fun imortMulAddress(appId: String, appSymbol: String, mulAddress: String): Boolean? {
             val mulAddr = WalletMulAddr()
-            mulAddr.util = getUtil(getGoURL()!!)
+            mulAddr.util = getUtil(UrlConfig.GO_URL!!)
             mulAddr.appid = appId
             mulAddr.appSymbol = appSymbol
             mulAddr.mulAddr = mulAddress
             return Walletapi.imortMulAddress(mulAddr)
         }
 
-        fun createWallet(wallet: PWallet, coinList: List<Coin>, listener: CoinListener) {
-            val mulList: ArrayList<MulAddress> = ArrayList()
-            doAsync {
-                for (coin in coinList) {
-                    val hdWallet = getHDWallet(coin.chain, wallet.mnem)
-                    val pubkey = hdWallet!!.newKeyPub(0)
-                    val address = hdWallet.newAddress_v2(0)
-                    val pubkeyStr = encodeToStrings(pubkey)
-                    if (Walletapi.TypeBtyString == coin.chain) {
-                        wallet.btyPrivkey = encodeToStrings(hdWallet.newKeyPriv(0))
-                    }
-                    coin.status = Coin.STATUS_ENABLE
-                    coin.pubkey = pubkeyStr
-                    coin.address = address
-                    //只添加主链即可
-                    if (coin.chain == coin.name) {
-                        val mulAddress = MulAddress()
-                        mulAddress.cointype = coin.chain
-                        mulAddress.address = coin.address
-                        mulList.add(mulAddress)
-                    }
-                }
-                saveAll(coinList)
-                wallet.coinList.addAll(coinList)
-                val bpassword = encPasswd(wallet.password)
-                val passwdHash = passwdHash(bpassword!!)
-                val seedEncKey = encMenm(bpassword, wallet.mnem)
-                wallet.mnem = seedEncKey
-                wallet.password = passwdHash
-                wallet.save()
-                val mulJson = gson.toJson(mulList)
-                val aBoolean = imortMulAddress("", APPSYMBOL_P, mulJson)
-                uiThread {
-                    listener.onSuccess()
-                }
-            }
-        }
 
         internal suspend fun createWallet(wallet: PWallet, coinList: List<Coin>): PWallet {
             return withContext(Dispatchers.IO) {
@@ -586,7 +548,8 @@ class GoWallet {
                     coin.pubkey = pubkeyStr
                     coin.address = address
                     if (Walletapi.TypeBtyString == coin.chain) {
-                        wallet.btyPrivkey = encodeToStrings(hdWallet.newKeyPriv(0))
+                        val bWalletImpl = BWallet.get() as BWalletImpl
+                        bWalletImpl.setBtyPrivkey(encodeToStrings(hdWallet.newKeyPriv(0)))
                     }
                 }
                 saveAll(coinList)

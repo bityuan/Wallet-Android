@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.FragmentTransaction
+import com.fzm.wallet.sdk.BWallet
 import com.fzm.walletmodule.base.Constants
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
@@ -32,21 +33,37 @@ class MainActivity : BaseActivity() {
         EventBus.getDefault().register(this)
         initView()
         setTabSelection(0)
-        Constants.setCoins(defaultCoinList())
+        Constants.setCoins(DEFAULT_COINS)
     }
 
 
-    private fun defaultCoinList(): MutableList<Coin> {
-        val coinList = mutableListOf<Coin>()
-        val coin = Coin()
-        coin.name = "BTY"
-        coin.chain = "BTY"
-        coin.platform = "bty"
-        coin.nickname = "以太坊"
-        coin.treaty = "1"
-        coinList.add(coin)
-        return coinList
-    }
+    internal val DEFAULT_COINS
+        get() = listOf(
+            Coin().apply {
+                chain = "BTY"
+                name = "BTY"
+                platform = "bty"
+                netId = "705"
+            },
+            Coin().apply {
+                chain = "ETH"
+                name = "ETH"
+                platform = "ethereum"
+                netId = "90"
+            },
+            Coin().apply {
+                chain = "BNB"
+                name = "BNB"
+                platform = "bnb"
+                netId = "641"
+            },
+            Coin().apply {
+                chain = "BNB"
+                name = "USDT"
+                platform = "bnb"
+                netId = "694"
+            },
+        )
 
      override fun initView() {
         bottomNavigationView.setOnNavigationItemSelectedListener {
@@ -168,7 +185,15 @@ class MainActivity : BaseActivity() {
             mPWallet = event.mPWallet
             WalletUtils.setUsingWallet(mPWallet)
         }
+
+        if(!event.isChoose) {
+            BWallet.get()
+            val privkey = BWallet.get().getBtyPrikey()
+            Log.v("tag", privkey+"")
+        }
     }
+
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onInitPasswordEvent(event: InitPasswordEvent) {
         val password = event.password

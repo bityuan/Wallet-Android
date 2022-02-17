@@ -156,4 +156,5 @@
     <string name="sunday">星期日</string>
     <string name="add_coin_tab_one">首页币种</string>
     <string name="rsp_dialog_input_password">请输入账户密码</string>
+    <string name="label_exchange">闪兑</string>
 </resources>

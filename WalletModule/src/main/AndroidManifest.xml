@@ -16,6 +16,14 @@
 
     <application>
         <activity
+            android:name=".ui.activity.ExchangeActivity"
+            android:label="@string/label_exchange"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+        <!-- <activity -->
+        <!-- android:name=".ui.activity.WebAppDetailsActivity" -->
+        <!-- android:exported="false" /> -->
+        <activity
             android:name=".ui.activity.AddCoinActivity"
             android:theme="@style/Theme.Design.NoActionBar"
             android:exported="false" />
@@ -77,7 +85,7 @@
             android:name=".ui.activity.CreateWalletActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Design.NoActionBar"
-            android:windowSoftInputMode="stateHidden|stateUnchanged" />
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.activity.MnemPasswordActivity"
             android:theme="@style/Theme.Design.NoActionBar"

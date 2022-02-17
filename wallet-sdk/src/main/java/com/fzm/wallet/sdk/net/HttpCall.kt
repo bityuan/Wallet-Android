@@ -19,7 +19,7 @@ suspend fun <T> apiCall(call: suspend () -> HttpResponse<T>): HttpResult<T> {
 
 }
 
-/*
+
 suspend fun <T> goCall(call: suspend () -> GoResponse<T>): HttpResult<T> {
     return try {
         call().let {
@@ -30,8 +30,8 @@ suspend fun <T> goCall(call: suspend () -> GoResponse<T>): HttpResult<T> {
             }
         }
     } catch (e: Exception) {
-        HttpResult.Error(HttpResult.handleException(e))
+        HttpResult.Error(HttpResult.handleException(e)!!)
     }
 
 }
-*/
+

@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
+    id 'maven-publish'
 }
 
 android {
@@ -39,7 +40,8 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    api 'com.github.bityuan:WalletApi-Android:1.0.5'
+
+    api 'com.github.bityuan:WalletApi-Android:1.0.6'
     api "org.litepal.android:kotlin:3.0.0"
     api "com.google.code.gson:gson:2.8.6"
     api "com.tencent:mmkv-static:1.2.10"
@@ -52,6 +54,23 @@ dependencies {
     api "org.koin:koin-androidx-ext:2.1.5"
     api "com.squareup.retrofit2:converter-gson:2.8.2"
     api "com.squareup.okhttp3:logging-interceptor:3.14.9"
+
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
+    api "me.jessyan:retrofit-url-manager:1.4.0"
+}
+
+//注意放置位置，复制此段代码稍加修改即可
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                //和你的仓库地址的反写一致，此处不会修改最终发布的组件依赖名
+                groupId = 'com.github.wallet'
+                //单组件时和你的仓库名一致，多组件时根据实际起自己的名字
+                artifactId = 'sdk'
+            }
+        }
+    }
 }

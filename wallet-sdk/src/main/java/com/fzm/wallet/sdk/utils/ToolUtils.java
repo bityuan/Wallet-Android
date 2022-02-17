@@ -114,46 +114,6 @@ public class ToolUtils {
         return versionName;
     }
 
-    /**
-     * 获取手机uuid
-     *
-     * @param context
-     * @return
-     */
-    public static String getMyUUID(Context context) {
-        String defaultUUID = "Android";
-        String uuid = MMkvUtil.INSTANCE.decodeString("uuid");
-       // String uuid = PreferencesUtils.getString(context, "uuid");
-        if (!TextUtils.isEmpty(uuid)) {
-            return uuid;
-        }
-        String uniqueId = "";
-        try {
-            final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            final String tmDevice, tmSerial, tmPhone, androidId;
-            if (tm == null) {
-                return defaultUUID;
-            }
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                return defaultUUID;
-            }
-            tmDevice = "" + tm.getDeviceId();
-            tmSerial = "" + tm.getSimSerialNumber();
-            androidId = "" + android.provider.Settings.Secure.getString(context.getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
-            UUID deviceUuid = new UUID(androidId.hashCode(), ((long) tmDevice.hashCode() << 32) | tmSerial.hashCode());
-            uniqueId = deviceUuid.toString();
-            if (!TextUtils.isEmpty(uniqueId)) {
-                MMkvUtil.INSTANCE.encode("uuid", uniqueId);
-                //PreferencesUtils.putString(context, "uuid", uniqueId);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (TextUtils.isEmpty(uniqueId)) {
-            uniqueId = defaultUUID;
-        }
-        return uniqueId;
-    }
 
     /**
      * 判断qq是否可用
