@@ -47,14 +47,14 @@ fun Module.walletNetModule() {
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .addInterceptor(get(walletQualifier))
-                .addNetworkInterceptor(
+           /*     .addNetworkInterceptor(
                     HttpLoggingInterceptor().apply {
                         level = when (BuildConfig.DEBUG) {
                             true -> HttpLoggingInterceptor.Level.BODY
                             false -> HttpLoggingInterceptor.Level.NONE
                         }
                     }
-                )
+                )*/
                 .sslSocketFactory(
                     SSLSocketClient.getSSLSocketFactory(),
                     SSLSocketClient.getTrustManager()
@@ -77,7 +77,7 @@ fun Module.walletNetModule() {
                 .header("Accept", "application/json")
                 .header("Fzm-Request-Source", "wallet")
                 .header("FZM-REQUEST-OS", "android")
-                .header("FZM-PLATFORM-ID", "1")
+                .header("FZM-PLATFORM-ID", "81")
                 .header(
                     "version",
                     "${ToolUtils.getVersionName(get())},${ToolUtils.getVersionCode(get())}"

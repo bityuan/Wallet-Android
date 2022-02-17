@@ -50,9 +50,14 @@ class MainActivity : BaseActivity() {
                 platform = "ethereum"
             },
             Coin().apply {
-                chain = "BTC"
-                name = "BTC"
-                platform = "btc"
+                chain = "BNB"
+                name = "BNB"
+                platform = "bnb"
+            },
+            Coin().apply {
+                chain = "BNB"
+                name = "USDT"
+                platform = "bnb"
             },
         )
 
