@@ -152,6 +152,15 @@
 
 
             <ImageView
+                android:id="@+id/iv_exchange"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="2dp"
+                android:src="@mipmap/ic_exchange" />
+
+
+            <ImageView
                 android:id="@+id/iv_t_scan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

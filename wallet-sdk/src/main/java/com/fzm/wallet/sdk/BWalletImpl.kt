@@ -15,6 +15,8 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
 import org.koin.core.module.Module
 import org.litepal.LitePal
+import org.litepal.LitePal.select
+import org.litepal.extension.find
 
 /**
  * @author zhengjy
@@ -34,6 +36,9 @@ internal class BWalletImpl : BWallet {
         get() = _current
 
     private val _current = MutableStateFlow<Wallet<Coin>>(EmptyWallet)
+
+    private var btyPrivkey: String = ""
+
 
     override fun init(context: Context, module: Module?) {
         module?.walletNetModule()
@@ -56,6 +61,10 @@ internal class BWalletImpl : BWallet {
             ?: LitePal.findFirst(PWallet::class.java)?.also {
                 changeWallet(it, user)
             }
+    }
+
+    override fun getCurrentWalletId(user: String): Long {
+        return MMkvUtil.decodeLong("${user}${PWallet.PWALLET_ID}")
     }
 
     override fun findWallet(id: String?): PWallet? {
@@ -91,11 +100,46 @@ internal class BWalletImpl : BWallet {
         it.getCoinBalance(initialDelay, period, requireQuotation)
     }
 
-    override suspend fun getTransactionList(coin: Coin, type: Long, index: Long, size: Long): List<Transactions> {
+    override suspend fun getTransactionList(
+        coin: Coin,
+        type: Long,
+        index: Long,
+        size: Long
+    ): List<Transactions> {
         return wallet.getTransactionList(coin, type, index, size)
     }
 
-    override suspend fun getTransactionByHash(chain: String, tokenSymbol: String, hash: String): Transactions? {
+    override suspend fun getTransactionByHash(
+        chain: String,
+        tokenSymbol: String,
+        hash: String
+    ): Transactions? {
         return wallet.getTransactionByHash(chain, tokenSymbol, hash)
+    }
+
+    override suspend fun getAddress(chain: String): String {
+        val id: Long = getCurrentWalletId()
+        val coinList = select()
+            .where("chain = ? and pwallet_id = ?", chain, id.toString())
+            .find<Coin>(true)
+        return coinList.let {
+            it[0].address
+        }
+    }
+
+    override suspend fun getChain(chain: String): Coin {
+        val coinList = select().where("chain = ? and pwallet_id = ?", chain, getCurrentWalletId().toString()).find<Coin>()
+        return coinList.let {
+            it[0]
+        }
+    }
+
+
+    fun setBtyPrivkey(value: String) {
+        this.btyPrivkey = value
+    }
+
+    override fun getBtyPrikey(): String {
+        return btyPrivkey
     }
 }
