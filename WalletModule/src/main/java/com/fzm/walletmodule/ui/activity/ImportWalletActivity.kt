@@ -13,6 +13,7 @@ import com.fzm.wallet.sdk.WalletConfiguration
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.exception.ImportWalletException
 import com.fzm.walletmodule.R
+import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.event.CaptureEvent
 import com.fzm.walletmodule.event.InitPasswordEvent
 import com.fzm.walletmodule.event.MyWalletEvent
@@ -143,7 +144,7 @@ class ImportWalletActivity : BaseActivity() {
                                 name,
                                 password,
                                 "",
-                                emptyList()
+                                Constants.getCoins()
                             )
                         )
                         val pWallet = wallet.findWallet(id)

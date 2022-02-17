@@ -30,6 +30,7 @@ import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.uiThread
+import walletapi.Walletapi
 import java.util.*
 
 
@@ -68,6 +69,8 @@ class TransactionsActivity : BaseActivity() {
 
     override fun initView() {
         setupViewPager()
+        iv_exchange.visibility =
+            if (Walletapi.TypeTrxString == coin.chain && "USDT" == coin.name) View.VISIBLE else View.GONE
     }
 
     override fun initListener() {
@@ -91,6 +94,11 @@ class TransactionsActivity : BaseActivity() {
             }
             startActivity<OutActivity>(
                 Pair(Constants.FROM, OutActivity.FROM_TRANSACTION),
+                Coin::class.java.simpleName to coin
+            )
+        }
+        iv_exchange.setOnClickListener {
+            startActivity<ExchangeActivity>(
                 Coin::class.java.simpleName to coin
             )
         }
@@ -187,7 +195,10 @@ class TransactionsActivity : BaseActivity() {
             if (event.requstCode == CaptureCustomActivity.REQUESTCODE_TRANSACTIONS) {
                 try {
                     coin.scanAddress = text
-                    startActivity<OutActivity>(Constants.FROM to OutActivity.FROM_SCAN, Coin::class.java.simpleName to coin)
+                    startActivity<OutActivity>(
+                        Constants.FROM to OutActivity.FROM_SCAN,
+                        Coin::class.java.simpleName to coin
+                    )
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -250,7 +261,8 @@ class TransactionsActivity : BaseActivity() {
         doAsync {
             val balance = GoWallet.handleBalance(coin)
             uiThread {
-                tv_balance.text = DecimalUtils.subZeroAndDot(balance)
+                coin.balance = balance
+                tv_balance.text = DecimalUtils.subZeroAndDot(coin.balance)
             }
         }
     }
