@@ -37,8 +37,15 @@ object EmptyWallet : Wallet<Coin> {
         return false
     }
 
-    override suspend fun transfer(coin: Coin, amount: Long) {
-
+    override suspend fun transfer(
+        coin: Coin,
+        toAddress: String,
+        amount: Double,
+        fee: Double,
+        note: String?,
+        password: String
+    ): String {
+        return ""
     }
 
     override suspend fun addCoins(coins: List<Coin>, password: suspend () -> String) {
@@ -69,7 +76,7 @@ object EmptyWallet : Wallet<Coin> {
         tokenSymbol: String,
         hash: String
     ): Transactions {
-        throw UnsupportedOperationException("查询失败")
+        return Transactions()
     }
 
     override suspend fun getAddress(chain: String): String? {

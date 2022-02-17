@@ -54,8 +54,15 @@ interface Wallet<T> : Cloneable {
 
     /**
      * 转账方法
+     *
+     * @param coin      币种
+     * @param toAddress 目标地址
+     * @param amount    转账金额
+     * @param fee       矿工费
+     * @param password  钱包密码
      */
-    suspend fun transfer(coin: T, amount: Long)
+    @Throws(Exception::class)
+    suspend fun transfer(coin: T, toAddress: String, amount: Double, fee: Double, note: String?, password: String): String
 
     /**
      * 添加币种

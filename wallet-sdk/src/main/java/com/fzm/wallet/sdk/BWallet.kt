@@ -115,6 +115,18 @@ interface BWallet {
     suspend fun deleteCoins(coins: List<Coin>)
 
     /**
+     * 转账
+     *
+     * @param coin      币种
+     * @param toAddress 目标地址
+     * @param amount    转账金额
+     * @param fee       矿工费
+     * @param password  钱包密码
+     */
+    @Throws(Exception::class)
+    suspend fun transfer(coin: Coin, toAddress: String, amount: Double, fee: Double, note: String?, password: String): String
+
+    /**
      * 获取资产余额列表
      *
      * @param initialDelay      初始延迟

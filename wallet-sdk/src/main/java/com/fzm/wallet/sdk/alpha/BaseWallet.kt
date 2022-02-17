@@ -1,6 +1,7 @@
 package com.fzm.wallet.sdk.alpha
 
 import com.fzm.wallet.sdk.WalletBean
+import com.fzm.wallet.sdk.bean.StringResult
 import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.bean.response.TransactionResponse
 import com.fzm.wallet.sdk.db.entity.Coin
@@ -108,8 +109,52 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
         }
     }
 
-    override suspend fun transfer(coin: Coin, amount: Long) {
-        TODO("Not yet implemented")
+    override suspend fun transfer(
+        coin: Coin,
+        toAddress: String,
+        amount: Double,
+        fee: Double,
+        note: String?,
+        password: String
+    ): String {
+        val result = GoWallet.checkPasswd(password, wallet.password)
+        if (!result) {
+            throw Exception("密码输入错误")
+        }
+        val mnem = GoWallet.decMenm(GoWallet.encPasswd(password)!!, coin.getpWallet().mnem)
+        val privateKey = coin.getPrivkey(coin.chain, mnem)?: throw Exception("私钥获取失败")
+
+        val tokenSymbol = if (coin.name == coin.chain) "" else coin.name
+        // 构造交易
+        val rawTx = GoWallet.createTran(
+            coin.chain,
+            coin.address,
+            toAddress,
+            amount,
+            fee,
+            note ?: "",
+            tokenSymbol
+        )
+        val createRawResult = gson.fromJson(rawTx, StringResult::class.java)
+        if (createRawResult == null || createRawResult.result.isNullOrEmpty()) {
+            throw Exception("创建交易失败")
+        }
+
+        // 签名交易
+        val signTx = GoWallet.signTran(coin.chain, createRawResult.result!!, privateKey)
+            ?: throw Exception("签名交易失败")
+
+        // 发送交易
+        val sendTx = GoWallet.sendTran(coin.chain, signTx, tokenSymbol)
+        val sendResult = gson.fromJson(sendTx, StringResult::class.java)
+        val txId = sendResult.result
+        if (sendResult == null || txId.isNullOrEmpty()) {
+            throw Exception("获取结果失败，请至区块链浏览器查看")
+        }
+        if (!sendResult.error.isNullOrEmpty()) {
+            throw Exception(sendResult.error)
+        }
+        return txId
     }
 
     override suspend fun addCoins(coins: List<Coin>, password: suspend () -> String) {

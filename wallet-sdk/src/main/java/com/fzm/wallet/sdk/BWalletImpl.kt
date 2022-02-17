@@ -145,6 +145,17 @@ internal class BWalletImpl : BWallet {
         wallet.deleteCoins(coins)
     }
 
+    override suspend fun transfer(
+        coin: Coin,
+        toAddress: String,
+        amount: Double,
+        fee: Double,
+        note: String?,
+        password: String
+    ): String {
+        return wallet.transfer(coin, toAddress, amount, fee, note, password)
+    }
+
     override fun getCoinBalance(
         initialDelay: Long,
         period: Long,
