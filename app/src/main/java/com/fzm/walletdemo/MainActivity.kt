@@ -43,21 +43,25 @@ class MainActivity : BaseActivity() {
                 chain = "BTY"
                 name = "BTY"
                 platform = "bty"
+                netId = "705"
             },
             Coin().apply {
                 chain = "ETH"
                 name = "ETH"
                 platform = "ethereum"
+                netId = "90"
             },
             Coin().apply {
                 chain = "BNB"
                 name = "BNB"
                 platform = "bnb"
+                netId = "641"
             },
             Coin().apply {
                 chain = "BNB"
                 name = "USDT"
                 platform = "bnb"
+                netId = "694"
             },
         )
 
