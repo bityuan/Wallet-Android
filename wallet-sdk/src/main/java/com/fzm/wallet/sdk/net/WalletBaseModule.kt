@@ -1,5 +1,6 @@
 package com.fzm.wallet.sdk.net
 
+import com.fzm.wallet.sdk.BuildConfig
 import com.fzm.wallet.sdk.api.ApiEnv
 import com.fzm.wallet.sdk.api.Apis
 import com.fzm.wallet.sdk.base.BWallet
@@ -8,6 +9,7 @@ import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.utils.ToolUtils
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.context.KoinContextHandler
 import org.koin.core.module.Module
 import org.koin.core.qualifier._q
@@ -31,7 +33,14 @@ fun Module.walletNetModule() {
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .addInterceptor(get(walletQualifier))
-//            .addInterceptor(HttpLoggingInterceptor())
+            .addNetworkInterceptor(
+                HttpLoggingInterceptor().apply {
+                    level = when (BuildConfig.DEBUG) {
+                        true -> HttpLoggingInterceptor.Level.BODY
+                        false -> HttpLoggingInterceptor.Level.NONE
+                    }
+                }
+            )
             .build()
     }
 
