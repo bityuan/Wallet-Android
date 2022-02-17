@@ -54,6 +54,7 @@ dependencies {
     api "org.koin:koin-androidx-ext:2.1.5"
     api "com.squareup.retrofit2:converter-gson:2.8.2"
     api "com.squareup.okhttp3:logging-interceptor:3.14.9"
+    implementation "com.alibaba:fastjson:1.1.68.android"
 
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"

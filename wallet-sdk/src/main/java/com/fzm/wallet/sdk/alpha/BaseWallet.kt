@@ -1,5 +1,6 @@
 package com.fzm.wallet.sdk.alpha
 
+import com.alibaba.fastjson.JSON
 import com.fzm.wallet.sdk.WalletBean
 import com.fzm.wallet.sdk.bean.StringResult
 import com.fzm.wallet.sdk.bean.Transactions
@@ -136,24 +137,27 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                 note ?: "",
                 tokenSymbol
             )
-            val createRawResult = gson.fromJson(rawTx, GoResponse::class.java)
+            val createRawResult = JSON.parseObject(rawTx, StringResult::class.java)
             if (createRawResult?.result == null) {
                 throw Exception("创建交易失败")
             }
 
             // 签名交易
-            val signTx = GoWallet.signTran(coin.chain, gson.toJson(createRawResult.result), privateKey)
+            val signTx = GoWallet.signTran(coin.chain, createRawResult.result ?: "", privateKey)
                 ?: throw Exception("签名交易失败")
 
             // 发送交易
             val sendTx = GoWallet.sendTran(coin.chain, signTx, tokenSymbol)
             val sendResult = gson.fromJson(sendTx, StringResult::class.java)
             val txId = sendResult.result
-            if (sendResult == null || txId.isNullOrEmpty()) {
+            if (sendResult == null) {
                 throw Exception("获取结果失败，请至区块链浏览器查看")
             }
             if (!sendResult.error.isNullOrEmpty()) {
                 throw Exception(sendResult.error)
+            }
+            if (txId.isNullOrEmpty()) {
+                throw Exception("获取结果失败，请至区块链浏览器查看")
             }
             txId
         }
