@@ -77,7 +77,7 @@ fun Module.walletNetModule() {
                 .header("Accept", "application/json")
                 .header("Fzm-Request-Source", "wallet")
                 .header("FZM-REQUEST-OS", "android")
-                .header("FZM-PLATFORM-ID", "1")
+                .header("FZM-PLATFORM-ID", "81")
                 .header(
                     "version",
                     "${ToolUtils.getVersionName(get())},${ToolUtils.getVersionCode(get())}"

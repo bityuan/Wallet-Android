@@ -1,5 +1,6 @@
 package com.fzm.walletmodule.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -14,41 +15,47 @@ import com.fzm.walletmodule.R;
 /**
  * ToastUtils
  *
- * @author <a href="http://www.trinea.cn" target="_blank">Trinea</a> 2013-12-9
+ * @author
  */
 public class ToastUtils {
     private static Toast mToast;
 
-    public static void show(Context context, int resId) {
+    public static void show(Activity context, int resId) {
         show(context, context.getResources().getText(resId), Toast.LENGTH_SHORT);
     }
 
-    public static void show(Context context, int resId, int duration) {
+    public static void show(Activity context, int resId, int duration) {
         show(context, context.getResources().getText(resId), duration);
     }
 
-    public static void show(Context context, CharSequence text) {
+    public static void show(Activity context, CharSequence text) {
         show(context, text, Toast.LENGTH_SHORT);
     }
 
-    public static void show(Context context, String text) {
+    public static void show(Activity context, String text) {
+        if (context == null || context.isFinishing()){
+            return;
+        }
         if (mToast == null) {
-            mToast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
+            mToast = Toast.makeText(context.getApplicationContext(), text, Toast.LENGTH_SHORT);
         } else {
             mToast.cancel();
-            mToast = Toast.makeText(context, text, Toast.LENGTH_LONG);
+            mToast = Toast.makeText(context.getApplicationContext(), text, Toast.LENGTH_LONG);
             mToast.setDuration(Toast.LENGTH_SHORT);
         }
         mToast.show();
     }
 
-    public static void showGravity(Context context, CharSequence text, int gravity) {
+    public static void showGravity(Activity context, CharSequence text, int gravity) {
         show(context, text, Toast.LENGTH_SHORT, gravity);
     }
 
-    public static void show(Context context, CharSequence text, int duration) {
+    public static void show(Activity context, CharSequence text, int duration) {
+        if (context == null || context.isFinishing()){
+            return;
+        }
         if (mToast == null) {
-            mToast = Toast.makeText(context, text, duration);
+            mToast = Toast.makeText(context.getApplicationContext(), text, duration);
         } else {
             mToast.setText(text);
             mToast.setDuration(duration);
@@ -56,40 +63,29 @@ public class ToastUtils {
         mToast.show();
     }
 
-    public static void show(Context context, CharSequence text, int duration, int gravity) {
-        Toast toast = Toast.makeText(context, null, duration);
+    public static void show(Activity context, CharSequence text, int duration, int gravity) {
+        if (context == null || context.isFinishing()){
+            return;
+        }
+        Toast toast = Toast.makeText(context.getApplicationContext(), null, duration);
         toast.setText(text);
         toast.setGravity(gravity, 0, 0);
         toast.show();
     }
 
-    public static void show(Context context, int resId, Object... args) {
+    public static void show(Activity context, int resId, Object... args) {
         show(context, String.format(context.getResources().getString(resId), args), Toast.LENGTH_SHORT);
     }
 
-    public static void show(Context context, String format, Object... args) {
+    public static void show(Activity context, String format, Object... args) {
         show(context, String.format(format, args), Toast.LENGTH_SHORT);
     }
 
-    public static void show(Context context, int resId, int duration, Object... args) {
+    public static void show(Activity context, int resId, int duration, Object... args) {
         show(context, String.format(context.getResources().getString(resId), args), duration);
     }
 
-    public static void show(Context context, String format, int duration, Object... args) {
+    public static void show(Activity context, String format, int duration, Object... args) {
         show(context, String.format(format, args), duration);
     }
-
-/*    public static void showImage(Context context, String msg, int resid) {
-        Toast toastCustom = new Toast(context);
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.layout_toast_icon,null);
-        ImageView imageView = view.findViewById(R.id.iv_icon);
-        TextView textView = view.findViewById(R.id.tv_msg);
-        imageView.setImageResource(resid);
-        textView.setText(msg);
-        toastCustom.setView(view);
-        toastCustom.setDuration(Toast.LENGTH_SHORT);
-        toastCustom.setGravity(Gravity.TOP,0,DisplayUtil.dip2px(context,100));
-        toastCustom.show();
-    }*/
 }

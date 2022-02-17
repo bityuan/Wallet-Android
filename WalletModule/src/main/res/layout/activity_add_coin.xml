@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/stateView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <include layout="@layout/layout_search_coin" />
+
+    <ImageView
+        android:id="@+id/iv_add_coin_back"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="20dp"
+        android:paddingLeft="16dp"
+        android:paddingTop="12dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="12dp"
+        android:src="@mipmap/icon_add_coin_back"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ctl_addcoin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="74dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+      <com.google.android.material.tabs.TabLayout
+          android:id="@+id/tl_addcoins"
+          android:layout_width="match_parent"
+          android:layout_height="50dp"
+          app:layout_constraintLeft_toLeftOf="parent"
+          app:layout_constraintRight_toRightOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          app:tabBackground="@color/transparent"
+          app:tabGravity="fill"
+          app:tabIndicatorColor="@color/transparent"
+          app:tabMode="scrollable"
+          app:tabRippleColor="@color/transparent"
+          app:tabSelectedTextColor="@color/color_333649"
+          app:tabTextAppearance="@style/text_tablayout_16"
+          app:tabTextColor="@color/color_8E92A3" />
+
+      <androidx.viewpager.widget.ViewPager
+          android:id="@+id/vp_addcoins"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_marginTop="50dp"
+          app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:id="@+id/ll_search_coin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="74dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent">
+
+<!--      <com.fzm.wallet.ui.widget.swipe.SwipeLayout
+          android:id="@+id/swipeLayout"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/swipe_target"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"
+            android:scrollbars="none" />
+
+      </com.fzm.wallet.ui.widget.swipe.SwipeLayout>-->
+      <cn.finalteam.loadingviewfinal.SwipeRefreshLayoutFinal
+          android:id="@+id/swipeLayout"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content">
+        <cn.finalteam.loadingviewfinal.RecyclerViewFinal
+            android:id="@+id/swipe_target"
+            android:layout_width="match_parent"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            android:layout_height="match_parent"/>
+      </cn.finalteam.loadingviewfinal.SwipeRefreshLayoutFinal>
+      <TextView
+          android:id="@+id/tv_search_tip"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:background="@android:color/white"
+          android:paddingLeft="42dp"
+          android:paddingTop="125dp"
+          android:paddingRight="42dp"
+          android:text="@string/tip_search_coin"
+          android:textColor="#8E92A3"
+          android:textSize="14sp"
+          android:visibility="gone" />
+
+      <LinearLayout
+          android:id="@+id/feedBackLayout"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="90dp"
+          android:gravity="center_horizontal"
+          android:orientation="vertical"
+          android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tip_notfound_coin"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/feedBack"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_feedback"
+            android:gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="@string/my_about_us_feedback"
+            android:textColor="#7190FF" />
+      </LinearLayout>
+    </FrameLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/guideLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_333649_CC"
+        android:visibility="gone">
+
+      <ImageView
+          android:id="@+id/guideTips"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="74dp"
+          android:src="@mipmap/guide_tips"
+          app:layout_constraintLeft_toLeftOf="parent"
+          app:layout_constraintRight_toRightOf="parent"
+          app:layout_constraintTop_toTopOf="parent" />
+
+      <ImageView
+          android:id="@+id/guideItem1"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="22dp"
+          android:layout_marginTop="130dp"
+          android:src="@mipmap/guide_item1"
+          app:layout_constraintLeft_toLeftOf="parent"
+          app:layout_constraintTop_toTopOf="parent" />
+
+      <ImageView
+          android:id="@+id/guideItem2"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="29dp"
+          android:layout_marginTop="240dp"
+          android:src="@mipmap/guide_item2"
+          app:layout_constraintLeft_toLeftOf="parent"
+          app:layout_constraintTop_toTopOf="parent" />
+
+      <ImageView
+          android:id="@+id/guideItem3"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="22dp"
+          android:layout_marginTop="340dp"
+          android:src="@mipmap/guide_item3"
+          app:layout_constraintLeft_toLeftOf="parent"
+          app:layout_constraintTop_toTopOf="parent" />
+
+      <ImageView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="22dp"
+          android:layout_marginTop="130dp"
+          android:src="@mipmap/guide_top"
+          app:layout_constraintLeft_toRightOf="@id/guideItem1"
+          app:layout_constraintTop_toTopOf="parent" />
+
+      <ImageView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="1dp"
+          android:layout_marginTop="250dp"
+          android:src="@mipmap/guide_mid"
+          app:layout_constraintLeft_toRightOf="@id/guideItem2"
+          app:layout_constraintTop_toTopOf="parent" />
+
+      <ImageView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="22dp"
+          android:layout_marginTop="310dp"
+          android:src="@mipmap/guide_down"
+          app:layout_constraintLeft_toRightOf="@id/guideItem3"
+          app:layout_constraintTop_toTopOf="parent" />
+
+      <Button
+          android:id="@+id/bn_guide_ok1"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="495dp"
+          android:background="@mipmap/guide_ok2"
+          app:layout_constraintLeft_toLeftOf="parent"
+          app:layout_constraintRight_toRightOf="parent"
+          app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+  </androidx.constraintlayout.widget.ConstraintLayout>

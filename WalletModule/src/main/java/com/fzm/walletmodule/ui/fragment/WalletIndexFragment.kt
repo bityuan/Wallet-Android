@@ -9,6 +9,7 @@ import com.fzm.walletmodule.ui.activity.CreateWalletActivity
 import com.fzm.walletmodule.ui.activity.ImportWalletActivity
 import com.fzm.walletmodule.ui.base.BaseFragment
 import com.fzm.walletmodule.utils.ToastUtils
+import com.fzm.walletmodule.utils.isFastClick
 import kotlinx.android.synthetic.main.fragment_wallet_index.*
 
 
@@ -28,11 +29,15 @@ class WalletIndexFragment : BaseFragment() {
 
     override fun initListener() {
         walletCreate.setOnClickListener {
-
+            if (isFastClick()){
+                return@setOnClickListener
+            }
             startActivity(Intent(activity, CreateWalletActivity::class.java))
         }
         walletImport.setOnClickListener {
-
+            if (isFastClick()){
+                return@setOnClickListener
+            }
             val intent = Intent(activity, ImportWalletActivity::class.java)
             startActivity(intent)
         }
