@@ -22,6 +22,7 @@ import com.fzm.walletmodule.ui.widget.InQrCodeDialogView
 import com.fzm.walletmodule.utils.ClipboardUtils
 import com.fzm.walletmodule.utils.DecimalUtils
 import com.fzm.walletmodule.utils.GlideUtils
+import com.fzm.walletmodule.utils.isFastClick
 import com.google.android.material.tabs.TabLayout
 import com.king.zxing.util.CodeUtils
 import kotlinx.android.synthetic.main.activity_transactions.*
@@ -33,7 +34,6 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.uiThread
 import walletapi.Walletapi
-import java.util.*
 
 
 class TransactionsActivity : BaseActivity() {
