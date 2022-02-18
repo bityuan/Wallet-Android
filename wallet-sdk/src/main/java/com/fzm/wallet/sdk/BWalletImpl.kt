@@ -7,7 +7,10 @@ import com.fzm.wallet.sdk.alpha.Wallet
 import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.net.rootScope
 import com.fzm.wallet.sdk.net.walletNetModule
+import com.fzm.wallet.sdk.net.walletQualifier
+import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.utils.MMkvUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -42,6 +45,7 @@ internal class BWalletImpl : BWallet {
 
     private var btyPrivkey: String = ""
 
+    private val walletRepository by lazy { rootScope.get<WalletRepository>(walletQualifier) }
 
     override fun init(context: Context, module: Module?) {
         module?.walletNetModule()
@@ -189,11 +193,15 @@ internal class BWalletImpl : BWallet {
         return wallet.getAddress(chain) ?: ""
     }
 
-    override suspend fun getChain(chain: String): Coin? {
+    override suspend fun getCoin(chain: String): Coin? {
         val coinList = withContext(Dispatchers.IO) {
             LitePal.select().where("chain = ? and pwallet_id = ?", chain, wallet.getId()).find<Coin>()
         }
         return coinList.firstOrNull()
+    }
+
+    override suspend fun getBrowserUrl(platform: String): String {
+        return walletRepository.getBrowserUrl(platform).dataOrNull()?.brower_url ?: ""
     }
 
     override fun close() {

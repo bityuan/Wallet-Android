@@ -175,7 +175,14 @@ interface BWallet {
      *
      * @param chain         链名
      */
-    suspend fun getChain(chain: String): Coin?
+    suspend fun getCoin(chain: String): Coin?
+
+    /**
+     * 获取区块链浏览器链接地址
+     *
+     * @param platform  平台码（平行链）
+     */
+    suspend fun getBrowserUrl(platform: String): String
 
     /**
      * 关闭钱包

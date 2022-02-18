@@ -1,6 +1,7 @@
 package com.fzm.wallet.sdk.repo
 
 import com.fzm.wallet.sdk.api.Apis
+import com.fzm.wallet.sdk.bean.BrowserBean
 import com.fzm.wallet.sdk.bean.toRequestBody
 import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
 import com.fzm.wallet.sdk.db.entity.Coin
@@ -23,6 +24,10 @@ class WalletRepository constructor(private val apis: Apis) {
 
     suspend fun getTabData(): HttpResult<List<AddCoinTabBean>> {
         return apiCall { apis.getTabData() }
+    }
+
+    suspend fun getBrowserUrl(platform: String): HttpResult<BrowserBean> {
+        return apiCall { apis.getBrowserUrl(platform) }
     }
 
 }

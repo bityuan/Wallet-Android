@@ -1,5 +1,6 @@
 package com.fzm.wallet.sdk.api
 
+import com.fzm.wallet.sdk.bean.BrowserBean
 import com.fzm.wallet.sdk.bean.ExchangeFee
 import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.bean.WithHold
@@ -28,6 +29,9 @@ interface Apis {
         @Query("platform") paltform: String,
         @Query("coinname") coinName: String
     ): HttpResponse<WithHold>
+
+    @GET("goapi/interface/tokenview/explore")
+    suspend fun getBrowserUrl(@Query("platform") platform: String): HttpResponse<BrowserBean>
 
 
     @POST("interface/wallet-coin")

@@ -164,39 +164,51 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
     }
 
     override suspend fun addCoins(coins: List<Coin>, password: suspend () -> String) {
-        var cachePass = ""
-        for (c in coins) {
-            checkCoin(c) {
-                cachePass.ifEmpty {
-                    withContext(Dispatchers.Main.immediate) {
-                        password().also { p -> cachePass = p }
+        withContext(Dispatchers.IO) {
+            var cachePass = ""
+            for (c in coins) {
+                checkCoin(c) {
+                    cachePass.ifEmpty {
+                        withContext(Dispatchers.Main.immediate) {
+                            password().also { p -> cachePass = p }
+                        }
                     }
                 }
             }
         }
-
-        val existCoins = LitePal.where("pwallet_id = ?", wallet.id.toString())
-            .find(Coin::class.java, true)
     }
 
     @Throws(Exception::class)
     private suspend fun checkCoin(coin: Coin, password: suspend () -> String) {
         if (coin.chain == null) return
+        val existNum = LitePal.where("pwallet_id = ?", wallet.id.toString()).count(Coin::class.java)
         val sameChainCoin =
             LitePal.select().where("chain = ? and pwallet_id = ?", coin.chain, wallet.id.toString())
                 .findFirst(Coin::class.java)
         if (sameChainCoin != null) {
             coin.address = sameChainCoin.address
             coin.pubkey = sameChainCoin.pubkey
+            coin.sort = existNum
             coin.setPrivkey(sameChainCoin.encPrivkey)
         } else {
             val pass = password()
-            if (pass.isEmpty()) return
-
+            if (!GoWallet.checkPasswd(pass, wallet.password)) {
+                throw Exception("密码输入错误")
+            }
+            val bPassword = GoWallet.encPasswd(pass) ?: throw Exception("未知错误")
+            val mnem = GoWallet.decMenm(bPassword, wallet.mnem)
+            if (mnem.isEmpty()) {
+                throw Exception("助记词解密失败")
+            }
+            val hdWallet = GoWallet.getHDWallet(coin.chain, mnem) ?: throw Exception("创建主链失败")
+            coin.address = hdWallet.newAddress_v2(0)
+            coin.pubkey = GoWallet.encodeToStrings(hdWallet.newKeyPub(0))
+            coin.sort = existNum
+            coin.save()
         }
     }
 
-    override suspend fun deleteCoins(coins: List<Coin>) {
+    override suspend fun deleteCoins(coins: List<Coin>) = withContext(Dispatchers.IO) {
         for (c in coins) {
             c.status = Coin.STATUS_DISABLE
             c.update(c.id)
@@ -212,13 +224,16 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
         var initEmit = true
         while (true) {
             coroutineScope {
-                val deferred = ArrayDeque<Deferred<Unit>>()
                 val coins = LitePal.where(
                     "pwallet_id = ? and status = ?",
                     wallet.id.toString(),
                     Coin.STATUS_ENABLE.toString()
-                )
-                    .find(Coin::class.java, true)
+                ).find(Coin::class.java, true)
+                if (coins.isEmpty()) {
+                    emit(emptyList())
+                    return@coroutineScope
+                }
+                val deferred = ArrayDeque<Deferred<Unit>>()
                 for (coin in coins) {
                     deferred.add(async(Dispatchers.IO) {
                         try {

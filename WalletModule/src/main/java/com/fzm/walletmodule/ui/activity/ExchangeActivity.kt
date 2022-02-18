@@ -145,7 +145,7 @@ class ExchangeActivity : BaseActivity() {
 
                 var trx: Coin?
                 withContext(Dispatchers.IO) {
-                    trx = BWallet.get().getChain(Walletapi.TypeTrxString)
+                    trx = BWallet.get().getCoin(Walletapi.TypeTrxString)
                 }
                 if (trx?.balance?.toDouble()!! < 10) {
                     toast("最低矿工费为10TRX")
