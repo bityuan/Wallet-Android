@@ -36,7 +36,7 @@ class MainActivity : BaseActivity() {
         EventBus.getDefault().register(this)
         initView()
         setTabSelection(0)
-        Constants.setCoins(defaultCoinList())
+        Constants.setCoins(DEFAULT_COINS)
         lifecycleScope.launchWhenResumed {
             BWallet.get().current.collect {
                 if (it is EmptyWallet) {
@@ -47,56 +47,43 @@ class MainActivity : BaseActivity() {
     }
 
 
-    private fun defaultCoinList() = listOf(
-        Coin().apply {
-            name = "BTY"
-            chain = "BTY"
-            platform = "bty"
-        },
-        Coin().apply {
-            name = "BTC"
-            chain = "BTC"
-            platform = "btc"
-        },
-        Coin().apply {
-            name = "BNB"
-            chain = "BNB"
-            platform = "bnb"
-        },
+    internal val DEFAULT_COINS
+        get() = listOf(
+            Coin().apply {
+                chain = "BTY"
+                name = "BTY"
+                platform = "bty"
+                netId = "705"
+            },
+            Coin().apply {
+                chain = "ETH"
+                name = "ETH"
+                platform = "ethereum"
+                netId = "90"
+            },
+            Coin().apply {
+                chain = "BNB"
+                name = "BNB"
+                platform = "bnb"
+                netId = "641"
+            },
+            Coin().apply {
+                chain = "BNB"
+                name = "USDT"
+                platform = "bnb"
+                netId = "694"
+            },
+        )
 
-        Coin().apply {
-            name = "TRX"
-            chain = "TRX"
-            platform = "trx"
-        },
-        Coin().apply {
-            name = "USDT"
-            chain = "TRX"
-            platform = "trx"
-        },
-        Coin().apply {
-            name = "USDT"
-            chain = "BTC"
-            platform = "btc"
-        },
-        Coin().apply {
-            name = "USDT"
-            chain = "BNB"
-            platform = "bnb"
-        }
-
-
-    )
-
-    override fun initView() {
+     override fun initView() {
         bottomNavigationView.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.fragment_home -> {
-                    Log.e("MainAc", "fragment_home")
+                    Log.e("MainAc","fragment_home")
                     setTabSelection(0)
                 }
                 R.id.fragment_explore -> {
-                    Log.e("MainAc", "fragment_explore")
+                    Log.e("MainAc","fragment_explore")
                     setTabSelection(1)
                 }
             }
@@ -219,7 +206,7 @@ class MainActivity : BaseActivity() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onInitPasswordEvent(event: InitPasswordEvent) {
         val password = event.password
-        Log.v("zx", password)
+        Log.v("zx",password)
     }
 
 

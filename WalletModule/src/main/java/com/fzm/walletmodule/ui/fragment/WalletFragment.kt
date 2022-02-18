@@ -2,7 +2,7 @@ package com.fzm.walletmodule.ui.fragment
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
@@ -29,18 +29,22 @@ import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.support.v4.startActivity
+import org.jetbrains.anko.uiThread
+import org.litepal.LitePal.where
+import java.lang.String
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
 class WalletFragment : BaseFragment() {
     private var mWalletAdapter: WalletAdapter? = null
-    private var mHeaderView: View? = null
     private var mPWallet: PWallet? = null
     private val mCoinList = CopyOnWriteArrayList<Coin>()
     private var more: ImageView? = null
+    private var addCoin: ImageView? = null
     private var name: TextView? = null
     private var money: TextView? = null
-    private var timeCount = 0
 
     private var job: Job? = null
 
@@ -50,10 +54,12 @@ class WalletFragment : BaseFragment() {
             job = lifecycleScope.launch {
                 BWallet.get().getCoinBalance(0, Constants.DELAYED_TIME, true)
                     .collect {
+                      //  Log.e("wallet","getCoinBalance")
                         mCoinList.clear()
                         mCoinList.addAll(it)
+                        //mCoinList.sort()
                         mWalletAdapter?.notifyDataSetChanged()
-                        money?.text = DecimalUtils.subWithNum(it.sumOf { c-> c.totalAsset }, 2)
+                        money?.text = DecimalUtils.subWithNum(it.sumOf { c -> c.totalAsset }, 2)
                     }
             }
         } else if (event == Lifecycle.Event.ON_PAUSE) {
@@ -84,6 +90,9 @@ class WalletFragment : BaseFragment() {
             WalletAdapter(requireActivity(), R.layout.view_item_coin_info, mCoinList, this)
         mWalletAdapter?.setOnItemClickListener(object : WalletAdapter.ItemClickListener {
             override fun OnItemClick(view: View?, position: Int) {
+                if (isFastClick()){
+                    return
+                }
                 val coinPosition = position - 1 //减去header
                 if (ListUtils.isEmpty(mCoinList) || coinPosition < 0 || coinPosition >= mCoinList.size) {
                     return
@@ -100,11 +109,12 @@ class WalletFragment : BaseFragment() {
     }
 
     private fun initHeaderView() {
-        mHeaderView =
+        val mHeaderView =
             LayoutInflater.from(activity).inflate(R.layout.view_header_wallet, null, false)
-        more = mHeaderView?.findViewById<ImageView>(R.id.more)
-        name = mHeaderView?.findViewById<TextView>(R.id.name)
-        money = mHeaderView?.findViewById<TextView>(R.id.money)
+        more = mHeaderView.findViewById<ImageView>(R.id.more)
+        name = mHeaderView.findViewById<TextView>(R.id.name)
+        money = mHeaderView.findViewById<TextView>(R.id.money)
+        addCoin = mHeaderView.findViewById<ImageView>(R.id.addCoin)
         recyclerView.addHeaderView(mHeaderView)
     }
 
@@ -131,6 +141,12 @@ class WalletFragment : BaseFragment() {
         }
         iv_back.setOnClickListener {
             requireActivity().finish()
+        }
+        addCoin?.setOnClickListener {
+            if (ClickUtils.isFastDoubleClick()) {
+                return@setOnClickListener
+            }
+            startActivity<AddCoinActivity>()
         }
         topLeft.setOnClickListener {
             if (ClickUtils.isFastDoubleClick()) {
@@ -165,20 +181,35 @@ class WalletFragment : BaseFragment() {
     }
 
 
+
+    //回调 - 添加币种
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onAddCoinEvent(event: AddCoinEvent) {
+        mPWallet = WalletUtils.getUsingWallet()
+        doAsync {
+
+            //获取最新的数据
+            val localCoinList = where(
+                "pwallet_id = ? and status = ?",
+                String.valueOf(mPWallet?.id),
+                String.valueOf(Coin.STATUS_ENABLE)
+            ).find(
+                Coin::class.java, true
+            )
+            localCoinList.sort()
+            mPWallet?.coinList?.addAll(localCoinList)
+            mCoinList.clear()
+            mCoinList.addAll(localCoinList)
+            uiThread {
+                mWalletAdapter?.notifyDataSetChanged()
+                job?.start()
+            }
+        }
+    }
+
     //回调 - 我的账户
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onTransactionsEvent(event: TransactionsEvent) {
-    }
-
-    //扫码回调
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    fun onCaptureEvent(event: CaptureEvent) {
-        val type: Int = event.type
-        val text: kotlin.String = event.text
-        val requstCode = event.requstCode
-        if (type == CaptureCustomActivity.RESULT_SUCCESS && requstCode == CaptureCustomActivity.REQUESTCODE_HOME && !TextUtils.isEmpty(text)) {
-
-        }
     }
 
     override fun onDestroyView() {

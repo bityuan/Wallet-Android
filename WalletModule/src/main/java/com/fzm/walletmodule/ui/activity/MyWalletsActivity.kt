@@ -10,6 +10,7 @@ import com.fzm.walletmodule.R
 import com.fzm.walletmodule.event.MyWalletEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.ListUtils
+import com.fzm.walletmodule.utils.isFastClick
 import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
 import kotlinx.android.synthetic.main.activity_my_wallets.*
@@ -92,9 +93,15 @@ class MyWalletsActivity : BaseActivity() {
 
     override fun initListener() {
         walletCreateLayout.setOnClickListener {
+            if (isFastClick()){
+                return@setOnClickListener
+            }
             startActivity<CreateWalletActivity>()
         }
         walletImport.setOnClickListener {
+            if (isFastClick()){
+                return@setOnClickListener
+            }
             startActivity<ImportWalletActivity>()
         }
     }

@@ -19,6 +19,7 @@ import com.fzm.walletmodule.ui.widget.CommonDialogFragment
 import com.fzm.walletmodule.ui.widget.EditDialogFragment
 import com.fzm.walletmodule.utils.ListUtils
 import com.fzm.walletmodule.utils.ToastUtils
+import com.fzm.walletmodule.utils.isFastClick
 import kotlinx.android.synthetic.main.activity_wallet_details.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -57,11 +58,17 @@ class WalletDetailsActivity : BaseActivity() {
 
     override fun initListener() {
         tv_forget_password.setOnClickListener {
+            if (isFastClick()){
+                return@setOnClickListener
+            }
             val `in` = Intent(this, CheckMnemActivity::class.java)
             `in`.putExtra(PWallet.PWALLET_ID, mPWallet!!.id)
             startActivity(`in`)
         }
         updatePassword.setOnClickListener {
+            if (isFastClick()){
+                return@setOnClickListener
+            }
             val intent = Intent()
             intent.setClass(
                 this,
@@ -71,15 +78,27 @@ class WalletDetailsActivity : BaseActivity() {
             startActivity(intent)
         }
         outPriv.setOnClickListener {
+            if (isFastClick()){
+                return@setOnClickListener
+            }
             checkPassword(1)
         }
         updateName.setOnClickListener {
+            if (isFastClick()){
+                return@setOnClickListener
+            }
             updateWalletName()
         }
         outMnem.setOnClickListener {
+            if (isFastClick()){
+                return@setOnClickListener
+            }
             checkPassword(3)
         }
         delete.setOnClickListener {
+            if (isFastClick()){
+                return@setOnClickListener
+            }
             checkPassword(2)
         }
     }

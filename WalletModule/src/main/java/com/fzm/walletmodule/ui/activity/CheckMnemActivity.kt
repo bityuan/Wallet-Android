@@ -11,6 +11,7 @@ import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.LimitEditText
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.utils.ToastUtils
+import com.fzm.walletmodule.utils.isFastClick
 import kotlinx.android.synthetic.main.activity_check_mnem.*
 import kotlinx.android.synthetic.main.view_import0.*
 import org.greenrobot.eventbus.EventBus
@@ -61,6 +62,9 @@ class CheckMnemActivity : BaseActivity() {
         }
 
         btn_check.setOnClickListener {
+            if (isFastClick()){
+                return@setOnClickListener
+            }
             val mnem = et_mnem.text.toString()
             if(mnem.isEmpty()) {
                 return@setOnClickListener

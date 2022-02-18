@@ -10,6 +10,7 @@ import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.AppUtils
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.utils.ToastUtils
+import com.fzm.walletmodule.utils.isFastClick
 import kotlinx.android.synthetic.main.activity_set_password.*
 import org.jetbrains.anko.doAsync
 import org.litepal.LitePal.find
@@ -35,6 +36,9 @@ class SetPasswordActivity : BaseActivity() {
 
     override fun initListener() {
         btn_sure.setOnClickListener {
+            if (isFastClick()){
+                return@setOnClickListener
+            }
             setPassword()
         }
     }
@@ -54,8 +58,8 @@ class SetPasswordActivity : BaseActivity() {
                 pWallet.password = passwdHash
                 //同时更改助记词的加密
                 val bOldPassword = GoWallet.encPasswd(mPWallet!!.password)
-                val mnem: String? = GoWallet.decMenm(bOldPassword!!, mPWallet!!.mnem)
-                val encMenm: String? = GoWallet.encMenm(encPasswd, mnem!!)
+                val mnem: String = GoWallet.decMenm(bOldPassword!!, mPWallet!!.mnem)
+                val encMenm: String? = GoWallet.encMenm(encPasswd, mnem)
                 pWallet.mnem = encMenm
                 pWallet.isPutpassword = true
                 pWallet.update(mPWalletId)

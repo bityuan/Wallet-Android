@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.fzm.walletdemo"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -63,4 +63,5 @@ dependencies {
 
     implementation project(path: ':WalletModule')
     //implementation 'com.github.bityuan:Wallet-Android:1.2.8.2'
+    //implementation "com.github.TrustWallet:wallet-connect-kotlin:1.5.4"
 }

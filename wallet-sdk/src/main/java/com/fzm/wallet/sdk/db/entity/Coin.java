@@ -15,7 +15,7 @@ import walletapi.Walletapi;
  * Created by ZX on 2018/5/30.
  */
 
-public class Coin extends BaseBean {
+public class Coin extends BaseBean implements Comparable<Coin>{
 
     public static final int STATUS_ENABLE = 1;
     public static final int STATUS_DISABLE = -1;
@@ -49,6 +49,25 @@ public class Coin extends BaseBean {
     @Column(ignore = true)
     private String scanAddress;
     private float rmb;
+    @SerializedName("id")
+    private String netId;
+    private int sort;
+
+    public int getSort() {
+        return sort;
+    }
+
+    public void setSort(int sort) {
+        this.sort = sort;
+    }
+
+    public String getNetId() {
+        return netId;
+    }
+
+    public void setNetId(String netId) {
+        this.netId = netId;
+    }
 
     public float getRmb() {
         return rmb;
@@ -205,4 +224,9 @@ public class Coin extends BaseBean {
     }
 
 
+    @Override
+    public int compareTo(Coin o) {
+        int l = sort - o.getSort();
+        return l;
+    }
 }
