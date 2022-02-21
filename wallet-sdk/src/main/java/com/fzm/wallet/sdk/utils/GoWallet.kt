@@ -4,6 +4,7 @@ import android.text.TextUtils
 import android.util.Log
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.BWalletImpl
+import com.fzm.wallet.sdk.MnemonicManager
 import com.fzm.wallet.sdk.bean.response.BalanceResponse
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
@@ -554,9 +555,14 @@ class GoWallet {
                 }
                 saveAll(coinList)
                 wallet.coinList.addAll(coinList)
-                val bpassword = encPasswd(wallet.password)
-                wallet.mnem = encMenm(bpassword!!, wallet.mnem)
-                wallet.password = passwdHash(bpassword)
+                if (MnemonicManager.DEFAULT_STORE == MnemonicManager.store) {
+                    // 如果是默认实现，则保存到wallet数据库中
+                    val bpassword = encPasswd(wallet.password)
+                    wallet.mnem = encMenm(bpassword!!, wallet.mnem)
+                    wallet.password = passwdHash(bpassword)
+                } else {
+                    MnemonicManager.saveMnemonicWords(wallet.mnem, wallet.password)
+                }
                 wallet.save()
                 return@withContext wallet
             }

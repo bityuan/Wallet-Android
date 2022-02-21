@@ -1,6 +1,7 @@
 package com.fzm.wallet.sdk.alpha
 
 import com.alibaba.fastjson.JSON
+import com.fzm.wallet.sdk.MnemonicManager
 import com.fzm.wallet.sdk.WalletBean
 import com.fzm.wallet.sdk.bean.StringResult
 import com.fzm.wallet.sdk.bean.Transactions
@@ -60,42 +61,22 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
         }
     }
 
-    private fun setPassword(password: String): Boolean {
-        val pWallet = PWallet()
-        val encPasswd = GoWallet.encPasswd(password) ?: return false
-        val passwdHash = GoWallet.passwdHash(encPasswd) ?: return false
-        pWallet.password = passwdHash
-        // 同时更改助记词的加密
-        val bOldPassword = GoWallet.encPasswd(wallet.password) ?: return false
-        val mnem = GoWallet.decMenm(bOldPassword, wallet.mnem) ?: return false
-        val encMenm = GoWallet.encMenm(encPasswd, mnem) ?: return false
-        pWallet.mnem = encMenm
-        pWallet.isPutpassword = true
-        pWallet.update(wallet.id)
-        return true
+    private suspend fun setPassword(password: String): Boolean {
+        val mnem = MnemonicManager.getMnemonicWords(wallet.password)
+        return MnemonicManager.saveMnemonicWords(mnem, password)
     }
 
-    private fun changePassword(old: String, password: String): Boolean {
-        if (!GoWallet.checkPasswd(old, password)) {
+    private suspend fun changePassword(old: String, password: String): Boolean {
+        if (!MnemonicManager.checkPassword(old)) {
             throw Exception("密码错误")
         }
-        val pWallet = PWallet()
-        val encPasswd = GoWallet.encPasswd(password) ?: return false
-        val passwdHash = GoWallet.passwdHash(encPasswd) ?: return false
-        pWallet.password = passwdHash
-        // 同时更改助记词的加密
-        val bOldPassword = GoWallet.encPasswd(old) ?: return false
-        val mnem = GoWallet.decMenm(bOldPassword, wallet.mnem) ?: return false
-        val encMenm = GoWallet.encMenm(encPasswd, mnem) ?: return false
-        pWallet.mnem = encMenm
-        pWallet.isPutpassword = true
-        pWallet.update(wallet.id)
-        return true
+        val mnem = MnemonicManager.getMnemonicWords(old)
+        return MnemonicManager.saveMnemonicWords(mnem, password)
     }
 
     override suspend fun delete(password: String, confirmation: suspend () -> Boolean): Boolean {
         val verified = withContext(Dispatchers.IO) {
-            GoWallet.checkPasswd(password, wallet.password)
+            MnemonicManager.checkPassword(password)
         }
         if (verified) {
             if (confirmation()) {
@@ -119,11 +100,11 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
         password: String
     ): String {
         return withContext(Dispatchers.IO) {
-            val result = GoWallet.checkPasswd(password, wallet.password)
+            val result = MnemonicManager.checkPassword(password)
             if (!result) {
                 throw Exception("密码输入错误")
             }
-            val mnem = GoWallet.decMenm(GoWallet.encPasswd(password)!!, coin.getpWallet().mnem)
+            val mnem = MnemonicManager.getMnemonicWords(password)
             val privateKey = coin.getPrivkey(coin.chain, mnem)?: throw Exception("私钥获取失败")
 
             val tokenSymbol = if (coin.name == coin.chain) "" else coin.name
@@ -192,11 +173,10 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
             coin.setPrivkey(sameChainCoin.encPrivkey)
         } else {
             val pass = password()
-            if (!GoWallet.checkPasswd(pass, wallet.password)) {
+            if (!MnemonicManager.checkPassword(pass)) {
                 throw Exception("密码输入错误")
             }
-            val bPassword = GoWallet.encPasswd(pass) ?: throw Exception("未知错误")
-            val mnem = GoWallet.decMenm(bPassword, wallet.mnem)
+            val mnem = MnemonicManager.getMnemonicWords(pass)
             if (mnem.isEmpty()) {
                 throw Exception("助记词解密失败")
             }
@@ -352,6 +332,13 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
             .where("chain = ? and pwallet_id = ?", chain, wallet.id.toString())
             .find<Coin>(true)
         return coinList.let { it.firstOrNull()?.address }
+    }
+
+    override fun close() {
+        wallet.password = null
+        wallet.isPutpassword = false
+        wallet.mnem = null
+        wallet.save()
     }
 
     protected fun getChineseMnem(mnem: String): String {

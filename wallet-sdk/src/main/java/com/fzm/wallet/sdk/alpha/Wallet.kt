@@ -116,5 +116,10 @@ interface Wallet<T> : Cloneable {
      */
     suspend fun getAddress(chain: String): String?
 
+    /**
+     * 关闭钱包
+     */
+    fun close()
+
     public override fun clone(): Wallet<Coin>
 }

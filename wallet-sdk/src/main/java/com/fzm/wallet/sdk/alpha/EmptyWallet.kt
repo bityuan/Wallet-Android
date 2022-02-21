@@ -90,4 +90,8 @@ object EmptyWallet : Wallet<Coin> {
     override suspend fun getCoinBalance(coin: Coin, requireQuotation: Boolean): Coin {
         return coin
     }
+
+    override fun close() {
+
+    }
 }

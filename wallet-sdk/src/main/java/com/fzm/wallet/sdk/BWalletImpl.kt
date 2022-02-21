@@ -205,6 +205,7 @@ internal class BWalletImpl : BWallet {
     }
 
     override fun close() {
+        wallet.close()
         MMkvUtil.encode(CURRENT_USER, "")
         MMkvUtil.encode(PWallet.PWALLET_ID, "")
         updateWalletFlow(EmptyWallet)
