@@ -562,6 +562,8 @@ class GoWallet {
                     wallet.password = passwdHash(bpassword)
                 } else {
                     MnemonicManager.saveMnemonicWords(wallet.mnem, wallet.password)
+                    wallet.mnem = null
+                    wallet.password = null
                 }
                 wallet.save()
                 return@withContext wallet
