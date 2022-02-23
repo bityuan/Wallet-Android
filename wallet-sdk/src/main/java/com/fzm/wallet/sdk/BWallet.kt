@@ -132,8 +132,10 @@ interface BWallet {
      * @param initialDelay      初始延迟
      * @param period            查询间隔
      * @param requireQuotation  是否查询市场行情
+     * @param predicate         币种过滤
      */
-    fun getCoinBalance(initialDelay: Long, period: Long, requireQuotation: Boolean): Flow<List<Coin>>
+    fun getCoinBalance(initialDelay: Long, period: Long, requireQuotation: Boolean,
+                       predicate: ((Coin) -> Boolean)? = null): Flow<List<Coin>>
 
     /**
      * 获取单个币种的资产余额与行情

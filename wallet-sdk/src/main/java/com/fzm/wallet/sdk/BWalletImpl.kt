@@ -163,9 +163,10 @@ internal class BWalletImpl : BWallet {
     override fun getCoinBalance(
         initialDelay: Long,
         period: Long,
-        requireQuotation: Boolean
+        requireQuotation: Boolean,
+        predicate: ((Coin) -> Boolean)?
     ): Flow<List<Coin>> = _current.flatMapLatest {
-        it.getCoinBalance(initialDelay, period, requireQuotation)
+        it.getCoinBalance(initialDelay, period, requireQuotation, predicate)
     }
 
     override suspend fun getCoinBalance(coin: Coin, requireQuotation: Boolean): Coin {
