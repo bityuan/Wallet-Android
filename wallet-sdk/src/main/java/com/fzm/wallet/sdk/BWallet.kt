@@ -178,6 +178,11 @@ interface BWallet {
     suspend fun getCoin(chain: String): Coin?
 
     /**
+     * 获取所有主链币种
+     */
+    suspend fun getAllCoins(): List<Coin>
+
+    /**
      * 获取区块链浏览器链接地址
      *
      * @param platform  平台码（平行链）

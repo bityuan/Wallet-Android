@@ -200,6 +200,12 @@ internal class BWalletImpl : BWallet {
         return coinList.firstOrNull()
     }
 
+    override suspend fun getAllCoins(): List<Coin> {
+        return withContext(Dispatchers.IO) {
+            LitePal.select().where("pwallet_id = ?", wallet.getId()).find()
+        }
+    }
+
     override suspend fun getBrowserUrl(platform: String): String {
         return walletRepository.getBrowserUrl(platform).dataOrNull()?.brower_url ?: ""
     }
