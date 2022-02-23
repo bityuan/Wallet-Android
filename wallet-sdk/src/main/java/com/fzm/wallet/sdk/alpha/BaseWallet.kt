@@ -198,7 +198,8 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
     override fun getCoinBalance(
         initialDelay: Long,
         period: Long,
-        requireQuotation: Boolean
+        requireQuotation: Boolean,
+        predicate: ((Coin) -> Boolean)?
     ): Flow<List<Coin>> = flow {
         if (initialDelay > 0) delay(initialDelay)
         var initEmit = true
@@ -208,7 +209,9 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                     "pwallet_id = ? and status = ?",
                     wallet.id.toString(),
                     Coin.STATUS_ENABLE.toString()
-                ).find(Coin::class.java, true)
+                ).find(Coin::class.java, true).let {
+                    if (predicate == null) it else it.filter(predicate)
+                }
                 if (coins.isEmpty()) {
                     emit(emptyList())
                     return@coroutineScope

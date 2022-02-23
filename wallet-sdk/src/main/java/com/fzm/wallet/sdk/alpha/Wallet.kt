@@ -82,7 +82,12 @@ interface Wallet<T> : Cloneable {
     /**
      * 获取资产余额与行情
      */
-    fun getCoinBalance(initialDelay: Long, period: Long, requireQuotation: Boolean): Flow<List<T>>
+    fun getCoinBalance(
+        initialDelay: Long,
+        period: Long,
+        requireQuotation: Boolean,
+        predicate: ((Coin) -> Boolean)? = null
+    ): Flow<List<T>>
 
     /**
      * 获取单个币种的资产余额与行情

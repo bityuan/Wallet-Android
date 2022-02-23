@@ -59,7 +59,8 @@ object EmptyWallet : Wallet<Coin> {
     override fun getCoinBalance(
         initialDelay: Long,
         period: Long,
-        requireQuotation: Boolean
+        requireQuotation: Boolean,
+        predicate: ((Coin) -> Boolean)?
     ): Flow<List<Coin>> = emptyFlow()
 
     override suspend fun getTransactionList(
