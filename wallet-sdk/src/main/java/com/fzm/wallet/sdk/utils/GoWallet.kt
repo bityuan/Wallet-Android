@@ -540,11 +540,12 @@ class GoWallet {
 
         internal suspend fun createWallet(wallet: PWallet, coinList: List<Coin>): PWallet {
             return withContext(Dispatchers.IO) {
-                for (coin in coinList) {
+                coinList.forEachIndexed { index, coin ->
                     val hdWallet = getHDWallet(coin.chain, wallet.mnem)
                     val pubkey = hdWallet!!.newKeyPub(0)
                     val address = hdWallet.newAddress_v2(0)
                     val pubkeyStr = encodeToStrings(pubkey)
+                    coin.sort = index
                     coin.status = Coin.STATUS_ENABLE
                     coin.pubkey = pubkeyStr
                     coin.address = address
