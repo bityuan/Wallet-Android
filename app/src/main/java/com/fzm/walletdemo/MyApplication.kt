@@ -17,7 +17,7 @@ class MyApplication : Application() {
         startKoin {
             androidContext(this@MyApplication)
             modules(module {
-                BWallet.get().init(this@MyApplication, this)
+                BWallet.get().init(this@MyApplication, this, "81")
             })
             modules(viewModelModule)
         }

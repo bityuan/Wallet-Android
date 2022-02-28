@@ -28,10 +28,11 @@ interface BWallet {
     /**
      * SDK初始化方法
      *
-     * @param context   Context
-     * @param module    用于Koin依赖注入
+     * @param context       Context
+     * @param module        用于Koin依赖注入
+     * @param platformId    平台码，用于后端区别不同业务
      */
-    fun init(context: Context, module: Module?)
+    fun init(context: Context, module: Module?, platformId: String)
 
     /**
      * 切换钱包

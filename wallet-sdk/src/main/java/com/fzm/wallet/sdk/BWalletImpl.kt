@@ -4,6 +4,7 @@ import android.content.Context
 import com.fzm.wallet.sdk.alpha.EmptyWallet
 import com.fzm.wallet.sdk.alpha.NormalWallet
 import com.fzm.wallet.sdk.alpha.Wallet
+import com.fzm.wallet.sdk.base.FZM_PLATFORM_ID
 import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
 import com.fzm.wallet.sdk.db.entity.Coin
@@ -48,7 +49,8 @@ internal class BWalletImpl : BWallet {
 
     private val walletRepository by lazy { rootScope.get<WalletRepository>(walletQualifier) }
 
-    override fun init(context: Context, module: Module?) {
+    override fun init(context: Context, module: Module?, platformId: String) {
+        FZM_PLATFORM_ID = platformId
         module?.walletNetModule()
         val user = MMkvUtil.decodeString(CURRENT_USER, "")
         val id = MMkvUtil.decodeString("${user}${PWallet.PWALLET_ID}", "").ifEmpty {
