@@ -171,6 +171,12 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
             coin.pubkey = sameChainCoin.pubkey
             coin.sort = existNum
             coin.setPrivkey(sameChainCoin.encPrivkey)
+            coin.setpWallet(wallet)
+            if (coin.id != 0L) {
+                coin.update(coin.id)
+            } else {
+                coin.save()
+            }
         } else {
             val pass = password()
             if (!MnemonicManager.checkPassword(pass)) {
@@ -184,6 +190,7 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
             coin.address = hdWallet.newAddress_v2(0)
             coin.pubkey = GoWallet.encodeToStrings(hdWallet.newKeyPub(0))
             coin.sort = existNum
+            coin.setpWallet(wallet)
             coin.save()
         }
     }
