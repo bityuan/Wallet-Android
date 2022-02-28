@@ -167,6 +167,7 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
             LitePal.select().where("chain = ? and pwallet_id = ?", coin.chain, wallet.id.toString())
                 .findFirst(Coin::class.java)
         if (sameChainCoin != null) {
+            coin.status = Coin.STATUS_ENABLE
             coin.address = sameChainCoin.address
             coin.pubkey = sameChainCoin.pubkey
             coin.sort = existNum
@@ -177,6 +178,7 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
             } else {
                 coin.save()
             }
+            wallet.coinList.add(coin)
         } else {
             val pass = password()
             if (!MnemonicManager.checkPassword(pass)) {
@@ -187,11 +189,13 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                 throw Exception("助记词解密失败")
             }
             val hdWallet = GoWallet.getHDWallet(coin.chain, mnem) ?: throw Exception("创建主链失败")
+            coin.status = Coin.STATUS_ENABLE
             coin.address = hdWallet.newAddress_v2(0)
             coin.pubkey = GoWallet.encodeToStrings(hdWallet.newKeyPub(0))
             coin.sort = existNum
             coin.setpWallet(wallet)
             coin.save()
+            wallet.coinList.add(coin)
         }
     }
 
@@ -199,6 +203,13 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
         for (c in coins) {
             c.status = Coin.STATUS_DISABLE
             c.update(c.id)
+            // 更新wallet信息
+            val itr = wallet.coinList.iterator()
+            while (itr.hasNext()) {
+                if (c.id == itr.next().id) {
+                    itr.remove()
+                }
+            }
         }
     }
 

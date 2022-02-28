@@ -144,10 +144,12 @@ internal class BWalletImpl : BWallet {
 
     override suspend fun addCoins(coins: List<Coin>, password: suspend () -> String) {
         wallet.addCoins(coins, password)
+        updateWalletFlow(wallet.clone())
     }
 
     override suspend fun deleteCoins(coins: List<Coin>) {
         wallet.deleteCoins(coins)
+        updateWalletFlow(wallet.clone())
     }
 
     override suspend fun transfer(
