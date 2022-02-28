@@ -3,6 +3,7 @@ package com.fzm.wallet.sdk
 import android.content.Context
 import com.fzm.wallet.sdk.alpha.Wallet
 import com.fzm.wallet.sdk.bean.Transactions
+import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import kotlinx.coroutines.flow.Flow
@@ -190,6 +191,22 @@ interface BWallet {
      * @param platform  平台码（平行链）
      */
     suspend fun getBrowserUrl(platform: String): String
+
+    /**
+     * 获取各主链的币种
+     */
+    suspend fun getChainAssets(): List<AddCoinTabBean>
+
+    /**
+     * 搜索币种
+     *
+     * @param page      页数
+     * @param limit     每页数据条数
+     * @param keywords  搜索关键词
+     * @param chain     主链
+     * @param platform  平台码
+     */
+    suspend fun searchCoins(page: Int, limit: Int, keywords: String, chain: String, platform: String): List<Coin>
 
     /**
      * 关闭钱包

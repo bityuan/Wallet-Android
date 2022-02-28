@@ -204,7 +204,7 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
         if (initialDelay > 0) delay(initialDelay)
         var initEmit = true
         while (true) {
-            coroutineScope {
+            supervisorScope {
                 val coins = LitePal.where(
                     "pwallet_id = ? and status = ?",
                     wallet.id.toString(),
@@ -214,7 +214,7 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                 }
                 if (coins.isEmpty()) {
                     emit(emptyList())
-                    return@coroutineScope
+                    return@supervisorScope
                 }
                 val deferred = ArrayDeque<Deferred<Unit>>()
                 for (coin in coins) {
