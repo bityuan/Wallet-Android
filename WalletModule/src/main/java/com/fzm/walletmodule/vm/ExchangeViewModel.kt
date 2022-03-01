@@ -48,16 +48,23 @@ class ExchangeViewModel constructor(private val exchangeRepository: ExchangeRepo
         }
     }
 
-    fun getExLimit(address: String) {
+    fun getExLimit(
+        address: String,
+        cointype: String,
+        tokensymbol: String
+    ) {
         viewModelScope.launch {
-            _getExLimit.value = exchangeRepository.getExLimit(address)
+            _getExLimit.value = exchangeRepository.getExLimit(address, cointype, tokensymbol)
         }
 
     }
 
-    fun getExFee() {
+    fun getExFee(
+        cointype: String,
+        tokensymbol: String
+    ) {
         viewModelScope.launch {
-            _getExFee.value = exchangeRepository.getExFee()
+            _getExFee.value = exchangeRepository.getExFee(cointype, tokensymbol)
         }
 
     }

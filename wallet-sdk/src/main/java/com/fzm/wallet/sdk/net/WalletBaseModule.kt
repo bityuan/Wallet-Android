@@ -117,23 +117,27 @@ object UrlConfig {
 
     private val config: Properties by lazy { openAssets() }
 
-    val BASE_URL: String = config.getProperty("BASE_URL")
-    val GO_URL: String = config.getProperty("GO_URL")
-    val EXCHANGE_MANAGER: String = config.getProperty("EXCHANGE_MANAGER")
-    val EXCHANGE_DO: String = config.getProperty("EXCHANGE_DO")
+    val BASE_URL: String by lazy { config.getProperty("BASE_URL") }
+    val GO_URL: String by lazy { config.getProperty("GO_URL") }
+    val EXCHANGE_MANAGER: String by lazy { config.getProperty("EXCHANGE_MANAGER") }
+    val EXCHANGE_DO: String by lazy { config.getProperty("EXCHANGE_DO") }
 
 
     private fun openAssets(): Properties {
+        var config = Properties()
         try {
-            val open = WalletModuleApp.context.assets.open("app-base.properties")
-            val config = Properties()
-            config.load(InputStreamReader(open, Charset.forName("UTF-8")))
-            open.close()
-            return config
+            WalletModuleApp.context.assets.open("app-base.properties")
+                .use {
+                    config = Properties()
+                    InputStreamReader(it, Charset.forName("UTF-8")).use { reader ->
+                        config.load(reader)
+                    }
+
+                }
         } catch (e: IOException) {
             e.printStackTrace()
         }
-        return Properties()
+        return config
     }
 
 

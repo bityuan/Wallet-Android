@@ -25,7 +25,6 @@
         <!-- android:exported="false" /> -->
         <activity
             android:name=".ui.activity.AddCoinActivity"
-            android:theme="@style/Theme.Design.NoActionBar"
             android:exported="false" />
         <!-- <activity -->
         <!-- android:name=".ui.activity.WebAppDetailsActivity" -->
@@ -33,77 +32,62 @@
         <activity
             android:name=".ui.activity.InActivity"
             android:label=""
-            android:theme="@style/Theme.Design.NoActionBar"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.OutActivity"
             android:label=""
-            android:theme="@style/Theme.Design.NoActionBar"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.MyWalletsActivity"
             android:label="@string/my_wallets_chose1"
             android:launchMode="singleTask"
-            android:theme="@style/Theme.Design.NoActionBar"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.CaptureCustomActivity"
             android:label=""
-            android:theme="@style/Theme.Design.NoActionBar"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.ChangePasswordActivity"
             android:label="@string/change_password"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Design.NoActionBar"
             android:windowSoftInputMode="stateUnchanged|stateHidden" />
         <activity
             android:name=".ui.activity.SetPasswordActivity"
             android:label="@string/title_set_pwd"
-            android:theme="@style/Theme.Design.NoActionBar"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.CheckMnemActivity"
-            android:theme="@style/Theme.Design.NoActionBar"
             android:label="校验助记词"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.WalletDetailsActivity"
             android:label="@string/title_wallet_details"
             android:launchMode="singleTask"
-            android:theme="@style/Theme.Design.NoActionBar"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.BackUpWalletActivity"
-            android:theme="@style/Theme.Design.NoActionBar"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.CreateMnemActivity"
-            android:theme="@style/Theme.Design.NoActionBar"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.CreateWalletActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Design.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.activity.MnemPasswordActivity"
-            android:theme="@style/Theme.Design.NoActionBar"
             android:label="@string/title_set_pwd" />
         <activity
             android:name=".ui.activity.ImportWalletActivity"
             android:label="@string/my_import_wallet"
-            android:theme="@style/Theme.Design.NoActionBar"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.activity.TransactionsActivity"
-            android:theme="@style/Theme.Design.NoActionBar"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.TransactionDetailsActivity"
             android:label="@string/title_transaction_details"
-            android:theme="@style/Theme.Design.NoActionBar"
             android:screenOrientation="portrait" />
     </application>
 

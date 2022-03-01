@@ -37,33 +37,49 @@ class MainActivity : BaseActivity() {
     }
 
 
-    internal val DEFAULT_COINS
-        get() = listOf(
-            Coin().apply {
-                chain = "BTY"
-                name = "BTY"
-                platform = "bty"
-                netId = "705"
-            },
-            Coin().apply {
-                chain = "ETH"
-                name = "ETH"
-                platform = "ethereum"
-                netId = "90"
-            },
-            Coin().apply {
-                chain = "BNB"
-                name = "BNB"
-                platform = "bnb"
-                netId = "641"
-            },
-            Coin().apply {
-                chain = "BNB"
-                name = "USDT"
-                platform = "bnb"
-                netId = "694"
-            },
-        )
+    val DEFAULT_COINS = listOf(
+        Coin().apply {
+            name = "USDT"
+            chain = "BNB"
+            platform = "bnb"
+            netId = "694"
+        }, Coin().apply {
+            name = "BTY"
+            chain = "BTY"
+            platform = "bty"
+            netId = "154"
+        }, Coin().apply {
+            name = "YCC"
+            chain = "BNB"
+            platform = "bnb"
+            netId = "695"
+        }, Coin().apply {
+            name = "BNB"
+            chain = "BNB"
+            platform = "bnb"
+            netId = "641"
+        }, Coin().apply {
+            name = "TRX"
+            chain = "TRX"
+            platform = "trx"
+            netId = "1"
+        }, Coin().apply {
+            name = "USDT"
+            chain = "TRX"
+            platform = "trx"
+            netId = "600"
+        },Coin().apply {
+            name = "ETH"
+            chain = "ETH"
+            platform = "ethereum"
+            netId = "90"
+        },Coin().apply {
+            name = "BTY"
+            chain = "BNB"
+            platform = "bnb"
+            netId = "705"
+        }
+    )
 
      override fun initView() {
         bottomNavigationView.setOnNavigationItemSelectedListener {
