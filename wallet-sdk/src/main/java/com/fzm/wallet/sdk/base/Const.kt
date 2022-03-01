@@ -17,7 +17,7 @@ internal val DEFAULT_COINS
             chain = "BTY"
             name = "BTY"
             platform = "bty"
-            netId = "705"
+            netId = "154"
         },
         Coin().apply {
             chain = "ETH"
