@@ -22,8 +22,4 @@ class PrivateKeyWallet(wallet: PWallet) : BaseWallet(wallet) {
     override suspend fun deleteCoins(coins: List<Coin>) {
         TODO("Not yet implemented")
     }
-
-    override fun clone(): Wallet<Coin> {
-        return PrivateKeyWallet(wallet.clone())
-    }
 }

@@ -1,7 +1,5 @@
 package com.fzm.wallet.sdk.db.entity;
 
-import androidx.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,21 +101,5 @@ public class PWallet extends BaseBean implements Cloneable {
                 ", coinList=" + coinList +
                 ", putpassword=" + putpassword +
                 '}';
-    }
-
-    @NonNull
-    @Override
-    public PWallet clone() {
-        PWallet pWallet = new PWallet();
-        pWallet.setId(getId());
-        pWallet.setCoinList(getCoinList());
-        pWallet.setMnem(getMnem());
-        pWallet.setMnemType(getMnemType());
-        pWallet.setPassword(getPassword());
-        pWallet.setName(getName());
-        pWallet.setPutpassword(isPutpassword());
-        pWallet.setUser(getUser());
-        pWallet.setType(getType());
-        return pWallet;
     }
 }

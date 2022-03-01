@@ -25,8 +25,4 @@ class AddressWallet(wallet: PWallet) : BaseWallet(wallet) {
     ): String {
         throw UnsupportedOperationException("观察钱包不支持转账")
     }
-
-    override fun clone(): AddressWallet {
-        return AddressWallet(wallet.clone())
-    }
 }

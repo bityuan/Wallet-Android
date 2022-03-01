@@ -165,7 +165,7 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
         val existNum = LitePal.where("pwallet_id = ?", wallet.id.toString()).count(Coin::class.java)
         val sameChainCoin =
             LitePal.select().where("chain = ? and pwallet_id = ?", coin.chain, wallet.id.toString())
-                .findFirst(Coin::class.java)
+                .findFirst(Coin::class.java, true)
         if (sameChainCoin != null) {
             coin.status = Coin.STATUS_ENABLE
             coin.address = sameChainCoin.address

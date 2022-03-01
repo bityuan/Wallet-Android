@@ -125,6 +125,4 @@ interface Wallet<T> : Cloneable {
      * 关闭钱包
      */
     fun close()
-
-    public override fun clone(): Wallet<Coin>
 }

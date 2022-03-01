@@ -61,8 +61,4 @@ class NormalWallet(wallet: PWallet) : BaseWallet(wallet) {
             GoWallet.createWallet(wallet, coins.ifEmpty { DEFAULT_COINS }).id.toString()
         }
     }
-
-    override fun clone(): Wallet<Coin> {
-        return NormalWallet(wallet.clone())
-    }
 }
