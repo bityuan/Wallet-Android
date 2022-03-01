@@ -182,9 +182,14 @@ interface BWallet {
     suspend fun getCoin(chain: String): Coin?
 
     /**
-     * 获取所有主链币种
+     * 获取所有币种
      */
     suspend fun getAllCoins(): List<Coin>
+
+    /**
+     * 获取所有币种
+     */
+    fun getCoinsFlow(): Flow<List<Coin>>
 
     /**
      * 获取区块链浏览器链接地址

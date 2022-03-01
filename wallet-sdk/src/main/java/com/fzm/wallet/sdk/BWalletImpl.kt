@@ -15,10 +15,7 @@ import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.utils.MMkvUtil
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import org.koin.core.module.Module
 import org.litepal.LitePal
@@ -218,6 +215,12 @@ internal class BWalletImpl : BWallet {
     override suspend fun getAllCoins(): List<Coin> {
         return withContext(Dispatchers.IO) {
             LitePal.select().where("pwallet_id = ?", wallet.getId()).find()
+        }
+    }
+
+    override fun getCoinsFlow(): Flow<List<Coin>> {
+        return _current.flatMapLatest {
+            flow { emit(getAllCoins()) }
         }
     }
 
