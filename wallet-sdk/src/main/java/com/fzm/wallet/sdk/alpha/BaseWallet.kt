@@ -168,23 +168,25 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
             LitePal.select().where("chain = ? and pwallet_id = ?", coin.chain, wallet.id.toString())
                 .findFirst(Coin::class.java, true)
         if (sameChainCoin != null) {
-            Coin().apply {
-                chain = coin.chain
-                name = coin.name
-                platform = coin.platform
-                netId = coin.netId
-                status = Coin.STATUS_ENABLE
-                address = sameChainCoin.address
-                pubkey = sameChainCoin.pubkey
-                sort = existNum
-                setPrivkey(sameChainCoin.encPrivkey)
-                setpWallet(wallet)
-                if (id != 0L) {
-                    update(id)
-                } else {
+            if (coin.id != 0L) {
+                val values = ContentValues().apply {
+                    put("status", Coin.STATUS_ENABLE)
+                }
+                LitePal.update(Coin::class.java, values, coin.id)
+            } else {
+                Coin().apply {
+                    chain = coin.chain
+                    name = coin.name
+                    platform = coin.platform
+                    netId = coin.netId
+                    status = Coin.STATUS_ENABLE
+                    address = sameChainCoin.address
+                    pubkey = sameChainCoin.pubkey
+                    sort = existNum
+                    setPrivkey(sameChainCoin.encPrivkey)
+                    setpWallet(wallet)
                     save()
                 }
-                wallet.coinList.add(this)
             }
         } else {
             val pass = password()
@@ -207,7 +209,6 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                 sort = existNum
                 coin.setpWallet(wallet)
                 save()
-                wallet.coinList.add(this)
             }
         }
     }
@@ -218,13 +219,6 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                 put("status", Coin.STATUS_DISABLE)
             }
             LitePal.update(Coin::class.java, values, c.id)
-            // 更新wallet信息
-            val itr = wallet.coinList.iterator()
-            while (itr.hasNext()) {
-                if (c.id == itr.next().id) {
-                    itr.remove()
-                }
-            }
         }
     }
 
