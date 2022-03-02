@@ -243,6 +243,11 @@ internal class BWalletImpl : BWallet {
             ?: emptyList()
     }
 
+    override fun changeCoinOrder(coin: Coin, sort: Int) {
+        coin.sort = sort
+        coin.update(coin.id)
+    }
+
     override fun close() {
         wallet.close()
         MMkvUtil.encode(CURRENT_USER, "")

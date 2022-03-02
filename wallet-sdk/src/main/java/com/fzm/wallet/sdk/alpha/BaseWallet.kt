@@ -194,7 +194,7 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                     status = Coin.STATUS_ENABLE
                     address = sameChainCoin.address
                     pubkey = sameChainCoin.pubkey
-                    sort = existNum
+                    sort = existNum + 1
                     setPrivkey(sameChainCoin.encPrivkey)
                     setpWallet(wallet)
                     save()
@@ -223,7 +223,7 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                 status = Coin.STATUS_ENABLE
                 address = hdWallet.newAddress_v2(0)
                 pubkey = GoWallet.encodeToStrings(hdWallet.newKeyPub(0))
-                sort = existNum
+                sort = existNum + 1
                 setpWallet(wallet)
                 save()
             }

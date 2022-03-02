@@ -215,6 +215,14 @@ interface BWallet {
     suspend fun searchCoins(page: Int, limit: Int, keywords: String, chain: String, platform: String): List<Coin>
 
     /**
+     * 修改币种排序
+     *
+     * @param coin  币种
+     * @param sort  排序权重
+     */
+    fun changeCoinOrder(coin: Coin, sort: Int)
+
+    /**
      * 关闭钱包
      */
     fun close()
