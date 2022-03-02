@@ -168,17 +168,29 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
             LitePal.select().where("chain = ? and pwallet_id = ?", coin.chain, wallet.id.toString())
                 .findFirst(Coin::class.java, true)
         if (sameChainCoin != null) {
-            if (coin.id != 0L) {
+            val sameCoin = LitePal.select().where(
+                "chain = ? and name = ? and platform = ? and pwallet_id = ?",
+                coin.chain,
+                coin.name,
+                coin.platform,
+                wallet.id.toString()
+            ).findFirst(Coin::class.java, false)
+            if (sameCoin != null) {
                 val values = ContentValues().apply {
                     put("status", Coin.STATUS_ENABLE)
                 }
-                LitePal.update(Coin::class.java, values, coin.id)
+                LitePal.update(Coin::class.java, values, sameCoin.id)
             } else {
                 Coin().apply {
                     chain = coin.chain
                     name = coin.name
                     platform = coin.platform
                     netId = coin.netId
+                    icon = coin.icon
+                    nickname = coin.nickname
+                    treaty = coin.treaty
+                    optionalName = coin.optionalName
+
                     status = Coin.STATUS_ENABLE
                     address = sameChainCoin.address
                     pubkey = sameChainCoin.pubkey
@@ -203,11 +215,16 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                 name = coin.name
                 platform = coin.platform
                 netId = coin.netId
+                icon = coin.icon
+                nickname = coin.nickname
+                treaty = coin.treaty
+                optionalName = coin.optionalName
+
                 status = Coin.STATUS_ENABLE
                 address = hdWallet.newAddress_v2(0)
                 pubkey = GoWallet.encodeToStrings(hdWallet.newKeyPub(0))
                 sort = existNum
-                coin.setpWallet(wallet)
+                setpWallet(wallet)
                 save()
             }
         }
