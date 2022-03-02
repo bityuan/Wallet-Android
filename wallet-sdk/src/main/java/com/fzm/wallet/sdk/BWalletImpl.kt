@@ -1,5 +1,6 @@
 package com.fzm.wallet.sdk
 
+import android.content.ContentValues
 import android.content.Context
 import com.fzm.wallet.sdk.alpha.EmptyWallet
 import com.fzm.wallet.sdk.alpha.NormalWallet
@@ -244,12 +245,11 @@ internal class BWalletImpl : BWallet {
     }
 
     override fun changeCoinOrder(coin: Coin, sort: Int) {
-        if (sort == 0) {
-            coin.setToDefault("sort")
-        } else {
-            coin.sort = sort
+        val values = ContentValues().apply {
+            put("sort", sort)
         }
-        coin.update(coin.id)
+        LitePal.update(Coin::class.java, values, coin.id)
+        updateWalletFlow(null)
     }
 
     override fun close() {
