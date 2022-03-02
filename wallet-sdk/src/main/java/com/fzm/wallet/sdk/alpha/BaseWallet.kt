@@ -1,5 +1,6 @@
 package com.fzm.wallet.sdk.alpha
 
+import android.content.ContentValues
 import com.alibaba.fastjson.JSON
 import com.fzm.wallet.sdk.MnemonicManager
 import com.fzm.wallet.sdk.WalletBean
@@ -167,18 +168,24 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
             LitePal.select().where("chain = ? and pwallet_id = ?", coin.chain, wallet.id.toString())
                 .findFirst(Coin::class.java, true)
         if (sameChainCoin != null) {
-            coin.status = Coin.STATUS_ENABLE
-            coin.address = sameChainCoin.address
-            coin.pubkey = sameChainCoin.pubkey
-            coin.sort = existNum
-            coin.setPrivkey(sameChainCoin.encPrivkey)
-            coin.setpWallet(wallet)
-            if (coin.id != 0L) {
-                coin.update(coin.id)
-            } else {
-                coin.save()
+            Coin().apply {
+                chain = coin.chain
+                name = coin.name
+                platform = coin.platform
+                netId = coin.netId
+                status = Coin.STATUS_ENABLE
+                address = sameChainCoin.address
+                pubkey = sameChainCoin.pubkey
+                sort = existNum
+                setPrivkey(sameChainCoin.encPrivkey)
+                setpWallet(wallet)
+                if (id != 0L) {
+                    update(id)
+                } else {
+                    save()
+                }
+                wallet.coinList.add(this)
             }
-            wallet.coinList.add(coin)
         } else {
             val pass = password()
             if (!MnemonicManager.checkPassword(pass)) {
@@ -189,20 +196,28 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                 throw Exception("助记词解密失败")
             }
             val hdWallet = GoWallet.getHDWallet(coin.chain, mnem) ?: throw Exception("创建主链失败")
-            coin.status = Coin.STATUS_ENABLE
-            coin.address = hdWallet.newAddress_v2(0)
-            coin.pubkey = GoWallet.encodeToStrings(hdWallet.newKeyPub(0))
-            coin.sort = existNum
-            coin.setpWallet(wallet)
-            coin.save()
-            wallet.coinList.add(coin)
+            Coin().apply {
+                chain = coin.chain
+                name = coin.name
+                platform = coin.platform
+                netId = coin.netId
+                status = Coin.STATUS_ENABLE
+                address = hdWallet.newAddress_v2(0)
+                pubkey = GoWallet.encodeToStrings(hdWallet.newKeyPub(0))
+                sort = existNum
+                coin.setpWallet(wallet)
+                save()
+                wallet.coinList.add(this)
+            }
         }
     }
 
     override suspend fun deleteCoins(coins: List<Coin>) = withContext(Dispatchers.IO) {
         for (c in coins) {
-            c.status = Coin.STATUS_DISABLE
-            c.update(c.id)
+            val values = ContentValues().apply {
+                put("status", Coin.STATUS_DISABLE)
+            }
+            LitePal.update(Coin::class.java, values, c.id)
             // 更新wallet信息
             val itr = wallet.coinList.iterator()
             while (itr.hasNext()) {
