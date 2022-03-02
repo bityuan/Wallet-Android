@@ -244,7 +244,11 @@ internal class BWalletImpl : BWallet {
     }
 
     override fun changeCoinOrder(coin: Coin, sort: Int) {
-        coin.sort = sort
+        if (sort == 0) {
+            coin.setToDefault("sort")
+        } else {
+            coin.sort = sort
+        }
         coin.update(coin.id)
     }
 

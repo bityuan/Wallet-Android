@@ -545,7 +545,7 @@ class GoWallet {
                     val pubkey = hdWallet!!.newKeyPub(0)
                     val address = hdWallet.newAddress_v2(0)
                     val pubkeyStr = encodeToStrings(pubkey)
-                    coin.sort = index + 1
+                    coin.sort = index
                     coin.status = Coin.STATUS_ENABLE
                     coin.pubkey = pubkeyStr
                     coin.address = address
