@@ -1,7 +1,6 @@
 package com.fzm.wallet.sdk.alpha
 
 import android.content.ContentValues
-import android.util.Log
 import com.alibaba.fastjson.JSON
 import com.fzm.wallet.sdk.MnemonicManager
 import com.fzm.wallet.sdk.WalletBean
@@ -177,7 +176,6 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                 wallet.id.toString()
             ).findFirst(Coin::class.java, false)
             if (sameCoin != null) {
-                Log.d("BWallet", "update coin $sameCoin")
                 updateLocalCoin(ContentValues().apply {
                     put("status", Coin.STATUS_ENABLE)
                 }, sameCoin.id)
@@ -199,7 +197,6 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                     setPrivkey(sameChainCoin.encPrivkey)
                     setpWallet(wallet)
                     save()
-                    Log.d("BWallet", "save coin $name")
                 }
             }
         } else {
@@ -228,14 +225,12 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                 sort = existNum
                 setpWallet(wallet)
                 save()
-                Log.d("BWallet", "save new chain coin $name")
             }
         }
     }
 
     override suspend fun deleteCoins(coins: List<Coin>) = withContext(Dispatchers.IO) {
         for (c in coins) {
-            Log.d("BWallet", "delete coin ${c.name}")
             updateLocalCoin(
                 ContentValues().apply { put("status", Coin.STATUS_DISABLE) },
                 c.id
@@ -270,7 +265,6 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                             ContentValues().apply { put("balance", coin.balance) },
                             coin.id
                         )
-                        Log.d("BWallet", "update coin balance ${coin.balance}")
                         return@async
                     } catch (e: Exception) {
                         // 资产获取异常
@@ -303,8 +297,6 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                             },
                             id
                         )
-                        Log.d("BWallet", "update coin info $name")
-
                     }
                 }
                 emit(coins)
