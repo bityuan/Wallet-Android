@@ -246,7 +246,6 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
         predicate: ((Coin) -> Boolean)?
     ): Flow<List<Coin>> = flow {
         if (initialDelay > 0) delay(initialDelay)
-        var initEmit = true
         while (true) {
             supervisorScope {
                 val coins = LitePal.where(
@@ -259,6 +258,8 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                 if (coins.isEmpty()) {
                     emit(emptyList())
                     return@supervisorScope
+                } else {
+                    emit(coins)
                 }
                 val deferred = ArrayDeque<Deferred<Unit>>()
                 for (coin in coins) {
@@ -277,11 +278,6 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                         // 查询资产行情等
                         async { walletRepository.getCoinList(coins.map { "${it.name},${it.platform}" }) }
                     } else null
-                if (initEmit) {
-                    initEmit = false
-                    // 第一次订阅时先提前发射本地缓存数据
-                    emit(coins)
-                }
                 quotationDeferred?.await()?.dataOrNull()?.also { coinMeta ->
                     val coinMap = coins.associateBy { "${it.chain}-${it.name}-${it.platform}" }
                     for (meta in coinMeta) {
