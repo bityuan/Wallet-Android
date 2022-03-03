@@ -176,10 +176,9 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                 wallet.id.toString()
             ).findFirst(Coin::class.java, false)
             if (sameCoin != null) {
-                val values = ContentValues().apply {
+                updateLocalCoin(ContentValues().apply {
                     put("status", Coin.STATUS_ENABLE)
-                }
-                LitePal.update(Coin::class.java, values, sameCoin.id)
+                }, sameCoin.id)
             } else {
                 Coin().apply {
                     chain = coin.chain
@@ -232,10 +231,10 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
 
     override suspend fun deleteCoins(coins: List<Coin>) = withContext(Dispatchers.IO) {
         for (c in coins) {
-            val values = ContentValues().apply {
-                put("status", Coin.STATUS_DISABLE)
-            }
-            LitePal.update(Coin::class.java, values, c.id)
+            updateLocalCoin(
+                ContentValues().apply { put("status", Coin.STATUS_DISABLE) },
+                c.id
+            )
         }
     }
 
@@ -262,7 +261,10 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                 deferred.add(async(Dispatchers.IO) {
                     try {
                         coin.balance = GoWallet.handleBalance(coin)
-                        coin.update(coin.id)
+                        updateLocalCoin(
+                            ContentValues().apply { put("balance", coin.balance) },
+                            coin.id
+                        )
                         return@async
                     } catch (e: Exception) {
                         // 资产获取异常
@@ -284,7 +286,17 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                         this.treaty = meta.treaty
                         this.netId = meta.netId
                         this.optionalName = meta.optionalName
-                        update(id)
+                        updateLocalCoin(
+                            ContentValues().apply {
+                                put("rmb", rmb)
+                                put("icon", icon)
+                                put("nickname", nickname)
+                                put("treaty", treaty)
+                                put("netId", netId)
+                                put("optionalName", optionalName)
+                            },
+                            id
+                        )
                     }
                 }
                 emit(coins)
@@ -310,9 +322,24 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                     coin.rmb = meta.rmb
                     coin.icon = meta.icon
                     coin.nickname = meta.nickname
+                    coin.treaty = meta.treaty
+                    coin.netId = meta.netId
+                    coin.optionalName = meta.optionalName
                 }
             }
             coin.update(coin.id)
+            updateLocalCoin(
+                ContentValues().apply {
+                    put("balance", coin.balance)
+                    put("rmb", coin.rmb)
+                    put("icon", coin.icon)
+                    put("nickname", coin.nickname)
+                    put("treaty", coin.treaty)
+                    put("netId", coin.netId)
+                    put("optionalName", coin.optionalName)
+                },
+                coin.id
+            )
             coin
         }
     }
@@ -379,6 +406,10 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
         wallet.isPutpassword = false
         wallet.mnem = null
         wallet.save()
+    }
+
+    private fun updateLocalCoin(values: ContentValues, id: Long) {
+        LitePal.update(Coin::class.java, values, id)
     }
 
     protected fun getChineseMnem(mnem: String): String {
