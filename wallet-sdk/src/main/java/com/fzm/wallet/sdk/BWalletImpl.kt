@@ -16,6 +16,7 @@ import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.utils.MMkvUtil
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import org.koin.core.module.Module
@@ -177,8 +178,15 @@ internal class BWalletImpl : BWallet {
         period: Long,
         requireQuotation: Boolean,
         predicate: ((Coin) -> Boolean)?
-    ): Flow<List<Coin>> = _current.flatMapLatest {
-        it.getCoinBalance(initialDelay, period, requireQuotation, predicate)
+    ): Flow<List<Coin>> = flow {
+        if (initialDelay > 0) delay(initialDelay)
+        _current.collect {
+            emitAll(it.getCoinBalance(requireQuotation, predicate))
+        }
+        while (true) {
+            wallet.getCoinBalance(requireQuotation, predicate)
+            delay(period.coerceAtLeast(1000L))
+        }
     }
 
     override suspend fun getCoinBalance(coin: Coin, requireQuotation: Boolean): Coin {

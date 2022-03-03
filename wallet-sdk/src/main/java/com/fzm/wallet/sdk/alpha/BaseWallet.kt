@@ -240,62 +240,59 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
     }
 
     override fun getCoinBalance(
-        initialDelay: Long,
-        period: Long,
         requireQuotation: Boolean,
         predicate: ((Coin) -> Boolean)?
     ): Flow<List<Coin>> = flow {
-        if (initialDelay > 0) delay(initialDelay)
-        while (true) {
-            supervisorScope {
-                val coins = LitePal.where(
-                    "pwallet_id = ? and status = ?",
-                    wallet.id.toString(),
-                    Coin.STATUS_ENABLE.toString()
-                ).find(Coin::class.java, true).let {
-                    if (predicate == null) it else it.filter(predicate)
-                }
-                if (coins.isEmpty()) {
-                    emit(emptyList())
-                    return@supervisorScope
-                } else {
-                    emit(coins)
-                }
-                val deferred = ArrayDeque<Deferred<Unit>>()
-                for (coin in coins) {
-                    deferred.add(async(Dispatchers.IO) {
-                        try {
-                            coin.balance = GoWallet.handleBalance(coin)
-                            coin.update(coin.id)
-                            return@async
-                        } catch (e: Exception) {
-                            // 资产获取异常
-                        }
-                    })
-                }
-                val quotationDeferred =
-                    if (requireQuotation || coins.any { it.nickname.isNullOrEmpty() }) {
-                        // 查询资产行情等
-                        async { walletRepository.getCoinList(coins.map { "${it.name},${it.platform}" }) }
-                    } else null
-                quotationDeferred?.await()?.dataOrNull()?.also { coinMeta ->
-                    val coinMap = coins.associateBy { "${it.chain}-${it.name}-${it.platform}" }
-                    for (meta in coinMeta) {
-                        coinMap["${meta.chain}-${meta.name}-${meta.platform}"]?.apply {
-                            this.rmb = meta.rmb
-                            this.icon = meta.icon
-                            this.nickname = meta.nickname
-                            update(id)
-                        }
+        supervisorScope {
+            val coins = LitePal.where(
+                "pwallet_id = ? and status = ?",
+                wallet.id.toString(),
+                Coin.STATUS_ENABLE.toString()
+            ).find(Coin::class.java, true).let {
+                if (predicate == null) it else it.filter(predicate)
+            }
+            if (coins.isEmpty()) {
+                emit(emptyList())
+                return@supervisorScope
+            } else {
+                emit(coins)
+            }
+            val deferred = ArrayDeque<Deferred<Unit>>()
+            for (coin in coins) {
+                deferred.add(async(Dispatchers.IO) {
+                    try {
+                        coin.balance = GoWallet.handleBalance(coin)
+                        coin.update(coin.id)
+                        return@async
+                    } catch (e: Exception) {
+                        // 资产获取异常
                     }
-                    emit(coins)
-                }
-                while (deferred.isNotEmpty()) {
-                    deferred.poll()?.await()
+                })
+            }
+            val quotationDeferred =
+                if (requireQuotation || coins.any { it.nickname.isNullOrEmpty() }) {
+                    // 查询资产行情等
+                    async { walletRepository.getCoinList(coins.map { "${it.name},${it.platform}" }) }
+                } else null
+            quotationDeferred?.await()?.dataOrNull()?.also { coinMeta ->
+                val coinMap = coins.associateBy { "${it.chain}-${it.name}-${it.platform}" }
+                for (meta in coinMeta) {
+                    coinMap["${meta.chain}-${meta.name}-${meta.platform}"]?.apply {
+                        this.rmb = meta.rmb
+                        this.icon = meta.icon
+                        this.nickname = meta.nickname
+                        this.treaty = meta.treaty
+                        this.netId = meta.netId
+                        this.optionalName = meta.optionalName
+                        update(id)
+                    }
                 }
                 emit(coins)
             }
-            delay(period.coerceAtLeast(1000L))
+            while (deferred.isNotEmpty()) {
+                deferred.poll()?.await()
+            }
+            emit(coins)
         }
     }.flowOn(Dispatchers.IO)
 
