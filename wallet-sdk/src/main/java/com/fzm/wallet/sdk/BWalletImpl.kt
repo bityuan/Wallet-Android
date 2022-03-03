@@ -15,10 +15,8 @@ import com.fzm.wallet.sdk.net.walletNetModule
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.utils.MMkvUtil
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.withContext
 import org.koin.core.module.Module
 import org.litepal.LitePal
 import org.litepal.extension.find
@@ -178,14 +176,32 @@ internal class BWalletImpl : BWallet {
         period: Long,
         requireQuotation: Boolean,
         predicate: ((Coin) -> Boolean)?
-    ): Flow<List<Coin>> = flow {
+    ): Flow<List<Coin>> = channelFlow {
         if (initialDelay > 0) delay(initialDelay)
-        _current.collect {
-            emitAll(it.getCoinBalance(requireQuotation, predicate))
+        var walletJob: Job? = null
+        var timeJob: Job? = null
+        GlobalScope.launch(Dispatchers.IO) {
+            _current.collect {
+                walletJob?.cancel()
+                timeJob?.cancel()
+                walletJob = launch {
+                    it.getCoinBalance(requireQuotation, predicate).collect { coins ->
+                        channel.send(coins)
+                    }
+                }
+            }
         }
-        while (true) {
-            wallet.getCoinBalance(requireQuotation, predicate)
-            delay(period.coerceAtLeast(1000L))
+        coroutineScope {
+            while (true) {
+                walletJob?.cancel()
+                timeJob?.cancel()
+                timeJob = launch {
+                    wallet.getCoinBalance(requireQuotation, predicate).collect {
+                        channel.send(it)
+                    }
+                }
+                delay(period.coerceAtLeast(1000L))
+            }
         }
     }
 
