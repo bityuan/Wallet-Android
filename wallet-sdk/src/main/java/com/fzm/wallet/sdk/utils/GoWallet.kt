@@ -183,7 +183,7 @@ class GoWallet {
                     }
                 }
             }
-            return coin.balance
+            return "0"
         }
 
         fun getRedPacketBalance(coin: Coin, symbol: String): String? {
