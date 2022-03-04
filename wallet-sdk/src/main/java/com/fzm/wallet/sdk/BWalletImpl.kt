@@ -284,6 +284,10 @@ internal class BWalletImpl : BWallet {
         return outRepository.getMiner(chain).dataOrNull()
     }
 
+    override suspend fun getRedPacketAssets(address: String): List<Coin> {
+        return wallet.getRedPacketAssets(address)
+    }
+
     override fun close() {
         wallet.close()
         MMkvUtil.encode(CURRENT_USER, "")

@@ -231,6 +231,13 @@ interface BWallet {
     suspend fun getRecommendedFee(chain: String): Miner?
 
     /**
+     * 获取红包合约中的资产
+     *
+     * @param address   地址
+     */
+    suspend fun getRedPacketAssets(address: String): List<Coin>
+
+    /**
      * 关闭钱包
      */
     fun close()

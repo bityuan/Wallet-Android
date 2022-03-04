@@ -163,6 +163,50 @@ class GoWallet {
             return lCoin.balance
         }
 
+        fun handleRedPacketBalance(coin: Coin): String {
+            if (!coin.isBty) return "0"
+            var tokensymbol = if (coin.name == coin.chain) "" else coin.name
+            if (coin.isBtyChild) {
+                if ("1" == coin.treaty) {
+                    tokensymbol = coin.platform + "." + coin.name
+                } else if ("2" == coin.treaty) {
+                    tokensymbol = coin.platform + ".coins"
+                }
+            }
+            val balanceStr = getRedPacketBalance(coin, tokensymbol)
+            if (!TextUtils.isEmpty(balanceStr)) {
+                val balanceResponse = gson.fromJson(balanceStr, BalanceResponse::class.java)
+                if (balanceResponse != null) {
+                    val balance = balanceResponse.result
+                    if (balance != null) {
+                        return balance.balance
+                    }
+                }
+            }
+            return coin.balance
+        }
+
+        fun getRedPacketBalance(coin: Coin, symbol: String): String? {
+            try {
+                val balance = WalletBalance().apply {
+                    cointype = coin.chain
+                    address = coin.address
+                    tokenSymbol = symbol
+                    util = getUtil(UrlConfig.GO_URL)
+                    extendInfo = ExtendInfo().apply {
+                        execer = if (coin.isBtyChild) "user.p.${coin.platform}.redpacket" else "redpacket"
+                        assetExec = coin.assetExec
+                        assetSymbol = coin.name
+                    }
+                }
+                val getbalance = Walletapi.getbalance(balance)
+                return Walletapi.byteTostring(getbalance)
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+            }
+            return null
+        }
+
         fun isBTYChild(coin: Coin): Boolean {
             return BTY == coin.chain && PLATFORM_BTY != coin.platform
         }

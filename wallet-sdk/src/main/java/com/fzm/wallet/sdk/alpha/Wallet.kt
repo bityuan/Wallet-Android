@@ -120,6 +120,13 @@ interface Wallet<T> : Cloneable {
     suspend fun getAddress(chain: String): String?
 
     /**
+     * 获取红包资产（不包含跨链资产）
+     *
+     * @param address   地址
+     */
+    suspend fun getRedPacketAssets(address: String): List<Coin>
+
+    /**
      * 关闭钱包
      */
     fun close()

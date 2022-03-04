@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import org.litepal.LitePal
 import org.litepal.extension.find
+import walletapi.Walletapi
 import java.util.*
 
 /**
@@ -399,6 +400,21 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
             .where("chain = ? and pwallet_id = ?", chain, wallet.id.toString())
             .find<Coin>(true)
         return coinList.let { it.firstOrNull()?.address }
+    }
+
+    override suspend fun getRedPacketAssets(address: String): List<Coin> {
+        return withContext(Dispatchers.IO) {
+            val coins = LitePal.where(
+                "pwallet_id = ? and status = ? and chain = ?",
+                wallet.id.toString(),
+                Coin.STATUS_ENABLE.toString(),
+                Walletapi.TypeBtyString
+            ).find(Coin::class.java)
+            coins.forEach {
+                it.balance = GoWallet.handleRedPacketBalance(it)
+            }
+            coins
+        }
     }
 
     override fun close() {
