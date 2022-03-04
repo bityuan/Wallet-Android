@@ -89,4 +89,8 @@ object EmptyWallet : Wallet<Coin> {
     override fun close() {
 
     }
+
+    override suspend fun getRedPacketAssets(address: String): List<Coin> {
+        return emptyList()
+    }
 }
