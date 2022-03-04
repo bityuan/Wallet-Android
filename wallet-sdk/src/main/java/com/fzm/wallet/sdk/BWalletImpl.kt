@@ -6,6 +6,7 @@ import com.fzm.wallet.sdk.alpha.EmptyWallet
 import com.fzm.wallet.sdk.alpha.NormalWallet
 import com.fzm.wallet.sdk.alpha.Wallet
 import com.fzm.wallet.sdk.base.FZM_PLATFORM_ID
+import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
 import com.fzm.wallet.sdk.db.entity.Coin
@@ -13,6 +14,7 @@ import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.net.rootScope
 import com.fzm.wallet.sdk.net.walletNetModule
 import com.fzm.wallet.sdk.net.walletQualifier
+import com.fzm.wallet.sdk.repo.OutRepository
 import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.utils.MMkvUtil
 import kotlinx.coroutines.*
@@ -45,6 +47,8 @@ internal class BWalletImpl : BWallet {
     private var btyPrivkey: String = ""
 
     private val walletRepository by lazy { rootScope.get<WalletRepository>(walletQualifier) }
+
+    private val outRepository by lazy { rootScope.get<OutRepository>(walletQualifier) }
 
     override fun init(context: Context, module: Module?, platformId: String) {
         FZM_PLATFORM_ID = platformId
@@ -276,13 +280,16 @@ internal class BWalletImpl : BWallet {
         updateWalletFlow(null)
     }
 
+    override suspend fun getRecommendedFee(chain: String): Miner? {
+        return outRepository.getMiner(chain).dataOrNull()
+    }
+
     override fun close() {
         wallet.close()
         MMkvUtil.encode(CURRENT_USER, "")
         MMkvUtil.encode(PWallet.PWALLET_ID, "")
         updateWalletFlow(EmptyWallet)
     }
-
 
     fun setBtyPrivkey(value: String) {
         this.btyPrivkey = value

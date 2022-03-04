@@ -2,6 +2,7 @@ package com.fzm.wallet.sdk
 
 import android.content.Context
 import com.fzm.wallet.sdk.alpha.Wallet
+import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
 import com.fzm.wallet.sdk.db.entity.Coin
@@ -221,6 +222,13 @@ interface BWallet {
      * @param sort  排序权重
      */
     fun changeCoinOrder(coin: Coin, sort: Int)
+
+    /**
+     * 获取推荐手续费
+     *
+     * @param chain  主链
+     */
+    suspend fun getRecommendedFee(chain: String): Miner?
 
     /**
      * 关闭钱包
