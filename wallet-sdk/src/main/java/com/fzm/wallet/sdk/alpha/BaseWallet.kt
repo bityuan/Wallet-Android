@@ -328,7 +328,6 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                     coin.optionalName = meta.optionalName
                 }
             }
-            coin.update(coin.id)
             updateLocalCoin(
                 ContentValues().apply {
                     put("balance", coin.balance)
