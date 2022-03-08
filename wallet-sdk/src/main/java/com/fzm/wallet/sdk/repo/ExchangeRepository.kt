@@ -6,15 +6,11 @@ import com.fzm.wallet.sdk.bean.WithHold
 import com.fzm.wallet.sdk.bean.toRequestBody
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.HttpResult
+import com.fzm.wallet.sdk.net.UrlConfig
 import com.fzm.wallet.sdk.net.apiCall
 import com.fzm.wallet.sdk.net.goCall
 
 class ExchangeRepository constructor(private val apis: Apis) {
-    companion object {
-        //const val token = "Basic Zmxhc2hFeGNoYW5nZUBicWI6YmpAYnFiQDIwMjJAMTAyNQ=="
-        //测试
-        const val token = "Basic MzNleGNoYW5nZTpleGNoYW5nZWZsYXNoMjAyMjAxMTg="
-    }
 
     suspend fun flashExchange(
         cointype: String,
@@ -36,7 +32,7 @@ class ExchangeRepository constructor(private val apis: Apis) {
             "gasfee" to gasfee
         )
         return goCall {
-            apis.flashExchange(token, body)
+            apis.flashExchange(UrlConfig.EXCHANGE_TOKEN, body)
         }
     }
 
