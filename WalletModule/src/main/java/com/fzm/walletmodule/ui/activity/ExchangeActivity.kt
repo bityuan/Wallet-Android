@@ -135,9 +135,16 @@ class ExchangeActivity : BaseActivity() {
                 } else if (value.toDouble() > balance.toDouble()) {
                     toast("余额不足")
                     return@launch
-                } else if(value.toDouble() > limit) {
+                } else if (value.toDouble() > limit) {
                     toast("今日可兑额度不足")
                     return@launch
+                }
+
+                if (mCoin.name == Walletapi.TypeBtyString) {
+                    if (value.toDouble() + 0.01 >= balance.toDouble()) {
+                        toast("余额不足")
+                        return@launch
+                    }
                 }
 
                 if (checked) {
@@ -153,12 +160,19 @@ class ExchangeActivity : BaseActivity() {
                 }
 
 
-                var trx: Coin?
+                var chainBalance = 0.0
                 withContext(Dispatchers.IO) {
-                    trx = BWallet.get().getChain(Walletapi.TypeTrxString)
+                    val chain = BWallet.get().getOnlyChain(mCoin.chain)
+                    chainBalance = chain.balance.toDouble()
                 }
-                if (trx?.balance?.toDouble()!! < 10) {
-                    toast("最低矿工费为10TRX")
+                val minFee: Double = when (mCoin.chain) {
+                    Walletapi.TypeTrxString -> 10.0
+                    Walletapi.TypeBtyString -> 0.01
+                    Walletapi.TypeBnbString -> 0.001
+                    else -> 0.01
+                }
+                if (chainBalance < minFee) {
+                    toast("最低矿工费为$minFee ${mCoin.chain}")
                 } else {
                     showPasswordDialog()
                 }
@@ -167,7 +181,13 @@ class ExchangeActivity : BaseActivity() {
 
         tv_max.setOnClickListener {
             if (!TextUtils.isEmpty(balance)) {
-                et_value.setText(balance)
+                if (mCoin.name == Walletapi.TypeBtyString && mCoin.chain == Walletapi.TypeBtyString) {
+                    val b = balance.toDouble() - 0.01
+                    et_value.setText(b.toString())
+                } else {
+                    et_value.setText(balance)
+                }
+
             }
 
         }
@@ -394,8 +414,15 @@ class ExchangeActivity : BaseActivity() {
             mExchange = job1.await()
             tv_receive_address_title.text = mExchange.receiveAddressTitle
             tv_receive_address.text = mExchange.receiveAddress
-            exchangeViewModel.getExLimit(mExchange.receiveAddress, mCoin.chain, if(mCoin.chain == mCoin.name) "" else mCoin.name)
-            exchangeViewModel.getExFee(mCoin.chain, if(mCoin.chain == mCoin.name) "" else mCoin.name)
+            exchangeViewModel.getExLimit(
+                mExchange.receiveAddress,
+                mCoin.chain,
+                if (mCoin.chain == mCoin.name) "" else mCoin.name
+            )
+            exchangeViewModel.getExFee(
+                mCoin.chain,
+                if (mCoin.chain == mCoin.name) "" else mCoin.name
+            )
         }
 
 

@@ -128,6 +128,8 @@ interface BWallet {
      */
     suspend fun getChain(chain: String): Coin
 
+    suspend fun getOnlyChain(chain: String): Coin
+
     /**
      * 获取临时私钥
      */

@@ -133,6 +133,12 @@ internal class BWalletImpl : BWallet {
             it[0]
         }
     }
+    override suspend fun getOnlyChain(chain: String): Coin {
+        val coinList = select().where("name = ? and pwallet_id = ?", chain, getCurrentWalletId().toString()).find<Coin>()
+        return coinList.let {
+            it[0]
+        }
+    }
 
 
     fun setBtyPrivkey(value: String) {
