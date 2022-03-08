@@ -121,6 +121,7 @@ object UrlConfig {
     val GO_URL: String by lazy { config.getProperty("GO_URL") }
     val EXCHANGE_MANAGER: String by lazy { config.getProperty("EXCHANGE_MANAGER") }
     val EXCHANGE_DO: String by lazy { config.getProperty("EXCHANGE_DO") }
+    val EXCHANGE_TOKEN: String by lazy { config.getProperty("EXCHANGE_TOKEN") }
 
 
     private fun openAssets(): Properties {
