@@ -98,6 +98,7 @@
 
 
             <LinearLayout
+                android:id="@+id/ll_ex_bnb"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="10dp"
@@ -130,6 +131,7 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/tv_receive_address_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -138,7 +140,7 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/tv_bsc_address"
+                android:id="@+id/tv_receive_address"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginTop="10dp"
@@ -170,7 +172,7 @@
                     android:id="@+id/tv_ex_fee"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="-USDT"
+                    android:text="-"
                     android:textColor="@color/color_ex_value" />
             </LinearLayout>
 
@@ -196,7 +198,7 @@
                     android:id="@+id/tv_re_value"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="0 USDT"
+                    android:text="-"
                     android:textColor="@color/color_ex_value" />
             </LinearLayout>
 
@@ -218,6 +220,7 @@
                 android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
+
                 app:bl_corners_radius="15dp"
                 app:bl_solid_color="#5B88A7"
                 app:bl_stroke_color="#E5E5E5"
@@ -239,31 +242,6 @@
                 android:text="1.由于闪兑需要操作区块链转账，一般处理时间为3~5分钟；\n2.遇到大量交易时，商家账户有时会稍有延迟，请您耐心等待；\n3.获取到的BNB以实际到账数量为准"
                 android:textColor="@color/color_ex_value"
                 android:textSize="14sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="1.由于闪兑需要操作区块链转账，一般处理时间为3~5分钟；\n2.遇到大量交易时，商家账户有时会稍有延迟，请您耐心等待；\n3.获取到的BNB以实际到账数量为准"
-                android:textColor="@color/color_ex_value"
-                android:textSize="14sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="1.由于闪兑需要操作区块链转账，一般处理时间为3~5分钟；\n2.遇到大量交易时，商家账户有时会稍有延迟，请您耐心等待；\n3.获取到的BNB以实际到账数量为准"
-                android:textColor="@color/color_ex_value"
-                android:textSize="14sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="1.由于闪兑需要操作区块链转账，一般处理时间为3~5分钟；\n2.遇到大量交易时，商家账户有时会稍有延迟，请您耐心等待；\n3.获取到的BNB以实际到账数量为准"
-                android:textColor="@color/color_ex_value"
-                android:textSize="14sp" />
-
 
         </LinearLayout>
     </ScrollView>

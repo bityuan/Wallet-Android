@@ -62,6 +62,5 @@ dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
 
     implementation project(path: ':WalletModule')
-    //implementation 'com.github.bityuan:Wallet-Android:1.2.8.2'
-    //implementation "com.github.TrustWallet:wallet-connect-kotlin:1.5.4"
+    //implementation "com.github.TrustWallet:wallet-connect-kotlin:1.5.0"
 }

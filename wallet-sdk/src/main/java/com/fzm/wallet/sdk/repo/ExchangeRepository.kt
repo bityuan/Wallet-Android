@@ -11,7 +11,9 @@ import com.fzm.wallet.sdk.net.goCall
 
 class ExchangeRepository constructor(private val apis: Apis) {
     companion object {
-        const val token = "Basic Zmxhc2hFeGNoYW5nZUBicWI6YmpAYnFiQDIwMjJAMTAyNQ=="
+        //const val token = "Basic Zmxhc2hFeGNoYW5nZUBicWI6YmpAYnFiQDIwMjJAMTAyNQ=="
+        //测试
+        const val token = "Basic MzNleGNoYW5nZTpleGNoYW5nZWZsYXNoMjAyMjAxMTg="
     }
 
     suspend fun flashExchange(
@@ -39,12 +41,16 @@ class ExchangeRepository constructor(private val apis: Apis) {
     }
 
 
-    suspend fun getExLimit(address: String): HttpResult<Double> {
-        return apiCall { apis.getExLimit(address) }
+    suspend fun getExLimit(
+        address: String,
+        cointype: String,
+        tokensymbol: String
+    ): HttpResult<Double> {
+        return apiCall { apis.getExLimit(address, cointype, tokensymbol) }
     }
 
-    suspend fun getExFee(): HttpResult<ExchangeFee> {
-        return apiCall { apis.getExFee() }
+    suspend fun getExFee(cointype: String, tokensymbol: String): HttpResult<ExchangeFee> {
+        return apiCall { apis.getExFee(cointype, tokensymbol) }
     }
 
 

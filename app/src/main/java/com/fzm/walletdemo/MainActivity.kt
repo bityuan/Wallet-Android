@@ -2,7 +2,9 @@ package com.fzm.walletdemo
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
+import android.view.View
 import androidx.fragment.app.FragmentTransaction
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.walletmodule.base.Constants
@@ -16,6 +18,7 @@ import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.fragment.WalletFragment
 import com.fzm.walletmodule.ui.fragment.WalletIndexFragment
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.CoroutineScope
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -37,43 +40,59 @@ class MainActivity : BaseActivity() {
     }
 
 
-    internal val DEFAULT_COINS
-        get() = listOf(
-            Coin().apply {
-                chain = "BTY"
-                name = "BTY"
-                platform = "bty"
-                netId = "705"
-            },
-            Coin().apply {
-                chain = "ETH"
-                name = "ETH"
-                platform = "ethereum"
-                netId = "90"
-            },
-            Coin().apply {
-                chain = "BNB"
-                name = "BNB"
-                platform = "bnb"
-                netId = "641"
-            },
-            Coin().apply {
-                chain = "BNB"
-                name = "USDT"
-                platform = "bnb"
-                netId = "694"
-            },
-        )
+    val DEFAULT_COINS = listOf(
+        Coin().apply {
+            name = "USDT"
+            chain = "BNB"
+            platform = "bnb"
+            netId = "694"
+        }, Coin().apply {
+            name = "BTY"
+            chain = "BTY"
+            platform = "bty"
+            netId = "154"
+        }, Coin().apply {
+            name = "YCC"
+            chain = "BNB"
+            platform = "bnb"
+            netId = "695"
+        }, Coin().apply {
+            name = "BNB"
+            chain = "BNB"
+            platform = "bnb"
+            netId = "641"
+        }, Coin().apply {
+            name = "TRX"
+            chain = "TRX"
+            platform = "trx"
+            netId = "1"
+        }, Coin().apply {
+            name = "USDT"
+            chain = "TRX"
+            platform = "trx"
+            netId = "600"
+        }, Coin().apply {
+            name = "ETH"
+            chain = "ETH"
+            platform = "ethereum"
+            netId = "90"
+        }, Coin().apply {
+            name = "BTY"
+            chain = "BNB"
+            platform = "bnb"
+            netId = "705"
+        }
+    )
 
-     override fun initView() {
+    override fun initView() {
         bottomNavigationView.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.fragment_home -> {
-                    Log.e("MainAc","fragment_home")
+                    Log.e("MainAc", "fragment_home")
                     setTabSelection(0)
                 }
                 R.id.fragment_explore -> {
-                    Log.e("MainAc","fragment_explore")
+                    Log.e("MainAc", "fragment_explore")
                     setTabSelection(1)
                 }
             }
@@ -186,10 +205,10 @@ class MainActivity : BaseActivity() {
             WalletUtils.setUsingWallet(mPWallet)
         }
 
-        if(!event.isChoose) {
+        if (!event.isChoose) {
             BWallet.get()
             val privkey = BWallet.get().getBtyPrikey()
-            Log.v("tag", privkey+"")
+            Log.v("tag", privkey + "")
         }
     }
 
@@ -197,7 +216,7 @@ class MainActivity : BaseActivity() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onInitPasswordEvent(event: InitPasswordEvent) {
         val password = event.password
-        Log.v("zx",password)
+        Log.v("zx", password)
     }
 
 
