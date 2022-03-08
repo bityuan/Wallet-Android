@@ -49,8 +49,8 @@ class ExchangeRepository constructor(private val apis: Apis) {
         return apiCall { apis.getExLimit(address, cointype, tokensymbol) }
     }
 
-    suspend fun getExFee(cointype: String, tokensymbol: String): HttpResult<ExchangeFee> {
-        return apiCall { apis.getExFee(cointype, tokensymbol) }
+    suspend fun getExFee(cointype: String, tokenSymbol: String): HttpResult<ExchangeFee> {
+        return apiCall { apis.getExFee(cointype, tokenSymbol) }
     }
 
 
