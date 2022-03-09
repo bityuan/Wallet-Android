@@ -140,9 +140,9 @@ class ExchangeActivity : BaseActivity() {
                     return@launch
                 }
 
-                if (mCoin.name == Walletapi.TypeBtyString) {
-                    if (value.toDouble() + 0.01 >= balance.toDouble()) {
-                        toast("余额不足")
+                if (mCoin.name == Walletapi.TypeBtyString && mCoin.chain == Walletapi.TypeBtyString) {
+                    if (value.toDouble() + 0.05 > balance.toDouble()) {
+                        toast("BTY不能全额兑换，需预留约0.05个BTY作为手续费")
                         return@launch
                     }
                 }
@@ -269,6 +269,8 @@ class ExchangeActivity : BaseActivity() {
         super.initData()
         tv_balance.text = "余额 ${mCoin.balance} ${mCoin.name}(${mCoin.nickname})"
         balance = mCoin.balance
+
+        exchangeTips.visibility = if(mCoin.name == "USDT" && mCoin.chain == "TRX") View.VISIBLE else View.GONE
         getExchange(mCoin)
     }
 
@@ -370,7 +372,7 @@ class ExchangeActivity : BaseActivity() {
                 } else if (Walletapi.TypeBnbString == coin.chain) {
                     when (coin.name) {
                         TransactionsActivity.USDT -> {
-                            exchange.toAddress = "0x4cc36DdDb7aBed5e3ac892781B1e7aC372EE00b4"
+                            exchange.toAddress = "0xA5d8f37CA965b01E5E54390449E50A4241d7AE55"
                             exchange.receiveAddressTitle = "接收地址(TRC20)"
                             withContext(Dispatchers.IO) {
                                 exchange.receiveAddress =
@@ -378,7 +380,7 @@ class ExchangeActivity : BaseActivity() {
                             }
                         }
                         TransactionsActivity.YCC -> {
-                            exchange.toAddress = "0x4cc36DdDb7aBed5e3ac892781B1e7aC372EE00b4"
+                            exchange.toAddress = "0xA5d8f37CA965b01E5E54390449E50A4241d7AE55"
                             exchange.receiveAddressTitle = "接收地址(ERC20)"
                             withContext(Dispatchers.IO) {
                                 exchange.receiveAddress =
@@ -386,7 +388,7 @@ class ExchangeActivity : BaseActivity() {
                             }
                         }
                         TransactionsActivity.BTY -> {
-                            exchange.toAddress = "0x4cc36DdDb7aBed5e3ac892781B1e7aC372EE00b4"
+                            exchange.toAddress = "0xA5d8f37CA965b01E5E54390449E50A4241d7AE55"
                             exchange.receiveAddressTitle = "接收地址(BTY)"
                             withContext(Dispatchers.IO) {
                                 exchange.receiveAddress =
@@ -396,7 +398,7 @@ class ExchangeActivity : BaseActivity() {
                     }
 
                 } else if (Walletapi.TypeBtyString == coin.chain && Walletapi.TypeBtyString == coin.name) {
-                    exchange.toAddress = "135YwNqSgiEQxuwXfPbmRmH2Y53Edg8d48"
+                    exchange.toAddress = "156SZUbSkKGkzJ5Mypt2u467JBZ8QkzDg1"
                     exchange.receiveAddressTitle = "接收地址(BEP20)"
                     withContext(Dispatchers.IO) {
                         exchange.receiveAddress =
