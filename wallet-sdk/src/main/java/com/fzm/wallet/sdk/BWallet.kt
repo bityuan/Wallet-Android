@@ -231,6 +231,13 @@ interface BWallet {
     suspend fun getRecommendedFee(chain: String): Miner?
 
     /**
+     * 获取对应token所在链的主代币资产
+     *
+     * @param chain     链名
+     */
+    suspend fun getMainAssets(chain: String): String
+
+    /**
      * 获取红包合约中的资产
      *
      * @param address   地址

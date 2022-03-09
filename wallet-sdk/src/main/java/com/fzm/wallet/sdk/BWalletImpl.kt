@@ -284,6 +284,10 @@ internal class BWalletImpl : BWallet {
         return outRepository.getMiner(chain).dataOrNull()
     }
 
+    override suspend fun getMainAssets(chain: String): String {
+        return wallet.getMainAssets(chain)
+    }
+
     override suspend fun getRedPacketAssets(address: String): List<Coin> {
         return wallet.getRedPacketAssets(address)
     }

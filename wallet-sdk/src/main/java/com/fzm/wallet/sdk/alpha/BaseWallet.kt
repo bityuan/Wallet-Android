@@ -416,6 +416,21 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
         }
     }
 
+    override suspend fun getMainAssets(chain: String): String {
+        return withContext(Dispatchers.IO) {
+            val coin = LitePal.where(
+                "pwallet_id = ? and chain = ?",
+                wallet.id.toString(),
+                Walletapi.TypeBtyString
+            ).findFirst(Coin::class.java)
+            if (coin != null) {
+                coin.balance
+            } else {
+                "0"
+            }
+        }
+    }
+
     override fun close() {
         wallet.password = null
         wallet.isPutpassword = false
