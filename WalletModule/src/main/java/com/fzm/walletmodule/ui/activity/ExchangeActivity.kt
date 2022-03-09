@@ -140,9 +140,9 @@ class ExchangeActivity : BaseActivity() {
                     return@launch
                 }
 
-                if (mCoin.name == Walletapi.TypeBtyString) {
-                    if (value.toDouble() + 0.01 >= balance.toDouble()) {
-                        toast("余额不足")
+                if (mCoin.name == Walletapi.TypeBtyString && mCoin.chain == Walletapi.TypeBtyString) {
+                    if (value.toDouble() + 0.05 > balance.toDouble()) {
+                        toast("BTY不能全额兑换，需预留约0.05个BTY作为手续费")
                         return@launch
                     }
                 }
@@ -269,6 +269,8 @@ class ExchangeActivity : BaseActivity() {
         super.initData()
         tv_balance.text = "余额 ${mCoin.balance} ${mCoin.name}(${mCoin.nickname})"
         balance = mCoin.balance
+
+        exchangeTips.visibility = if(mCoin.name == "USDT" && mCoin.chain == "TRX") View.VISIBLE else View.GONE
         getExchange(mCoin)
     }
 
