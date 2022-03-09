@@ -1,7 +1,6 @@
 package com.fzm.wallet.sdk.utils
 
 import com.fzm.wallet.sdk.db.entity.Coin
-import walletapi.Walletapi
 
 /**
  * @author zhengjy
@@ -22,7 +21,7 @@ inline val Coin.isBtyToken: Boolean get() = isBtyChild && !isCoin
 /**
  * 判断是coins还是token
  */
-inline val Coin.isCoin: Boolean get() = if (isBtyChild) treaty == "2" else name == Walletapi.TypeBtyString
+inline val Coin.isCoin: Boolean get() = if (isBtyChild) treaty == "2" else name == chain
 
 val Coin.tokenSymbol: String
     get() {
