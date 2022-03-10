@@ -6,17 +6,17 @@ import com.fzm.wallet.sdk.MnemonicManager
 import com.fzm.wallet.sdk.WalletBean
 import com.fzm.wallet.sdk.bean.StringResult
 import com.fzm.wallet.sdk.bean.Transactions
+import com.fzm.wallet.sdk.bean.WithHold
 import com.fzm.wallet.sdk.bean.response.TransactionResponse
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.net.GoResponse
 import com.fzm.wallet.sdk.net.rootScope
 import com.fzm.wallet.sdk.net.walletQualifier
+import com.fzm.wallet.sdk.repo.OutRepository
 import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.toWalletBean
-import com.fzm.wallet.sdk.utils.GoWallet
-import com.fzm.wallet.sdk.utils.MMkvUtil
-import com.fzm.wallet.sdk.utils.tokenSymbol
+import com.fzm.wallet.sdk.utils.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.*
@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import org.litepal.LitePal
 import org.litepal.extension.find
+import walletapi.GsendTx
 import walletapi.Walletapi
 import java.util.*
 
@@ -37,6 +38,7 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
 
     protected val gson by lazy { Gson() }
     protected val walletRepository by lazy { rootScope.get<WalletRepository>(walletQualifier) }
+    protected val outRepository by lazy { rootScope.get<OutRepository>(walletQualifier) }
 
     override fun getId(): String {
         return wallet.id.toString()
@@ -110,41 +112,103 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
             val mnem = MnemonicManager.getMnemonicWords(password)
             val privateKey = coin.getPrivkey(coin.chain, mnem)?: throw Exception("私钥获取失败")
 
-            val tokenSymbol = coin.tokenSymbol
-            // 构造交易
-            val rawTx = GoWallet.createTran(
-                coin.chain,
-                coin.address,
-                toAddress,
-                amount,
-                fee,
-                note ?: "",
-                tokenSymbol
-            )
-            val createRawResult = JSON.parseObject(rawTx, StringResult::class.java)
-            if (createRawResult?.result == null) {
-                throw Exception("创建交易失败")
+            if (coin.isBtyChild) {
+                handleBtyChildTransfer(coin, toAddress, amount, fee, note, privateKey)
+            } else {
+                handleTransfer(coin, toAddress, amount, fee, note, privateKey)
             }
-
-            // 签名交易
-            val signTx = GoWallet.signTran(coin.chain, createRawResult.result ?: "", privateKey)
-                ?: throw Exception("签名交易失败")
-
-            // 发送交易
-            val sendTx = GoWallet.sendTran(coin.chain, signTx, tokenSymbol)
-            val sendResult = gson.fromJson(sendTx, StringResult::class.java)
-            val txId = sendResult.result
-            if (sendResult == null) {
-                throw Exception("获取结果失败，请至区块链浏览器查看")
-            }
-            if (!sendResult.error.isNullOrEmpty()) {
-                throw Exception(sendResult.error)
-            }
-            if (txId.isNullOrEmpty()) {
-                throw Exception("获取结果失败，请至区块链浏览器查看")
-            }
-            txId
         }
+    }
+
+    private suspend fun handleBtyChildTransfer(
+        coin: Coin,
+        toAddress: String,
+        amount: Double,
+        fee: Double,
+        note: String?,
+        privateKey: String
+    ): String {
+        val result = outRepository.getWithHold(coin.platform, coin.name)
+        val withHold = if (result.isSucceed()) {
+            result.data()!!
+        } else throw Exception("代扣信息获取失败")
+        val gsendTx = GsendTx().apply {
+            this.feepriv = withHold.private_key
+            this.to = toAddress
+            this.tokenSymbol = withHold.tokensymbol
+            this.execer = withHold.exer
+            this.note = note
+            this.amount = amount
+            this.txpriv = privateKey
+        }
+
+        if (coin.isBtyToken) {
+            if (withHold.coinsName.isNullOrEmpty()) {
+                gsendTx.fee = fee
+            } else {
+                withholdCoins(gsendTx, withHold)
+            }
+        } else {
+            //转coins币除了代扣bty作为手续费，自己也要扣点coins
+            gsendTx.amount = amount + withHold.fee
+            withholdCoins(gsendTx, withHold)
+        }
+        val resp = Walletapi.coinsTxGroup(gsendTx)
+        GoWallet.sendTran(coin.chain, resp.signedTx, withHold.tokensymbol)
+            ?: throw Exception("获取结果失败，请至区块链浏览器查看")
+        return resp.txId
+    }
+
+    private fun withholdCoins(gsendTx: GsendTx, withHold: WithHold) {
+        gsendTx.coinsForFee = true
+        gsendTx.tokenFee = withHold.fee
+        gsendTx.tokenFeeAddr = withHold.address
+        //代扣的就是平行链的token和coins，统一都x3
+        gsendTx.fee = withHold.btyFee * 3
+    }
+
+    private fun handleTransfer(
+        coin: Coin,
+        toAddress: String,
+        amount: Double,
+        fee: Double,
+        note: String?,
+        privateKey: String,
+    ): String {
+        val tokenSymbol = coin.tokenSymbol
+        // 构造交易
+        val rawTx = GoWallet.createTran(
+            coin.chain,
+            coin.address,
+            toAddress,
+            amount,
+            fee,
+            note ?: "",
+            tokenSymbol
+        )
+        val createRawResult = JSON.parseObject(rawTx, StringResult::class.java)
+        if (createRawResult?.result == null) {
+            throw Exception("创建交易失败")
+        }
+
+        // 签名交易
+        val signTx = GoWallet.signTran(coin.chain, createRawResult.result ?: "", privateKey)
+            ?: throw Exception("签名交易失败")
+
+        // 发送交易
+        val sendTx = GoWallet.sendTran(coin.chain, signTx, tokenSymbol)
+        val sendResult = gson.fromJson(sendTx, StringResult::class.java)
+        val txId = sendResult.result
+        if (sendResult == null) {
+            throw Exception("获取结果失败，请至区块链浏览器查看")
+        }
+        if (!sendResult.error.isNullOrEmpty()) {
+            throw Exception(sendResult.error)
+        }
+        if (txId.isNullOrEmpty()) {
+            throw Exception("获取结果失败，请至区块链浏览器查看")
+        }
+        return txId
     }
 
     override suspend fun addCoins(coins: List<Coin>, password: suspend () -> String) {
