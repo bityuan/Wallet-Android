@@ -16,8 +16,7 @@ import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.toWalletBean
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.MMkvUtil
-import com.fzm.wallet.sdk.utils.isBtyCoins
-import com.fzm.wallet.sdk.utils.isBtyToken
+import com.fzm.wallet.sdk.utils.tokenSymbol
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.*
@@ -111,11 +110,7 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
             val mnem = MnemonicManager.getMnemonicWords(password)
             val privateKey = coin.getPrivkey(coin.chain, mnem)?: throw Exception("私钥获取失败")
 
-            val tokenSymbol = when {
-                coin.isBtyCoins -> "${coin.platform}.coins"
-                coin.isBtyToken -> "${coin.platform}.${coin.name}"
-                else -> ""
-            }
+            val tokenSymbol = coin.tokenSymbol
             // 构造交易
             val rawTx = GoWallet.createTran(
                 coin.chain,

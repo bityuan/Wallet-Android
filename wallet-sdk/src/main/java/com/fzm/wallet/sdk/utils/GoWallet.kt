@@ -111,7 +111,7 @@ class GoWallet {
                 val balance = WalletBalance()
                 balance.cointype = chain
                 balance.address = addresss
-                balance.tokenSymbol = tokenSymbol
+                balance.tokenSymbol = if (chain == tokenSymbol) "" else tokenSymbol
                 balance.util = getUtil(goNoderUrl)
                 val getbalance = Walletapi.getbalance(balance)
                 return Walletapi.byteTostring(getbalance)
@@ -140,7 +140,7 @@ class GoWallet {
          * @return String?  余额
          */
         fun handleBalance(lCoin: Coin): String {
-            var tokensymbol = if (lCoin.name == lCoin.chain) "" else lCoin.name
+            var tokensymbol = lCoin.tokenSymbol/*if (lCoin.name == lCoin.chain) "" else lCoin.name
             if (!TextUtils.isEmpty(lCoin.platform) && !TextUtils.isEmpty(lCoin.chain)) {
                 if (isBTYChild(lCoin)) {
                     if ("1" == lCoin.treaty) {
@@ -149,7 +149,7 @@ class GoWallet {
                         tokensymbol = lCoin.platform + ".coins"
                     }
                 }
-            }
+            }*/
             val balanceStr = getbalance(lCoin.address, lCoin.chain, tokensymbol)
             if (!TextUtils.isEmpty(balanceStr)) {
                 val balanceResponse = gson.fromJson(balanceStr, BalanceResponse::class.java)
@@ -333,7 +333,7 @@ class GoWallet {
             try {
                 val walletTx = WalletTx()
                 walletTx.cointype = chain
-                walletTx.tokenSymbol = tokensymbol
+                walletTx.tokenSymbol = if (chain == tokensymbol) "" else tokensymbol
                 val txdata = Txdata()
                 txdata.amount = amount
                 txdata.fee = fee
