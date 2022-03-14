@@ -45,6 +45,8 @@ class ExchangeActivity : BaseActivity() {
 
     private var countFee = 0.0
 
+    private var minLimit = 0.0
+
     private var limit = 0.0
 
     private var gasChain = 0.0
@@ -61,15 +63,6 @@ class ExchangeActivity : BaseActivity() {
 
     override fun initIntent() {
         mCoin = intent.getSerializableExtra(Coin::class.java.simpleName) as Coin
-        if (mCoin.chain == Walletapi.TypeTrxString && mCoin.name == USDT) {
-            ll_ex_bnb.visibility = View.VISIBLE
-            tv_re_chain.visibility = View.VISIBLE
-            checked = true
-        } else {
-            ll_ex_bnb.visibility = View.GONE
-            tv_re_chain.visibility = View.GONE
-            checked = false
-        }
     }
 
     override fun initObserver() {
@@ -103,15 +96,29 @@ class ExchangeActivity : BaseActivity() {
                     gasFeeUsdt = it.gasFeeUsdt
                     gasChain = it.gasFeeAmount
                     countFee = exFee + gasFeeUsdt
+                    minLimit = it.minLimit
+                    showGasBNB(it.gasSupport)
 
                     val bigDecimal = BigDecimal(gasChain).setScale(4, BigDecimal.ROUND_DOWN);
                     val gasChain = bigDecimal.toString()
                     tv_ex_fee.text = "$exFee ${mCoin.name}"
-                    tv_ex_chain.text = "是否使用$gasFeeUsdt USDT兑换BNB ≈$gasChain BNB"
+                    tv_ex_chain.text = "是否使用$gasFeeUsdt ${mCoin.name}兑换BNB ≈$gasChain BNB"
                     tv_re_chain.text = "$gasChain BNB"
                 }
             }
         })
+    }
+
+    fun showGasBNB(gasSupport: Boolean) {
+        if (gasSupport) {
+            ll_ex_bnb.visibility = View.VISIBLE
+            tv_re_chain.visibility = View.VISIBLE
+            checked = true
+        } else {
+            ll_ex_bnb.visibility = View.GONE
+            tv_re_chain.visibility = View.GONE
+            checked = false
+        }
     }
 
     override fun initListener() {
@@ -148,12 +155,12 @@ class ExchangeActivity : BaseActivity() {
                 }
 
                 if (checked) {
-                    if (value.toDouble() < (countFee + 1)) {
+                    if (value.toDouble() < (countFee + minLimit)) {
                         toast("请输入足够的兑换数量")
                         return@launch
                     }
                 } else {
-                    if (value.toDouble() < (exFee + 1)) {
+                    if (value.toDouble() < (exFee + minLimit)) {
                         toast("请输入足够的兑换数量")
                         return@launch
                     }
@@ -238,7 +245,7 @@ class ExchangeActivity : BaseActivity() {
                     val inputb = BigDecimal(inputStr).setScale(2, BigDecimal.ROUND_DOWN)
                     val countFeeStr = BigDecimal(countFee).setScale(2, BigDecimal.ROUND_DOWN)
                     val value = inputb.subtract(countFeeStr)
-                    tv_re_value.text = "${value} USDT"
+                    tv_re_value.text = "${value} ${mCoin.name}"
                     tv_re_chain.text = "$gasChain BNB"
                 } else {
                     resetExValue()
@@ -270,7 +277,8 @@ class ExchangeActivity : BaseActivity() {
         tv_balance.text = "余额 ${mCoin.balance} ${mCoin.name}(${mCoin.nickname})"
         balance = mCoin.balance
 
-        exchangeTips.visibility = if(mCoin.name == "USDT" && mCoin.chain == "TRX") View.VISIBLE else View.GONE
+        exchangeTips.visibility =
+            if ((mCoin.name == USDT && mCoin.chain == Walletapi.TypeTrxString) || mCoin.name == Walletapi.TypeBtyString) View.VISIBLE else View.GONE
         getExchange(mCoin)
     }
 

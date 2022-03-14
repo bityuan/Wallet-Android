@@ -6,5 +6,8 @@ data class ExchangeFee(
     var UpdatedAt: String,
     var fee: Double,
     var gasFeeUsdt: Double,
-    var gasFeeAmount: Double
+    var gasFeeAmount: Double,
+    var minLimit:Double,
+    var maxPerDay:Long,
+    var gasSupport:Boolean
 )
