@@ -31,9 +31,13 @@ interface BWallet {
      *
      * @param context       Context
      * @param module        用于Koin依赖注入
-     * @param platformId    平台码，用于后端区别不同业务
+     * @param platformId    平台码，用于php后端区别不同业务
+     * @param appSymbol     应用标识符，用于钱包网关后端区别不同业务
+     * @param appId         平台码，用于钱包网关后端区别不同业务
+     * @param appKey        appKey，用于验证平台
+     * @param device        设备，用于钱包网关后端
      */
-    fun init(context: Context, module: Module?, platformId: String)
+    fun init(context: Context, module: Module?, platformId: String, appSymbol: String, appId: String, appKey: String, device: String)
 
     /**
      * 切换钱包

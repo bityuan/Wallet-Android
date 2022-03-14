@@ -16,12 +16,15 @@ import com.fzm.wallet.sdk.net.walletNetModule
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.repo.OutRepository
 import com.fzm.wallet.sdk.repo.WalletRepository
+import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.MMkvUtil
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import org.koin.core.module.Module
 import org.litepal.LitePal
 import org.litepal.extension.find
+import walletapi.WalletSession
+import walletapi.Walletapi
 
 /**
  * @author zhengjy
@@ -50,8 +53,23 @@ internal class BWalletImpl : BWallet {
 
     private val outRepository by lazy { rootScope.get<OutRepository>(walletQualifier) }
 
-    override fun init(context: Context, module: Module?, platformId: String) {
+    override fun init(
+        context: Context,
+        module: Module?,
+        platformId: String,
+        appSymbol: String,
+        appId: String,
+        appKey: String,
+        device: String
+    ) {
         FZM_PLATFORM_ID = platformId
+        GoWallet.setSessionInfo(WalletSession().apply {
+            this.appSymbol = appSymbol
+            this.appid = appId
+            this.hardinfo = device
+        })
+        GoWallet.checkSessionID()
+        Walletapi.setAppKey(appKey)
         module?.walletNetModule()
         val user = MMkvUtil.decodeString(CURRENT_USER, "")
         val id = MMkvUtil.decodeString("${user}${PWallet.PWALLET_ID}", "").ifEmpty {

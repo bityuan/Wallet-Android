@@ -26,6 +26,8 @@ class GoWallet {
 
         private val util = Util()
 
+        private var lastRefreshSessionTime: Long = 0L
+
         fun getUtil(goNoderUrl: String): Util {
             util.node = goNoderUrl
             return util
@@ -91,6 +93,24 @@ class GoWallet {
             return Walletapi.byteTohex(byteArray)
         }
 
+        private var session: WalletSession? = null
+
+        fun setSessionInfo(session: WalletSession) {
+            this.session = session
+        }
+
+        fun checkSessionID(force: Boolean = false) {
+            if (System.currentTimeMillis() - lastRefreshSessionTime < 29 * 60 * 1000 && !force) {
+                // sessionID半小时过期，提前1分钟刷新
+                return
+            }
+            return try {
+                Walletapi.setSessionID(Walletapi.getSessionId(session, getUtil(UrlConfig.GO_URL)))
+                lastRefreshSessionTime = System.currentTimeMillis()
+            } catch (e: Exception) {
+
+            }
+        }
 
         /**
          * 获取余额
@@ -108,6 +128,7 @@ class GoWallet {
             goNoderUrl: String
         ): String? {
             try {
+                checkSessionID()
                 val balance = WalletBalance()
                 balance.cointype = chain
                 balance.address = addresss
@@ -188,6 +209,7 @@ class GoWallet {
 
         fun getRedPacketBalance(coin: Coin, symbol: String): String? {
             try {
+                checkSessionID()
                 val balance = WalletBalance().apply {
                     cointype = coin.chain
                     address = coin.address
@@ -232,6 +254,7 @@ class GoWallet {
             goNoderUrl: String
         ): String? {
             try {
+                checkSessionID()
                 val walletQueryByAddr = WalletQueryByAddr()
                 val queryByPage = QueryByPage()
                 queryByPage.cointype = chain
@@ -290,6 +313,7 @@ class GoWallet {
             goNoderUrl: String
         ): String? {
             try {
+                checkSessionID()
                 val walletQueryByTxid = WalletQueryByTxid()
                 walletQueryByTxid.cointype = chain
                 walletQueryByTxid.tokenSymbol = if (chain == tokenSymbol) "" else tokenSymbol
@@ -331,6 +355,7 @@ class GoWallet {
             note: String, tokensymbol: String, goNoderUrl: String
         ): String? {
             try {
+                checkSessionID()
                 val walletTx = WalletTx()
                 walletTx.cointype = chain
                 walletTx.tokenSymbol = if (chain == tokensymbol) "" else tokensymbol
@@ -405,6 +430,7 @@ class GoWallet {
             goNoderUrl: String
         ): String? {
             try {
+                checkSessionID()
                 val sendTx = WalletSendTx()
                 sendTx.cointype = chain
                 sendTx.signedTx = signData
@@ -563,6 +589,7 @@ class GoWallet {
         }
 
         fun deleteMulAddress(appId: String, appSymbol: String, mulAddress: String): Boolean? {
+            checkSessionID()
             val mulAddr = WalletMulAddr()
             mulAddr.util = getUtil(UrlConfig.GO_URL!!)
             mulAddr.appid = appId
@@ -573,6 +600,7 @@ class GoWallet {
 
 
         fun imortMulAddress(appId: String, appSymbol: String, mulAddress: String): Boolean? {
+            checkSessionID()
             val mulAddr = WalletMulAddr()
             mulAddr.util = getUtil(UrlConfig.GO_URL!!)
             mulAddr.appid = appId
