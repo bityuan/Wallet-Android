@@ -2,6 +2,7 @@ package com.fzm.walletdemo
 
 import android.app.Application
 import android.content.Context
+import android.os.Build
 import androidx.multidex.MultiDex
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.base.WalletModuleApp
@@ -17,7 +18,7 @@ class MyApplication : Application() {
         startKoin {
             androidContext(this@MyApplication)
             modules(module {
-                BWallet.get().init(this@MyApplication, this, "81")
+                BWallet.get().init(this@MyApplication, this, "", "", "", "", "${Build.MANUFACTURER} ${Build.MODEL}")
             })
             modules(viewModelModule)
         }
