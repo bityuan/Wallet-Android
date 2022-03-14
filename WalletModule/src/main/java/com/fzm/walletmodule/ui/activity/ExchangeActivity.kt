@@ -449,7 +449,8 @@ class ExchangeActivity : BaseActivity() {
             while (true) {
                 balance = GoWallet.handleBalance(mCoin)
                 withContext(Dispatchers.Main) {
-                    tv_balance.text = "余额 $balance USDT (TRC20)"
+                    tv_balance.text = "余额 $balance ${mCoin.name}(${mCoin.nickname})"
+
                 }
                 delay(3000)
             }
