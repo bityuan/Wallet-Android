@@ -41,7 +41,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-    api 'com.github.bityuan:WalletApi-Android:1.0.6'
+    api 'com.github.bityuan:WalletApi-Android:1.0.7'
     api "org.litepal.android:kotlin:3.0.0"
     api "com.google.code.gson:gson:2.8.6"
     api "com.tencent:mmkv-static:1.2.10"
