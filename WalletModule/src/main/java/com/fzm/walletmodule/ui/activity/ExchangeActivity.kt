@@ -101,6 +101,7 @@ class ExchangeActivity : BaseActivity() {
 
                     val bigDecimal = BigDecimal(gasChain).setScale(4, BigDecimal.ROUND_DOWN);
                     val gasChain = bigDecimal.toString()
+
                     tv_ex_fee.text = "$exFee ${mCoin.name}"
                     tv_ex_chain.text = "是否使用$gasFeeUsdt ${mCoin.name}兑换BNB ≈$gasChain BNB"
                     tv_re_chain.text = "$gasChain BNB"
@@ -109,15 +110,17 @@ class ExchangeActivity : BaseActivity() {
         })
     }
 
-    fun showGasBNB(gasSupport: Boolean) {
+    private fun showGasBNB(gasSupport: Boolean) {
         if (gasSupport) {
             ll_ex_bnb.visibility = View.VISIBLE
             tv_re_chain.visibility = View.VISIBLE
             checked = true
+            et_value.hint = "${countFee + minLimit}个${mCoin.name}起兑"
         } else {
             ll_ex_bnb.visibility = View.GONE
             tv_re_chain.visibility = View.GONE
             checked = false
+            et_value.hint = "${exFee + minLimit}个${mCoin.name}起兑"
         }
     }
 
@@ -127,9 +130,11 @@ class ExchangeActivity : BaseActivity() {
             if (checked) {
                 iv_check.setImageResource(R.mipmap.ic_ex_nomal)
                 checked = false
+                et_value.hint = "${exFee + minLimit}个${mCoin.name}起兑"
             } else {
                 iv_check.setImageResource(R.mipmap.ic_ex_sel)
                 checked = true
+                et_value.hint = "${countFee + minLimit}个${mCoin.name}起兑"
             }
             handleCheck(et_value.text.toString(), checked)
         }

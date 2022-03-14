@@ -52,6 +52,7 @@
 
                 <EditText
                     android:id="@+id/et_value"
+                    android:gravity="center_vertical"
                     android:layout_width="317dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="9dp"
