@@ -36,6 +36,7 @@ import org.litepal.LitePal.where
 import java.lang.String
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.Comparator
 
 class WalletFragment : BaseFragment() {
     private var mWalletAdapter: WalletAdapter? = null
@@ -52,6 +53,17 @@ class WalletFragment : BaseFragment() {
 
     private var job: Job? = null
 
+    inner class SortCoinComparator(private val coins: List<Coin>) : Comparator<Coin>{
+
+        override fun compare(item1: Coin, item2: Coin): Int {
+            val itemSize1 = coins.filter { it.name == item1.name }.size
+            val itemSize2 = coins.filter { it.name == item2.name }.size
+
+            if (itemSize1 == itemSize2) return item1.name.compareTo(item2.name)
+            return if (item1.name.equals(item2.name)) item1.name.compareTo(item2.name) else itemSize2.compareTo(itemSize1)
+        }
+    }
+
     private val observer = LifecycleEventObserver { _, event ->
         if (event == Lifecycle.Event.ON_RESUME) {
             // FIXME: 最好使用lifecycle2.4.0提供的repeatOnLifecycle方法
@@ -60,7 +72,7 @@ class WalletFragment : BaseFragment() {
                     .collect {
                       //  Log.e("wallet","getCoinBalance")
                         mCoinList.clear()
-                        mCoinList.addAll(it)
+                        mCoinList.addAll(it.sortedWith(SortCoinComparator(it)))
                         //mCoinList.sort()
                         mWalletAdapter?.notifyDataSetChanged()
                         money?.text = DecimalUtils.subWithNum(it.sumOf { c -> c.totalAsset }, 2)
