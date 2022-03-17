@@ -28,6 +28,8 @@ public class Coin extends BaseBean implements Comparable<Coin>{
     private PWallet pWallet;
     //拥有量
     private String balance;
+    private String dexBalance;
+    private String dexFrozenBalance;
     //启用：1 禁用：0
     private int status;
     private String privkey;
@@ -113,6 +115,34 @@ public class Coin extends BaseBean implements Comparable<Coin>{
             balance = "0";
         }
         this.balance = balance;
+    }
+
+    public String getDexBalance() {
+        if (TextUtils.isEmpty(dexBalance) || TextUtils.equals(dexBalance, "%!f(int=0000)")) {
+            return "0";
+        }
+        return dexBalance;
+    }
+
+    public void setDexBalance(String dexBalance) {
+        if (TextUtils.isEmpty(dexBalance)) {
+            dexBalance = "0";
+        }
+        this.dexBalance = dexBalance;
+    }
+
+    public String getDexFrozenBalance() {
+        if (TextUtils.isEmpty(dexFrozenBalance) || TextUtils.equals(dexFrozenBalance, "%!f(int=0000)")) {
+            return "0";
+        }
+        return dexFrozenBalance;
+    }
+
+    public void setDexFrozenBalance(String dexFrozenBalance) {
+        if (TextUtils.isEmpty(dexFrozenBalance)) {
+            dexFrozenBalance = "0";
+        }
+        this.dexFrozenBalance = dexFrozenBalance;
     }
 
     public int getStatus() {

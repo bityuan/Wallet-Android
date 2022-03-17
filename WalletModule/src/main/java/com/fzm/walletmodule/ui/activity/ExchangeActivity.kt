@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.alibaba.fastjson.JSON
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.bean.StringResult
@@ -13,6 +14,7 @@ import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.R
+import com.fzm.walletmodule.ui.activity.TransactionsActivity.Companion.USDT
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.EditDialogFragment
 import com.fzm.walletmodule.utils.ToastUtils
@@ -29,8 +31,7 @@ class ExchangeActivity : BaseActivity() {
 
     private var mEditDialogFragment: EditDialogFragment? = null
     private lateinit var mCoin: Coin
-    private val mainScope = MainScope()
-    private lateinit var bnbAddress: String
+    private lateinit var mExchange: Exchange
     private val exchangeViewModel: ExchangeViewModel by inject(walletQualifier)
     private var checked = true
 
@@ -44,9 +45,6 @@ class ExchangeActivity : BaseActivity() {
 
     private var gasChain = 0.0
 
-    companion object {
-        val TOADDRESS = "TLeG94FNqAg7fs9C2ytcBk1eWcn3vaK9hb"
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,8 +57,15 @@ class ExchangeActivity : BaseActivity() {
 
     override fun initIntent() {
         mCoin = intent.getSerializableExtra(Coin::class.java.simpleName) as Coin
-        tv_balance.text = "余额 ${mCoin.balance} USDT (TRC20)"
-        balance = mCoin.balance
+        if (mCoin.chain == Walletapi.TypeTrxString && mCoin.name == USDT) {
+            ll_ex_bnb.visibility = View.VISIBLE
+            tv_re_chain.visibility = View.VISIBLE
+            checked = true
+        } else {
+            ll_ex_bnb.visibility = View.GONE
+            tv_re_chain.visibility = View.GONE
+            checked = false
+        }
     }
 
     override fun initObserver() {
@@ -81,11 +86,9 @@ class ExchangeActivity : BaseActivity() {
         exchangeViewModel.getExLimit.observe(this, Observer {
             if (it.isSucceed()) {
                 limit = it.data()!!
-                tv_limit.text = "$limit USDT"
+                tv_limit.text = "$limit ${mCoin.name}"
             } else {
-                limit = 1000.0
-                tv_limit.text = "$limit USDT"
-                //toast(it.error())
+                toast(it.error())
             }
         })
         exchangeViewModel.getExFee.observe(this, Observer {
@@ -99,7 +102,7 @@ class ExchangeActivity : BaseActivity() {
 
                     val bigDecimal = BigDecimal(gasChain).setScale(4, BigDecimal.ROUND_DOWN);
                     val gasChain = bigDecimal.toString()
-                    tv_ex_fee.text = "$exFee USDT"
+                    tv_ex_fee.text = "$exFee ${mCoin.name}"
                     tv_ex_chain.text = "是否使用$gasFeeUsdt USDT兑换BNB ≈$gasChain BNB"
                     tv_re_chain.text = "$gasChain BNB"
                 }
@@ -125,9 +128,19 @@ class ExchangeActivity : BaseActivity() {
                 if (TextUtils.isEmpty(value)) {
                     toast("请输入兑换数量")
                     return@launch
-                } else if (value.toDouble() > balance.toDouble() || value.toDouble() > limit) {
+                } else if (value.toDouble() > balance.toDouble()) {
                     toast("余额不足")
                     return@launch
+                } else if (value.toDouble() > limit) {
+                    toast("今日可兑额度不足")
+                    return@launch
+                }
+
+                if (mCoin.name == Walletapi.TypeBtyString && mCoin.chain == Walletapi.TypeBtyString) {
+                    if (value.toDouble() + 0.05 > balance.toDouble()) {
+                        toast("BTY不能全额兑换，需预留约0.05个BTY作为手续费")
+                        return@launch
+                    }
                 }
 
                 if (checked) {
@@ -136,19 +149,26 @@ class ExchangeActivity : BaseActivity() {
                         return@launch
                     }
                 } else {
-                    if (value.toDouble() < (exFee+1)) {
+                    if (value.toDouble() < (exFee + 1)) {
                         toast("请输入足够的兑换数量")
                         return@launch
                     }
                 }
 
 
-                var trx: Coin?
+                var chainBalance = 0.0
                 withContext(Dispatchers.IO) {
-                    trx = BWallet.get().getCoin(Walletapi.TypeTrxString)
+                    val chain = BWallet.get().getOnlyChain(mCoin.chain)
+                    chainBalance = chain.balance.toDouble()
                 }
-                if (trx?.balance?.toDouble()!! < 10) {
-                    toast("最低矿工费为10TRX")
+                val minFee: Double = when (mCoin.chain) {
+                    Walletapi.TypeTrxString -> 10.0
+                    Walletapi.TypeBtyString -> 0.01
+                    Walletapi.TypeBnbString -> 0.001
+                    else -> 0.01
+                }
+                if (chainBalance < minFee) {
+                    toast("最低矿工费为$minFee ${mCoin.chain}")
                 } else {
                     showPasswordDialog()
                 }
@@ -157,10 +177,14 @@ class ExchangeActivity : BaseActivity() {
 
         tv_max.setOnClickListener {
             if (!TextUtils.isEmpty(balance)) {
-                et_value.setText(balance)
-            }
+                if (mCoin.name == Walletapi.TypeBtyString && mCoin.chain == Walletapi.TypeBtyString) {
+                    val b = balance.toDouble() - 0.01
+                    et_value.setText(b.toString())
+                } else {
+                    et_value.setText(balance)
+                }
 
-        }
+            }
 
 
         et_value.addTextChangedListener {
@@ -218,7 +242,7 @@ class ExchangeActivity : BaseActivity() {
                     val inputb = BigDecimal(inputStr).setScale(2, BigDecimal.ROUND_DOWN)
                     val exFeeStr = BigDecimal(exFee).setScale(2, BigDecimal.ROUND_DOWN)
                     val value = inputb.subtract(exFeeStr)
-                    tv_re_value.text = "${value} USDT"
+                    tv_re_value.text = "${value} ${mCoin.name}"
                     tv_re_chain.text = "0 BNB"
                 } else {
                     resetExValue()
@@ -231,13 +255,17 @@ class ExchangeActivity : BaseActivity() {
     }
 
     private fun resetExValue() {
-        tv_re_value.text = "0 USDT"
+        tv_re_value.text = "0 ${mCoin.name}"
         tv_re_chain.text = "0 BNB"
     }
 
     override fun initData() {
         super.initData()
-        getAddress()
+        tv_balance.text = "余额 ${mCoin.balance} ${mCoin.name}(${mCoin.nickname})"
+        balance = mCoin.balance
+
+        exchangeTips.visibility = if(mCoin.name == "USDT" && mCoin.chain == "TRX") View.VISIBLE else View.GONE
+        getExchange(mCoin)
     }
 
 
@@ -293,7 +321,7 @@ class ExchangeActivity : BaseActivity() {
         val createRaw = GoWallet.createTran(
             mCoin.chain,
             mCoin.address,
-            TOADDRESS,
+            mExchange.toAddress,
             amount,
             0.001,
             "exchange",
@@ -310,29 +338,93 @@ class ExchangeActivity : BaseActivity() {
             return
         }
         exchangeViewModel.flashExchange(
-            mCoin.chain, mCoin.name, bnbAddress, signtx!!, amount,
-            TOADDRESS, checked
+            mCoin.chain,
+            if (mCoin.chain == mCoin.name) "" else mCoin.name,
+            mExchange.receiveAddress,
+            signtx!!,
+            amount,
+            mExchange.toAddress,
+            checked
         )
 
     }
 
 
-    private fun getAddress() {
-        showInLoading()
-        mainScope.launch(Dispatchers.IO) {
-            bnbAddress = BWallet.get().getAddress(Walletapi.TypeBnbString)
-            exchangeViewModel.getExLimit(bnbAddress)
-            exchangeViewModel.getExFee()
-            withContext(Dispatchers.Main) {
-                tv_bsc_address.text = bnbAddress
+    private fun getExchange(coin: Coin) {
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            showInLoading()
+            val job1 = lifecycleScope.async(Dispatchers.Main) {
+                val exchange = Exchange()
+                if (Walletapi.TypeTrxString == coin.chain && TransactionsActivity.USDT == coin.name) {
+                    exchange.toAddress = "TLeG94FNqAg7fs9C2ytcBk1eWcn3vaK9hb"
+                    exchange.receiveAddressTitle = "接收地址(BEP20)"
+                    withContext(Dispatchers.IO) {
+                        exchange.receiveAddress = BWallet.get().getAddress(Walletapi.TypeBnbString)
+                    }
+
+                } else if (Walletapi.TypeBnbString == coin.chain) {
+                    when (coin.name) {
+                        TransactionsActivity.USDT -> {
+                            exchange.toAddress = "0xA5d8f37CA965b01E5E54390449E50A4241d7AE55"
+                            exchange.receiveAddressTitle = "接收地址(TRC20)"
+                            withContext(Dispatchers.IO) {
+                                exchange.receiveAddress =
+                                    BWallet.get().getAddress(Walletapi.TypeTrxString)
+                            }
+                        }
+                        TransactionsActivity.YCC -> {
+                            exchange.toAddress = "0xA5d8f37CA965b01E5E54390449E50A4241d7AE55"
+                            exchange.receiveAddressTitle = "接收地址(ERC20)"
+                            withContext(Dispatchers.IO) {
+                                exchange.receiveAddress =
+                                    BWallet.get().getAddress(Walletapi.TypeETHString)
+                            }
+                        }
+                        TransactionsActivity.BTY -> {
+                            exchange.toAddress = "0xA5d8f37CA965b01E5E54390449E50A4241d7AE55"
+                            exchange.receiveAddressTitle = "接收地址(BTY)"
+                            withContext(Dispatchers.IO) {
+                                exchange.receiveAddress =
+                                    BWallet.get().getAddress(Walletapi.TypeBtyString)
+                            }
+                        }
+                    }
+
+                } else if (Walletapi.TypeBtyString == coin.chain && Walletapi.TypeBtyString == coin.name) {
+                    exchange.toAddress = "156SZUbSkKGkzJ5Mypt2u467JBZ8QkzDg1"
+                    exchange.receiveAddressTitle = "接收地址(BEP20)"
+                    withContext(Dispatchers.IO) {
+                        exchange.receiveAddress =
+                            BWallet.get().getAddress(Walletapi.TypeBnbString)
+                    }
+
+
+                } else if (Walletapi.TypeETHString == coin.chain && Walletapi.TypeYccString == coin.name) {
+
+                }
+
+                exchange
             }
 
+            mExchange = job1.await()
+            tv_receive_address_title.text = mExchange.receiveAddressTitle
+            tv_receive_address.text = mExchange.receiveAddress
+            exchangeViewModel.getExLimit(
+                mExchange.receiveAddress,
+                mCoin.chain,
+                if (mCoin.chain == mCoin.name) "" else mCoin.name
+            )
+            exchangeViewModel.getExFee(
+                mCoin.chain,
+                if (mCoin.chain == mCoin.name) "" else mCoin.name
+            )
         }
     }
 
     private var balance: String = "0"
     private fun getBalance() {
-        mainScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.IO) {
             while (true) {
                 balance = GoWallet.handleBalance(mCoin)
                 withContext(Dispatchers.Main) {
@@ -344,8 +436,12 @@ class ExchangeActivity : BaseActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        mainScope.cancel()
+
+    companion object {
+        class Exchange {
+            lateinit var toAddress: String
+            lateinit var receiveAddressTitle: String
+            lateinit var receiveAddress: String
+        }
     }
 }

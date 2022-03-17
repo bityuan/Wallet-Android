@@ -253,6 +253,8 @@ interface BWallet {
      */
     fun close()
 
+    suspend fun getOnlyChain(chain: String): Coin
+
     /**
      * 获取临时私钥
      */

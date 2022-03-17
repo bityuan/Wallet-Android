@@ -270,6 +270,12 @@ internal class BWalletImpl : BWallet {
             flow { emit(getAllCoins()) }
         }
     }
+    override suspend fun getOnlyChain(chain: String): Coin {
+        val coinList = select().where("name = ? and pwallet_id = ?", chain, getCurrentWalletId().toString()).find<Coin>()
+        return coinList.let {
+            it[0]
+        }
+    }
 
     override suspend fun getBrowserUrl(platform: String): String {
         return walletRepository.getBrowserUrl(platform).dataOrNull()?.brower_url ?: ""

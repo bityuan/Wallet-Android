@@ -51,6 +51,7 @@ interface Apis {
      * @param token
      */
     @Headers("$DOMAIN_NAME_HEADER$DOMAIN_EXCHANGE_DO")
+    @POST("/")
     suspend fun flashExchange(
         @Header("Authorization") token: String,
         @Body body: RequestBody
@@ -58,17 +59,23 @@ interface Apis {
 
     /**
      * exchange limit
-     * @param address trc20 usdt地址
+     * @param address
      */
     @Headers("$DOMAIN_NAME_HEADER$DOMAIN_EXCHANGE_MANAGER")
     @GET("public/limit")
-    suspend fun getExLimit(@Query("address") address: String): HttpResponse<Double>
+    suspend fun getExLimit(
+        @Query("address") address: String,
+        @Query("cointype") cointype: String,
+        @Query("tokensymbol") tokensymbol: String
+    ): HttpResponse<Double>
 
     /**
      * exchange fee
-     * @param address trc20 usdt
      */
     @Headers("$DOMAIN_NAME_HEADER$DOMAIN_EXCHANGE_MANAGER")
     @GET("public/fee")
-    suspend fun getExFee(): HttpResponse<ExchangeFee>
+    suspend fun getExFee(
+        @Query("cointype") cointype: String,
+        @Query("tokensymbol") tokensymbol: String
+    ): HttpResponse<ExchangeFee>
 }

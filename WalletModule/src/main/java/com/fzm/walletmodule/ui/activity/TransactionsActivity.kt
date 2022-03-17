@@ -69,10 +69,24 @@ class TransactionsActivity : BaseActivity() {
     }
 
 
+    fun needExchange(): Boolean {
+        if (Walletapi.TypeTrxString == coin.chain && USDT == coin.name) {
+            return true
+        } else if (Walletapi.TypeBnbString == coin.chain && USDT == coin.name) {
+            return true
+        } else if (Walletapi.TypeBnbString == coin.chain && BTY == coin.name) {
+            return true
+        } else if (Walletapi.TypeBtyString == coin.chain && BTY == coin.name) {
+            return true
+        }
+
+        return false
+    }
+
+
     override fun initView() {
         setupViewPager()
-        iv_exchange.visibility =
-            if (Walletapi.TypeTrxString == coin.chain && "USDT" == coin.name) View.VISIBLE else View.GONE
+        iv_exchange.visibility = if (needExchange()) View.VISIBLE else View.GONE
     }
 
     override fun initListener() {
@@ -91,7 +105,7 @@ class TransactionsActivity : BaseActivity() {
             }
         })
         ll_out.setOnClickListener {
-            if (isFastClick()){
+            if (isFastClick()) {
                 return@setOnClickListener
             }
             startActivity<OutActivity>(
@@ -105,7 +119,7 @@ class TransactionsActivity : BaseActivity() {
             )
         }
         ll_in.setOnClickListener {
-            if (isFastClick()){
+            if (isFastClick()) {
                 return@setOnClickListener
             }
             startActivity<InActivity>(Coin::class.java.simpleName to coin)
@@ -121,7 +135,7 @@ class TransactionsActivity : BaseActivity() {
             }
         }
         iv_t_scan.setOnClickListener {
-            if (isFastClick()){
+            if (isFastClick()) {
                 return@setOnClickListener
             }
             startActivity<CaptureCustomActivity>(CaptureCustomActivity.REQUST_CODE to CaptureCustomActivity.REQUESTCODE_TRANSACTIONS)
@@ -269,4 +283,10 @@ class TransactionsActivity : BaseActivity() {
         }
     }
 
+
+    companion object {
+        val USDT = "USDT"
+        val YCC = "YCC"
+        val BTY = "BTY"
+    }
 }
