@@ -68,7 +68,9 @@ internal class BWalletImpl : BWallet {
             this.appid = appId
             this.hardinfo = device
         })
-        GoWallet.checkSessionID()
+        GlobalScope.launch(Dispatchers.IO) {
+            GoWallet.checkSessionID()
+        }
         Walletapi.setAppKey(appKey)
         module?.walletNetModule()
         val user = MMkvUtil.decodeString(CURRENT_USER, "")
@@ -204,6 +206,7 @@ internal class BWalletImpl : BWallet {
         var timeJob: Job? = null
         GlobalScope.launch(Dispatchers.IO) {
             _current.collect {
+                // 取消所有正在查询的任务，防止请求缓慢导致返回旧数据
                 walletJob?.cancel()
                 timeJob?.cancel()
                 walletJob = launch {
@@ -215,6 +218,7 @@ internal class BWalletImpl : BWallet {
         }
         coroutineScope {
             while (true) {
+                // 取消所有正在查询的任务，防止请求缓慢导致返回旧数据
                 walletJob?.cancel()
                 timeJob?.cancel()
                 timeJob = launch {
@@ -222,6 +226,8 @@ internal class BWalletImpl : BWallet {
                         channel.send(it)
                     }
                 }
+                timeJob?.join()
+                // 上一个请求结束才开始延时
                 delay(period.coerceAtLeast(1000L))
             }
         }
