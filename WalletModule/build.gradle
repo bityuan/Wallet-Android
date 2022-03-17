@@ -87,7 +87,8 @@ dependencies {
     api "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0"
     api "com.alibaba:fastjson:1.1.68.android"
     api "com.github.JavaNoober.BackgroundLibrary:libraryx:1.7.3"
-
+    api "com.alibaba:arouter-api:1.4.0"
+    api "com.alibaba:arouter-compiler:1.2.1"
 }
 
 
