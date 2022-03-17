@@ -2,9 +2,7 @@ package com.fzm.walletdemo
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.util.Log
-import android.view.View
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
 import com.fzm.wallet.sdk.BWallet
@@ -18,10 +16,8 @@ import com.fzm.walletmodule.event.MyWalletEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.fragment.WalletFragment
 import com.fzm.walletmodule.ui.fragment.WalletIndexFragment
-import com.fzm.walletmodule.utils.WalletUtils
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.CoroutineScope
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -202,7 +198,6 @@ class MainActivity : BaseActivity() {
         setTabSelection(0)
     }
 
-    private var mPWallet: PWallet? = null
 
     //回调 - 我的账户
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -211,8 +206,6 @@ class MainActivity : BaseActivity() {
             return
         } else {
             setTabSelection(0)
-            mPWallet = event.mPWallet
-            WalletUtils.setUsingWallet(mPWallet)
         }
 
         if (!event.isChoose) {
