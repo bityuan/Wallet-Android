@@ -188,7 +188,7 @@ class TransactionsActivity : BaseActivity() {
 
     override fun initData() {
         super.initData()
-        title = if (coin.nickname.isEmpty()) coin.name else "${coin.name}(${coin.nickname})"
+        title = if (coin.nickname.isNullOrEmpty()) coin.name else "${coin.name}(${coin.nickname})"
         tv_balance.text = DecimalUtils.subZeroAndDot(coin.balance)
         tv_address.text = coin.address
         if (TextUtils.isEmpty(coin.icon)) {
