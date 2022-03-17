@@ -35,9 +35,9 @@
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/iv_back"
-            android:visibility="gone"
             android:scaleType="center"
-            android:src="@mipmap/home_top_left" />
+            android:src="@mipmap/home_top_left"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/walletTypeName"
@@ -50,13 +50,22 @@
             tools:text="@string/my_wallets_mnem_walllet" />
 
         <ImageView
+            android:id="@+id/iv_to_exchange"
+            android:layout_width="57dp"
+            android:layout_toLeftOf="@+id/topRight"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:scaleType="center"
+            android:src="@mipmap/ic_home_exchange" />
+
+        <ImageView
             android:id="@+id/topRight"
             android:layout_width="57dp"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:scaleType="center"
-            android:src="@mipmap/home_top_wallet" />
+            android:src="@mipmap/ic_home_wallet" />
 
     </RelativeLayout>
 
@@ -93,9 +102,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:visibility="gone"
             android:gravity="center_horizontal"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <ImageView
                 android:layout_width="wrap_content"

@@ -84,7 +84,6 @@ class TransactionsActivity : BaseActivity() {
 
     override fun initView() {
         setupViewPager()
-        iv_exchange.visibility = if (needExchange()) View.VISIBLE else View.GONE
     }
 
     override fun initListener() {
@@ -108,11 +107,6 @@ class TransactionsActivity : BaseActivity() {
             }
             startActivity<OutActivity>(
                 Pair(Constants.FROM, OutActivity.FROM_TRANSACTION),
-                Coin::class.java.simpleName to coin
-            )
-        }
-        iv_exchange.setOnClickListener {
-            startActivity<ExchangeActivity>(
                 Coin::class.java.simpleName to coin
             )
         }

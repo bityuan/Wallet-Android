@@ -5,7 +5,6 @@ import com.fzm.wallet.sdk.api.Apis
 import com.fzm.wallet.sdk.base.BWallet
 import com.fzm.wallet.sdk.base.WalletModuleApp
 import com.fzm.wallet.sdk.net.security.SSLSocketClient
-import com.fzm.wallet.sdk.repo.ExchangeRepository
 import com.fzm.wallet.sdk.repo.OutRepository
 import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.utils.ToolUtils
@@ -40,8 +39,6 @@ fun Module.walletNetModule() {
 
         RetrofitUrlManager.getInstance().apply {
             putDomain(UrlConfig.DOMAIN_URL_GO, UrlConfig.GO_URL)
-            putDomain(UrlConfig.DOMAIN_EXCHANGE_MANAGER, UrlConfig.EXCHANGE_MANAGER)
-            putDomain(UrlConfig.DOMAIN_EXCHANGE_DO, UrlConfig.EXCHANGE_DO)
         }.with(
             OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
@@ -105,23 +102,17 @@ fun Module.walletNetModule() {
 
     single(walletQualifier) { WalletRepository(get(walletQualifier)) }
 
-    single(walletQualifier) { ExchangeRepository(get(walletQualifier)) }
 }
 
 object UrlConfig {
     const val DOMAIN_URL_BASE = "url_base"
     const val DOMAIN_URL_GO = "url_go"
-    const val DOMAIN_EXCHANGE_MANAGER = "exchange_manager"
-    const val DOMAIN_EXCHANGE_DO = "exchange_do"
 
 
     private val config: Properties by lazy { openAssets() }
 
     val BASE_URL: String by lazy { config.getProperty("BASE_URL") }
     val GO_URL: String by lazy { config.getProperty("GO_URL") }
-    val EXCHANGE_MANAGER: String by lazy { config.getProperty("EXCHANGE_MANAGER") }
-    val EXCHANGE_DO: String by lazy { config.getProperty("EXCHANGE_DO") }
-    val EXCHANGE_TOKEN: String by lazy { config.getProperty("EXCHANGE_TOKEN") }
 
 
     private fun openAssets(): Properties {
