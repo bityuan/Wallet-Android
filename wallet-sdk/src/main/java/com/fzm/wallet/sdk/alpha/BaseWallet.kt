@@ -481,18 +481,14 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
         }
     }
 
-    override suspend fun getMainAssets(chain: String): String {
+    override suspend fun getMainAssets(chain: String): Coin? {
         return withContext(Dispatchers.IO) {
-            val coin = LitePal.where(
-                "pwallet_id = ? and chain = ?",
+            LitePal.where(
+                "pwallet_id = ? and chain = ? and name = ?",
                 wallet.id.toString(),
-                Walletapi.TypeBtyString
+                chain,
+                chain
             ).findFirst(Coin::class.java)
-            if (coin != null) {
-                coin.balance
-            } else {
-                "0"
-            }
         }
     }
 

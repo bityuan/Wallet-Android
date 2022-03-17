@@ -180,13 +180,6 @@ interface BWallet {
     suspend fun getAddress(chain: String): String
 
     /**
-     * 根据主链获取币种
-     *
-     * @param chain         链名
-     */
-    suspend fun getCoin(chain: String): Coin?
-
-    /**
      * 获取所有币种
      */
     suspend fun getAllCoins(): List<Coin>
@@ -235,11 +228,11 @@ interface BWallet {
     suspend fun getRecommendedFee(chain: String): Miner?
 
     /**
-     * 获取对应token所在链的主代币资产
+     * 获取所在链的主代币
      *
      * @param chain     链名
      */
-    suspend fun getMainAssets(chain: String): String
+    suspend fun getMainCoin(chain: String): Coin?
 
     /**
      * 获取红包合约中的资产
@@ -252,8 +245,6 @@ interface BWallet {
      * 关闭钱包
      */
     fun close()
-
-    suspend fun getOnlyChain(chain: String): Coin
 
     /**
      * 获取临时私钥

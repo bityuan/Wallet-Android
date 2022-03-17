@@ -252,13 +252,6 @@ internal class BWalletImpl : BWallet {
         return wallet.getAddress(chain) ?: ""
     }
 
-    override suspend fun getCoin(chain: String): Coin? {
-        val coinList = withContext(Dispatchers.IO) {
-            LitePal.select().where("chain = ? and pwallet_id = ?", chain, wallet.getId()).find<Coin>(true)
-        }
-        return coinList.firstOrNull()
-    }
-
     override suspend fun getAllCoins(): List<Coin> {
         return withContext(Dispatchers.IO) {
             LitePal.select().where("pwallet_id = ?", wallet.getId()).find()
@@ -268,12 +261,6 @@ internal class BWalletImpl : BWallet {
     override fun getCoinsFlow(): Flow<List<Coin>> {
         return _current.flatMapLatest {
             flow { emit(getAllCoins()) }
-        }
-    }
-    override suspend fun getOnlyChain(chain: String): Coin {
-        val coinList = select().where("name = ? and pwallet_id = ?", chain, getCurrentWalletId().toString()).find<Coin>()
-        return coinList.let {
-            it[0]
         }
     }
 
@@ -308,7 +295,7 @@ internal class BWalletImpl : BWallet {
         return outRepository.getMiner(chain).dataOrNull()
     }
 
-    override suspend fun getMainAssets(chain: String): String {
+    override suspend fun getMainCoin(chain: String): Coin? {
         return wallet.getMainAssets(chain)
     }
 

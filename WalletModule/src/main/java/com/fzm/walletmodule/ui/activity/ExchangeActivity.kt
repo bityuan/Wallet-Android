@@ -158,8 +158,8 @@ class ExchangeActivity : BaseActivity() {
 
                 var chainBalance = 0.0
                 withContext(Dispatchers.IO) {
-                    val chain = BWallet.get().getOnlyChain(mCoin.chain)
-                    chainBalance = chain.balance.toDouble()
+                    val chain = BWallet.get().getMainCoin(mCoin.chain)
+                    chainBalance = chain?.balance?.toDouble() ?: 0.0
                 }
                 val minFee: Double = when (mCoin.chain) {
                     Walletapi.TypeTrxString -> 10.0
@@ -185,6 +185,7 @@ class ExchangeActivity : BaseActivity() {
                 }
 
             }
+        }
 
 
         et_value.addTextChangedListener {

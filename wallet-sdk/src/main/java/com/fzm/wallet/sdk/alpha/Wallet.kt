@@ -127,11 +127,11 @@ interface Wallet<T> : Cloneable {
     suspend fun getRedPacketAssets(address: String): List<Coin>
 
     /**
-     * 获取对应token所在链的主代币资产
+     * 获取所在链的主代币
      *
      * @param chain     链名
      */
-    suspend fun getMainAssets(chain: String): String
+    suspend fun getMainAssets(chain: String): Coin?
 
     /**
      * 关闭钱包
