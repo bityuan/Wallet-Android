@@ -131,7 +131,7 @@ interface Wallet<T> : Cloneable {
      *
      * @param chain     链名
      */
-    suspend fun getMainAssets(chain: String): Coin?
+    suspend fun getMainCoin(chain: String): Coin?
 
     /**
      * 关闭钱包

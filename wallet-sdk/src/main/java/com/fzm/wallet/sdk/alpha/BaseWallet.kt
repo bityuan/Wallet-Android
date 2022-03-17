@@ -481,7 +481,7 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
         }
     }
 
-    override suspend fun getMainAssets(chain: String): Coin? {
+    override suspend fun getMainCoin(chain: String): Coin? {
         return withContext(Dispatchers.IO) {
             LitePal.where(
                 "pwallet_id = ? and chain = ? and name = ?",

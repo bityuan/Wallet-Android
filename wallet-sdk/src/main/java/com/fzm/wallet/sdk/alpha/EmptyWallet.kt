@@ -94,7 +94,7 @@ object EmptyWallet : Wallet<Coin> {
         return emptyList()
     }
 
-    override suspend fun getMainAssets(chain: String): String {
-        return "0"
+    override suspend fun getMainCoin(chain: String): Coin? {
+        return null
     }
 }

@@ -296,7 +296,7 @@ internal class BWalletImpl : BWallet {
     }
 
     override suspend fun getMainCoin(chain: String): Coin? {
-        return wallet.getMainAssets(chain)
+        return wallet.getMainCoin(chain)
     }
 
     override suspend fun getRedPacketAssets(address: String): List<Coin> {
