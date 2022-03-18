@@ -54,6 +54,15 @@ public class Coin extends BaseBean implements Comparable<Coin>{
     @SerializedName("id")
     private String netId;
     private int sort;
+    private boolean exchange = false;
+
+    public boolean getExchange() {
+        return exchange;
+    }
+
+    public void setExchange(boolean exchange) {
+        this.exchange = exchange;
+    }
 
     public int getSort() {
         return sort;
