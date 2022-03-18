@@ -4,6 +4,7 @@ import android.text.TextUtils
 import android.util.Log
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.BWalletImpl
+import com.fzm.wallet.sdk.MnemonicManager
 import com.fzm.wallet.sdk.bean.response.BalanceResponse
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
@@ -24,6 +25,8 @@ class GoWallet {
         private val gson = Gson()
 
         private val util = Util()
+
+        private var lastRefreshSessionTime: Long = 0L
 
         fun getUtil(goNoderUrl: String): Util {
             util.node = goNoderUrl
@@ -90,6 +93,24 @@ class GoWallet {
             return Walletapi.byteTohex(byteArray)
         }
 
+        private var session: WalletSession? = null
+
+        fun setSessionInfo(session: WalletSession) {
+            this.session = session
+        }
+
+        fun checkSessionID(force: Boolean = false) {
+            if (System.currentTimeMillis() - lastRefreshSessionTime < 29 * 60 * 1000 && !force) {
+                // sessionID半小时过期，提前1分钟刷新
+                return
+            }
+            return try {
+                Walletapi.setSessionID(Walletapi.getSessionId(session, getUtil(UrlConfig.GO_URL)))
+                lastRefreshSessionTime = System.currentTimeMillis()
+            } catch (e: Exception) {
+
+            }
+        }
 
         /**
          * 获取余额
@@ -107,10 +128,11 @@ class GoWallet {
             goNoderUrl: String
         ): String? {
             try {
+                checkSessionID()
                 val balance = WalletBalance()
                 balance.cointype = chain
                 balance.address = addresss
-                balance.tokenSymbol = tokenSymbol
+                balance.tokenSymbol = if (chain == tokenSymbol) "" else tokenSymbol
                 balance.util = getUtil(goNoderUrl)
                 val getbalance = Walletapi.getbalance(balance)
                 return Walletapi.byteTostring(getbalance)
@@ -139,7 +161,7 @@ class GoWallet {
          * @return String?  余额
          */
         fun handleBalance(lCoin: Coin): String {
-            var tokensymbol = if (lCoin.name == lCoin.chain) "" else lCoin.name
+            var tokensymbol = lCoin.tokenSymbol/*if (lCoin.name == lCoin.chain) "" else lCoin.name
             if (!TextUtils.isEmpty(lCoin.platform) && !TextUtils.isEmpty(lCoin.chain)) {
                 if (isBTYChild(lCoin)) {
                     if ("1" == lCoin.treaty) {
@@ -148,7 +170,7 @@ class GoWallet {
                         tokensymbol = lCoin.platform + ".coins"
                     }
                 }
-            }
+            }*/
             val balanceStr = getbalance(lCoin.address, lCoin.chain, tokensymbol)
             if (!TextUtils.isEmpty(balanceStr)) {
                 val balanceResponse = gson.fromJson(balanceStr, BalanceResponse::class.java)
@@ -160,6 +182,51 @@ class GoWallet {
                 }
             }
             return lCoin.balance
+        }
+
+        fun handleRedPacketBalance(coin: Coin): String {
+            if (!coin.isBty) return "0"
+            var tokensymbol = if (coin.name == coin.chain) "" else coin.name
+            if (coin.isBtyChild) {
+                if ("1" == coin.treaty) {
+                    tokensymbol = coin.platform + "." + coin.name
+                } else if ("2" == coin.treaty) {
+                    tokensymbol = coin.platform + ".coins"
+                }
+            }
+            val balanceStr = getRedPacketBalance(coin, tokensymbol)
+            if (!TextUtils.isEmpty(balanceStr)) {
+                val balanceResponse = gson.fromJson(balanceStr, BalanceResponse::class.java)
+                if (balanceResponse != null) {
+                    val balance = balanceResponse.result
+                    if (balance != null) {
+                        return balance.balance
+                    }
+                }
+            }
+            return "0"
+        }
+
+        fun getRedPacketBalance(coin: Coin, symbol: String): String? {
+            try {
+                checkSessionID()
+                val balance = WalletBalance().apply {
+                    cointype = coin.chain
+                    address = coin.address
+                    tokenSymbol = symbol
+                    util = getUtil(UrlConfig.GO_URL)
+                    extendInfo = ExtendInfo().apply {
+                        execer = if (coin.isBtyChild) "user.p.${coin.platform}.redpacket" else "redpacket"
+                        assetExec = coin.assetExec
+                        assetSymbol = coin.name
+                    }
+                }
+                val getbalance = Walletapi.getbalance(balance)
+                return Walletapi.byteTostring(getbalance)
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+            }
+            return null
         }
 
         fun isBTYChild(coin: Coin): Boolean {
@@ -187,6 +254,7 @@ class GoWallet {
             goNoderUrl: String
         ): String? {
             try {
+                checkSessionID()
                 val walletQueryByAddr = WalletQueryByAddr()
                 val queryByPage = QueryByPage()
                 queryByPage.cointype = chain
@@ -245,9 +313,10 @@ class GoWallet {
             goNoderUrl: String
         ): String? {
             try {
+                checkSessionID()
                 val walletQueryByTxid = WalletQueryByTxid()
                 walletQueryByTxid.cointype = chain
-                walletQueryByTxid.tokenSymbol = tokenSymbol
+                walletQueryByTxid.tokenSymbol = if (chain == tokenSymbol) "" else tokenSymbol
                 walletQueryByTxid.txid = txid
                 walletQueryByTxid.util = getUtil(goNoderUrl)
                 val transaction =
@@ -286,9 +355,10 @@ class GoWallet {
             note: String, tokensymbol: String, goNoderUrl: String
         ): String? {
             try {
+                checkSessionID()
                 val walletTx = WalletTx()
                 walletTx.cointype = chain
-                walletTx.tokenSymbol = tokensymbol
+                walletTx.tokenSymbol = if (chain == tokensymbol) "" else tokensymbol
                 val txdata = Txdata()
                 txdata.amount = amount
                 txdata.fee = fee
@@ -360,6 +430,7 @@ class GoWallet {
             goNoderUrl: String
         ): String? {
             try {
+                checkSessionID()
                 val sendTx = WalletSendTx()
                 sendTx.cointype = chain
                 sendTx.signedTx = signData
@@ -518,6 +589,7 @@ class GoWallet {
         }
 
         fun deleteMulAddress(appId: String, appSymbol: String, mulAddress: String): Boolean? {
+            checkSessionID()
             val mulAddr = WalletMulAddr()
             mulAddr.util = getUtil(UrlConfig.GO_URL!!)
             mulAddr.appid = appId
@@ -528,6 +600,7 @@ class GoWallet {
 
 
         fun imortMulAddress(appId: String, appSymbol: String, mulAddress: String): Boolean? {
+            checkSessionID()
             val mulAddr = WalletMulAddr()
             mulAddr.util = getUtil(UrlConfig.GO_URL!!)
             mulAddr.appid = appId
@@ -539,11 +612,12 @@ class GoWallet {
 
         internal suspend fun createWallet(wallet: PWallet, coinList: List<Coin>): PWallet {
             return withContext(Dispatchers.IO) {
-                for (coin in coinList) {
+                coinList.forEachIndexed { index, coin ->
                     val hdWallet = getHDWallet(coin.chain, wallet.mnem)
                     val pubkey = hdWallet!!.newKeyPub(0)
                     val address = hdWallet.newAddress_v2(0)
                     val pubkeyStr = encodeToStrings(pubkey)
+                    coin.sort = index
                     coin.status = Coin.STATUS_ENABLE
                     coin.pubkey = pubkeyStr
                     coin.address = address
@@ -554,9 +628,16 @@ class GoWallet {
                 }
                 saveAll(coinList)
                 wallet.coinList.addAll(coinList)
-                val bpassword = encPasswd(wallet.password)
-                wallet.mnem = encMenm(bpassword!!, wallet.mnem)
-                wallet.password = passwdHash(bpassword)
+                if (MnemonicManager.DEFAULT_STORE == MnemonicManager.store) {
+                    // 如果是默认实现，则保存到wallet数据库中
+                    val bpassword = encPasswd(wallet.password)
+                    wallet.mnem = encMenm(bpassword!!, wallet.mnem)
+                    wallet.password = passwdHash(bpassword)
+                } else {
+                    MnemonicManager.saveMnemonicWords(wallet.mnem, wallet.password)
+                    wallet.mnem = null
+                    wallet.password = null
+                }
                 wallet.save()
                 return@withContext wallet
             }

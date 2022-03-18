@@ -1,5 +1,6 @@
 package com.fzm.wallet.sdk.alpha
 
+import com.fzm.wallet.sdk.WalletBean
 import com.fzm.wallet.sdk.WalletConfiguration
 import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.db.entity.Coin
@@ -17,12 +18,34 @@ object EmptyWallet : Wallet<Coin> {
         return ""
     }
 
-    override suspend fun delete(password: String, confirmation: suspend () -> Boolean) {
-
+    override fun getId(): String {
+        return "0"
     }
 
-    override suspend fun transfer(coin: Coin, amount: Long) {
+    override val walletInfo: WalletBean
+        get() = WalletBean(0L, "", "", 0)
 
+    override suspend fun changeWalletName(name: String): Boolean {
+        return false
+    }
+
+    override suspend fun changeWalletPassword(old: String, password: String): Boolean {
+        return false
+    }
+
+    override suspend fun delete(password: String, confirmation: suspend () -> Boolean): Boolean {
+        return false
+    }
+
+    override suspend fun transfer(
+        coin: Coin,
+        toAddress: String,
+        amount: Double,
+        fee: Double,
+        note: String?,
+        password: String
+    ): String {
+        return ""
     }
 
     override suspend fun addCoins(coins: List<Coin>, password: suspend () -> String) {
@@ -34,9 +57,8 @@ object EmptyWallet : Wallet<Coin> {
     }
 
     override fun getCoinBalance(
-        initialDelay: Long,
-        period: Long,
-        requireQuotation: Boolean
+        requireQuotation: Boolean,
+        predicate: ((Coin) -> Boolean)?
     ): Flow<List<Coin>> = emptyFlow()
 
     override suspend fun getTransactionList(
@@ -52,7 +74,27 @@ object EmptyWallet : Wallet<Coin> {
         chain: String,
         tokenSymbol: String,
         hash: String
-    ): Transactions? {
+    ): Transactions {
+        return Transactions()
+    }
+
+    override suspend fun getAddress(chain: String): String? {
+        return null
+    }
+
+    override suspend fun getCoinBalance(coin: Coin, requireQuotation: Boolean): Coin {
+        return coin
+    }
+
+    override fun close() {
+
+    }
+
+    override suspend fun getRedPacketAssets(address: String): List<Coin> {
+        return emptyList()
+    }
+
+    override suspend fun getMainCoin(chain: String): Coin? {
         return null
     }
 }

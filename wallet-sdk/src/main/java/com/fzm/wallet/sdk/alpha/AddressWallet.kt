@@ -15,7 +15,14 @@ class AddressWallet(wallet: PWallet) : BaseWallet(wallet) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun transfer(coin: Coin, amount: Long) {
+    override suspend fun transfer(
+        coin: Coin,
+        toAddress: String,
+        amount: Double,
+        fee: Double,
+        note: String?,
+        password: String
+    ): String {
         throw UnsupportedOperationException("观察钱包不支持转账")
     }
 }

@@ -2,23 +2,22 @@ package com.fzm.walletdemo
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.util.Log
-import android.view.View
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.lifecycleScope
 import com.fzm.wallet.sdk.BWallet
-import com.fzm.walletmodule.base.Constants
+import com.fzm.wallet.sdk.alpha.EmptyWallet
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.event.InitPasswordEvent
-import com.fzm.walletmodule.utils.WalletUtils
 import com.fzm.walletmodule.event.MainCloseEvent
 import com.fzm.walletmodule.event.MyWalletEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.fragment.WalletFragment
 import com.fzm.walletmodule.ui.fragment.WalletIndexFragment
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.collect
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -37,6 +36,13 @@ class MainActivity : BaseActivity() {
         initView()
         setTabSelection(0)
         Constants.setCoins(DEFAULT_COINS)
+        lifecycleScope.launchWhenResumed {
+            BWallet.get().current.collect {
+                if (it is EmptyWallet) {
+                    setTabSelection(0)
+                }
+            }
+        }
     }
 
 
@@ -192,7 +198,6 @@ class MainActivity : BaseActivity() {
         setTabSelection(0)
     }
 
-    private var mPWallet: PWallet? = null
 
     //回调 - 我的账户
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -201,12 +206,9 @@ class MainActivity : BaseActivity() {
             return
         } else {
             setTabSelection(0)
-            mPWallet = event.mPWallet
-            WalletUtils.setUsingWallet(mPWallet)
         }
 
         if (!event.isChoose) {
-            BWallet.get()
             val privkey = BWallet.get().getBtyPrikey()
             Log.v("tag", privkey + "")
         }

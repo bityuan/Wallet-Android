@@ -1,4 +1,4 @@
-package com.fzm.walletmodule.bean
+package com.fzm.wallet.sdk.bean
 
 class StringResult {
     var error: String? = null

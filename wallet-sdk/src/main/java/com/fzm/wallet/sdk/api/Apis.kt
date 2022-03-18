@@ -27,6 +27,9 @@ interface Apis {
         @Query("coinname") coinName: String
     ): HttpResponse<WithHold>
 
+    @GET("goapi/interface/tokenview/explore")
+    suspend fun getBrowserUrl(@Query("platform") platform: String): HttpResponse<BrowserBean>
+
 
     @POST("interface/wallet-coin")
     suspend fun getCoinList(@Body body: Map<String, Any>): HttpResponse<List<Coin>>
@@ -38,4 +41,38 @@ interface Apis {
     @POST("interface/recommend-coin")
     suspend fun getTabData(): HttpResponse<List<AddCoinTabBean>>
 
+    //---------------------------exchange-------------------------------
+
+    /**
+     * apply
+     * @param token
+     */
+    @Headers("$DOMAIN_NAME_HEADER$DOMAIN_EXCHANGE_DO")
+    @POST("/")
+    suspend fun flashExchange(
+        @Header("Authorization") token: String,
+        @Body body: RequestBody
+    ): GoResponse<String>
+
+    /**
+     * exchange limit
+     * @param address
+     */
+    @Headers("$DOMAIN_NAME_HEADER$DOMAIN_EXCHANGE_MANAGER")
+    @GET("public/limit")
+    suspend fun getExLimit(
+        @Query("address") address: String,
+        @Query("cointype") cointype: String,
+        @Query("tokensymbol") tokensymbol: String
+    ): HttpResponse<Double>
+
+    /**
+     * exchange fee
+     */
+    @Headers("$DOMAIN_NAME_HEADER$DOMAIN_EXCHANGE_MANAGER")
+    @GET("public/fee")
+    suspend fun getExFee(
+        @Query("cointype") cointype: String,
+        @Query("tokensymbol") tokensymbol: String
+    ): HttpResponse<ExchangeFee>
 }

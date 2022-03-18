@@ -41,10 +41,6 @@ import java.util.concurrent.CopyOnWriteArrayList
 class WalletFragment : BaseFragment() {
     private var mWalletAdapter: WalletAdapter? = null
     private var mPWallet: PWallet? = null
-        set(value) {
-            BWallet.get().changeWallet(value)
-            field = value
-        }
     private val mCoinList = CopyOnWriteArrayList<Coin>()
     private var more: ImageView? = null
     private var addCoin: ImageView? = null
@@ -124,8 +120,11 @@ class WalletFragment : BaseFragment() {
     }
 
     override fun initData() {
-        mPWallet = WalletUtils.getUsingWallet()
-        name?.text = mPWallet?.name
+        lifecycleScope.launchWhenResumed {
+            BWallet.get().current.collect {
+                name?.text = it.walletInfo.name
+            }
+        }
     }
 
     override fun initListener() {
@@ -138,7 +137,7 @@ class WalletFragment : BaseFragment() {
             }
             val `in` = Intent()
             `in`.setClass(requireActivity(), WalletDetailsActivity::class.java)
-            `in`.putExtra(PWallet::class.java.simpleName, mPWallet)
+            `in`.putExtra(PWallet.PWALLET_ID, BWallet.get().getCurrentWallet()?.id ?: 0L)
             startActivityForResult(`in`, UPDATE_WALLET)
         }
         iv_back.setOnClickListener {
@@ -186,30 +185,6 @@ class WalletFragment : BaseFragment() {
         const val UPDATE_WALLET = 1000
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public fun onUpdateWalletNameEvent(event: UpdateWalletNameEvent) {
-        if (event != null && event.needUpdate) {
-            mPWallet = WalletUtils.getUsingWallet()
-            name?.text = mPWallet?.name
-        }
-    }
-
-    //回调 - 删除账户
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onWalletDeleteEvent(event: WalletDeleteEvent) {
-        if (mPWallet?.id == event.walletId) {
-            initData()
-        }
-    }
-
-    //回调 - 我的账户
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    fun onMyWalletEvent(event: MyWalletEvent) {
-        if (event.mPWallet != null && mPWallet?.id != event.mPWallet.id) {
-            mPWallet = event.mPWallet
-            name?.text = mPWallet?.name
-        }
-    }
 
 
     //回调 - 添加币种

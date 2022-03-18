@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter.base.listener.OnItemDragListener
 import com.fzm.wallet.sdk.BWallet
@@ -25,13 +24,15 @@ import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.AutoLineFeedLayoutManager
 import com.fzm.walletmodule.ui.widget.FlowTagLayout
 import com.fzm.walletmodule.ui.widget.TestDividerItemDecoration
-import com.fzm.walletmodule.utils.*
+import com.fzm.walletmodule.utils.ListUtils
+import com.fzm.walletmodule.utils.ScreenUtils
+import com.fzm.walletmodule.utils.ToastUtils
+import com.fzm.walletmodule.utils.isFastClick
 import com.zhy.adapter.abslistview.CommonAdapter
 import com.zhy.adapter.abslistview.ViewHolder
 import kotlinx.android.synthetic.main.activity_back_up_wallet.*
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
-import java.util.*
 
 /**
  * 创建账户时验证助记词和导入钱包页面
@@ -259,13 +260,11 @@ class BackUpWalletActivity : BaseActivity() {
                         mPWallet.password,
                         "",
                         Constants.getCoins()
-                    )
+                    ), true
                 )
                 val pWallet = BWallet.get().findWallet(id)
-                BWallet.get().changeWallet(pWallet)
 
                 dismiss()
-                WalletUtils.setUsingWallet(pWallet)
                 EventBus.getDefault().postSticky(MyWalletEvent(pWallet))
                 closeSomeActivitys()
             }

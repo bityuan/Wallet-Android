@@ -3,11 +3,13 @@ package com.fzm.wallet.sdk.net
 import com.fzm.wallet.sdk.BuildConfig
 import com.fzm.wallet.sdk.api.Apis
 import com.fzm.wallet.sdk.base.BWallet
+import com.fzm.wallet.sdk.base.FZM_PLATFORM_ID
 import com.fzm.wallet.sdk.base.WalletModuleApp
 import com.fzm.wallet.sdk.net.security.SSLSocketClient
 import com.fzm.wallet.sdk.repo.OutRepository
 import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.utils.ToolUtils
+import me.jessyan.retrofiturlmanager.RetrofitUrlManager
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -18,12 +20,11 @@ import org.koin.core.scope.Scope
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
-import me.jessyan.retrofiturlmanager.RetrofitUrlManager
 import java.io.IOException
 import java.io.InputStreamReader
 import java.nio.charset.Charset
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 val rootScope: Scope
@@ -65,6 +66,7 @@ fun Module.walletNetModule() {
 
     // Http头部基础数据
     single(walletQualifier) {
+        val platformId = FZM_PLATFORM_ID
         Interceptor { chain ->
             val originalRequest = chain.request()
             val newBuilder = originalRequest.newBuilder()
@@ -74,7 +76,7 @@ fun Module.walletNetModule() {
                 .header("Accept", "application/json")
                 .header("Fzm-Request-Source", "wallet")
                 .header("FZM-REQUEST-OS", "android")
-                .header("FZM-PLATFORM-ID", "81")
+                .header("FZM-PLATFORM-ID", platformId)
                 .header(
                     "version",
                     "${ToolUtils.getVersionName(get())},${ToolUtils.getVersionCode(get())}"

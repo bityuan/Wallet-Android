@@ -1,7 +1,9 @@
 package com.fzm.wallet.sdk.alpha
 
+import com.fzm.wallet.sdk.WalletBean
 import com.fzm.wallet.sdk.WalletConfiguration
 import com.fzm.wallet.sdk.bean.Transactions
+import com.fzm.wallet.sdk.db.entity.Coin
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -9,12 +11,34 @@ import kotlinx.coroutines.flow.Flow
  * @since 2022/01/12
  * Description:
  */
-interface Wallet<T> {
+interface Wallet<T> : Cloneable {
 
     /**
      * 初始化钱包方法
      */
     suspend fun init(configuration: WalletConfiguration): String
+
+    /**
+     * 获取钱包id
+     */
+    fun getId(): String
+
+    /**
+     * 钱包信息
+     */
+    val walletInfo: WalletBean
+
+    /**
+     * 修改钱包名称
+     */
+    @Throws(Exception::class)
+    suspend fun changeWalletName(name: String): Boolean
+
+    /**
+     * 修改钱包密码
+     */
+    @Throws(Exception::class)
+    suspend fun changeWalletPassword(old: String, password: String): Boolean
 
     /**
      * 删除钱包
@@ -26,12 +50,19 @@ interface Wallet<T> {
     suspend fun delete(
         password: String,
         confirmation: suspend () -> Boolean
-    )
+    ): Boolean
 
     /**
      * 转账方法
+     *
+     * @param coin      币种
+     * @param toAddress 目标地址
+     * @param amount    转账金额
+     * @param fee       矿工费
+     * @param password  钱包密码
      */
-    suspend fun transfer(coin: T, amount: Long)
+    @Throws(Exception::class)
+    suspend fun transfer(coin: T, toAddress: String, amount: Double, fee: Double, note: String?, password: String): String
 
     /**
      * 添加币种
@@ -51,7 +82,15 @@ interface Wallet<T> {
     /**
      * 获取资产余额与行情
      */
-    fun getCoinBalance(initialDelay: Long, period: Long, requireQuotation: Boolean): Flow<List<T>>
+    fun getCoinBalance(
+        requireQuotation: Boolean,
+        predicate: ((Coin) -> Boolean)? = null
+    ): Flow<List<T>>
+
+    /**
+     * 获取单个币种的资产余额与行情
+     */
+    suspend fun getCoinBalance(coin: T, requireQuotation: Boolean): T
 
     /**
      * 获取交易列表
@@ -70,5 +109,32 @@ interface Wallet<T> {
      * @param tokenSymbol   币种symbol
      * @param hash          交易hash
      */
-    suspend fun getTransactionByHash(chain: String, tokenSymbol: String, hash: String): Transactions?
+    @Throws(Exception::class)
+    suspend fun getTransactionByHash(chain: String, tokenSymbol: String, hash: String): Transactions
+
+    /**
+     * 根据主链获取地址
+     *
+     * @param chain         链名
+     */
+    suspend fun getAddress(chain: String): String?
+
+    /**
+     * 获取红包资产（不包含跨链资产）
+     *
+     * @param address   地址
+     */
+    suspend fun getRedPacketAssets(address: String): List<Coin>
+
+    /**
+     * 获取所在链的主代币
+     *
+     * @param chain     链名
+     */
+    suspend fun getMainCoin(chain: String): Coin?
+
+    /**
+     * 关闭钱包
+     */
+    fun close()
 }

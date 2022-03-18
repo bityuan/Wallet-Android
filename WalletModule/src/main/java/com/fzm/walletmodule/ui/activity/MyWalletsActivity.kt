@@ -4,9 +4,9 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.fzm.walletmodule.R
+import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.db.entity.PWallet
-import com.fzm.walletmodule.utils.WalletUtils
+import com.fzm.walletmodule.R
 import com.fzm.walletmodule.event.MyWalletEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.ListUtils
@@ -58,13 +58,14 @@ class MyWalletsActivity : BaseActivity() {
         listView.adapter = mAdapter
         listView.setOnItemClickListener { holder, position ->
             val wallet = mAdapter!!.datas[position] as PWallet
+            BWallet.get().changeWallet(wallet.id.toString())
             EventBus.getDefault().post(MyWalletEvent(wallet,true))
             finish()
         }
     }
 
     private fun refresh() {
-        mSelectedId = WalletUtils.getUseWalletId()
+        mSelectedId = BWallet.get().getCurrentWallet()?.id ?: 0L
         list.clear()
         doAsync {
             val walletList: List<PWallet> = LitePal.findAll(PWallet::class.java, true)

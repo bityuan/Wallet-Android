@@ -17,27 +17,26 @@ internal val DEFAULT_COINS
             chain = "BTY"
             name = "BTY"
             platform = "bty"
+            netId = "154"
         },
         Coin().apply {
             chain = "ETH"
             name = "ETH"
             platform = "ethereum"
-        },
-        Coin().apply {
-            chain = "BTC"
-            name = "BTC"
-            platform = "btc"
+            netId = "90"
         },
         Coin().apply {
             chain = "ETH"
-            name = "YCC"
+            name = "USDT"
             platform = "ethereum"
+            netId = "288"
         },
         Coin().apply {
-            chain = "DCR"
-            name = "DCR"
-            platform = "dcr"
-        }
+            chain = "BNB"
+            name = "BNB"
+            platform = "bnb"
+            netId = "641"
+        },
     )
 
 const val REGEX_CHINESE = "[\u4e00-\u9fa5]+"
