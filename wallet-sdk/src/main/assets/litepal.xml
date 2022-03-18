@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <litepal>
     <dbname value="pwallet"></dbname>
-    <version value="8"></version>
+    <version value="10"></version>
 
     <list>
         <mapping class="com.fzm.wallet.sdk.db.entity.PWallet"></mapping>

@@ -1,5 +1,6 @@
 package com.fzm.wallet.sdk.api
 
+import com.fzm.wallet.sdk.bean.BrowserBean
 import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.bean.WithHold
 import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
@@ -41,38 +42,4 @@ interface Apis {
     @POST("interface/recommend-coin")
     suspend fun getTabData(): HttpResponse<List<AddCoinTabBean>>
 
-    //---------------------------exchange-------------------------------
-
-    /**
-     * apply
-     * @param token
-     */
-    @Headers("$DOMAIN_NAME_HEADER$DOMAIN_EXCHANGE_DO")
-    @POST("/")
-    suspend fun flashExchange(
-        @Header("Authorization") token: String,
-        @Body body: RequestBody
-    ): GoResponse<String>
-
-    /**
-     * exchange limit
-     * @param address
-     */
-    @Headers("$DOMAIN_NAME_HEADER$DOMAIN_EXCHANGE_MANAGER")
-    @GET("public/limit")
-    suspend fun getExLimit(
-        @Query("address") address: String,
-        @Query("cointype") cointype: String,
-        @Query("tokensymbol") tokensymbol: String
-    ): HttpResponse<Double>
-
-    /**
-     * exchange fee
-     */
-    @Headers("$DOMAIN_NAME_HEADER$DOMAIN_EXCHANGE_MANAGER")
-    @GET("public/fee")
-    suspend fun getExFee(
-        @Query("cointype") cointype: String,
-        @Query("tokensymbol") tokensymbol: String
-    ): HttpResponse<ExchangeFee>
 }
