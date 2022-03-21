@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
@@ -172,6 +173,10 @@ class WalletFragment : BaseFragment() {
             if (ClickUtils.isFastClick(1000)) {
                 recyclerView.smoothScrollToPosition(0)
             }
+        }
+
+        iv_to_exchange.setOnClickListener {
+            ARouter.getInstance().build("/app/ExchangeActivity").navigation()
         }
     }
 

@@ -68,7 +68,7 @@
             android:layout_height="35dp"
             android:layout_alignParentRight="true"
             android:layout_marginTop="13dp"
-            android:layout_marginRight="14dp"
+            android:layout_marginRight="11dp"
             android:scaleType="center"
             android:src="@mipmap/header_wallet_more" />
 

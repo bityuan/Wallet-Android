@@ -102,14 +102,14 @@ public class EditDialogFragment extends DialogFragment {
     }
 
     public static EditDialogFragment newInstance() {
-       EditDialogFragment fragment = new EditDialogFragment();
+        EditDialogFragment fragment = new EditDialogFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
     }
 
     public static EditDialogFragment newInstance(int _type) {
-       EditDialogFragment fragment = new EditDialogFragment();
+        EditDialogFragment fragment = new EditDialogFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         fragment.setType(_type);
@@ -227,9 +227,8 @@ public class EditDialogFragment extends DialogFragment {
     }
 
     public void showDialog(String tag, FragmentManager fm) {
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.add(this, tag);
-        ft.commitAllowingStateLoss();
+        fm.beginTransaction().remove(this).commitAllowingStateLoss();
+        fm.beginTransaction().add(this,tag).commitAllowingStateLoss();
     }
 
 }
