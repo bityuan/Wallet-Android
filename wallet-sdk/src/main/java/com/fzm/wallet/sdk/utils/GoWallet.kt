@@ -5,6 +5,7 @@ import android.util.Log
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.BWalletImpl
 import com.fzm.wallet.sdk.MnemonicManager
+import com.fzm.wallet.sdk.bean.log
 import com.fzm.wallet.sdk.bean.response.BalanceResponse
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
@@ -105,10 +106,11 @@ class GoWallet {
                 return
             }
             return try {
-                Walletapi.setSessionID(Walletapi.getSessionId(session, getUtil(UrlConfig.GO_URL)))
+                val ss = Walletapi.getSessionId(session, getUtil(UrlConfig.GO_URL))
+                Walletapi.setSessionID(ss)
                 lastRefreshSessionTime = System.currentTimeMillis()
             } catch (e: Exception) {
-
+                e.printStackTrace()
             }
         }
 
@@ -172,6 +174,7 @@ class GoWallet {
                 }
             }*/
             val balanceStr = getbalance(lCoin.address, lCoin.chain, tokensymbol)
+            log(balanceStr)
             if (!TextUtils.isEmpty(balanceStr)) {
                 val balanceResponse = gson.fromJson(balanceStr, BalanceResponse::class.java)
                 if (balanceResponse != null) {
