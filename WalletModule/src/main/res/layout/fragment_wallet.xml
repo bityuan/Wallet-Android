@@ -49,14 +49,6 @@
             android:textStyle="bold"
             tools:text="@string/my_wallets_mnem_walllet" />
 
-        <ImageView
-            android:id="@+id/iv_to_exchange"
-            android:layout_width="57dp"
-            android:layout_toLeftOf="@+id/topRight"
-            android:layout_height="match_parent"
-            android:layout_centerVertical="true"
-            android:scaleType="center"
-            android:src="@mipmap/ic_home_exchange" />
 
         <ImageView
             android:id="@+id/topRight"

@@ -9,7 +9,7 @@ package com.fzm.wallet.sdk.base
 /**
  * 唯一标识符
  */
-const val BWallet = "BWallet"
+const val Q_BWallet = "Q_BWallet"
 
 /**
  * 平台码

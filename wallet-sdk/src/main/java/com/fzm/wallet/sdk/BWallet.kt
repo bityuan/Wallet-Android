@@ -22,6 +22,8 @@ interface BWallet {
         private val wallet by lazy { BWalletImpl() }
 
         fun get(): BWallet = wallet
+        var BASE_URL = ""
+        var GO_URL = ""
     }
 
     val current: Flow<Wallet<Coin>>

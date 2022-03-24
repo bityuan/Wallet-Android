@@ -174,10 +174,6 @@ class WalletFragment : BaseFragment() {
                 recyclerView.smoothScrollToPosition(0)
             }
         }
-
-        iv_to_exchange.setOnClickListener {
-            ARouter.getInstance().build("/app/ExchangeActivity").navigation()
-        }
     }
 
     companion object {

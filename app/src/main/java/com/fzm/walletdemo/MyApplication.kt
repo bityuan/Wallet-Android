@@ -14,6 +14,9 @@ import org.koin.dsl.module
 class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
+        BWallet.BASE_URL = ""
+        BWallet.GO_URL = ""
+
         WalletModuleApp.init(this)
         startKoin {
             androidContext(this@MyApplication)

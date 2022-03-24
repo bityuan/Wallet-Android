@@ -1,10 +1,10 @@
 package com.fzm.wallet.sdk.net
 
+import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.BuildConfig
 import com.fzm.wallet.sdk.api.Apis
-import com.fzm.wallet.sdk.base.BWallet
 import com.fzm.wallet.sdk.base.FZM_PLATFORM_ID
-import com.fzm.wallet.sdk.base.WalletModuleApp
+import com.fzm.wallet.sdk.base.Q_BWallet
 import com.fzm.wallet.sdk.net.security.SSLSocketClient
 import com.fzm.wallet.sdk.repo.OutRepository
 import com.fzm.wallet.sdk.repo.WalletRepository
@@ -20,17 +20,13 @@ import org.koin.core.scope.Scope
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.IOException
-import java.io.InputStreamReader
-import java.nio.charset.Charset
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 
 val rootScope: Scope
     get() = KoinContextHandler.get()._scopeRegistry.rootScope
 
-val walletQualifier = _q(BWallet)
+val walletQualifier = _q(Q_BWallet)
 
 val walletBaseModules = module { walletNetModule() }
 
@@ -107,32 +103,11 @@ fun Module.walletNetModule() {
 }
 
 object UrlConfig {
-    const val DOMAIN_URL_BASE = "url_base"
     const val DOMAIN_URL_GO = "url_go"
 
 
-    private val config: Properties by lazy { openAssets() }
-
-    val BASE_URL: String by lazy { config.getProperty("BASE_URL") }
-    val GO_URL: String by lazy { config.getProperty("GO_URL") }
-
-
-    private fun openAssets(): Properties {
-        var config = Properties()
-        try {
-            WalletModuleApp.context.assets.open("app-base.properties")
-                .use {
-                    config = Properties()
-                    InputStreamReader(it, Charset.forName("UTF-8")).use { reader ->
-                        config.load(reader)
-                    }
-
-                }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        return config
-    }
+    val BASE_URL: String by lazy { BWallet.BASE_URL }
+    val GO_URL: String by lazy { BWallet.GO_URL }
 
 
 }

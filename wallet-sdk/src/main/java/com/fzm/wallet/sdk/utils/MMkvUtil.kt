@@ -1,13 +1,13 @@
 package com.fzm.wallet.sdk.utils
 
 import android.os.Parcelable
-import com.fzm.wallet.sdk.base.BWallet
+import com.fzm.wallet.sdk.base.Q_BWallet
 import com.tencent.mmkv.MMKV
 import java.util.Collections.emptySet
 
 object MMkvUtil {
 
-    private val mmkv = MMKV.mmkvWithID(BWallet)
+    private val mmkv = MMKV.mmkvWithID(Q_BWallet)
 
     fun encode(key: String, value: Any?) {
         when (value) {
