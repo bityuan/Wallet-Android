@@ -35,6 +35,8 @@ internal class BWalletImpl : BWallet {
 
     companion object {
         const val CURRENT_USER = "CURRENT_USER"
+        var BASE_URL = ""
+        var GO_URL = ""
     }
 
     private val wallet: Wallet<Coin>
@@ -80,6 +82,11 @@ internal class BWalletImpl : BWallet {
         changeWallet(getWallet(id))
     }
 
+    override fun setUrls(baseUrl: String, goUrl: String) {
+        BASE_URL = baseUrl
+        GO_URL = goUrl
+    }
+
     override fun changeWallet(wallet: WalletBean?): Boolean {
         if (wallet == null || this.wallet.getId() == wallet.id.toString()) return false
         MMkvUtil.encode(CURRENT_USER, wallet.user)
@@ -110,7 +117,7 @@ internal class BWalletImpl : BWallet {
         _current.update { newWallet }
     }
 
-    override fun  getCurrentWallet(): WalletBean? {
+    override fun getCurrentWallet(): WalletBean? {
         return getWallet(wallet.getId())
     }
 

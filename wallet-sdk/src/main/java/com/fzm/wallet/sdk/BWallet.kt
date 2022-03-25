@@ -22,8 +22,6 @@ interface BWallet {
         private val wallet by lazy { BWalletImpl() }
 
         fun get(): BWallet = wallet
-        var BASE_URL = ""
-        var GO_URL = ""
     }
 
     val current: Flow<Wallet<Coin>>
@@ -40,6 +38,9 @@ interface BWallet {
      * @param device        设备，用于钱包网关后端
      */
     fun init(context: Context, module: Module?, platformId: String, appSymbol: String, appId: String, appKey: String, device: String)
+
+
+    fun setUrls(baseUrl:String,goUrl:String)
 
     /**
      * 切换钱包

@@ -1,6 +1,7 @@
 package com.fzm.wallet.sdk.net
 
 import com.fzm.wallet.sdk.BWallet
+import com.fzm.wallet.sdk.BWalletImpl
 import com.fzm.wallet.sdk.BuildConfig
 import com.fzm.wallet.sdk.api.Apis
 import com.fzm.wallet.sdk.base.FZM_PLATFORM_ID
@@ -106,8 +107,8 @@ object UrlConfig {
     const val DOMAIN_URL_GO = "url_go"
 
 
-    val BASE_URL: String by lazy { BWallet.BASE_URL }
-    val GO_URL: String by lazy { BWallet.GO_URL }
+    val BASE_URL: String by lazy { BWalletImpl.BASE_URL }
+    val GO_URL: String by lazy { BWalletImpl.GO_URL }
 
 
 }
