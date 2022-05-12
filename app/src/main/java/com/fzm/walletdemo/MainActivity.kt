@@ -45,6 +45,14 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    val DEFAULT_NFTS = listOf(
+        Coin().apply {
+            name = "老虎"
+            chain = "ETH"
+            platform = "ethereum"
+            netId = "725"
+        }
+    )
 
     val DEFAULT_COINS = listOf(
         Coin().apply {

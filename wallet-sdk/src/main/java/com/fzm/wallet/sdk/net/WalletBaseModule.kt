@@ -4,6 +4,7 @@ import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.BWalletImpl
 import com.fzm.wallet.sdk.BuildConfig
 import com.fzm.wallet.sdk.api.Apis
+import com.fzm.wallet.sdk.api.GoService
 import com.fzm.wallet.sdk.base.FZM_PLATFORM_ID
 import com.fzm.wallet.sdk.base.Q_BWallet
 import com.fzm.wallet.sdk.net.security.SSLSocketClient
@@ -96,6 +97,7 @@ fun Module.walletNetModule() {
     }
 
     single(walletQualifier) { get<Retrofit>(walletQualifier).create(Apis::class.java) }
+    single(walletQualifier) { get<Retrofit>(walletQualifier).create(GoService::class.java) }
 
     single(walletQualifier) { OutRepository(get(walletQualifier)) }
 
