@@ -1,9 +1,10 @@
-package com.fzm.wallet.sdk.repo
+package com.fzm.nft
 
 import com.fzm.wallet.sdk.api.GoService
 import com.fzm.wallet.sdk.bean.toRequestBody
 import com.fzm.wallet.sdk.net.HttpResult
 import com.fzm.wallet.sdk.net.goCall
+import com.fzm.wallet.sdk.utils.GoWallet
 import org.json.JSONObject
 import walletapi.Walletapi
 
@@ -22,7 +23,9 @@ class NFTRepository constructor(private val goService: GoService) {
         rawdata.put("method", "NFT_BalanceOf")
 
         return goCall {
+            GoWallet.checkSessionID()
             goService.getNFTBalance(
+                GoWallet.sessionID,
                 toRequestBody(
                     "Wallet.Transport",
                     "cointype" to cointype,

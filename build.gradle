@@ -102,6 +102,7 @@ ext {
     viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
     zxingLite = "com.king.zxing:zxing-lite:1.1.2"
     backgroundLibrary = "com.github.JavaNoober.BackgroundLibrary:libraryx:1.7.3"
+    fragmentKtx = "androidx.fragment:fragment-ktx:1.4.1"
 
 
 }

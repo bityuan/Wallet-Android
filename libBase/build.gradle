@@ -45,6 +45,7 @@ dependencies {
     api cfg.viewmodel
     api cfg.zxingLite
     api cfg.backgroundLibrary
+    api cfg.fragmentKtx
 }
 
 //注意放置位置，复制此段代码稍加修改即可

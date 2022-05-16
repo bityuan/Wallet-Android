@@ -2,4 +2,5 @@ apply from: app
 dependencies {
     implementation project(path: ':libBase')
     implementation project(path: ':business:wallet')
+    implementation project(path: ':business:nft')
 }

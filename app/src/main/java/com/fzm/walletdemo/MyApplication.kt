@@ -3,6 +3,7 @@ package com.fzm.walletdemo
 import android.app.Application
 import android.content.Context
 import android.os.Build
+import com.fzm.nft.nftModule
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.base.WalletModuleApp
 import com.fzm.walletmodule.net.viewModelModule
@@ -29,6 +30,7 @@ class MyApplication : Application() {
                 BWallet.get().init(this@MyApplication, this, "86", APP_SYMBOL, "", APP_KEY, "${Build.MANUFACTURER} ${Build.MODEL}")
             })
             modules(viewModelModule)
+            modules(nftModule)
         }
     }
 }

@@ -28,6 +28,7 @@ class GoWallet {
         private val util = Util()
 
         private var lastRefreshSessionTime: Long = 0L
+        var sessionID: String = ""
 
         fun getUtil(goNoderUrl: String): Util {
             util.node = goNoderUrl
@@ -106,8 +107,8 @@ class GoWallet {
                 return
             }
             return try {
-                val ss = Walletapi.getSessionId(session, getUtil(UrlConfig.GO_URL))
-                Walletapi.setSessionID(ss)
+                sessionID = Walletapi.getSessionId(session, getUtil(UrlConfig.GO_URL))
+                Walletapi.setSessionID(sessionID)
                 lastRefreshSessionTime = System.currentTimeMillis()
             } catch (e: Exception) {
                 e.printStackTrace()

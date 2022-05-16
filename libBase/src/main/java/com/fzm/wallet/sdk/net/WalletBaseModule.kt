@@ -1,6 +1,5 @@
 package com.fzm.wallet.sdk.net
 
-import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.BWalletImpl
 import com.fzm.wallet.sdk.BuildConfig
 import com.fzm.wallet.sdk.api.Apis
@@ -100,8 +99,8 @@ fun Module.walletNetModule() {
     single(walletQualifier) { get<Retrofit>(walletQualifier).create(GoService::class.java) }
 
     single(walletQualifier) { OutRepository(get(walletQualifier)) }
-
     single(walletQualifier) { WalletRepository(get(walletQualifier)) }
+
 
 }
 
