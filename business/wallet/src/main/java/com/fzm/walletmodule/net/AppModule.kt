@@ -6,7 +6,7 @@ import com.fzm.walletmodule.vm.WalletViewModel
 import org.koin.dsl.module
 
 
-val viewModelModule = module {
+val walletModule = module {
     factory(walletQualifier) { OutViewModel(get(walletQualifier)) }
     factory(walletQualifier) { WalletViewModel(get(walletQualifier)) }
 }

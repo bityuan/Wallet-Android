@@ -1,6 +1,5 @@
 package com.fzm.nft
 
-import com.fzm.wallet.sdk.api.GoService
 import com.fzm.wallet.sdk.bean.toRequestBody
 import com.fzm.wallet.sdk.net.HttpResult
 import com.fzm.wallet.sdk.net.goCall
@@ -8,7 +7,7 @@ import com.fzm.wallet.sdk.utils.GoWallet
 import org.json.JSONObject
 import walletapi.Walletapi
 
-class NFTRepository constructor(private val goService: GoService) {
+class NFTRepository constructor(private val nftService: NFTService) {
     suspend fun getNFTBalance(
         cointype: String = Walletapi.TypeETHString,
         tokensymbol: String = "",
@@ -24,7 +23,7 @@ class NFTRepository constructor(private val goService: GoService) {
 
         return goCall {
             GoWallet.checkSessionID()
-            goService.getNFTBalance(
+            nftService.getNFTBalance(
                 GoWallet.sessionID,
                 toRequestBody(
                     "Wallet.Transport",

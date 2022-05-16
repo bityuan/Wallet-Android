@@ -1,17 +1,16 @@
 package com.fzm.walletdemo
 
 import android.app.Application
-import android.content.Context
 import android.os.Build
 import com.fzm.nft.nftModule
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.base.WalletModuleApp
-import com.fzm.walletmodule.net.viewModelModule
+import com.fzm.walletmodule.net.walletModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 
-class MyApplication : Application() {
+class IApplication : Application() {
 
     companion object {
         const val APP_SYMBOL = "open_wallet"
@@ -25,11 +24,11 @@ class MyApplication : Application() {
         BWallet.get().setUrls(BASE_URL,GO_URL)
         WalletModuleApp.init(this)
         startKoin {
-            androidContext(this@MyApplication)
+            androidContext(this@IApplication)
             modules(module {
-                BWallet.get().init(this@MyApplication, this, "86", APP_SYMBOL, "", APP_KEY, "${Build.MANUFACTURER} ${Build.MODEL}")
+                BWallet.get().init(this@IApplication, this, "86", APP_SYMBOL, "", APP_KEY, "${Build.MANUFACTURER} ${Build.MODEL}")
             })
-            modules(viewModelModule)
+            modules(walletModule)
             modules(nftModule)
         }
     }
