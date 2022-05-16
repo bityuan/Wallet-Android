@@ -1,4 +1,5 @@
 rootProject.name = "WalletDemo"
 include ':app'
-include ':WalletModule'
-include ':wallet-sdk'
+include ':business:wallet'
+include ':libBase'
+include ':business:nft'

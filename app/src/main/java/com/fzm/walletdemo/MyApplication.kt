@@ -3,7 +3,6 @@ package com.fzm.walletdemo
 import android.app.Application
 import android.content.Context
 import android.os.Build
-import androidx.multidex.MultiDex
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.base.WalletModuleApp
 import com.fzm.walletmodule.net.viewModelModule
@@ -31,10 +30,5 @@ class MyApplication : Application() {
             })
             modules(viewModelModule)
         }
-    }
-    override fun attachBaseContext(context: Context) {
-        super.attachBaseContext(context)
-        MultiDex.install(this)
-
     }
 }

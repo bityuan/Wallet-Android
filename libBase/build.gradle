@@ -1,0 +1,63 @@
+apply from: lib
+def cfg = rootProject.ext
+dependencies {
+
+
+    api cfg.library.corektx
+    api cfg.library.appcompat
+    api cfg.library.material
+    api cfg.library.constraintlayout
+    testImplementation  cfg.library.junit
+    androidTestImplementation cfg.library.junitext
+    androidTestImplementation cfg.library.espressocore
+
+    api cfg.arouter
+    api cfg.WalletApiAndroid
+    api cfg.litepal
+    api cfg.litepal
+    api cfg.gson
+    api cfg.mmkv
+    api cfg.anko
+    api cfg.okhttp
+    api cfg.retrofit
+    api cfg.koinScope
+    api cfg.koinViewmodel
+    api cfg.koinFragment
+    api cfg.koinExt
+    api cfg.converterGson
+    api cfg.logging
+    api cfg.fastjson
+    api cfg.coroutinesCore
+    api cfg.coroutinesAndroid
+    api cfg.urlManager
+    api cfg.baseAdapter
+    api cfg.aviLib
+    api cfg.finalLoadMore
+    api cfg.finalRefresh
+    api cfg.finalLoading
+    api cfg.listAdapter
+    api cfg.rvAdapter
+    api cfg.systembartint
+    api cfg.eventbus
+    api cfg.antifake
+    api cfg.glide
+    api cfg.runtime
+    api cfg.viewmodel
+    api cfg.zxingLite
+    api cfg.backgroundLibrary
+}
+
+//注意放置位置，复制此段代码稍加修改即可
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                //和你的仓库地址的反写一致，此处不会修改最终发布的组件依赖名
+                groupId = 'com.github.wallet'
+                //单组件时和你的仓库名一致，多组件时根据实际起自己的名字
+                artifactId = 'sdk'
+            }
+        }
+    }
+}

@@ -9,6 +9,7 @@ import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.alpha.EmptyWallet
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.walletdemo.fragment.NFTFragment
 import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.event.InitPasswordEvent
 import com.fzm.walletmodule.event.MainCloseEvent
@@ -26,7 +27,7 @@ import org.litepal.LitePal.count
 class MainActivity : BaseActivity() {
     private var homeFragment: WalletFragment? = null
     private var mWalletIndexFragment: WalletIndexFragment? = null
-    private var mExploreFragment: ExploreFragment? = null
+    private var mNFTFragment: NFTFragment? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         mCustomToobar = true
         setStatusColor(android.R.color.transparent)
@@ -130,7 +131,7 @@ class MainActivity : BaseActivity() {
                 }
             }
             1 -> {
-                showExploreFragment(fragmentTransaction)
+                showNFTFragment(fragmentTransaction)
             }
         }
 
@@ -143,8 +144,8 @@ class MainActivity : BaseActivity() {
         if (mWalletIndexFragment != null) {
             transaction.hide(mWalletIndexFragment!!)
         }
-        if (mExploreFragment != null) {
-            transaction.hide(mExploreFragment!!)
+        if (mNFTFragment != null) {
+            transaction.hide(mNFTFragment!!)
         }
     }
 
@@ -183,19 +184,19 @@ class MainActivity : BaseActivity() {
         fragmentTransaction.commitAllowingStateLoss()
     }
 
-    private fun showExploreFragment(fragmentTransaction: FragmentTransaction) {
-        if (mExploreFragment != null) {
-            fragmentTransaction.show(mExploreFragment!!)
+    private fun showNFTFragment(fragmentTransaction: FragmentTransaction) {
+        if (mNFTFragment != null) {
+            fragmentTransaction.show(mNFTFragment!!)
         } else {
-            if (mExploreFragment == null) {
-                mExploreFragment = ExploreFragment()
+            if (mNFTFragment == null) {
+                mNFTFragment = NFTFragment()
                 fragmentTransaction.add(
                     R.id.fl_tabcontent,
-                    mExploreFragment!!,
-                    "ExploreFragment"
+                    mNFTFragment!!,
+                    "NFTFragment"
                 )
             } else {
-                fragmentTransaction.show(mExploreFragment!!)
+                fragmentTransaction.show(mNFTFragment!!)
             }
         }
         fragmentTransaction.commitAllowingStateLoss()
