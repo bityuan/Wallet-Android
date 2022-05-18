@@ -4,11 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_list"
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:tabMode="auto" />
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/vp_home"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:nestedScrollingEnabled="false"
-        android:overScrollMode="never"
-        android:scrollbars="none"/>
+        android:layout_height="wrap_content" />
+
 </LinearLayout>

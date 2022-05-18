@@ -13,6 +13,7 @@ import com.fzm.wallet.sdk.net.UrlConfig
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.litepal.LitePal
 import org.litepal.LitePal.saveAll
 import walletapi.*
 import java.util.*
@@ -220,7 +221,8 @@ class GoWallet {
                     tokenSymbol = symbol
                     util = getUtil(UrlConfig.GO_URL)
                     extendInfo = ExtendInfo().apply {
-                        execer = if (coin.isBtyChild) "user.p.${coin.platform}.redpacket" else "redpacket"
+                        execer =
+                            if (coin.isBtyChild) "user.p.${coin.platform}.redpacket" else "redpacket"
                         assetExec = coin.assetExec
                         assetSymbol = coin.name
                     }
@@ -396,7 +398,16 @@ class GoWallet {
             chain: String, fromAddr: String, toAddr: String, amount: Double, fee: Double,
             note: String, tokensymbol: String
         ): String? {
-            return createTran(chain, fromAddr, toAddr, amount, fee, note, tokensymbol, UrlConfig.GO_URL!!)
+            return createTran(
+                chain,
+                fromAddr,
+                toAddr,
+                amount,
+                fee,
+                note,
+                tokensymbol,
+                UrlConfig.GO_URL!!
+            )
         }
 
 
@@ -646,11 +657,18 @@ class GoWallet {
                 return@withContext wallet
             }
         }
-    }
 
 
-    interface CoinListener {
-        fun onSuccess()
+        fun getChain(chain: String): Coin {
+            val chains = LitePal.where(
+                "pwallet_id=? and chain = ?",
+                "${BWallet.get().getCurrentWallet()?.id}",
+                chain
+            ).find(Coin::class.java)
+
+            return chains[0]
+        }
     }
+
 
 }

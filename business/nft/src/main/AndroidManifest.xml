@@ -2,4 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.fzm.nft">
 
+    <application>
+        <activity
+            android:name=".activity.NFTOutActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.NFTInActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.NFTTranActivity"
+            android:exported="false" />
+    </application>
+
 </manifest>

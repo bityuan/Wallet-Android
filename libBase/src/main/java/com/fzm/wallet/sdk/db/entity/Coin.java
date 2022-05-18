@@ -55,6 +55,15 @@ public class Coin extends BaseBean implements Comparable<Coin>{
     private String netId;
     private int sort;
     private boolean exchange = false;
+    private String contract_address;
+
+    public String getContract_address() {
+        return contract_address;
+    }
+
+    public void setContract_address(String contract_address) {
+        this.contract_address = contract_address;
+    }
 
     public boolean getExchange() {
         return exchange;

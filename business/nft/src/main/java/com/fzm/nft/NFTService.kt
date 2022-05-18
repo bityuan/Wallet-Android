@@ -19,4 +19,17 @@ interface NFTService {
         @Header("SessionId") sessionId: String,
         @Body body: RequestBody
     ): GoResponse<String>
+
+    //根据用户地址和nft合约地址查询账单
+    @Headers("$DOMAIN_NAME_HEADER$DOMAIN_URL_GO")
+    @POST(".")
+    suspend fun getNFTTran(
+        @Header("SessionId") sessionId: String,
+        @Body body: RequestBody
+    ): GoResponse<List<NftTran>>
+
+
+
+
+
 }

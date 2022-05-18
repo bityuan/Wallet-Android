@@ -71,20 +71,6 @@
                     tools:text="以太坊" />
 
                 <TextView
-                    android:id="@+id/tv_coin_state"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="7dp"
-                    android:padding="3dp"
-                    android:text="可交易"
-                    android:textColor="#328BCF"
-                    android:textSize="10sp"
-                    app:bl_corners_radius="2dp"
-                    app:bl_solid_color="#FFFFFF"
-                    app:bl_stroke_color="#328BCF"
-                    app:bl_stroke_width="1dp" />
-
-                <TextView
                     android:id="@+id/balance"
                     android:layout_width="0dp"
                     android:gravity="right"

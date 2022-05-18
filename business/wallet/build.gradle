@@ -2,7 +2,7 @@ apply from: lib
 def cfg = rootProject.ext
 dependencies {
     implementation project(':libBase')
-
+    kapt cfg.arouterCompiler
     testImplementation  cfg.library.junit
     androidTestImplementation cfg.library.junitext
     androidTestImplementation cfg.library.espressocore

@@ -1,5 +1,7 @@
 apply from: app
+def cfg = rootProject.ext
 dependencies {
+    kapt cfg.arouterCompiler
     implementation project(path: ':libBase')
     implementation project(path: ':business:wallet')
     implementation project(path: ':business:nft')

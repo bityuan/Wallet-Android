@@ -2,6 +2,7 @@ package com.fzm.walletdemo
 
 import android.app.Application
 import android.os.Build
+import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.nft.nftModule
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.base.WalletModuleApp
@@ -31,5 +32,8 @@ class IApplication : Application() {
             modules(walletModule)
             modules(nftModule)
         }
+        ARouter.openLog()
+        ARouter.openDebug()
+        ARouter.init(this)
     }
 }

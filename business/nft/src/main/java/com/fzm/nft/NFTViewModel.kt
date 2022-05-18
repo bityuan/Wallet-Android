@@ -10,20 +10,61 @@ import walletapi.Walletapi
 
 class NFTViewModel constructor(private val nftRepository: NFTRepository) : ViewModel() {
 
-    private val _getNFTBalance = MutableLiveData<HttpResult<String>>()
-    val getNFTBalance: LiveData<HttpResult<String>>
-        get() = _getNFTBalance
+
+    private val _getNFTValue = MutableLiveData<NftValue>()
+    val getNFTValue: LiveData<NftValue>
+        get() = _getNFTValue
+
+    private val _getNftTran = MutableLiveData<List<NftTran>>()
+    val getNftTran: LiveData<List<NftTran>>
+        get() = _getNftTran
 
     fun getNFTBalance(
+        position: Int,
         cointype: String = Walletapi.TypeETHString,
         tokensymbol: String = "",
         from: String,
         contractAddr: String
     ) {
         viewModelScope.launch {
-            _getNFTBalance.value =
-                nftRepository.getNFTBalance(cointype, tokensymbol, from, contractAddr)
+            val result = nftRepository.getNFTBalance(cointype, tokensymbol, from, contractAddr)
+            if (result.isSucceed()) {
+                result.data()?.let {
+                    _getNFTValue.value = NftValue(position, contractAddr, it)
+                }
+
+            }
+
         }
     }
 
+
+    fun getNFTTran(
+        cointype: String = Walletapi.TypeETHString,
+        tokensymbol: String = "",
+        contractAddr: String,
+        address: String,
+        index: Int,
+        count: Int,
+        direction: Int,
+        type: Int
+    ) {
+        viewModelScope.launch {
+            val result = nftRepository.getNFTTran(
+                cointype,
+                tokensymbol,
+                contractAddr,
+                address,
+                index,
+                count,
+                direction,
+                type
+            )
+            if (result.isSucceed()) {
+                result.data()?.let {
+                    _getNftTran.value = it
+                }
+            }
+        }
+    }
 }

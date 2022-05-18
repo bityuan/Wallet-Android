@@ -1,4 +1,4 @@
-package com.fzm.walletdemo
+package com.fzm.walletdemo.fragment
 
 
 import android.os.Bundle
@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.fzm.walletdemo.Explore
+import com.fzm.walletdemo.R
 import com.fzm.walletmodule.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_explore.*
 import kotlinx.android.synthetic.main.listitem_explore_vertical.view.*

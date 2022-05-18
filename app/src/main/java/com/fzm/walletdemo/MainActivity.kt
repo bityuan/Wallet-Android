@@ -9,7 +9,7 @@ import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.alpha.EmptyWallet
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
-import com.fzm.walletdemo.fragment.NFTFragment
+import com.fzm.walletdemo.fragment.HomeFragment
 import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.event.InitPasswordEvent
 import com.fzm.walletmodule.event.MainCloseEvent
@@ -25,9 +25,9 @@ import org.greenrobot.eventbus.ThreadMode
 import org.litepal.LitePal.count
 
 class MainActivity : BaseActivity() {
-    private var homeFragment: WalletFragment? = null
+    private var walletFragment: WalletFragment? = null
     private var mWalletIndexFragment: WalletIndexFragment? = null
-    private var mNFTFragment: NFTFragment? = null
+    private var mHomeFragment: HomeFragment? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         mCustomToobar = true
         setStatusColor(android.R.color.transparent)
@@ -45,15 +45,6 @@ class MainActivity : BaseActivity() {
             }
         }
     }
-
-    val DEFAULT_NFTS = listOf(
-        Coin().apply {
-            name = "老虎"
-            chain = "ETH"
-            platform = "ethereum"
-            netId = "725"
-        }
-    )
 
     val DEFAULT_COINS = listOf(
         Coin().apply {
@@ -131,36 +122,25 @@ class MainActivity : BaseActivity() {
                 }
             }
             1 -> {
-                showNFTFragment(fragmentTransaction)
+                showHomeFragment(fragmentTransaction)
             }
         }
 
     }
 
     private fun hideFragments(transaction: FragmentTransaction) {
-        if (homeFragment != null) {
-            transaction.hide(homeFragment!!)
-        }
-        if (mWalletIndexFragment != null) {
-            transaction.hide(mWalletIndexFragment!!)
-        }
-        if (mNFTFragment != null) {
-            transaction.hide(mNFTFragment!!)
-        }
+        walletFragment?.let { transaction.hide(it) }
+        mWalletIndexFragment?.let { transaction.hide(it) }
+        mHomeFragment?.let { transaction.hide(it) }
     }
 
 
     private fun showWalletFragment(fragmentTransaction: FragmentTransaction) {
-        if (homeFragment != null) {
-            fragmentTransaction.show(homeFragment!!)
+        if (walletFragment != null) {
+            fragmentTransaction.show(walletFragment!!)
         } else {
-
-            if (homeFragment == null) {
-                homeFragment = WalletFragment()
-                fragmentTransaction.add(R.id.fl_tabcontent, homeFragment!!, "homeFragment")
-            } else {
-                fragmentTransaction.show(homeFragment!!)
-            }
+            walletFragment = WalletFragment()
+            fragmentTransaction.add(R.id.fl_tabcontent, walletFragment!!, "walletFragment")
         }
         fragmentTransaction.commitAllowingStateLoss()
     }
@@ -170,34 +150,28 @@ class MainActivity : BaseActivity() {
         if (mWalletIndexFragment != null) {
             fragmentTransaction.show(mWalletIndexFragment!!)
         } else {
-            if (mWalletIndexFragment == null) {
-                mWalletIndexFragment = WalletIndexFragment()
-                fragmentTransaction.add(
-                    R.id.fl_tabcontent,
-                    mWalletIndexFragment!!,
-                    "WalletIndexFragment"
-                )
-            } else {
-                fragmentTransaction.show(mWalletIndexFragment!!)
-            }
+            mWalletIndexFragment = WalletIndexFragment()
+            fragmentTransaction.add(
+                R.id.fl_tabcontent,
+                mWalletIndexFragment!!,
+                "WalletIndexFragment"
+            )
+
         }
         fragmentTransaction.commitAllowingStateLoss()
     }
 
-    private fun showNFTFragment(fragmentTransaction: FragmentTransaction) {
-        if (mNFTFragment != null) {
-            fragmentTransaction.show(mNFTFragment!!)
+    private fun showHomeFragment(fragmentTransaction: FragmentTransaction) {
+        if (mHomeFragment != null) {
+            fragmentTransaction.show(mHomeFragment!!)
         } else {
-            if (mNFTFragment == null) {
-                mNFTFragment = NFTFragment()
-                fragmentTransaction.add(
-                    R.id.fl_tabcontent,
-                    mNFTFragment!!,
-                    "NFTFragment"
-                )
-            } else {
-                fragmentTransaction.show(mNFTFragment!!)
-            }
+            mHomeFragment = HomeFragment()
+            fragmentTransaction.add(
+                R.id.fl_tabcontent,
+                mHomeFragment!!,
+                "HomeFragment"
+            )
+
         }
         fragmentTransaction.commitAllowingStateLoss()
     }
