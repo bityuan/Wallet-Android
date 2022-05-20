@@ -19,6 +19,10 @@ class NFTViewModel constructor(private val nftRepository: NFTRepository) : ViewM
     val getNftTran: LiveData<List<NftTran>>
         get() = _getNftTran
 
+    private val _outNFT = MutableLiveData<String>()
+    val outNFT: LiveData<String>
+        get() = _outNFT
+
     fun getNFTBalance(
         position: Int,
         cointype: String = Walletapi.TypeETHString,
@@ -63,6 +67,24 @@ class NFTViewModel constructor(private val nftRepository: NFTRepository) : ViewM
             if (result.isSucceed()) {
                 result.data()?.let {
                     _getNftTran.value = it
+                }
+            }
+        }
+    }
+
+    fun outNFT(
+        cointype: String = Walletapi.TypeETHString,
+        tokenId: String,
+        contractAddr: String,
+        from: String,
+        to: String,
+        fee: Double
+    ) {
+        viewModelScope.launch {
+            val result = nftRepository.outNFT(cointype,tokenId,contractAddr,from,to,fee)
+            if(result.isSucceed()) {
+                result.data()?.let {
+                    _outNFT.value = it
                 }
             }
         }

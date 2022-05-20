@@ -1,7 +1,9 @@
 package com.fzm.nft.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -15,6 +17,8 @@ import com.fzm.nft.databinding.ActivityNfttranBinding
 import com.fzm.nft.fragment.NFTTranFragment
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.utils.StatusBarUtil
+import com.fzm.walletmodule.utils.ClipboardUtils
 import com.king.zxing.util.CodeUtils
 
 @Route(path = RouterPath.NFT_TRAN)
@@ -26,11 +30,28 @@ class NFTTranActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityNfttranBinding.inflate(layoutInflater) }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        doBar()
         ARouter.getInstance().inject(this)
         initView()
+    }
+
+    private fun doBar() {
+        setSupportActionBar(binding.xbar.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.xbar.toolbar.setNavigationOnClickListener { onBackPressed() }
+        val view = (findViewById<View>(android.R.id.content) as ViewGroup).getChildAt(0)
+        view.fitsSystemWindows = true
+        StatusBarUtil.StatusBarLightMode(this)
+    }
+
+    override fun onTitleChanged(title: CharSequence?, color: Int) {
+        super.onTitleChanged(title, color)
+        binding.xbar.toolbar.title = ""
+        binding.xbar.tvToolbar.text = title
     }
 
     private fun initView() {
@@ -52,13 +73,19 @@ class NFTTranActivity : AppCompatActivity() {
         }
 
         binding.btnTo.setOnClickListener {
-            ARouter.getInstance().build(RouterPath.NFT_OUT).withSerializable(RouterPath.PARAM_COIN, coin)
+            ARouter.getInstance().build(RouterPath.NFT_OUT)
+                .withSerializable(RouterPath.PARAM_COIN, coin)
                 .navigation()
 
         }
         binding.btnReceive.setOnClickListener {
-            ARouter.getInstance().build(RouterPath.NFT_IN).withSerializable(RouterPath.PARAM_COIN, coin)
+            ARouter.getInstance().build(RouterPath.NFT_IN)
+                .withSerializable(RouterPath.PARAM_COIN, coin)
                 .navigation()
+        }
+
+        binding.tvAddress.setOnClickListener {
+            ClipboardUtils.clip(this, coin?.address)
         }
 
     }

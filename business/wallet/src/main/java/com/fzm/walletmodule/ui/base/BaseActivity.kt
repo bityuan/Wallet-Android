@@ -23,7 +23,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.ui.widget.LoadingView
-import com.fzm.walletmodule.utils.StatusBarUtil
+import com.fzm.wallet.sdk.utils.StatusBarUtil
 import java.util.*
 
 abstract class BaseActivity : AppCompatActivity() {

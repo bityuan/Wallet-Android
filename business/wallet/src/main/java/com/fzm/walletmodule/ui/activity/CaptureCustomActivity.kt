@@ -10,6 +10,8 @@ import android.provider.MediaStore
 import android.text.TextUtils
 import android.view.MotionEvent
 import android.view.View
+import com.alibaba.android.arouter.facade.annotation.Route
+import com.fzm.wallet.sdk.RouterPath
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.event.CaptureEvent
 import com.fzm.walletmodule.manager.PermissionManager
@@ -24,7 +26,7 @@ import kotlinx.android.synthetic.main.activity_capture_custom.*
 import kotlinx.android.synthetic.main.include_scan.*
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.doAsync
-
+@Route(path = RouterPath.WALLET_CAPTURE)
 class CaptureCustomActivity : BaseActivity(), EasyPermissions.PermissionCallbacks,
     OnCaptureCallback {
     private var mRequstCode = -1

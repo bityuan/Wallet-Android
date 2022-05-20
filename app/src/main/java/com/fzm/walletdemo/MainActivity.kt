@@ -48,45 +48,15 @@ class MainActivity : BaseActivity() {
 
     val DEFAULT_COINS = listOf(
         Coin().apply {
-            name = "USDT"
-            chain = "BNB"
-            platform = "bnb"
-            netId = "694"
-        }, Coin().apply {
             name = "BTY"
             chain = "BTY"
             platform = "bty"
             netId = "154"
         }, Coin().apply {
-            name = "YCC"
-            chain = "BNB"
-            platform = "bnb"
-            netId = "695"
-        }, Coin().apply {
-            name = "BNB"
-            chain = "BNB"
-            platform = "bnb"
-            netId = "641"
-        }, Coin().apply {
-            name = "TRX"
-            chain = "TRX"
-            platform = "trx"
-            netId = "1"
-        }, Coin().apply {
-            name = "USDT"
-            chain = "TRX"
-            platform = "trx"
-            netId = "600"
-        }, Coin().apply {
             name = "ETH"
             chain = "ETH"
             platform = "ethereum"
             netId = "90"
-        }, Coin().apply {
-            name = "BTY"
-            chain = "BNB"
-            platform = "bnb"
-            netId = "705"
         }
     )
 

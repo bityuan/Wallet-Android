@@ -5,13 +5,19 @@
     <application>
         <activity
             android:name=".activity.NFTOutActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="转账"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.NFTInActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="收款"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.NFTTranActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="交易记录"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

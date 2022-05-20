@@ -26,8 +26,16 @@ data class WalletBean(
      * 2：普通钱包
      */
     val type: Int,
-): Serializable
+    /**
+     * 助记词
+     */
+    val mnem: String,
+    /**
+     * 密码
+     */
+    val password: String,
+) : Serializable
 
 internal fun PWallet.toWalletBean(): WalletBean {
-    return WalletBean(id, name, user, type)
+    return WalletBean(id, name, user, type, mnem, password)
 }

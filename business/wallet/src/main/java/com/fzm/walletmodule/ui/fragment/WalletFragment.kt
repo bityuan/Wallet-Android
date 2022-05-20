@@ -46,6 +46,7 @@ class WalletFragment : BaseFragment() {
     private var money: TextView? = null
 
     private var job: Job? = null
+    private var newPosition = false
 
     private val observer = LifecycleEventObserver { _, event ->
         if (event == Lifecycle.Event.ON_RESUME) {
@@ -53,7 +54,7 @@ class WalletFragment : BaseFragment() {
             job = lifecycleScope.launch {
                 BWallet.get().getCoinBalance(0, Constants.DELAYED_TIME, true)
                     .collect {
-                      //  Log.e("wallet","getCoinBalance")
+                        //  Log.e("wallet","getCoinBalance")
                         mCoinList.clear()
                         mCoinList.addAll(it)
                         //mCoinList.sort()
@@ -76,11 +77,16 @@ class WalletFragment : BaseFragment() {
             EventBus.getDefault().register(this)
         }
         initView()
-        initHeaderView()
+        configWallets()
         initData()
         initListener()
         viewLifecycleOwner.lifecycle.addObserver(observer)
+    }
 
+    override fun configWallets() {
+        super.configWallets()
+        rl_top.visibility = View.GONE
+        //initHeaderView()
     }
 
     override fun initView() {
@@ -89,10 +95,11 @@ class WalletFragment : BaseFragment() {
             WalletAdapter(requireActivity(), R.layout.view_item_coin_info, mCoinList, this)
         mWalletAdapter?.setOnItemClickListener(object : WalletAdapter.ItemClickListener {
             override fun OnItemClick(view: View?, position: Int) {
-                if (isFastClick()){
+                if (isFastClick()) {
                     return
                 }
-                val coinPosition = position - 1 //减去header
+                val coinPosition = if (newPosition) position - 1 else position //减去header
+
                 if (ListUtils.isEmpty(mCoinList) || coinPosition < 0 || coinPosition >= mCoinList.size) {
                     return
                 }
@@ -108,6 +115,7 @@ class WalletFragment : BaseFragment() {
     }
 
     private fun initHeaderView() {
+        newPosition = true
         val mHeaderView =
             LayoutInflater.from(activity).inflate(R.layout.view_header_wallet, null, false)
         more = mHeaderView.findViewById<ImageView>(R.id.more)
@@ -167,7 +175,7 @@ class WalletFragment : BaseFragment() {
             intent.setClass(requireActivity(), MyWalletsActivity::class.java)
             startActivity(intent)
         }
-        titleLayout.setOnClickListener {
+        rl_top.setOnClickListener {
             if (ClickUtils.isFastClick(1000)) {
                 recyclerView.smoothScrollToPosition(0)
             }
@@ -178,7 +186,6 @@ class WalletFragment : BaseFragment() {
 
         const val UPDATE_WALLET = 1000
     }
-
 
 
     //回调 - 添加币种

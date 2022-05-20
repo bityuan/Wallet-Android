@@ -23,7 +23,7 @@ object EmptyWallet : Wallet<Coin> {
     }
 
     override val walletInfo: WalletBean
-        get() = WalletBean(0L, "", "", 0)
+        get() = WalletBean(0L, "", "", 0,"","")
 
     override suspend fun changeWalletName(name: String): Boolean {
         return false

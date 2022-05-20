@@ -28,6 +28,14 @@ interface NFTService {
         @Body body: RequestBody
     ): GoResponse<List<NftTran>>
 
+    //NFT转账
+    @Headers("$DOMAIN_NAME_HEADER$DOMAIN_URL_GO")
+    @POST(".")
+    suspend fun outNFT(
+        @Header("SessionId") sessionId: String,
+        @Body body: RequestBody
+    ): GoResponse<String>
+
 
 
 

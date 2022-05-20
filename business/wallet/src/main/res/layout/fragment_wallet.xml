@@ -14,7 +14,8 @@
         android:background="@color/color_f8f8fa" />
 
     <RelativeLayout
-        android:id="@+id/titleLayout"
+        android:id="@+id/rl_top"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="44dp"
         android:background="@color/color_f8f8fa">

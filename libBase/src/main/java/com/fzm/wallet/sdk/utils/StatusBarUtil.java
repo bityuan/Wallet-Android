@@ -1,4 +1,4 @@
-package com.fzm.walletmodule.utils;
+package com.fzm.wallet.sdk.utils;
 
 import android.annotation.TargetApi;
 import android.app.Activity;

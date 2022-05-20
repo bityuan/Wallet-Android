@@ -45,15 +45,15 @@ class NFTRepository constructor(private val nftService: NFTService) {
         direction: Int,
         type: Int
     ): HttpResult<List<NftTran>> {
-        val jobj = JSONObject()
-        jobj.put("contractAddr", contractAddr)
-        jobj.put("address", address)
-        jobj.put("index", index)
-        jobj.put("count", count)
-        jobj.put("direction", direction)
-        jobj.put("type", type)
+        val payload = JSONObject()
+        payload.put("contractAddr", contractAddr)
+        payload.put("address", address)
+        payload.put("index", index)
+        payload.put("count", count)
+        payload.put("direction", direction)
+        payload.put("type", type)
         val rawdata = JSONObject()
-        rawdata.put("payload", jobj)
+        rawdata.put("payload", payload)
         rawdata.put("method", "NFT_QueryTxsByAddr")
 
         return goCall {
@@ -64,6 +64,37 @@ class NFTRepository constructor(private val nftService: NFTService) {
                     "Wallet.Transport",
                     "cointype" to cointype,
                     "tokensymbol" to tokensymbol,
+                    "rawdata" to rawdata
+                )
+            )
+        }
+    }
+
+    suspend fun outNFT(
+        cointype: String = Walletapi.TypeETHString,
+        tokenId: String,
+        contractAddr: String,
+        from: String,
+        to: String,
+        fee: Double
+    ): HttpResult<String> {
+        val payload = JSONObject()
+        payload.put("tokenId", tokenId)
+        payload.put("contractAddr", contractAddr)
+        payload.put("from", from)
+        payload.put("to", to)
+        payload.put("fee", fee)
+        val rawdata = JSONObject()
+        rawdata.put("payload", payload)
+        rawdata.put("method", "NFT_TransferFrom")
+
+        return goCall {
+            GoWallet.checkSessionID()
+            nftService.outNFT(
+                GoWallet.sessionID,
+                toRequestBody(
+                    "Wallet.Transport",
+                    "cointype" to cointype,
                     "rawdata" to rawdata
                 )
             )

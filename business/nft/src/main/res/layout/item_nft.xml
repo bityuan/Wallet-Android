@@ -1,56 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingLeft="18dp"
-    android:paddingTop="20dp"
-    android:paddingRight="18dp"
-    android:paddingBottom="20dp">
+    android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/iv_icon"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_centerVertical="true"
-        tools:src="@mipmap/coin_bty" />
 
-    <TextView
-        android:id="@+id/tv_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="83dp"
         android:layout_marginLeft="10dp"
-        android:layout_toRightOf="@+id/iv_icon"
-        android:textColor="#333333"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        tools:text="BTC" />
+        android:layout_marginRight="10dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:background="@mipmap/bg_home_item">
 
-    <TextView
-        android:id="@+id/tv_nickName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="4dp"
-        android:layout_toRightOf="@+id/tv_name"
-        android:textColor="#ff8e92a3"
-        android:textSize="12sp"
-        tools:text="以太坊" />
+        <ImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerVertical="true"
+            tools:src="@mipmap/coin_bty" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/iv_icon"
+            android:textColor="#333333"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="BTC" />
+
+        <TextView
+            android:id="@+id/tv_nickName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="4dp"
+            android:layout_toRightOf="@+id/tv_name"
+            android:textColor="#ff8e92a3"
+            android:textSize="12sp"
+            tools:text="以太坊" />
 
 
-    <TextView
-        android:id="@+id/tv_balance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:gravity="right"
-        android:textColor="#333333"
-        android:textSize="18sp"
-        tools:text="2.1000" />
+        <TextView
+            android:id="@+id/tv_balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:gravity="right"
+            android:textColor="#333333"
+            android:textSize="18sp"
+            tools:text="2.1000" />
 
-</RelativeLayout>
-
+    </RelativeLayout>
+</FrameLayout>
 

@@ -1,0 +1,13 @@
+<resources>
+
+    <style name="feeSeekbar">
+        <item name="android:maxHeight">10dp</item>
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:indeterminateDrawable">@color/color_first</item>
+        <item name="android:progressDrawable">@drawable/shape_seekbar</item>
+        <item name="android:minHeight">10dp</item>
+        <item name="android:thumb">@drawable/shape_bar</item>
+    </style>
+
+
+</resources>

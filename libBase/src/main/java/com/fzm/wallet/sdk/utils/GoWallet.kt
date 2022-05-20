@@ -429,6 +429,17 @@ class GoWallet {
             }
             return null
         }
+        fun signTran(chain: String, unSignData: ByteArray, priv: String): String? {
+            try {
+                val signRawTransaction =
+                    Walletapi.signRawTransaction(chain, unSignData, priv)
+                Log.v("tag", "签名交易: $signRawTransaction")
+                return signRawTransaction
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+            }
+            return null
+        }
 
         /**
          * 发送交易
@@ -668,6 +679,7 @@ class GoWallet {
 
             return chains[0]
         }
+
     }
 
 
