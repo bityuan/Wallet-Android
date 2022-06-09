@@ -7,16 +7,21 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.nft.NFTViewModel
 import com.fzm.nft.NftTran
 import com.fzm.nft.adapter.NFTAdapter
 import com.fzm.nft.adapter.NFTTranAdapter
 import com.fzm.nft.databinding.FragmentNftTranBinding
+import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.RouterPath.PARAM_NFT_TRAN
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.walletQualifier
+import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.ui.fragment.TransactionFragment
 import org.jetbrains.anko.support.v4.onRefresh
 import org.koin.android.ext.android.inject
+import walletapi.HDWallet
 import walletapi.Walletapi
 
 class NFTTranFragment : Fragment() {
@@ -56,6 +61,7 @@ class NFTTranFragment : Fragment() {
         binding.rvList.adapter = adapter
         adapter.setOnItemClickListener {
             val tran = list[it]
+            ARouter.getInstance().build(RouterPath.NFT_TRAN_DETAIL).withSerializable(PARAM_NFT_TRAN,tran).navigation()
         }
     }
 

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
@@ -13,6 +14,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.net.walletQualifier
+import com.fzm.wallet.sdk.utils.GoWallet
+import com.fzm.wallet.sdk.utils.tokenSymbol
 import com.fzm.wallet.sdk.utils.totalAsset
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.adapter.WalletAdapter
@@ -21,6 +25,8 @@ import com.fzm.walletmodule.event.*
 import com.fzm.walletmodule.ui.activity.*
 import com.fzm.walletmodule.ui.base.BaseFragment
 import com.fzm.walletmodule.utils.*
+import com.fzm.walletmodule.vm.ParamViewModel
+import com.fzm.walletmodule.vm.WalletViewModel
 import kotlinx.android.synthetic.main.fragment_wallet.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
@@ -30,7 +36,9 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.support.v4.startActivity
+import org.jetbrains.anko.support.v4.toast
 import org.jetbrains.anko.uiThread
+import org.koin.android.ext.android.inject
 import org.litepal.LitePal.where
 import java.lang.String
 import java.util.*
@@ -48,6 +56,8 @@ class WalletFragment : BaseFragment() {
     private var job: Job? = null
     private var newPosition = false
 
+    private val paramViewModel by activityViewModels<ParamViewModel>()
+
     private val observer = LifecycleEventObserver { _, event ->
         if (event == Lifecycle.Event.ON_RESUME) {
             // FIXME: 最好使用lifecycle2.4.0提供的repeatOnLifecycle方法
@@ -59,7 +69,9 @@ class WalletFragment : BaseFragment() {
                         mCoinList.addAll(it)
                         //mCoinList.sort()
                         mWalletAdapter?.notifyDataSetChanged()
-                        money?.text = DecimalUtils.subWithNum(it.sumOf { c -> c.totalAsset }, 2)
+                        val moneys = DecimalUtils.subWithNum(it.sumOf { c -> c.totalAsset }, 2)
+                        money?.text = moneys
+                        paramViewModel.walletMoney.value = moneys
                     }
             }
         } else if (event == Lifecycle.Event.ON_PAUSE) {
@@ -104,9 +116,11 @@ class WalletFragment : BaseFragment() {
                     return
                 }
                 val coin: Coin = mCoinList[coinPosition]
-                val `in` = Intent(activity, TransactionsActivity::class.java)
-                `in`.putExtra(Coin::class.java.simpleName, coin)
-                startActivity(`in`)
+                val intent = Intent(activity, TransactionsActivity::class.java)
+                val coinToken = GoWallet.newCoinType(coin.chain, coin.tokenSymbol)
+                coin.chain = coinToken.cointype
+                intent.putExtra(Coin::class.java.simpleName, coin)
+                startActivity(intent)
             }
 
             override fun OnLongItemClick(view: View?, position: Int) {}
@@ -129,6 +143,7 @@ class WalletFragment : BaseFragment() {
         lifecycleScope.launchWhenResumed {
             BWallet.get().current.collect {
                 name?.text = it.walletInfo.name
+                paramViewModel.walletName.value = it.walletInfo.name
             }
         }
     }

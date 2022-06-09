@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rotate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fromDegrees="0"
+    android:pivotX="50%"
+    android:pivotY="50%"
+    android:toDegrees="360">
+
+<!--    下列属性只在android:shape=”ring”时使用：
+    android:innerRadiux
+    尺寸值，它用尺寸值或尺寸资源指定圆环内圆的半径（指中间的圆孔的半径）。
+    android:innerRadiusRatio
+    浮点值，它用圆环宽度（即外圆的直径）的占比来表示内圆的半径。例如，如果android:innerRadiusRatio=”5”，那么内圆半径就等于圆环宽度除以5。这个值会被android:innerRadius的值覆盖。默认是9。
+    android:thickness
+    尺寸值，它用一个尺寸值或尺寸资源来定义圆环的厚度（即外圆与内圆之间的宽度）。
+    android:thicknessRatio
+    浮点值。它用圆环宽度的占比来表示圆环的厚度。例如，如果android:thicknessRatio=”2”，那么厚度就等于圆环的宽度除以2。这个值会被android:innerRadius覆盖。默认值是3。也就是说这个值设置的越大圆环就越细了。
+    注意：一般在布局中设定了ProgressBar的宽高，所以这里定义形状时使用占比属性innerRaiusRatio和thicknessRatio来定义圆环内圆半径和圆环厚度！
+    android:useLevel-->
+
+
+
+    <shape
+        android:innerRadiusRatio="3"
+        android:shape="ring"
+        android:thicknessRatio="10"
+        android:useLevel="false">
+
+        <gradient
+            android:centerColor="#FFFFFF"
+            android:centerY="0.50"
+            android:endColor="#FFFF00"
+            android:startColor="#00FFFF"
+            android:type="sweep"
+            android:useLevel="false" />
+    </shape>
+</rotate>

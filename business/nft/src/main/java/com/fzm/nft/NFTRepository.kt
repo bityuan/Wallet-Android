@@ -101,5 +101,30 @@ class NFTRepository constructor(private val nftService: NFTService) {
         }
     }
 
+    suspend fun getNFTList(
+        cointype: String = Walletapi.TypeETHString,
+        contractAddr: String,
+        from: String,
+    ): HttpResult<List<String>> {
+        val payload = JSONObject()
+        payload.put("contractAddr", contractAddr)
+        payload.put("from", from)
+        val rawdata = JSONObject()
+        rawdata.put("payload", payload)
+        rawdata.put("method", "NFT_TokenIdList")
+
+        return goCall {
+            GoWallet.checkSessionID()
+            nftService.getNFTList(
+                GoWallet.sessionID,
+                toRequestBody(
+                    "Wallet.Transport",
+                    "cointype" to cointype,
+                    "rawdata" to rawdata
+                )
+            )
+        }
+    }
+
 
 }

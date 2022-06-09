@@ -56,12 +56,14 @@
                 android:paddingBottom="15dp">
 
                 <TextView
+                    android:id="@+id/tv_choose_nftid"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="选择编号" />
 
                 <TextView
+                    android:id="@+id/tv_balance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="余额：100" />
@@ -82,6 +84,7 @@
                     android:text="矿工费" />
 
                 <TextView
+                    android:id="@+id/tv_fee"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0.001bty≈￥0.02" />

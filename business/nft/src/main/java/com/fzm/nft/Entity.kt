@@ -1,5 +1,7 @@
 package com.fzm.nft
 
+import java.io.Serializable
+
 data class NftValue(
     val position: Int,
     val contractAddr: String,
@@ -17,4 +19,4 @@ data class NftTran(
     val tokenid: String,
     val txid: String,
     val value: String
-)
+) : Serializable

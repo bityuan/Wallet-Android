@@ -48,6 +48,12 @@ class MainActivity : BaseActivity() {
 
     val DEFAULT_COINS = listOf(
         Coin().apply {
+            name = "BTC"
+            chain = "BTC"
+            platform = "btc"
+            netId = "89"
+        },
+        Coin().apply {
             name = "BTY"
             chain = "BTY"
             platform = "bty"
@@ -57,7 +63,18 @@ class MainActivity : BaseActivity() {
             chain = "ETH"
             platform = "ethereum"
             netId = "90"
+        },Coin().apply {
+            name = "YCC"
+            chain = "BTC"
+            platform = "btc"
+            netId = "727"
+        },Coin().apply {
+            name = "YCC"
+            chain = "ETH"
+            platform = "ethereum"
+            netId = "155"
         }
+
     )
 
     override fun initView() {
@@ -86,13 +103,13 @@ class MainActivity : BaseActivity() {
             0 -> {
                 val count: Int = count(PWallet::class.java)
                 if (count > 0) {
-                    showWalletFragment(fragmentTransaction)
+                    showHomeFragment(fragmentTransaction)
                 } else {
                     showWalletIndexFragment(fragmentTransaction)
                 }
             }
             1 -> {
-                showHomeFragment(fragmentTransaction)
+                //showWalletFragment(fragmentTransaction)
             }
         }
 

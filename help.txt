@@ -1,0 +1,5 @@
+   /*
+        operatorfunBigDecimal.plus(a:BigDecimal)=this.add(a)
+        operatorfunBigDecimal.minus(a:BigDecimal)=this.subtract(a)
+        operatorfunBigDecimal.times(a:BigDecimal)=this.multiply(a)
+        operatorfunBigDecimal.div(a:BigDecimal)=this.divide(a)*/

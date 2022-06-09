@@ -20,6 +20,8 @@ import java.util.*
 
 class GoWallet {
     companion object {
+        const val testContractAddr = "0x9A534628B4062E123cE7Ee2222ec20B86e16Ca8F"
+        const val testEthAddr = "0x9a534628b4062e123ce7ee2222ec20b86e16ca8f"
         const val BTY = "BTY"
         const val PLATFORM_BTY = "bty"
         const val APPSYMBOL_P = "p"
@@ -134,9 +136,10 @@ class GoWallet {
             try {
                 checkSessionID()
                 val balance = WalletBalance()
-                balance.cointype = chain
+                val coinToken = newCoinType(chain,tokenSymbol)
+                balance.cointype = coinToken.cointype
                 balance.address = addresss
-                balance.tokenSymbol = if (chain == tokenSymbol) "" else tokenSymbol
+                balance.tokenSymbol = coinToken.tokenSymbol
                 balance.util = getUtil(goNoderUrl)
                 val getbalance = Walletapi.getbalance(balance)
                 return Walletapi.byteTostring(getbalance)
@@ -420,8 +423,12 @@ class GoWallet {
          */
         fun signTran(chain: String, unSignData: String, priv: String): String? {
             try {
+                val signData = SignData()
+                signData.cointype = chain
+                signData.data = Walletapi.stringTobyte(unSignData)
+                signData.privKey = priv
                 val signRawTransaction =
-                    Walletapi.signRawTransaction(chain, Walletapi.stringTobyte(unSignData), priv)
+                    Walletapi.signRawTransaction(signData)
                 Log.v("tag", "签名交易: $signRawTransaction")
                 return signRawTransaction
             } catch (e: java.lang.Exception) {
@@ -429,10 +436,33 @@ class GoWallet {
             }
             return null
         }
+        fun signTran(chain: String, unSignData: String, priv: String,  addressId:Int): String? {
+            try {
+                val signData = SignData()
+                signData.cointype = chain
+                signData.data = Walletapi.stringTobyte(unSignData)
+                signData.privKey = priv
+                if (addressId != -1) {
+                    signData.addressID = addressId
+                }
+                val signRawTransaction =
+                    Walletapi.signRawTransaction(signData)
+                Log.v("tag", "签名交易: $signRawTransaction")
+                return signRawTransaction
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+            }
+            return null
+        }
+
         fun signTran(chain: String, unSignData: ByteArray, priv: String): String? {
             try {
+                val signData = SignData()
+                signData.cointype = chain
+                signData.data = unSignData
+                signData.privKey = priv
                 val signRawTransaction =
-                    Walletapi.signRawTransaction(chain, unSignData, priv)
+                    Walletapi.signRawTransaction(signData)
                 Log.v("tag", "签名交易: $signRawTransaction")
                 return signRawTransaction
             } catch (e: java.lang.Exception) {
@@ -678,6 +708,23 @@ class GoWallet {
             ).find(Coin::class.java)
 
             return chains[0]
+        }
+
+        fun newCoinType(cointype: String, tokenSymbol: String): CoinToken {
+            val coinToken = CoinToken()
+            if (tokenSymbol == Walletapi.TypeYccString && (cointype == "BTC" || cointype == "ETH")) {
+                coinToken.cointype = "YCC"
+                coinToken.tokenSymbol = ""
+            } else {
+                coinToken.cointype = cointype
+                coinToken.tokenSymbol = if (cointype == tokenSymbol) "" else tokenSymbol
+            }
+            return coinToken
+        }
+
+        class CoinToken {
+            var cointype: String = ""
+            var tokenSymbol: String = ""
         }
 
     }

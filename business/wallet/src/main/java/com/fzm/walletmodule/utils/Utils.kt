@@ -2,6 +2,7 @@ package com.fzm.walletmodule.utils
 
 import org.json.JSONException
 import org.json.JSONObject
+import walletapi.Walletapi
 
 private var lastClickTime: Long = 0
 private var count: Long = 0
@@ -62,11 +63,6 @@ fun mapToJson(vararg params: Pair<String, Any?>): String {
     return param.toString()
 }
 
-/*
-fun mapOftoJson(vararg pairs: Pair<String, Any?>): String {
-    val map = mapOf(pairs)
-    return Gson().toJson(map)
 
-      val map = mapOf("error" to str,"" to "")
-        handler.complete(Gson().toJson(map))
-}*/
+
+

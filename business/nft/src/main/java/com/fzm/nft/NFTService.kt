@@ -36,6 +36,14 @@ interface NFTService {
         @Body body: RequestBody
     ): GoResponse<String>
 
+    //查询NFT列表
+    @Headers("$DOMAIN_NAME_HEADER$DOMAIN_URL_GO")
+    @POST(".")
+    suspend fun getNFTList(
+        @Header("SessionId") sessionId: String,
+        @Body body: RequestBody
+    ): GoResponse<List<String>>
+
 
 
 

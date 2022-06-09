@@ -4,6 +4,9 @@
 
     <application>
         <activity
+            android:name=".activity.NFTTranDetailsActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.NFTOutActivity"
             android:exported="false"
             android:label="转账"

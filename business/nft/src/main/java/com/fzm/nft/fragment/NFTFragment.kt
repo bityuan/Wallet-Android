@@ -48,7 +48,7 @@ class NFTFragment : Fragment() {
 
     private fun initView() {
         binding.swipeList.onRefresh {
-            walletViewModel.getCoinList(listOf("老虎,ethereum", "长颈鹿,ethereum"))
+            walletViewModel.getCoinList(listOf("MEKA,ethereum"))
         }
         context?.let {
             nftAdapter = NFTAdapter(it, list)
@@ -82,11 +82,12 @@ class NFTFragment : Fragment() {
 
                     for (i in list.indices) {
                         list[i].address = eth.address
+                        list[i].address = GoWallet.testEthAddr
                         nftViewModel.getNFTBalance(
                             i,
                             Walletapi.TypeETHString,
                             "",
-                            eth.address,
+                            list[i].address,
                             list[i].contract_address
                         )
                     }
@@ -98,6 +99,6 @@ class NFTFragment : Fragment() {
     }
 
     private fun initData() {
-        walletViewModel.getCoinList(listOf("老虎,ethereum", "长颈鹿,ethereum"))
+        walletViewModel.getCoinList(listOf("MEKA,ethereum"))
     }
 }

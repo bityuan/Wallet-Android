@@ -1,10 +1,12 @@
 package com.fzm.nft.activity
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -17,21 +19,25 @@ import com.fzm.nft.databinding.ActivityNftoutBinding
 import com.fzm.nft.databinding.DialogPwdBinding
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.UrlConfig
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.StatusBarUtil
 import com.fzm.walletmodule.event.CaptureEvent
-import com.fzm.walletmodule.ui.widget.configWindow
+import com.fzm.walletmodule.utils.DecimalUtils
+import com.fzm.walletmodule.vm.OutViewModel
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
-import walletapi.HDWallet
 import walletapi.Walletapi
+import java.math.RoundingMode
+import java.text.DecimalFormat
+import kotlin.math.pow
 
 
 @Route(path = RouterPath.NFT_OUT)
@@ -39,6 +45,10 @@ class NFTOutActivity : AppCompatActivity() {
     private val binding by lazy { ActivityNftoutBinding.inflate(layoutInflater) }
     private val nftViewModel: NFTViewModel by inject(walletQualifier)
     private lateinit var privkey: String
+    private var nftListDialog: AlertDialog? = null
+    private var tokenID: String = ""
+    private val outViewModel: OutViewModel by inject(walletQualifier)
+    private val eth by lazy { GoWallet.getChain(Walletapi.TypeETHString) }
 
     private val loading by lazy {
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_loading, null)
@@ -58,7 +68,7 @@ class NFTOutActivity : AppCompatActivity() {
         doBar()
         initObserver()
         coin?.let {
-
+            binding.tvBalance.text = " 余额：${it.balance}"
         }
 
         binding.ivScan.setOnClickListener {
@@ -68,6 +78,33 @@ class NFTOutActivity : AppCompatActivity() {
         binding.btnOk.setOnClickListener {
             showPwdDialog()
         }
+
+        binding.tvChooseNftid.setOnClickListener {
+            coin?.let {
+                nftViewModel.getNFTList(it.contract_address, it.address)
+            }
+        }
+
+        outViewModel.getMiner(Walletapi.TypeETHString)
+        binding.seekbarFee.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val value: Double = progress.plus(min).div(100000000.00)
+                val rmb = eth.rmb.times(value)
+                val format = DecimalFormat("0.##")
+                //未保留小数的舍弃规则，RoundingMode.FLOOR表示直接舍弃。
+                format.roundingMode = RoundingMode.FLOOR
+                binding.tvFee.text = "$value ETH ≈ ￥${format.format(rmb)}"
+
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+
+        })
+
     }
 
     private fun doBar() {
@@ -79,23 +116,55 @@ class NFTOutActivity : AppCompatActivity() {
         StatusBarUtil.StatusBarLightMode(this)
     }
 
-    private fun initObserver() {
-        nftViewModel.outNFT.observe(this, Observer {
-            toast(it)
 
+    private var min = 0
+    private fun initObserver() {
+        outViewModel.getMiner.observe(this, Observer {
+            if (it.isSucceed()) {
+                it.data()?.let { miner: Miner ->
+                    val max = miner.high.toDouble().times(100000000).toInt()
+                    min = miner.low.toDouble().times(100000000).toInt()
+                    val maxValue = max.minus(min)
+                    binding.seekbarFee.max = maxValue
+                    binding.seekbarFee.progress = maxValue.div(2)
+
+                }
+
+            } else {
+                it.error()
+            }
+        })
+        nftViewModel.outNFT.observe(this, Observer { createHash: String ->
             val sign = GoWallet.signTran(
                 Walletapi.TypeETHString,
-                Walletapi.hexTobyte(it),
+                Walletapi.hexTobyte(createHash),
                 privkey
             )
-            sign?.let {
-                val send = GoWallet.sendTran(Walletapi.TypeETHString, it, "", UrlConfig.GO_URL)
+            sign?.let { signHash ->
+                val send =
+                    GoWallet.sendTran(Walletapi.TypeETHString, signHash, "", UrlConfig.GO_URL)
                 Log.v("nft", "send = $send")
                 toast("操作成功" + send)
                 loading.dismiss()
                 finish()
             }
 
+        })
+
+
+        nftViewModel.getNFTList.observe(this, Observer {
+            val items = it.toTypedArray()
+            if (nftListDialog == null) {
+                nftListDialog = AlertDialog.Builder(this)
+                    .setItems(items, object : DialogInterface.OnClickListener {
+                        override fun onClick(dialog: DialogInterface?, which: Int) {
+                            tokenID = items[which]
+                            binding.tvChooseNftid.text = "选择编号：$tokenID"
+                        }
+
+                    }).create()
+            }
+            nftListDialog?.show()
         })
     }
 
@@ -145,7 +214,7 @@ class NFTOutActivity : AppCompatActivity() {
                     coin?.let {
                         nftViewModel.outNFT(
                             Walletapi.TypeETHString,
-                            "1",
+                            tokenID,
                             it.contract_address,
                             address,
                             binding.etAddress.text.toString(),

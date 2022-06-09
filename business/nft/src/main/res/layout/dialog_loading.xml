@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ProgressBar xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@android:style/Widget.ProgressBar"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center" />
+    android:layout_gravity="center"
+    android:indeterminateDuration="1000"
+    android:indeterminateDrawable="@drawable/shape_progressbar" />
+
+    <!--
+    android:max：进度条的最大值。
+
+        android:progress：进度条已完成进度值。
+
+        android:progressDrawable：设置轨道对应的Drawable对象。
+
+        android:indeterminate：该属性一般在进度条为横向情况（Widget.ProgressBar.Horizontal）下才设置，因为圆形进度条本身就是模糊模式。true - 启用模糊模式
+        false - 禁用模糊模式
+        android:indeterminateDrawable：设置模糊状态下ProgressBar的Drawable资源，该Drawable资源是一个带动画的资源文件，例如旋转动画<rotate>。在ProgressBar的自定义章节中，我们会对该属性进行更详细的说明。
+
+        android:indeterminateDuration：旋转速度,设置模糊状态下ProgressBar一个周期动画的持续时间，该属性值必须是整型。在【ProgressBar的自定义】中，我们会对该属性进行更详细的说明。
+
+        android:secondaryProgress：二级进度条，类似于视频播放的一条是当前播放进度，一条是缓冲进度。
+        getMax()：返回这个进度条的范围的上限。
+
+        -->
 
