@@ -15,7 +15,7 @@ dependencies {
 
 
 //注意放置位置，复制此段代码稍加修改即可
-/*afterEvaluate {
+afterEvaluate {
     publishing {
         publications {
             release(MavenPublication) {
@@ -27,7 +27,7 @@ dependencies {
             }
         }
     }
-}*/
+}
 
 
 

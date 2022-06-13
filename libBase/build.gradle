@@ -1,7 +1,6 @@
 apply from: lib
 def cfg = rootProject.ext
 dependencies {
-    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     api cfg.library.corektx
     api cfg.library.appcompat
     api cfg.library.material
@@ -49,7 +48,7 @@ dependencies {
 }
 
 //注意放置位置，复制此段代码稍加修改即可
-/*afterEvaluate {
+afterEvaluate {
     publishing {
         publications {
             release(MavenPublication) {
@@ -61,4 +60,4 @@ dependencies {
             }
         }
     }
-}*/
+}
