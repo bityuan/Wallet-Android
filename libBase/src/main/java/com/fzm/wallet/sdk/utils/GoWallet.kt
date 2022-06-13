@@ -304,7 +304,7 @@ class GoWallet {
             page: Long,
             count: Long
         ): String? {
-            return getTranList(addr, chain, tokenSymbol, type, page, count, UrlConfig.GO_URL!!)
+            return getTranList(addr, chain, tokenSymbol, type, page, count, UrlConfig.GO_URL)
         }
 
         /**
@@ -409,7 +409,7 @@ class GoWallet {
                 fee,
                 note,
                 tokensymbol,
-                UrlConfig.GO_URL!!
+                UrlConfig.GO_URL
             )
         }
 
@@ -510,7 +510,7 @@ class GoWallet {
          * @return String?
          */
         fun sendTran(chain: String, signData: String, tokenSymbol: String): String? {
-            return sendTran(chain, signData, tokenSymbol, UrlConfig.GO_URL!!)
+            return sendTran(chain, signData, tokenSymbol, UrlConfig.GO_URL)
         }
 
         /**
@@ -644,10 +644,10 @@ class GoWallet {
             return Walletapi.byteTohex(b)
         }
 
-        fun deleteMulAddress(appId: String, appSymbol: String, mulAddress: String): Boolean? {
+        fun deleteMulAddress(appId: String, appSymbol: String, mulAddress: String): Boolean {
             checkSessionID()
             val mulAddr = WalletMulAddr()
-            mulAddr.util = getUtil(UrlConfig.GO_URL!!)
+            mulAddr.util = getUtil(UrlConfig.GO_URL)
             mulAddr.appid = appId
             mulAddr.appSymbol = appSymbol
             mulAddr.mulAddr = mulAddress
@@ -658,7 +658,7 @@ class GoWallet {
         fun imortMulAddress(appId: String, appSymbol: String, mulAddress: String): Boolean? {
             checkSessionID()
             val mulAddr = WalletMulAddr()
-            mulAddr.util = getUtil(UrlConfig.GO_URL!!)
+            mulAddr.util = getUtil(UrlConfig.GO_URL)
             mulAddr.appid = appId
             mulAddr.appSymbol = appSymbol
             mulAddr.mulAddr = mulAddress
