@@ -17,7 +17,6 @@ class IApplication : Application() {
     companion object {
         const val APP_SYMBOL = "open_wallet"
         const val APP_KEY = "0425823a38b591b104ca0c3fcf1f3d9d"
-        //const val BASE_URL = "https://wiki.bitfeel.cn"
         const val BASE_URL = "http://8.218.140.119:8082"
         const val GO_URL = "https://8.218.140.119:8083"
     }
