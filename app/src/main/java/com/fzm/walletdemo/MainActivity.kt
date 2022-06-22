@@ -9,6 +9,7 @@ import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.alpha.EmptyWallet
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.walletdemo.fragment.ExploreFragment
 import com.fzm.walletdemo.fragment.HomeFragment
 import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.event.InitPasswordEvent
@@ -26,6 +27,7 @@ import org.litepal.LitePal.count
 
 class MainActivity : BaseActivity() {
     private var walletFragment: WalletFragment? = null
+    private var exploreFragment: ExploreFragment? = null
     private var mWalletIndexFragment: WalletIndexFragment? = null
     private var mHomeFragment: HomeFragment? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -110,6 +112,7 @@ class MainActivity : BaseActivity() {
             }
             1 -> {
                 //showWalletFragment(fragmentTransaction)
+                showExploreFragment(fragmentTransaction)
             }
         }
 
@@ -119,6 +122,7 @@ class MainActivity : BaseActivity() {
         walletFragment?.let { transaction.hide(it) }
         mWalletIndexFragment?.let { transaction.hide(it) }
         mHomeFragment?.let { transaction.hide(it) }
+        exploreFragment?.let { transaction.hide(it) }
     }
 
 
@@ -156,6 +160,20 @@ class MainActivity : BaseActivity() {
             fragmentTransaction.add(
                 R.id.fl_tabcontent,
                 mHomeFragment!!,
+                "HomeFragment"
+            )
+
+        }
+        fragmentTransaction.commitAllowingStateLoss()
+    }
+    private fun showExploreFragment(fragmentTransaction: FragmentTransaction) {
+        if (exploreFragment != null) {
+            fragmentTransaction.show(exploreFragment!!)
+        } else {
+            exploreFragment = ExploreFragment()
+            fragmentTransaction.add(
+                R.id.fl_tabcontent,
+                exploreFragment!!,
                 "HomeFragment"
             )
 

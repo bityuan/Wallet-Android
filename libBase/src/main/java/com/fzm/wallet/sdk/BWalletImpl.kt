@@ -6,6 +6,7 @@ import com.fzm.wallet.sdk.alpha.EmptyWallet
 import com.fzm.wallet.sdk.alpha.NormalWallet
 import com.fzm.wallet.sdk.alpha.Wallet
 import com.fzm.wallet.sdk.base.FZM_PLATFORM_ID
+import com.fzm.wallet.sdk.bean.ExploreBean
 import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
@@ -279,6 +280,9 @@ internal class BWalletImpl : BWallet {
 
     override suspend fun getBrowserUrl(platform: String): String {
         return walletRepository.getBrowserUrl(platform).dataOrNull()?.brower_url ?: ""
+    }
+    override suspend fun getExploreList(): List<ExploreBean> {
+        return walletRepository.getExploreList().dataOrNull()?: emptyList()
     }
 
     override suspend fun getChainAssets(): List<AddCoinTabBean> {

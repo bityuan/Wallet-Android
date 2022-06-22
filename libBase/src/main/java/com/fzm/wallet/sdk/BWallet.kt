@@ -2,6 +2,7 @@ package com.fzm.wallet.sdk
 
 import android.content.Context
 import com.fzm.wallet.sdk.alpha.Wallet
+import com.fzm.wallet.sdk.bean.ExploreBean
 import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
@@ -198,6 +199,10 @@ interface BWallet {
      * @param platform  平台码（平行链）
      */
     suspend fun getBrowserUrl(platform: String): String
+
+    suspend fun getExploreList(): List<ExploreBean>
+
+
 
     /**
      * 获取各主链的币种

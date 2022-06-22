@@ -1,71 +1,118 @@
 package com.fzm.walletdemo.fragment
 
-
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.fzm.walletdemo.Explore
+import com.alibaba.android.arouter.launcher.ARouter
+import com.bumptech.glide.Glide
+import com.fzm.wallet.sdk.BWallet
+import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.bean.ExploreBean
 import com.fzm.walletdemo.R
-import com.fzm.walletmodule.ui.base.BaseFragment
+import com.fzm.walletdemo.databinding.FragmentExploreBinding
+import com.fzm.walletdemo.databinding.ItemExploreBinding
 import kotlinx.android.synthetic.main.fragment_explore.*
-import kotlinx.android.synthetic.main.listitem_explore_vertical.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
+class ExploreFragment : Fragment() {
+    private lateinit var binding: FragmentExploreBinding
+    private val exList = mutableListOf<ExploreBean.AppsBean>()
+    private lateinit var adapter: Adapter
 
-class ExploreFragment : BaseFragment() {
-    override fun getLayout(): Int {
-        return R.layout.fragment_explore
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentExploreBinding.inflate(inflater, container, false)
+        return binding.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initData()
+        binding.etWeb.setSelection(et_web.text.length)
+        binding.tvSearch.setOnClickListener {
+            ARouter.getInstance().build(RouterPath.EX_DAPP)
+                .withString("name", getString(R.string.app_name))
+                .withString("url", binding.etWeb.text.toString()).navigation()
+        }
+        getExploreAll()
     }
 
-    override fun initData() {
-        var ex = Explore(1, "uni", "this is a small app", R.mipmap.ic_app)
-        val list = mutableListOf<Explore>(ex)
-        val exAdapter = ExAdapter(list)
-        rv_list.layoutManager = LinearLayoutManager(activity)
-        rv_list.adapter = exAdapter
-    }
+    private fun getExploreAll() {
+        context?.let {
+            binding.rvExplore.layoutManager = LinearLayoutManager(context)
+            adapter = Adapter(it, exList)
+            binding.rvExplore.adapter = adapter
+        }
 
-
-    companion object {
-        class ExAdapter(var list: List<Explore>) : RecyclerView.Adapter<ExAdapter.ViewHolder>() {
-            class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
-
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-                val view =
-                    LayoutInflater.from(parent.context)
-                        .inflate(R.layout.listitem_explore_vertical, parent, false)
-                return ViewHolder(view)
-            }
-
-            override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-                val explore = list[position]
-                holder.itemView.tv_explore_vertical_title.text = explore.name
-                holder.itemView.tv_explore_vertical_des.text = explore.des
-                holder.itemView.iv_explore_vertical.setImageResource(explore.img)
-                holder.itemView.setOnClickListener {
-                    onItemClickListener?.onItemClick(holder.itemView, position)
+        exList.clear()
+        CoroutineScope((Dispatchers.IO)).launch {
+            val list = BWallet.get().getExploreList()
+            withContext(Dispatchers.Main) {
+                for (l in list) {
+                    exList.addAll(l.apps)
                 }
-            }
-
-            override fun getItemCount(): Int {
-                return list.size
-            }
-
-            private var onItemClickListener: OnItemClickListener? = null
-            fun setOnItemClickListener(onItemClickListener: OnItemClickListener) {
-                this.onItemClickListener = onItemClickListener
-            }
-
-            interface OnItemClickListener {
-                fun onItemClick(v: View, position: Int)
+                adapter.notifyDataSetChanged()
             }
         }
+
+        adapter.setOnItemClickListener {
+            exList[it].let { appBean ->
+                ARouter.getInstance().build(RouterPath.EX_DAPP).withString("name", appBean.name)
+                    .withString("url", appBean.app_url).navigation()
+            }
+
+        }
     }
+
+
+    inner class Adapter(
+        private val context: Context,
+        private val list: List<ExploreBean.AppsBean>
+    ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            val binding = ItemExploreBinding.inflate(LayoutInflater.from(parent.context))
+            return ViewHolder(binding)
+        }
+
+        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            if (holder is ViewHolder) {
+                val item = list[position]
+                holder.binding.tvExploreVerticalTitle.text = item.name
+                holder.binding.tvExploreVerticalDes.text = item.slogan
+                Glide.with(context)
+                    .load(item.icon)
+                    .into(holder.binding.ivExploreVertical)
+                holder.itemView.setOnClickListener { clickListener(position) }
+            }
+
+        }
+
+        override fun getItemCount(): Int {
+            return list.size
+        }
+
+        lateinit var clickListener: (Int) -> Unit
+
+        fun setOnItemClickListener(listener: (Int) -> Unit) {
+            this.clickListener = listener
+        }
+
+
+        inner class ViewHolder(val binding: ItemExploreBinding) :
+            RecyclerView.ViewHolder(binding.root)
+
+    }
+
+
 }

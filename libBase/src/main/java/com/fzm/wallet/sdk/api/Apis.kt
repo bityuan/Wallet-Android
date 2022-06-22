@@ -1,6 +1,7 @@
 package com.fzm.wallet.sdk.api
 
 import com.fzm.wallet.sdk.bean.BrowserBean
+import com.fzm.wallet.sdk.bean.ExploreBean
 import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.bean.WithHold
 import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
@@ -41,5 +42,8 @@ interface Apis {
 
     @POST("interface/recommend-coin")
     suspend fun getTabData(): HttpResponse<List<AddCoinTabBean>>
+
+    @GET("interface/explore")
+    suspend fun getExploreList(): HttpResponse<List<ExploreBean>>
 
 }
