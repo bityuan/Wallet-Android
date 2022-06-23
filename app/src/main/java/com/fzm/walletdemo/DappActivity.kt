@@ -16,6 +16,7 @@ import com.fzm.walletdemo.databinding.ActivityDappBinding
 
 @Route(path = RouterPath.EX_DAPP)
 class DappActivity : AppCompatActivity() {
+
     private val binding by lazy { ActivityDappBinding.inflate(layoutInflater) }
 
     @JvmField
