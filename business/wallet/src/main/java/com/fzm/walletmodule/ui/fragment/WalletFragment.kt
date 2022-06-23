@@ -62,7 +62,7 @@ class WalletFragment : BaseFragment() {
         if (event == Lifecycle.Event.ON_RESUME) {
             // FIXME: 最好使用lifecycle2.4.0提供的repeatOnLifecycle方法
             job = lifecycleScope.launch {
-                BWallet.get().getCoinBalance(0, Constants.DELAYED_TIME, true)
+                BWallet.get().getCoinBalance(0, Constants.DELAYED_TIME, false)
                     .collect {
                         //  Log.e("wallet","getCoinBalance")
                         mCoinList.clear()
