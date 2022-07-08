@@ -14,14 +14,6 @@ import com.fzm.walletmodule.ui.widget.LoadingView
 abstract class BaseFragment : Fragment() {
 
     private lateinit var loadingView: LoadingView
-    @LayoutRes
-    abstract fun getLayout(): Int
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(getLayout(), container, false)
-        setHasOptionsMenu(true)
-        return rootView
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

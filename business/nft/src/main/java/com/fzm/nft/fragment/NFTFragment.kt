@@ -19,6 +19,8 @@ import com.fzm.walletmodule.vm.WalletViewModel
 import org.jetbrains.anko.support.v4.onRefresh
 import org.jetbrains.anko.support.v4.toast
 import org.koin.android.ext.android.inject
+import org.litepal.LitePal
+import org.litepal.extension.findAll
 import walletapi.Walletapi
 
 class NFTFragment : Fragment() {
@@ -28,7 +30,7 @@ class NFTFragment : Fragment() {
     private lateinit var binding: FragmentNftBinding
     private lateinit var nftAdapter: NFTAdapter
     private val list = mutableListOf<Coin>()
-    private val eth by lazy { GoWallet.getChain(Walletapi.TypeETHString) }
+    private val chains by lazy { LitePal.findAll<Coin>() }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -81,8 +83,13 @@ class NFTFragment : Fragment() {
                     nftAdapter.notifyDataSetChanged()
 
                     for (i in list.indices) {
-                        list[i].address = eth.address
-                        list[i].address = GoWallet.testEthAddr
+                        val coin = list[i]
+                        val chain = chains.find { coin.chain == it.chain }
+                        coin.address = chain?.address
+
+                        //list[i].address = eth.address
+                        //list[i].address = GoWallet.testEthAddr
+                        //list[i].address = GoWallet.testEthAddr
                         nftViewModel.getNFTBalance(
                             i,
                             Walletapi.TypeETHString,

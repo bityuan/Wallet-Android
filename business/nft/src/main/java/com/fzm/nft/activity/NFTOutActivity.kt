@@ -16,17 +16,16 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.nft.NFTViewModel
 import com.fzm.nft.R
 import com.fzm.nft.databinding.ActivityNftoutBinding
-import com.fzm.nft.databinding.DialogPwdBinding
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.bean.Miner
+import com.fzm.wallet.sdk.databinding.DialogPwdBinding
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.UrlConfig
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.StatusBarUtil
 import com.fzm.walletmodule.event.CaptureEvent
-import com.fzm.walletmodule.utils.DecimalUtils
 import com.fzm.walletmodule.vm.OutViewModel
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
@@ -89,11 +88,11 @@ class NFTOutActivity : AppCompatActivity() {
         binding.seekbarFee.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 val value: Double = progress.plus(min).div(100000000.00)
-                val rmb = eth.rmb.times(value)
+                //val rmb = eth.rmb.times(value)
                 val format = DecimalFormat("0.##")
                 //未保留小数的舍弃规则，RoundingMode.FLOOR表示直接舍弃。
                 format.roundingMode = RoundingMode.FLOOR
-                binding.tvFee.text = "$value ETH ≈ ￥${format.format(rmb)}"
+                binding.tvFee.text = "$value ETH"
 
             }
 

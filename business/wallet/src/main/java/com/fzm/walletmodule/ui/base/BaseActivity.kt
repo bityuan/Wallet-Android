@@ -136,6 +136,31 @@ abstract class BaseActivity : AppCompatActivity() {
         customToolbar.setNavigationOnClickListener { onBackPressed() }
     }
 
+
+    override fun setContentView(view: View?) {
+        if (mCustomToobar) {
+            super.setContentView(view)
+        } else {
+            val contentView = LinearLayout(this)
+            contentView.orientation = LinearLayout.VERTICAL
+            val layoutToolbar = FrameLayout(this)
+            LayoutInflater.from(this).inflate(R.layout.layout_base_bar, layoutToolbar, true)
+            toolbar = layoutToolbar.findViewById<Toolbar>(R.id.toolbar)
+            tvTitle = layoutToolbar.findViewById<TextView>(R.id.tv_title)
+            contentView.addView(layoutToolbar)
+            contentView.addView(view)
+            super.setContentView(contentView)
+            setSupportActionBar(toolbar)
+            toolbar.setNavigationIcon(R.drawable.ic_back)
+            toolbar.setNavigationOnClickListener { onBackPressed() }
+
+            val view = (findViewById<View>(android.R.id.content) as ViewGroup).getChildAt(0)
+            view.fitsSystemWindows = true
+            view.setBackgroundResource(android.R.color.white)
+        }
+
+    }
+
     override fun setContentView(layoutResID: Int) {
         if (mCustomToobar) {
             super.setContentView(layoutResID)

@@ -417,7 +417,7 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
     ): List<Transactions> {
         return withContext(Dispatchers.IO) {
             var coinName = coin.name
-            if (GoWallet.isBTYChild(coin)) {
+            if (GoWallet.isPara(coin)) {
                 coinName =
                     if (coin.treaty == "1") "${coin.platform}.${coin.name}" else "${coin.platform}.coins"
             }

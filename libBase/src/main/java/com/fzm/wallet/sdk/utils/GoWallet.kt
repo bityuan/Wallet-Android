@@ -136,7 +136,7 @@ class GoWallet {
             try {
                 checkSessionID()
                 val balance = WalletBalance()
-                val coinToken = newCoinType(chain,tokenSymbol)
+                val coinToken = newCoinType(chain, tokenSymbol)
                 balance.cointype = coinToken.cointype
                 balance.address = addresss
                 balance.tokenSymbol = coinToken.tokenSymbol
@@ -238,8 +238,20 @@ class GoWallet {
             return null
         }
 
-        fun isBTYChild(coin: Coin): Boolean {
-            return BTY == coin.chain && PLATFORM_BTY != coin.platform
+        fun isPara(coin: Coin): Boolean {
+            return (coin.chain == "BTY" && coin.platform != "bty")
+        }
+
+        //通过平行获取Tokensymbol
+        fun getTokensymbol(coin: Coin): String {
+            if (coin.chain == "BTY" && coin.platform != "bty") {
+                return if (coin.treaty == "1") {
+                    coin.platform + "." + coin.name
+                } else {
+                    coin.platform + ".coins"
+                }
+            }
+            return coin.name
         }
 
         /**
@@ -436,7 +448,8 @@ class GoWallet {
             }
             return null
         }
-        fun signTran(chain: String, unSignData: String, priv: String,  addressId:Int): String? {
+
+        fun signTran(chain: String, unSignData: String, priv: String, addressId: Int): String? {
             try {
                 val signData = SignData()
                 signData.cointype = chain

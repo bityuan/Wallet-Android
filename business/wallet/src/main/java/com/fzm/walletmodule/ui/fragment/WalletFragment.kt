@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.activityViewModels
@@ -14,20 +15,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
-import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.tokenSymbol
 import com.fzm.wallet.sdk.utils.totalAsset
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.adapter.WalletAdapter
 import com.fzm.walletmodule.base.Constants
+import com.fzm.walletmodule.databinding.FragmentWalletBinding
 import com.fzm.walletmodule.event.*
 import com.fzm.walletmodule.ui.activity.*
 import com.fzm.walletmodule.ui.base.BaseFragment
 import com.fzm.walletmodule.utils.*
 import com.fzm.walletmodule.vm.ParamViewModel
 import com.fzm.walletmodule.vm.WalletViewModel
-import kotlinx.android.synthetic.main.fragment_wallet.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -57,6 +57,7 @@ class WalletFragment : BaseFragment() {
     private var newPosition = false
 
     private val paramViewModel by activityViewModels<ParamViewModel>()
+    private lateinit var binding:FragmentWalletBinding
 
     private val observer = LifecycleEventObserver { _, event ->
         if (event == Lifecycle.Event.ON_RESUME) {
@@ -79,8 +80,13 @@ class WalletFragment : BaseFragment() {
         }
     }
 
-    override fun getLayout(): Int {
-        return R.layout.fragment_wallet
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentWalletBinding.inflate(inflater,container,false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -97,12 +103,12 @@ class WalletFragment : BaseFragment() {
 
     override fun configWallets() {
         super.configWallets()
-        rl_top.visibility = View.GONE
+        binding.rlTop.visibility = View.GONE
         //initHeaderView()
     }
 
     override fun initView() {
-        recyclerView.layoutManager = LinearLayoutManager(activity)
+        binding.recyclerView.layoutManager = LinearLayoutManager(activity)
         mWalletAdapter =
             WalletAdapter(requireActivity(), R.layout.view_item_coin_info, mCoinList, this)
         mWalletAdapter?.setOnItemClickListener(object : WalletAdapter.ItemClickListener {
@@ -125,7 +131,7 @@ class WalletFragment : BaseFragment() {
 
             override fun OnLongItemClick(view: View?, position: Int) {}
         })
-        recyclerView.adapter = mWalletAdapter
+        binding.recyclerView.adapter = mWalletAdapter
     }
 
     private fun initHeaderView() {
@@ -136,7 +142,7 @@ class WalletFragment : BaseFragment() {
         name = mHeaderView.findViewById<TextView>(R.id.name)
         money = mHeaderView.findViewById<TextView>(R.id.money)
         addCoin = mHeaderView.findViewById<ImageView>(R.id.addCoin)
-        recyclerView.addHeaderView(mHeaderView)
+        binding.recyclerView.addHeaderView(mHeaderView)
     }
 
     override fun initData() {
@@ -149,8 +155,8 @@ class WalletFragment : BaseFragment() {
     }
 
     override fun initListener() {
-        swl_layout.setOnRefreshListener {
-            swl_layout.onRefreshComplete()
+        binding.swlLayout.setOnRefreshListener {
+            binding.swlLayout.onRefreshComplete()
         }
         more?.setOnClickListener {
             if (ClickUtils.isFastDoubleClick()) {
@@ -161,7 +167,7 @@ class WalletFragment : BaseFragment() {
             `in`.putExtra(PWallet.PWALLET_ID, BWallet.get().getCurrentWallet()?.id ?: 0L)
             startActivityForResult(`in`, UPDATE_WALLET)
         }
-        iv_back.setOnClickListener {
+        binding.ivBack.setOnClickListener {
             requireActivity().finish()
         }
         addCoin?.setOnClickListener {
@@ -170,7 +176,7 @@ class WalletFragment : BaseFragment() {
             }
             startActivity<AddCoinActivity>()
         }
-        topLeft.setOnClickListener {
+        binding.topLeft.setOnClickListener {
             if (ClickUtils.isFastDoubleClick()) {
                 return@setOnClickListener
             }
@@ -182,7 +188,7 @@ class WalletFragment : BaseFragment() {
             )
             startActivity(intent)
         }
-        topRight.setOnClickListener {
+        binding.topRight.setOnClickListener {
             if (ClickUtils.isFastDoubleClick()) {
                 return@setOnClickListener
             }
@@ -190,9 +196,9 @@ class WalletFragment : BaseFragment() {
             intent.setClass(requireActivity(), MyWalletsActivity::class.java)
             startActivity(intent)
         }
-        rl_top.setOnClickListener {
+        binding.rlTop.setOnClickListener {
             if (ClickUtils.isFastClick(1000)) {
-                recyclerView.smoothScrollToPosition(0)
+                binding.recyclerView.smoothScrollToPosition(0)
             }
         }
     }
@@ -226,11 +232,6 @@ class WalletFragment : BaseFragment() {
                 job?.start()
             }
         }
-    }
-
-    //回调 - 我的账户
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onTransactionsEvent(event: TransactionsEvent) {
     }
 
     override fun onDestroyView() {

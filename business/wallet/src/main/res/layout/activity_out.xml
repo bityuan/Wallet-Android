@@ -138,7 +138,7 @@
 
 
                     <EditText
-                        android:id="@+id/tv_other_address"
+                        android:id="@+id/tv_to_address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="29dp"
@@ -267,26 +267,10 @@
                         android:textColor="@color/color_333649"
                         android:textSize="@dimen/sp_14" />
 
-                    <TextView
-                        android:id="@+id/tv_fee_coin_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="@string/common_null"
-                        android:textColor="@color/color_333649"
-                        android:textSize="@dimen/sp_14" />
-
-                    <TextView
-                        android:id="@+id/tv_fee_rmb"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="0"
-                        android:textColor="@color/color_333649"
-                        android:textSize="@dimen/sp_14" />
-
                 </LinearLayout>
 
                 <SeekBar
-                    android:id="@+id/seekbar_money"
+                    android:id="@+id/seekbar_fee"
                     style="@style/CustomSeekbarStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -10,8 +10,8 @@ dependencies {
     androidTestImplementation cfg.library.espressocore
 
     api cfg.arouter
-    api cfg.WalletApiAndroid
-    //api(name: 'walletapi', ext: 'aar')
+    //api cfg.WalletApiAndroid
+    api(name: 'walletapi', ext: 'aar')
     api cfg.litepal
     api cfg.litepal
     api cfg.gson
@@ -45,7 +45,6 @@ dependencies {
     api cfg.zxingLite
     api cfg.backgroundLibrary
     api cfg.fragmentKtx
-    api cfg.vlayout
 }
 
 //注意放置位置，复制此段代码稍加修改即可

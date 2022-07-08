@@ -3,7 +3,9 @@ package com.fzm.walletmodule.ui.fragment
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,6 +14,7 @@ import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.R
+import com.fzm.walletmodule.databinding.FragmentTokenCoinBinding
 import com.fzm.walletmodule.event.AddCoinEvent
 import com.fzm.walletmodule.ui.base.BaseFragment
 import com.fzm.walletmodule.ui.widget.EditDialogFragment
@@ -19,7 +22,6 @@ import com.fzm.walletmodule.utils.ToastUtils
 import com.fzm.walletmodule.utils.WalletUtils
 import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
-import kotlinx.android.synthetic.main.fragment_token_coin.*
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.support.v4.toast
@@ -30,15 +32,13 @@ import walletapi.HDWallet
 import java.util.HashMap
 
 
-/**
- * create an instance of this fragment.
- */
 class TokenCoinFragment : BaseFragment() {
     private val data = ArrayList<Coin>()
     private var mCommonAdapter: CommonAdapter<Coin>? = null
     private var mPWallet: PWallet? = null
     private val mStatusMap = HashMap<String, Int>()
     private val mCoinsMap = HashMap<String, Coin>()
+    private lateinit var binding:FragmentTokenCoinBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -50,8 +50,14 @@ class TokenCoinFragment : BaseFragment() {
         }
     }
 
-    override fun getLayout(): Int {
-        return R.layout.fragment_token_coin
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentTokenCoinBinding.inflate(inflater,container,false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,7 +66,7 @@ class TokenCoinFragment : BaseFragment() {
     }
 
     override fun initView() {
-        swipe_target.layoutManager = LinearLayoutManager(activity)
+        binding.swipeTarget.layoutManager = LinearLayoutManager(activity)
         mCommonAdapter = object : CommonAdapter<Coin>(activity, R.layout.listitem_addcoin, data) {
             override fun convert(holder: ViewHolder, coin: Coin, position: Int) {
                 val ivAddIcon = holder.getView<ImageView>(R.id.iv_addcoin_icon)
@@ -96,7 +102,7 @@ class TokenCoinFragment : BaseFragment() {
                 }
             }
         }
-        swipe_target.adapter = mCommonAdapter
+        binding.swipeTarget.adapter = mCommonAdapter
     }
 
     @SuppressLint("NotifyDataSetChanged")

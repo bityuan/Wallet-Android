@@ -11,6 +11,7 @@ import retrofit2.http.POST
 
 interface NFTService {
 
+    //-------------------------------------------------ETH-----------------------------------------
 
     //根据用户地址和nft合约地址获取NFT数量
     @Headers("$DOMAIN_NAME_HEADER$DOMAIN_URL_GO")
@@ -45,7 +46,29 @@ interface NFTService {
     ): GoResponse<List<String>>
 
 
+    //---------------------------------------------------slg--------------------------------------------
+//根据用户地址和nft合约地址获取NFT数量
+    @Headers("$DOMAIN_NAME_HEADER$DOMAIN_URL_GO")
+    @POST(".")
+    suspend fun getSLGNFTBalance(
+        @Header("SessionId") sessionId: String,
+        @Body body: RequestBody
+    ): GoResponse<String>
+
+    //NFT转账
+    @Headers("$DOMAIN_NAME_HEADER$DOMAIN_URL_GO")
+    @POST(".")
+    suspend fun outSLGNFT(
+        @Header("SessionId") sessionId: String,
+        @Body body: RequestBody
+    ): GoResponse<String>
 
 
-
+    //根据用户地址和nft合约地址查询账单
+    @Headers("$DOMAIN_NAME_HEADER$DOMAIN_URL_GO")
+    @POST(".")
+    suspend fun getSLGNFTTran(
+        @Header("SessionId") sessionId: String,
+        @Body body: RequestBody
+    ): GoResponse<List<NftTran>>
 }

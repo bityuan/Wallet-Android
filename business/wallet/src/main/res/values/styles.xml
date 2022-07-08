@@ -77,7 +77,7 @@
         <item name="android:indeterminateDrawable">@color/color_7190FF</item>
         <item name="android:progressDrawable">@drawable/seekbar_progress_drawable</item>
         <item name="android:minHeight">10dp</item>
-        <item name="android:thumb">@mipmap/icon_seek_bar</item>
+        <item name="android:thumb">@drawable/shape_bar</item>
     </style>
 
 

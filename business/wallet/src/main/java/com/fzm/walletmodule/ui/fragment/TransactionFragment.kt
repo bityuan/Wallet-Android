@@ -2,25 +2,32 @@ package com.fzm.walletmodule.ui.fragment
 
 import android.graphics.Color
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.fzm.walletmodule.R
-import com.fzm.walletmodule.base.Constants
 import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.bean.response.TransactionResponse
-import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.utils.GoWallet
+import com.fzm.wallet.sdk.utils.MMkvUtil
+import com.fzm.walletmodule.R
+import com.fzm.walletmodule.base.Constants
+import com.fzm.walletmodule.databinding.FragmentTransactionBinding
 import com.fzm.walletmodule.ui.activity.TransactionDetailsActivity
+import com.fzm.walletmodule.ui.activity.TransactionsActivity
 import com.fzm.walletmodule.ui.base.BaseFragment
-import com.fzm.walletmodule.utils.*
+import com.fzm.walletmodule.utils.NetWorkUtils
+import com.fzm.walletmodule.utils.TimeUtils
+import com.fzm.walletmodule.utils.isFastClick
 import com.google.gson.Gson
 import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
-import kotlinx.android.synthetic.main.fragment_transaction.*
-import org.jetbrains.anko.doAsync
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.support.v4.startActivity
-import org.jetbrains.anko.uiThread
 
 
 class TransactionFragment : BaseFragment() {
@@ -32,6 +39,8 @@ class TransactionFragment : BaseFragment() {
     private var mTokenFeeList = ArrayList<Transactions>()
     private lateinit var mCommonAdapter: CommonAdapter<Transactions>
     private var isCanLoadMore = false
+
+    private lateinit var binding: FragmentTransactionBinding
 
 
     companion object {
@@ -48,8 +57,13 @@ class TransactionFragment : BaseFragment() {
         }
     }
 
-    override fun getLayout(): Int {
-        return R.layout.fragment_transaction
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentTransactionBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,7 +83,7 @@ class TransactionFragment : BaseFragment() {
 
     override fun initData() {
         super.initData()
-        rv_list.layoutManager = LinearLayoutManager(activity)
+        binding.rvList.layoutManager = LinearLayoutManager(activity)
         mCommonAdapter =
             object : CommonAdapter<Transactions>(activity, R.layout.listitem_coin_details, mList) {
                 override fun convert(holder: ViewHolder, transaction: Transactions, position: Int) {
@@ -109,9 +123,9 @@ class TransactionFragment : BaseFragment() {
                 }
 
             }
-        rv_list.adapter = mCommonAdapter
+        binding.rvList.adapter = mCommonAdapter
 
-        rv_list.setOnItemClickListener { holder, position ->
+        binding.rvList.setOnItemClickListener { holder, position ->
             if (isFastClick()) {
                 return@setOnItemClickListener
             }
@@ -136,92 +150,66 @@ class TransactionFragment : BaseFragment() {
 
     override fun initRefresh() {
         super.initRefresh()
-        swl_layout.setOnRefreshListener {
+        binding.swlLayout.setOnRefreshListener {
             getDatas(0)
+            (activity as TransactionsActivity).doRefreshBalance()
         }
-        swl_layout.autoRefresh()
+        binding.swlLayout.autoRefresh()
 
-        rv_list.setOnLoadMoreListener {
+        binding.rvList.setOnLoadMoreListener {
             getDatas(mIndex)
         }
     }
 
 
-    fun getDatas(index: Long) {
-        var coinName = coin.name
-        if (GoWallet.isBTYChild(coin)) {
-            if (coin.treaty == "1") {
-                coinName = coin.platform + "." + coin.name
-            } else {
-                coinName = coin.platform + ".coins"
-            }
-        }
-
-        doAsync {
-            var datas: String?
-            if (index == 0L) {
-                if (!NetWorkUtils.isConnected(context)) {
-                    datas = MMkvUtil.decodeString(getKey(coinName))
-                } else {
-                    datas = GoWallet.getTranList(
-                        coin.address, coin.chain, coinName, mType.toLong(), index,
-                        Constants.PAGE_LIMIT
-                    )
-                }
+    private fun getDatas(index: Long) {
+        val tokensymbol = GoWallet.getTokensymbol(coin)
+        var datas: String?
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (index == 0L && !NetWorkUtils.isConnected(context)) {
+                datas = MMkvUtil.decodeString(getKey(tokensymbol))
             } else {
                 datas = GoWallet.getTranList(
-                    coin.address, coin.chain, coinName, mType.toLong(), index,
+                    coin.address,
+                    coin.chain,
+                    tokensymbol,
+                    mType.toLong(),
+                    index,
                     Constants.PAGE_LIMIT
                 )
             }
-            val query = query(datas)
-            uiThread {
-                try {
-                    if (index == 0L) {
-                        if (datas != null) {
-                            MMkvUtil.encode(getKey(coinName), datas)
-                        }
-                    }
-                    updateList(query!!, index)
-                } catch (e: Exception) {
-                    e.printStackTrace()
+            //cache one page
+            if (index == 0L && datas != null) {
+                MMkvUtil.encode(getKey(tokensymbol), datas)
+            }
+            val response = Gson().fromJson(datas, TransactionResponse::class.java)
+            val list = response.result as List<Transactions>
+
+            mIndex = index + Constants.PAGE_LIMIT
+            isCanLoadMore = list.size < Constants.PAGE_LIMIT
+            withContext(Dispatchers.Main) {
+                if (index == 0L) {
+                    mList.clear()
+                    binding.swlLayout.onRefreshComplete()
                 }
 
+                addList(list)
+                binding.rvList.setHasLoadMore(!isCanLoadMore)
+                binding.rvList.onLoadMoreComplete()
+                mCommonAdapter.notifyDataSetChanged()
             }
+
         }
+
     }
 
     private fun getKey(coinName: String?): String {
         return coin.chain + coin.address + coinName + mType
     }
 
-    private fun query(datas: String?): List<Transactions>? {
-        val gson = Gson()
-        val response = gson.fromJson(datas, TransactionResponse::class.java)
-        return response.result
-    }
-
-    @Synchronized
-    private fun updateList(list: List<Transactions>, index: Long) {
-        if (activity == null) {
-            return
-        }
-        mIndex = index + Constants.PAGE_LIMIT
-        isCanLoadMore = list.size < Constants.PAGE_LIMIT
-        if (index == 0L) {
-            mList.clear()
-            swl_layout?.onRefreshComplete()
-        }
-
-        addList(list)
-        rv_list?.setHasLoadMore(!isCanLoadMore)
-        rv_list?.onLoadMoreComplete()
-        mCommonAdapter.notifyDataSetChanged()
-    }
-
 
     private fun addList(list: List<Transactions>) {
-        if (GoWallet.isBTYChild(coin)) {
+        if (GoWallet.isPara(coin)) {
             for (transactions in list) {
                 if (transactions.type == "send"
                     && transactions.note == "token fee"
@@ -236,12 +224,5 @@ class TransactionFragment : BaseFragment() {
             mList.addAll(list)
         }
     }
-
-    fun refresh() {
-        if (swl_layout != null) {
-            getDatas(0)
-        }
-    }
-
 
 }

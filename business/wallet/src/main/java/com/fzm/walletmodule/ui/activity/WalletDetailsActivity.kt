@@ -4,9 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.lifecycleScope
+import com.alibaba.fastjson.JSON
 import com.fzm.wallet.sdk.BWallet
+import com.fzm.wallet.sdk.bean.StringResult
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.utils.GoWallet
@@ -19,6 +22,7 @@ import com.fzm.walletmodule.ui.widget.CommonDialogFragment
 import com.fzm.walletmodule.ui.widget.EditDialogFragment
 import com.fzm.walletmodule.utils.ListUtils
 import com.fzm.walletmodule.utils.ToastUtils
+import com.fzm.walletmodule.utils.WalletRecoverUtils
 import com.fzm.walletmodule.utils.isFastClick
 import kotlinx.android.synthetic.main.activity_wallet_details.*
 import kotlinx.coroutines.launch
@@ -30,6 +34,7 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.litepal.LitePal.find
 import org.litepal.LitePal.select
+import walletapi.*
 import java.util.*
 import kotlin.coroutines.resume
 
@@ -58,7 +63,7 @@ class WalletDetailsActivity : BaseActivity() {
 
     override fun initListener() {
         tv_forget_password.setOnClickListener {
-            if (isFastClick()){
+            if (isFastClick()) {
                 return@setOnClickListener
             }
             val `in` = Intent(this, CheckMnemActivity::class.java)
@@ -66,7 +71,7 @@ class WalletDetailsActivity : BaseActivity() {
             startActivity(`in`)
         }
         updatePassword.setOnClickListener {
-            if (isFastClick()){
+            if (isFastClick()) {
                 return@setOnClickListener
             }
             val intent = Intent()
@@ -78,13 +83,13 @@ class WalletDetailsActivity : BaseActivity() {
             startActivity(intent)
         }
         outPriv.setOnClickListener {
-            if (isFastClick()){
+            if (isFastClick()) {
                 return@setOnClickListener
             }
             checkPassword(1)
         }
         updateName.setOnClickListener {
-            if (isFastClick()){
+            if (isFastClick()) {
                 return@setOnClickListener
             }
             updateWalletName()
@@ -99,7 +104,8 @@ class WalletDetailsActivity : BaseActivity() {
             if (isFastClick()){
                 return@setOnClickListener
             }
-            checkPassword(2)
+           // checkPassword(2)
+            WalletRecoverUtils().test()
         }
     }
 
@@ -200,6 +206,7 @@ class WalletDetailsActivity : BaseActivity() {
                 }
 
             }
+
             override fun onLeftButtonClick(v: View?) {
             }
         })

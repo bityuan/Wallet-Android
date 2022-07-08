@@ -6,7 +6,9 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Vibrator
 import android.text.TextUtils
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -17,13 +19,13 @@ import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.walletmodule.R
+import com.fzm.walletmodule.databinding.FragmentHomeCoinBinding
 import com.fzm.walletmodule.event.AddCoinEvent
 import com.fzm.walletmodule.ui.base.BaseFragment
 import com.fzm.walletmodule.utils.WalletUtils
 import com.fzm.walletmodule.vm.WalletViewModel
 import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
-import kotlinx.android.synthetic.main.fragment_home_coin.*
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.support.v4.toast
 import org.koin.android.ext.android.inject
@@ -42,8 +44,15 @@ class HomeCoinFragment : BaseFragment() {
     private lateinit var mPWallet: PWallet
     private val walletViewModel: WalletViewModel by inject(walletQualifier)
     var needUpdate = false
-    override fun getLayout(): Int {
-        return R.layout.fragment_home_coin
+    private lateinit var binding:FragmentHomeCoinBinding
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentHomeCoinBinding.inflate(inflater,container,false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -56,7 +65,7 @@ class HomeCoinFragment : BaseFragment() {
     override fun initView() {
         mPWallet = WalletUtils.getUsingWallet()
         data = where("pwallet_id = ? ", String.valueOf(mPWallet.id)).find(Coin::class.java, true)
-        swipe_target.layoutManager = LinearLayoutManager(activity)
+        binding.swipeTarget.layoutManager = LinearLayoutManager(activity)
         mCommonAdapter = object : CommonAdapter<Coin>(activity, R.layout.listitem_addcoin, data) {
             override fun convert(holder: ViewHolder, coin: Coin, position: Int) {
                 val ivAddCoin = holder.getView<ImageView>(R.id.iv_addcoin_icon)
@@ -81,9 +90,9 @@ class HomeCoinFragment : BaseFragment() {
                 }
             }
         }
-        swipe_target.adapter = mCommonAdapter
+        binding.swipeTarget.adapter = mCommonAdapter
         //拖曳排序
-        helper.attachToRecyclerView(swipe_target)
+        helper.attachToRecyclerView(binding.swipeTarget)
     }
 
     override fun initData() {

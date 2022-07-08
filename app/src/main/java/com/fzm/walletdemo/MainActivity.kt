@@ -24,6 +24,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.litepal.LitePal.count
+import walletapi.Walletapi
 
 class MainActivity : BaseActivity() {
     private var walletFragment: WalletFragment? = null
@@ -46,6 +47,7 @@ class MainActivity : BaseActivity() {
                 }
             }
         }
+
     }
 
     val DEFAULT_COINS = listOf(
@@ -65,17 +67,7 @@ class MainActivity : BaseActivity() {
             chain = "ETH"
             platform = "ethereum"
             netId = "90"
-        },Coin().apply {
-            name = "YCC"
-            chain = "BTC"
-            platform = "btc"
-            netId = "727"
-        },Coin().apply {
-            name = "YCC"
-            chain = "ETH"
-            platform = "ethereum"
-            netId = "155"
-        }
+        },
 
     )
 

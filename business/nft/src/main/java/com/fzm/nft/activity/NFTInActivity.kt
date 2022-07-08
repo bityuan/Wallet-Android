@@ -11,6 +11,7 @@ import com.fzm.nft.databinding.ActivityNftinBinding
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.utils.StatusBarUtil
+import com.fzm.walletmodule.utils.ClipboardUtils
 import com.king.zxing.util.CodeUtils
 
 @Route(path = RouterPath.NFT_IN)
@@ -30,6 +31,12 @@ class NFTInActivity : AppCompatActivity() {
             val bitmap = CodeUtils.createQRCode(it.address, 200)
             binding.ivAddress.setImageBitmap(bitmap)
             binding.tvAddress.text = it.address
+            binding.ivAddress.setOnClickListener { _ ->
+                ClipboardUtils.clip(this, it.address)
+            }
+            binding.tvAddress.setOnClickListener { _ ->
+                ClipboardUtils.clip(this, it.address)
+            }
         }
     }
 
