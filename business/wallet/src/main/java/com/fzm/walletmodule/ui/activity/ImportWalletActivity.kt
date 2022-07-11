@@ -7,25 +7,26 @@ import android.view.MenuItem
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.WalletConfiguration
+import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
+import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.exception.ImportWalletException
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.base.Constants
-import com.fzm.walletmodule.event.CaptureEvent
-import com.fzm.walletmodule.event.InitPasswordEvent
-import com.fzm.walletmodule.event.MyWalletEvent
+import com.fzm.walletmodule.databinding.ActivityImportWalletBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.LimitEditText
-import com.fzm.walletmodule.utils.*
+import com.fzm.walletmodule.utils.AppUtils
+import com.fzm.walletmodule.utils.ListUtils
+import com.fzm.walletmodule.utils.ToastUtils
+import com.fzm.walletmodule.utils.isFastClick
+import com.jeremyliao.liveeventbus.LiveEventBus
 import com.snail.antifake.jni.EmulatorDetectUtil
-import kotlinx.android.synthetic.main.activity_import_wallet.*
 import kotlinx.coroutines.launch
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.startActivity
 import org.litepal.LitePal
 import org.litepal.extension.count
@@ -39,11 +40,12 @@ class ImportWalletActivity : BaseActivity() {
     private var isOK: Boolean = false
 
     private val wallet: BWallet get() = BWallet.get()
+    private val binding by lazy { ActivityImportWalletBinding.inflate(layoutInflater) }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_import_wallet)
+        setContentView(binding.root)
         initData()
         initListener()
         initObserver()
@@ -52,12 +54,12 @@ class ImportWalletActivity : BaseActivity() {
     override fun initData() {
         val count = LitePal.count<PWallet>()
         val name = getString(R.string.import_wallet_wallet_name) + (count + 1)
-        walletName.setText(name)
-        et_mnem.setRegex(LimitEditText.REGEX_CHINESE_ENGLISH)
+        binding.etWalletName.setText(name)
+        binding.etMnem.setRegex(LimitEditText.REGEX_CHINESE_ENGLISH)
     }
 
     override fun initListener() {
-        et_mnem.doOnTextChanged { text, start, count, after ->
+        binding.etMnem.doOnTextChanged { text, start, count, after ->
             importButtonState()
             val lastString = text.toString()
             if (!TextUtils.isEmpty(lastString)) {
@@ -77,43 +79,43 @@ class ImportWalletActivity : BaseActivity() {
                             }
                         }
                         if (!TextUtils.equals(lastString, stringBuffer)) {
-                            et_mnem.setText(stringBuffer.toString())
-                            et_mnem.setSelection(stringBuffer.toString().length)
+                            binding.etMnem.setText(stringBuffer.toString())
+                            binding.etMnem.setSelection(stringBuffer.toString().length)
                         }
                     }
                 }
             }
         }
 
-        walletPassword.doOnTextChanged { text, start, count, after ->
+        binding.etWalletPassword.doOnTextChanged { text, start, count, after ->
             if (TextUtils.isEmpty(text)) {
-                passwordTip.visibility = View.INVISIBLE
+                binding.tvPasswordTip.visibility = View.INVISIBLE
             } else {
-                passwordTip.visibility = View.VISIBLE
-                passwordTip.text = getString(R.string.set_wallet_password)
+                binding.tvPasswordTip.visibility = View.VISIBLE
+                binding.tvPasswordTip.text = getString(R.string.set_wallet_password)
             }
         }
-        walletPasswordAgain.doOnTextChanged { text, start, count, after ->
+        binding.etWalletPasswordAgain.doOnTextChanged { text, start, count, after ->
             if (TextUtils.isEmpty(text)) {
-                passwordAgainTip.visibility = View.INVISIBLE
+                binding.tvPasswordAgainTip.visibility = View.INVISIBLE
             } else {
-                passwordAgainTip.visibility = View.VISIBLE
-                passwordAgainTip.text = getString(R.string.confirm_wallet_password)
+                binding.tvPasswordAgainTip.visibility = View.VISIBLE
+                binding.tvPasswordAgainTip.text = getString(R.string.confirm_wallet_password)
             }
         }
 
-        walletName.doOnTextChanged { text, start, count, after ->
+        binding.etWalletName.doOnTextChanged { text, start, count, after ->
             importButtonState()
         }
-        walletPassword.doOnTextChanged { text, start, count, after ->
+        binding.etWalletPassword.doOnTextChanged { text, start, count, after ->
             importButtonState()
         }
-        walletPasswordAgain.doOnTextChanged { text, start, count, after ->
+        binding.etWalletPasswordAgain.doOnTextChanged { text, start, count, after ->
             importButtonState()
         }
 
-        btnImport.setOnClickListener {
-            hideKeyboard(btnImport)
+        binding.btnImport.setOnClickListener {
+            hideKeyboard(binding.btnImport)
             if (EmulatorDetectUtil.isEmulator(this)) {
                 ToastUtils.show(this, "检测到您使用模拟器创建账户，请切换到真机")
             } else {
@@ -124,17 +126,25 @@ class ImportWalletActivity : BaseActivity() {
     }
 
 
+    override fun initObserver() {
+        super.initObserver()
+        //扫一扫
+        LiveEventBus.get<String>(LIVE_KEY_SCAN).observe(this, Observer { scan ->
+            binding.etMnem.setText(scan)
+        })
+    }
+
+
     private fun finishTask() {
         if (isFastClick()) {
             return
         }
-        val name = walletName.text.toString()
-        val password = walletPassword.text.toString()
-        val passwordAgain = walletPasswordAgain.text.toString()
-        val mnem = et_mnem.text.toString()
+        val name = binding.etWalletName.text.toString()
+        val password = binding.etWalletPassword.text.toString()
+        val passwordAgain = binding.etWalletPasswordAgain.text.toString()
+        val mnem =  binding.etMnem.text.toString()
         if (checkMnem(mnem)) {
             if (checked(name, password, passwordAgain)) {
-                EventBus.getDefault().post(InitPasswordEvent(password))
                 lifecycleScope.launch {
                     try {
                         showLoading()
@@ -149,7 +159,7 @@ class ImportWalletActivity : BaseActivity() {
                         )
                         val pWallet = wallet.findWallet(id)
                         dismiss()
-                        EventBus.getDefault().postSticky(MyWalletEvent(pWallet))
+                        LiveEventBus.get<PWallet>(LIVE_KEY_WALLET).post(pWallet)
                         ToastUtils.show(this@ImportWalletActivity, getString(R.string.my_import_success))
                         closeSomeActivitys()
                         finish()
@@ -177,10 +187,10 @@ class ImportWalletActivity : BaseActivity() {
         } else {
             isOK = ok
             if (ok) {
-                btnImport.background =
+                binding.btnImport.background =
                     ContextCompat.getDrawable(this, R.drawable.bg_import_wallet_button_ok)
             } else {
-                btnImport.background =
+                binding.btnImport.background =
                     ContextCompat.getDrawable(this, R.drawable.bg_import_wallet_button)
             }
         }
@@ -188,16 +198,16 @@ class ImportWalletActivity : BaseActivity() {
 
     private val importButtonState: Boolean
         get() {
-            if (TextUtils.isEmpty(et_mnem.text.toString())) {
+            if (TextUtils.isEmpty(binding.etMnem.text.toString())) {
                 return false
             }
-            if (TextUtils.isEmpty(walletPassword.text.toString())) {
+            if (TextUtils.isEmpty(binding.etWalletPassword.text.toString())) {
                 return false
             }
-            if (TextUtils.isEmpty(walletPasswordAgain.text.toString())) {
+            if (TextUtils.isEmpty(binding.etWalletPasswordAgain.text.toString())) {
                 return false
             }
-            if (TextUtils.isEmpty(walletName.text.toString())) {
+            if (TextUtils.isEmpty(binding.etWalletName.text.toString())) {
                 return false
             }
             return true
@@ -253,28 +263,5 @@ class ImportWalletActivity : BaseActivity() {
             startActivity<CaptureCustomActivity>()
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onCaptureEvent(event: CaptureEvent) {
-        if (event != null && event.type == CaptureCustomActivity.RESULT_SUCCESS) {
-            et_mnem.setText(event.text)
-        }
-    }
-
-
-    override fun onStart() {
-        super.onStart()
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this)
-        }
-    }
-
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().unregister(this)
-        }
     }
 }

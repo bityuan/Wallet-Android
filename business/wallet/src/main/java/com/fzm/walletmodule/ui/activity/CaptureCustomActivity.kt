@@ -12,20 +12,21 @@ import android.view.MotionEvent
 import android.view.View
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
 import com.fzm.walletmodule.R
-import com.fzm.walletmodule.event.CaptureEvent
 import com.fzm.walletmodule.manager.PermissionManager
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.ToastUtils
 import com.fzm.walletmodule.utils.UriUtils
 import com.fzm.walletmodule.utils.permission.EasyPermissions
+import com.jeremyliao.liveeventbus.LiveEventBus
 import com.king.zxing.CaptureHelper
 import com.king.zxing.OnCaptureCallback
 import com.king.zxing.util.CodeUtils
 import kotlinx.android.synthetic.main.activity_capture_custom.*
 import kotlinx.android.synthetic.main.include_scan.*
-import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.doAsync
+
 @Route(path = RouterPath.WALLET_CAPTURE)
 class CaptureCustomActivity : BaseActivity(), EasyPermissions.PermissionCallbacks,
     OnCaptureCallback {
@@ -211,11 +212,12 @@ class CaptureCustomActivity : BaseActivity(), EasyPermissions.PermissionCallback
     }
 
     private fun post(result: String) {
-        EventBus.getDefault().post(CaptureEvent(mRequstCode, RESULT_SUCCESS, result))
+        LiveEventBus.get<String>(LIVE_KEY_SCAN).post(result)
     }
 
 
     companion object {
+
 
         val RESULT_SUCCESS = 1
         private val RC_CAMERA = 111

@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.fzm.wallet.sdk.db.entity.PWallet;
 import com.fzm.wallet.sdk.utils.MMkvUtil;
 import com.fzm.walletmodule.event.MainCloseEvent;
+import com.jeremyliao.liveeventbus.LiveEventBus;
 
 import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;

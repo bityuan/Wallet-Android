@@ -9,10 +9,10 @@ import android.view.ViewGroup
 import android.widget.EditText
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.walletmodule.R
+import com.fzm.walletmodule.databinding.ActivityCreateWalletBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.*
 import com.snail.antifake.jni.EmulatorDetectUtil
-import kotlinx.android.synthetic.main.activity_create_wallet.*
 import org.litepal.LitePal
 
 /**
@@ -20,51 +20,52 @@ import org.litepal.LitePal
  */
 class CreateWalletActivity : BaseActivity() {
     private var viewHeight = 0
+    private val binding by lazy { ActivityCreateWalletBinding.inflate(layoutInflater) }
     override fun onCreate(savedInstanceState: Bundle?) {
         mConfigFinish = true
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_create_wallet)
+        setContentView(binding.root)
         initView()
         initListener()
     }
 
     override fun initView() {
         super.initView()
-        et_name.setSelection(et_name.text.length)
+        binding.etName.setSelection(binding.etName.text.length)
         title = ""
-        btn_create.viewTreeObserver.addOnPreDrawListener {
-            viewHeight = btn_create.height
+        binding.btnCreate.viewTreeObserver.addOnPreDrawListener {
+            viewHeight = binding.btnCreate.height
             true
         }
-        setLineFocusChage(et_name, line_name)
-        setLineFocusChage(et_password, line_password)
-        setLineFocusChage(et_password_again, line_password_again)
+        setLineFocusChage(binding.etName, binding.lineName.root)
+        setLineFocusChage(binding.etPassword, binding.linePassword.root)
+        setLineFocusChage(binding.etPasswordAgain, binding.linePasswordAgain.root)
     }
 
     private fun setLineFocusChage(editText: EditText, lineView: View) {
         editText.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
                 lineView.setBackgroundResource(R.color.color_333649)
-                val pra: ViewGroup.LayoutParams = line_name.layoutParams
+                val pra: ViewGroup.LayoutParams = binding.lineName.root.layoutParams
                 pra.height = ScreenUtils.dp2px(this, 1f)
                 lineView.layoutParams = pra
             } else {
                 lineView.setBackgroundResource(R.color.lineColor)
-                val pra: ViewGroup.LayoutParams = line_name.layoutParams
+                val pra: ViewGroup.LayoutParams = binding.lineName.root.layoutParams
                 pra.height = 1
                 lineView.layoutParams = pra
             }
             if (v.id == R.id.et_password) {
-                tv_prompt.visibility = View.VISIBLE
+                binding.tvPrompt.visibility = View.VISIBLE
             } else {
-                tv_prompt.visibility = View.INVISIBLE
+                binding.tvPrompt.visibility = View.INVISIBLE
             }
         }
     }
 
     override fun initListener() {
         super.initListener()
-        btn_create.setOnClickListener {
+        binding.btnCreate.setOnClickListener {
             if (isFastClick()){
                 return@setOnClickListener
             }
@@ -82,9 +83,9 @@ class CreateWalletActivity : BaseActivity() {
     }
 
     private fun finishTask() {
-        val name: String = et_name.text.toString().trim { it <= ' ' }
-        val password: String = et_password.text.toString().trim { it <= ' ' }
-        val passwordAgain: String = et_password_again.text.toString().trim { it <= ' ' }
+        val name: String = binding.etName.text.toString()
+        val password: String = binding.etPassword.text.toString()
+        val passwordAgain: String = binding.etPasswordAgain.text.toString()
         if (checked(name, password, passwordAgain)) {
             val intent = Intent(this, CreateMnemActivity::class.java)
             val wallet = PWallet()
@@ -113,13 +114,13 @@ class CreateWalletActivity : BaseActivity() {
         } else if (password.length < 8 || password.length > 16) {
             ToastUtils.show(this, getString(R.string.my_create_letter),Gravity.CENTER)
             checked = false
-            tv_prompt.setTextColor(resources.getColor(R.color.color_EA2551))
+            binding.tvPrompt.setTextColor(resources.getColor(R.color.color_EA2551))
         } else if (TextUtils.isEmpty(passwordAgain)) {
             ToastUtils.show(this, getString(R.string.my_change_password_again),Gravity.CENTER)
             checked = false
         } else if (password != passwordAgain) {
             ToastUtils.show(this, getString(R.string.my_set_password_different),Gravity.CENTER)
-            tv_tip_error.visibility = View.VISIBLE
+            binding.tvTipError.visibility = View.VISIBLE
             checked = false
         } else if (!AppUtils.ispassWord(password) || !AppUtils.ispassWord(passwordAgain)) {
             ToastUtils.show(this, getString(R.string.my_set_password_number_letter),Gravity.CENTER)

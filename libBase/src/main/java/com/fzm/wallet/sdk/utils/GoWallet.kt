@@ -15,6 +15,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.litepal.LitePal
 import org.litepal.LitePal.saveAll
+import org.litepal.LitePal.where
+import org.litepal.extension.find
 import walletapi.*
 import java.util.*
 
@@ -713,14 +715,17 @@ class GoWallet {
         }
 
 
-        fun getChain(chain: String): Coin {
-            val chains = LitePal.where(
+        fun getChain(chain: String): Coin? {
+            val chains = where(
                 "pwallet_id=? and chain = ?",
                 "${BWallet.get().getCurrentWallet()?.id}",
                 chain
-            ).find(Coin::class.java)
-
+            ).find<Coin>()
+            if (chains.isNullOrEmpty()) {
+                return null
+            }
             return chains[0]
+
         }
 
         fun newCoinType(cointype: String, tokenSymbol: String): CoinToken {

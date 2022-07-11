@@ -1,13 +1,11 @@
 package com.fzm.walletmodule.ui.activity
 
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.SeekBar
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import com.alibaba.android.arouter.facade.annotation.Autowired
@@ -15,6 +13,7 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.alibaba.fastjson.JSON
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
 import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.bean.StringResult
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
@@ -25,21 +24,18 @@ import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.RegularUtils
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.databinding.ActivityOutBinding
-import com.fzm.walletmodule.event.CaptureEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.RemarksTipsDialogView
 import com.fzm.walletmodule.utils.ClickUtils
 import com.fzm.walletmodule.utils.ToastUtils
 import com.fzm.walletmodule.vm.OutViewModel
 import com.google.gson.Gson
+import com.jeremyliao.liveeventbus.LiveEventBus
 import kotlinx.android.synthetic.main.activity_out.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
 import walletapi.Walletapi
@@ -121,6 +117,11 @@ class OutActivity : BaseActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
             }
 
+        })
+
+        //扫一扫
+        LiveEventBus.get<String>(LIVE_KEY_SCAN).observe(this, Observer { scan ->
+            binding.tvToAddress.setText(scan)
         })
     }
 
@@ -296,22 +297,4 @@ class OutActivity : BaseActivity() {
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onMessageEvent(event: CaptureEvent) {
-        binding.tvToAddress.setText(event.text)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this)
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().unregister(this)
-        }
-    }
 }

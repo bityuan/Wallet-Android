@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/baseTitleLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -63,7 +62,7 @@
                     android:textSize="14sp" />
 
                 <EditText
-                    android:id="@+id/walletName"
+                    android:id="@+id/et_wallet_name"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="@null"
@@ -79,13 +78,13 @@
                     android:background="#D9DCE9" />
 
                 <LinearLayout
-                    android:id="@+id/passwordLayout"
+                    android:id="@+id/ll_password_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/passwordTip"
+                        android:id="@+id/tv_password_tip"
                         android:layout_width="wrap_content"
                         android:layout_height="30dp"
                         android:gravity="bottom"
@@ -95,7 +94,7 @@
                         android:visibility="invisible" />
 
                     <EditText
-                        android:id="@+id/walletPassword"
+                        android:id="@+id/et_wallet_password"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:layout_marginTop="2dp"
@@ -114,7 +113,7 @@
                         android:background="#D9DCE9" />
 
                     <TextView
-                        android:id="@+id/passwordAgainTip"
+                        android:id="@+id/tv_password_again_tip"
                         android:layout_width="wrap_content"
                         android:layout_height="30dp"
                         android:gravity="bottom"
@@ -124,7 +123,7 @@
                         android:visibility="invisible" />
 
                     <EditText
-                        android:id="@+id/walletPasswordAgain"
+                        android:id="@+id/et_wallet_password_again"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:layout_marginTop="2dp"
@@ -152,7 +151,7 @@
         </ScrollView>
 
         <Button
-            android:id="@+id/btnImport"
+            android:id="@+id/btn_import"
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:layout_marginLeft="@dimen/dp_16"

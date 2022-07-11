@@ -45,6 +45,8 @@ dependencies {
     api cfg.zxingLite
     api cfg.backgroundLibrary
     api cfg.fragmentKtx
+    api cfg.dsBridge
+    api cfg.livedatabus
 }
 
 //注意放置位置，复制此段代码稍加修改即可

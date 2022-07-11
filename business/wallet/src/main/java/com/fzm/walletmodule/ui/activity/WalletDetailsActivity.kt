@@ -104,8 +104,7 @@ class WalletDetailsActivity : BaseActivity() {
             if (isFastClick()){
                 return@setOnClickListener
             }
-           // checkPassword(2)
-            WalletRecoverUtils().test()
+            checkPassword(2)
         }
     }
 

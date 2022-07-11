@@ -4,21 +4,22 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.alpha.EmptyWallet
+import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.walletdemo.databinding.ActivityMainBinding
 import com.fzm.walletdemo.fragment.ExploreFragment
 import com.fzm.walletdemo.fragment.HomeFragment
 import com.fzm.walletmodule.base.Constants
-import com.fzm.walletmodule.event.InitPasswordEvent
 import com.fzm.walletmodule.event.MainCloseEvent
-import com.fzm.walletmodule.event.MyWalletEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.fragment.WalletFragment
 import com.fzm.walletmodule.ui.fragment.WalletIndexFragment
-import kotlinx.android.synthetic.main.activity_main.*
+import com.jeremyliao.liveeventbus.LiveEventBus
 import kotlinx.coroutines.flow.collect
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -31,14 +32,17 @@ class MainActivity : BaseActivity() {
     private var exploreFragment: ExploreFragment? = null
     private var mWalletIndexFragment: WalletIndexFragment? = null
     private var mHomeFragment: HomeFragment? = null
+
+    private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     override fun onCreate(savedInstanceState: Bundle?) {
         mCustomToobar = true
         setStatusColor(android.R.color.transparent)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
         EventBus.getDefault().register(this)
         initView()
         setTabSelection(0)
+        initObserver()
         Constants.setCoins(DEFAULT_COINS)
         lifecycleScope.launchWhenResumed {
             BWallet.get().current.collect {
@@ -62,17 +66,18 @@ class MainActivity : BaseActivity() {
             chain = "BTY"
             platform = "bty"
             netId = "154"
-        }, Coin().apply {
+        },
+        Coin().apply {
             name = "ETH"
             chain = "ETH"
             platform = "ethereum"
             netId = "90"
         },
 
-    )
+        )
 
     override fun initView() {
-        bottomNavigationView.setOnNavigationItemSelectedListener {
+        binding.bottomNavigationView.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.fragment_home -> {
                     Log.e("MainAc", "fragment_home")
@@ -108,6 +113,15 @@ class MainActivity : BaseActivity() {
             }
         }
 
+    }
+
+    override fun initObserver() {
+        super.initObserver()
+        LiveEventBus.get<PWallet>(LIVE_KEY_WALLET).observeSticky(this, Observer {
+            it?.let {
+                setTabSelection(0)
+            }
+        })
     }
 
     private fun hideFragments(transaction: FragmentTransaction) {
@@ -158,6 +172,7 @@ class MainActivity : BaseActivity() {
         }
         fragmentTransaction.commitAllowingStateLoss()
     }
+
     private fun showExploreFragment(fragmentTransaction: FragmentTransaction) {
         if (exploreFragment != null) {
             fragmentTransaction.show(exploreFragment!!)
@@ -176,29 +191,6 @@ class MainActivity : BaseActivity() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         setTabSelection(0)
-    }
-
-
-    //回调 - 我的账户
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onMyWalletEvent(event: MyWalletEvent) {
-        if (null == event.mPWallet) {
-            return
-        } else {
-            setTabSelection(0)
-        }
-
-        if (!event.isChoose) {
-            val privkey = BWallet.get().getBtyPrikey()
-            Log.v("tag", privkey + "")
-        }
-    }
-
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onInitPasswordEvent(event: InitPasswordEvent) {
-        val password = event.password
-        Log.v("zx", password)
     }
 
 

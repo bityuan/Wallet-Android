@@ -5,16 +5,16 @@ import android.graphics.Color
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fzm.wallet.sdk.BWallet
+import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.walletmodule.R
-import com.fzm.walletmodule.event.MyWalletEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.ListUtils
 import com.fzm.walletmodule.utils.isFastClick
+import com.jeremyliao.liveeventbus.LiveEventBus
 import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
 import kotlinx.android.synthetic.main.activity_my_wallets.*
-import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.startActivity
 import org.litepal.LitePal
@@ -59,7 +59,7 @@ class MyWalletsActivity : BaseActivity() {
         listView.setOnItemClickListener { holder, position ->
             val wallet = mAdapter!!.datas[position] as PWallet
             BWallet.get().changeWallet(wallet.id.toString())
-            EventBus.getDefault().post(MyWalletEvent(wallet,true))
+            LiveEventBus.get<PWallet>(LIVE_KEY_WALLET).post(wallet)
             finish()
         }
     }

@@ -107,6 +107,8 @@ ext {
     zxingLite = "com.king.zxing:zxing-lite:1.1.2"
     backgroundLibrary = "com.github.JavaNoober.BackgroundLibrary:libraryx:1.7.3"
     fragmentKtx = "androidx.fragment:fragment-ktx:1.4.1"
+    dsBridge = "com.github.wendux:DSBridge-Android:x5-3.0-SNAPSHOT"
+    livedatabus = "io.github.jeremyliao:live-event-bus-x:1.8.0"
 
 
 }

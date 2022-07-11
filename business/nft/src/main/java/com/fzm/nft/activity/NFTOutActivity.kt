@@ -18,6 +18,7 @@ import com.fzm.nft.R
 import com.fzm.nft.databinding.ActivityNftoutBinding
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
 import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
 import com.fzm.wallet.sdk.db.entity.Coin
@@ -25,18 +26,17 @@ import com.fzm.wallet.sdk.net.UrlConfig
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.StatusBarUtil
-import com.fzm.walletmodule.event.CaptureEvent
 import com.fzm.walletmodule.vm.OutViewModel
-import kotlinx.coroutines.*
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
+import com.jeremyliao.liveeventbus.LiveEventBus
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
 import walletapi.Walletapi
 import java.math.RoundingMode
 import java.text.DecimalFormat
-import kotlin.math.pow
 
 
 @Route(path = RouterPath.NFT_OUT)
@@ -47,7 +47,6 @@ class NFTOutActivity : AppCompatActivity() {
     private var nftListDialog: AlertDialog? = null
     private var tokenID: String = ""
     private val outViewModel: OutViewModel by inject(walletQualifier)
-    private val eth by lazy { GoWallet.getChain(Walletapi.TypeETHString) }
 
     private val loading by lazy {
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_loading, null)
@@ -165,6 +164,12 @@ class NFTOutActivity : AppCompatActivity() {
             }
             nftListDialog?.show()
         })
+
+        //扫一扫
+        LiveEventBus.get<String>(LIVE_KEY_SCAN).observe(this, Observer { scan ->
+            binding.etAddress.setText(scan)
+            binding.etAddress.setSelection(scan.length)
+        })
     }
 
 
@@ -232,26 +237,5 @@ class NFTOutActivity : AppCompatActivity() {
         super.onTitleChanged(title, color)
         binding.xbar.toolbar.title = ""
         binding.xbar.tvToolbar.text = title
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onMessageEvent(event: CaptureEvent) {
-        binding.etAddress.setText(event.text)
-        binding.etAddress.setSelection(event.text.length)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this)
-        }
-    }
-
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().unregister(this)
-        }
     }
 }

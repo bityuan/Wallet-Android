@@ -11,14 +11,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter.base.listener.OnItemDragListener
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.WalletConfiguration
+import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.adapter.BackUpWalletAdapter
 import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.bean.WalletBackUp
-import com.fzm.walletmodule.event.BackUpEvent
-import com.fzm.walletmodule.event.InitPasswordEvent
-import com.fzm.walletmodule.event.MyWalletEvent
 import com.fzm.walletmodule.manager.WalletManager
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.AutoLineFeedLayoutManager
@@ -28,6 +26,7 @@ import com.fzm.walletmodule.utils.ListUtils
 import com.fzm.walletmodule.utils.ScreenUtils
 import com.fzm.walletmodule.utils.ToastUtils
 import com.fzm.walletmodule.utils.isFastClick
+import com.jeremyliao.liveeventbus.LiveEventBus
 import com.zhy.adapter.abslistview.CommonAdapter
 import com.zhy.adapter.abslistview.ViewHolder
 import kotlinx.android.synthetic.main.activity_back_up_wallet.*
@@ -245,13 +244,10 @@ class BackUpWalletActivity : BaseActivity() {
                 return@setOnClickListener
             }
             if (mFrom == WalletManager::class.java.simpleName) {
-                EventBus.getDefault().post(BackUpEvent())
                 ToastUtils.show(this, getString(R.string.backup_success))
                 finish()
                 return@setOnClickListener
             }
-
-            EventBus.getDefault().post(InitPasswordEvent(mPWallet.password))
             showLoading()
 
             lifecycleScope.launch {
@@ -267,7 +263,7 @@ class BackUpWalletActivity : BaseActivity() {
                 val pWallet = BWallet.get().findWallet(id)
 
                 dismiss()
-                EventBus.getDefault().postSticky(MyWalletEvent(pWallet))
+                LiveEventBus.get<PWallet>(LIVE_KEY_WALLET).post(pWallet)
                 closeSomeActivitys()
             }
 

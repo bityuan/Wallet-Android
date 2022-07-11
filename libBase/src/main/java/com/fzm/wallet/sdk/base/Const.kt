@@ -2,15 +2,6 @@ package com.fzm.wallet.sdk.base
 
 import com.fzm.wallet.sdk.db.entity.Coin
 
-/**
- * @author zhengjy
- * @since 2022/01/12
- * Description:
- */
-
-/**
- * 默认币种列表
- */
 internal val DEFAULT_COINS
     get() = listOf(
         Coin().apply {
@@ -40,3 +31,6 @@ internal val DEFAULT_COINS
     )
 
 const val REGEX_CHINESE = "[\u4e00-\u9fa5]+"
+
+const val LIVE_KEY_SCAN = "live_key_scan"
+const val LIVE_KEY_WALLET = "live_key_wallet"
