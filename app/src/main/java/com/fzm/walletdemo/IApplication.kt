@@ -23,12 +23,12 @@ class IApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        BWallet.get().setUrls(BASE_URL,GO_URL)
+        BWallet.get().setUrls(IPConfig.BASE_URL,IPConfig.GO_URL)
         WalletModuleApp.init(this)
         startKoin {
             androidContext(this@IApplication)
             modules(module {
-                BWallet.get().init(this@IApplication, this, "1", APP_SYMBOL, "", APP_KEY, "${Build.MANUFACTURER} ${Build.MODEL}")
+                BWallet.get().init(this@IApplication, this, "1", IPConfig.APP_SYMBOL, "", IPConfig.APP_KEY, "${Build.MANUFACTURER} ${Build.MODEL}")
             })
             modules(walletModule)
             modules(nftModule)
