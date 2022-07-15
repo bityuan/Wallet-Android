@@ -5,13 +5,20 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/layout_header" android:id="@+id/header" />
+    <include
+        android:id="@+id/header"
+        layout="@layout/layout_header" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_home"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:tabMode="auto" />
+        app:tabIndicatorAnimationMode="elastic"
+        app:tabIndicatorFullWidth="false"
+        app:tabMode="auto"
+        app:tabSelectedTextColor="@android:color/black"
+        app:tabTextAppearance="@style/myTabTextAppearance"
+        app:tabTextColor="@color/color_8e92a3" />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/vp_home"

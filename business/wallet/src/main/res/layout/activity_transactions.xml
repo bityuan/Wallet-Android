@@ -14,7 +14,9 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include layout="@layout/layout_bar" android:id="@+id/bar"/>
+        <include
+            android:id="@+id/bar"
+            layout="@layout/layout_bar" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -178,15 +180,12 @@
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_layout"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/rv_hotcoinslist"
-                app:tabBackground="@color/transparent"
-                app:tabGravity="fill"
-                app:tabIndicatorColor="@color/transparent"
-                app:tabMode="scrollable"
-                app:tabSelectedTextColor="@color/color_7190FF"
+                app:tabIndicatorFullWidth="false"
+                app:tabSelectedTextColor="@android:color/black"
                 app:tabTextAppearance="@style/text_tablayout"
                 app:tabTextColor="@color/color_8E92A3" />
 
