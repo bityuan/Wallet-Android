@@ -123,7 +123,7 @@ public class CommonDialogFragment extends DialogFragment {
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View rootView = inflater.inflate(R.layout.dialog_fragment_common, null);
+        View rootView = inflater.inflate(R.layout.dialog_common, null);
         ImageView ivClose = (ImageView) rootView.findViewById(R.id.iv_close);
         ivClose.setVisibility(isShowClose ? View.VISIBLE : View.GONE);
         mTvResult = (TextView) rootView.findViewById(R.id.tv_result);

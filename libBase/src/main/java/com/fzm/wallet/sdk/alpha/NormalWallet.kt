@@ -1,5 +1,7 @@
 package com.fzm.wallet.sdk.alpha
 
+import com.fzm.wallet.sdk.BWallet
+import com.fzm.wallet.sdk.BWalletImpl
 import com.fzm.wallet.sdk.WalletConfiguration
 import com.fzm.wallet.sdk.base.DEFAULT_COINS
 import com.fzm.wallet.sdk.base.REGEX_CHINESE
@@ -22,43 +24,57 @@ class NormalWallet(wallet: PWallet) : BaseWallet(wallet) {
 
     override suspend fun init(configuration: WalletConfiguration): String {
         return with(configuration) {
-            if (mnemonic.isNullOrEmpty()) {
-                throw ImportWalletException("助记词不能为空")
-            }
-            if (walletName.isNullOrEmpty()) {
-                throw ImportWalletException("钱包名称不能为空")
-            }
-            if (password.isNullOrEmpty()) {
-                throw ImportWalletException("钱包密码不能为空")
-            }
-            val type = if (mnemonic!!.substring(0, 1).matches(REGEX_CHINESE.toRegex())) {
+            val mnemType = if (mnemonic!!.substring(0, 1).matches(REGEX_CHINESE.toRegex())) {
                 PWallet.TYPE_CHINESE
             } else PWallet.TYPE_ENGLISH
-            val mnem = if (type == PWallet.TYPE_CHINESE) getChineseMnem(mnemonic!!) else mnemonic!!
+            val mnem =
+                if (mnemType == PWallet.TYPE_CHINESE) getChineseMnem(mnemonic!!) else mnemonic!!
 
             val hdWallet = withContext(Dispatchers.IO) {
                 GoWallet.getHDWallet(Walletapi.TypeBtyString, mnem)
-            } ?: throw ImportWalletException("助记词不存在")
+            } ?: throw ImportWalletException("助记词有误")
 
             val pubKey = GoWallet.encodeToStrings(hdWallet.newKeyPub(0))
             val count = LitePal.where("pubkey = ?", pubKey).find<Coin>(true)
 
             if (count.isNotEmpty()) {
-                if (count[0].getpWallet().type == PWallet.TYPE_NOMAL) {
-                    throw ImportWalletException("助记词重复")
+                throw ImportWalletException("助记词重复")
+            }
+            withContext(Dispatchers.IO) {
+                coins.forEachIndexed { index, coin ->
+                    val hdWallet = GoWallet.getHDWallet(coin.chain, mnem)
+                    hdWallet?.let {
+                        val privateKey = it.newKeyPriv(0)
+                        val pubkey = it.newKeyPub(0)
+                        val address = it.newAddress_v2(0)
+                        val pubkeyStr = Walletapi.byteTohex(pubkey)
+                        coin.sort = index
+                        coin.status = Coin.STATUS_ENABLE
+                        coin.pubkey = pubkeyStr
+                        coin.address = address
+                        if (Walletapi.TypeBtyString == coin.chain) {
+                            val bWalletImpl = BWallet.get() as BWalletImpl
+                            bWalletImpl.setBtyPrivkey(Walletapi.byteTohex(privateKey))
+                        }
+                    }
                 }
+                wallet.also {
+                    it.mnemType = mnemType
+                    it.type = PWallet.TYPE_NOMAL
+                    it.name = walletName
+                    it.user = configuration.user
+                    val bPassword = Walletapi.encPasswd(password)
+                    it.password = GoWallet.passwdHash(bPassword)
+                    it.mnem = GoWallet.encMenm(bPassword, mnem)
+                }
+
+                LitePal.saveAll(coins)
+                wallet.coinList.addAll(coins)
+                wallet.save()
+                wallet.id.toString()
             }
 
-            wallet.also {
-                it.mnemType = type
-                it.mnem = mnem
-                it.type = PWallet.TYPE_NOMAL
-                it.name = walletName
-                it.password = password
-                it.user = configuration.user
-            }
 
-            GoWallet.createWallet(wallet, coins.ifEmpty { DEFAULT_COINS }).id.toString()
         }
     }
 }

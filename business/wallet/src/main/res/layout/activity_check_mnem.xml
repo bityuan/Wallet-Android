@@ -8,7 +8,7 @@
     android:orientation="vertical"
     tools:context=".ui.activity.CheckMnemActivity">
 
-    <include layout="@layout/view_import0"/>
+    <include layout="@layout/view_import0" android:id="@+id/view_mnem"/>
 
     <Button
         android:id="@+id/btn_check"

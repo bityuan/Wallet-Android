@@ -12,7 +12,7 @@ class WalletRecoverUtils {
 
         try {
 
-            //找回钱包
+            //找回账户
             val hdWallet1 =
                 Walletapi.newWalletFromMnemonic_v2("BTY", "")
             val hdWallet2 =

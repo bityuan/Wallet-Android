@@ -14,6 +14,10 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.RelativeLayout
+import com.alibaba.android.arouter.facade.annotation.Autowired
+import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
+import com.fzm.wallet.sdk.RouterPath
 import com.fzm.walletmodule.R
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
@@ -32,15 +36,19 @@ import org.litepal.LitePal.find
 /**
  * 修改密码页面
  */
+@Route(path = RouterPath.WALLET_CHANGE_PASSWORD)
 class ChangePasswordActivity : BaseActivity() {
+    @JvmField
+    @Autowired(name = PWallet.PWALLET_ID)
+    var walletid: Long = 0
     private var viewHeight = 0
-    private var mPWalletId: Long = 0
     private var mPasswordHash: String? = null
     private var mPWallet: PWallet? = null
     var goChecked = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_change_password)
+        ARouter.getInstance().inject(this)
         btn_sure.viewTreeObserver.addOnPreDrawListener {
             viewHeight = btn_sure.height
             true
@@ -53,8 +61,7 @@ class ChangePasswordActivity : BaseActivity() {
     }
 
     override fun initIntent() {
-        mPWalletId = intent.getLongExtra(PWALLET_ID, 0)
-        mPWallet = find(PWallet::class.java, mPWalletId)
+        mPWallet = find(PWallet::class.java, walletid)
         mPasswordHash = mPWallet?.password
     }
 
@@ -101,7 +108,7 @@ class ChangePasswordActivity : BaseActivity() {
                 val mnem = GoWallet.decMenm(bOldPassword!!, mPWallet!!.mnem)
                 val encMenm = GoWallet.encMenm(encPasswd, mnem!!)
                 pWallet.mnem = encMenm
-                pWallet.update(mPWalletId)
+                pWallet.update(walletid)
                 runOnUiThread {
                     dismiss()
                     ToastUtils.show(this@ChangePasswordActivity, getString(R.string.my_change_password_success), Gravity.CENTER)
@@ -220,9 +227,5 @@ class ChangePasswordActivity : BaseActivity() {
             currentView = et_password_again
             false
         })
-    }
-
-    companion object {
-        const val PWALLET_ID = "pwallet_id"
     }
 }

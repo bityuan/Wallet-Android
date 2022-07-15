@@ -12,7 +12,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.BWallet
+import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.utils.GoWallet
@@ -162,10 +164,9 @@ class WalletFragment : BaseFragment() {
             if (ClickUtils.isFastDoubleClick()) {
                 return@setOnClickListener
             }
-            val `in` = Intent()
-            `in`.setClass(requireActivity(), WalletDetailsActivity::class.java)
-            `in`.putExtra(PWallet.PWALLET_ID, BWallet.get().getCurrentWallet()?.id ?: 0L)
-            startActivityForResult(`in`, UPDATE_WALLET)
+            ARouter.getInstance().build(RouterPath.WALLET_WALLET_DETAILS)
+                .withLong(PWallet.PWALLET_ID, BWallet.get().getCurrentWallet()?.id ?: 0L).navigation()
+
         }
         binding.ivBack.setOnClickListener {
             requireActivity().finish()
@@ -201,11 +202,6 @@ class WalletFragment : BaseFragment() {
                 binding.recyclerView.smoothScrollToPosition(0)
             }
         }
-    }
-
-    companion object {
-
-        const val UPDATE_WALLET = 1000
     }
 
 

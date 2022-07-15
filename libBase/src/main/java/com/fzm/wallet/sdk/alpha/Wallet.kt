@@ -14,36 +14,36 @@ import kotlinx.coroutines.flow.Flow
 interface Wallet<T> : Cloneable {
 
     /**
-     * 初始化钱包方法
+     * 初始化账户方法
      */
     suspend fun init(configuration: WalletConfiguration): String
 
     /**
-     * 获取钱包id
+     * 获取账户id
      */
     fun getId(): String
 
     /**
-     * 钱包信息
+     * 账户信息
      */
     val walletInfo: WalletBean
 
     /**
-     * 修改钱包名称
+     * 修改账户名称
      */
     @Throws(Exception::class)
     suspend fun changeWalletName(name: String): Boolean
 
     /**
-     * 修改钱包密码
+     * 修改账户密码
      */
     @Throws(Exception::class)
     suspend fun changeWalletPassword(old: String, password: String): Boolean
 
     /**
-     * 删除钱包
+     * 删除账户
      *
-     * @param password      钱包密码
+     * @param password      账户密码
      * @param confirmation  获取用户确认，默认允许
      */
     @Throws(Exception::class)
@@ -59,7 +59,7 @@ interface Wallet<T> : Cloneable {
      * @param toAddress 目标地址
      * @param amount    转账金额
      * @param fee       矿工费
-     * @param password  钱包密码
+     * @param password  账户密码
      */
     @Throws(Exception::class)
     suspend fun transfer(coin: T, toAddress: String, amount: Double, fee: Double, note: String?, password: String): String
@@ -134,7 +134,7 @@ interface Wallet<T> : Cloneable {
     suspend fun getMainCoin(chain: String): Coin?
 
     /**
-     * 关闭钱包
+     * 关闭账户
      */
     fun close()
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.fzm.walletmodule" >
+    package="com.fzm.walletmodule">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission
@@ -15,6 +15,10 @@
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application>
+        <activity
+            android:name=".ui.activity.ChooseChainActivity"
+            android:label="选择主链"
+            android:exported="false" />
         <activity
             android:name=".ui.activity.AddCoinActivity"
             android:exported="false" />

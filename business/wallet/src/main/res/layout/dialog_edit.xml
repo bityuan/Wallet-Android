@@ -45,7 +45,7 @@
         </LinearLayout>
 
 
-        <View xmlns:android="http://schemas.android.com/apk/res/android"
+        <View
             android:layout_width="45dp"
             android:layout_height="4dp"
             android:layout_marginLeft="25dp"
@@ -54,16 +54,16 @@
 
         <EditText
             android:id="@+id/et_input"
-            android:maxLength="16"
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:layout_marginLeft="25dp"
             android:layout_marginTop="20dp"
             android:layout_marginRight="25dp"
             android:background="@color/gray_f8"
+            android:maxLength="16"
             android:paddingLeft="10dp"
-            android:textColorHint="@color/color_8E92A3"
             android:textColor="@color/gray_33"
+            android:textColorHint="@color/color_8E92A3"
             android:textSize="17sp" />
 
 

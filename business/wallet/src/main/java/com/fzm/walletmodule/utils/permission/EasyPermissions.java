@@ -146,7 +146,7 @@ public class EasyPermissions {
     private static void showDialog(Activity activity, String rationale, final Object object, final int requestCode, final String... perms){
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         LayoutInflater inflater = activity.getLayoutInflater();
-        View rootView = inflater.inflate(R.layout.dialog_fragment_common, null);
+        View rootView = inflater.inflate(R.layout.dialog_common, null);
         TextView tvResult = (TextView) rootView.findViewById(R.id.tv_result);
         TextView tvResultDetails = (TextView) rootView.findViewById(R.id.tv_result_details);
         Button btnLeft = (Button) rootView.findViewById(R.id.btn_left);

@@ -4,6 +4,10 @@ package com.fzm.walletmodule.ui.activity
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
+import com.alibaba.android.arouter.facade.annotation.Autowired
+import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
+import com.fzm.wallet.sdk.RouterPath
 import com.fzm.walletmodule.R
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.walletmodule.ui.base.BaseActivity
@@ -18,20 +22,23 @@ import org.litepal.LitePal.find
 /**
  * 设置密码页面
  */
+@Route(path = RouterPath.WALLET_SET_PASSWORD)
 class SetPasswordActivity : BaseActivity() {
-    private var mPWalletId: Long = 0
+    @JvmField
+    @Autowired(name = PWallet.PWALLET_ID)
+    var walletid: Long = 0
     private var mPWallet: PWallet? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_set_password)
+        ARouter.getInstance().inject(this)
         tvTitle.text = getString(R.string.title_set_pwd)
         initIntent()
         initListener()
     }
 
     override fun initIntent() {
-        mPWalletId = intent.getLongExtra(SetPasswordActivity.PWALLET_ID, 0)
-        mPWallet = find(PWallet::class.java, mPWalletId)
+        mPWallet = find(PWallet::class.java, walletid)
     }
 
     override fun initListener() {
@@ -62,7 +69,7 @@ class SetPasswordActivity : BaseActivity() {
                 val encMenm: String? = GoWallet.encMenm(encPasswd, mnem)
                 pWallet.mnem = encMenm
                 pWallet.isPutpassword = true
-                pWallet.update(mPWalletId)
+                pWallet.update(walletid)
                 runOnUiThread {
                     dismiss()
                     ToastUtils.show(this@SetPasswordActivity, getString(R.string.my_set_password))
@@ -89,10 +96,5 @@ class SetPasswordActivity : BaseActivity() {
             tv_different.visibility = View.INVISIBLE
         }
         return true
-    }
-
-
-    companion object {
-        const val PWALLET_ID = "pwallet_id"
     }
 }

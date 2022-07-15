@@ -23,6 +23,6 @@ class AddressWallet(wallet: PWallet) : BaseWallet(wallet) {
         note: String?,
         password: String
     ): String {
-        throw UnsupportedOperationException("观察钱包不支持转账")
+        throw UnsupportedOperationException("观察账户不支持转账")
     }
 }

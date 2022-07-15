@@ -10,6 +10,8 @@ import com.fzm.wallet.sdk.db.entity.PWallet
  */
 class WalletConfiguration {
 
+
+
     var type: Int = 0
 
     /**
@@ -31,13 +33,13 @@ class WalletConfiguration {
         private set
 
     /**
-     * 钱包名
+     * 账户名
      */
     var walletName: String? = null
         private set
 
     /**
-     * 钱包密码
+     * 账户密码
      */
     var password: String? = null
         private set
@@ -49,12 +51,9 @@ class WalletConfiguration {
         private set
 
     /**
-     * 钱包币种
+     * 账户币种
      */
-    val coins: List<Coin>
-        get() = _coins ?: emptyList()
-
-    private var _coins: List<Coin>? = null
+    var coins: List<Coin> = ArrayList()
 
     companion object {
 
@@ -70,7 +69,7 @@ class WalletConfiguration {
             this.walletName = walletName
             this.password = password
             this.user = user
-            this._coins = coins
+            this.coins = coins
         }
 
         fun privateKeyWallet(
@@ -80,11 +79,12 @@ class WalletConfiguration {
             user: String,
             coins: List<Coin>
         ) = WalletConfiguration().apply {
+            this.type = PWallet.TYPE_PRI_KEY
             this.privateKey = privateKey
             this.walletName = walletName
             this.password = password
             this.user = user
-            this._coins = coins
+            this.coins = coins
         }
 
         fun addressWallet(
@@ -98,7 +98,7 @@ class WalletConfiguration {
             this.walletName = walletName
             this.password = password
             this.user = user
-            this._coins = coins
+            this.coins = coins
         }
     }
 }

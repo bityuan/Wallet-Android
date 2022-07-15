@@ -22,7 +22,7 @@
         android:visibility="visible" />
 
     <TextView
-        android:id="@+id/updatePassword"
+        android:id="@+id/tv_update_password"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="@color/white"
@@ -42,7 +42,7 @@
         android:background="@color/lineColor" />
 
     <TextView
-        android:id="@+id/updateName"
+        android:id="@+id/tv_update_name"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="@color/white"
@@ -61,7 +61,7 @@
         android:layout_height="10dp" />
 
     <TextView
-        android:id="@+id/outMnem"
+        android:id="@+id/tv_out_mnem"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="@color/white"
@@ -81,7 +81,7 @@
         android:background="@color/lineColor" />
 
     <TextView
-        android:id="@+id/outPriv"
+        android:id="@+id/tv_out_priv"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="@color/white"
@@ -103,7 +103,7 @@
         android:background="@color/lineColor" />
 
     <TextView
-        android:id="@+id/delete"
+        android:id="@+id/tv_delete"
         android:layout_width="140dp"
         android:layout_height="44dp"
         android:layout_gravity="center_horizontal"

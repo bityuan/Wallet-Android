@@ -11,8 +11,9 @@ public class PWallet extends BaseBean implements Cloneable {
     public static final String PWALLET_MNEM = "pwallet_mnem";
     public static final int TYPE_CHINESE = 1;
     public static final int TYPE_ENGLISH = 0;
-    public static final int TYPE_NOMAL = 2;
-    public static final int TYPE_NONE = 6;
+
+    public static final int TYPE_NOMAL = 2;//普通账户
+    public static final int TYPE_PRI_KEY = 4;//私钥账户
     private int type;
     private String user;
     private String name;

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rl_choose_chain"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="@drawable/bg_import_wallet_chose_coin">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:text="@string/import_wallet_chain_name"
+            android:textColor="#7190ff"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/iv_chain"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginRight="10dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tv_chain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="选择主链"
+                android:textColor="#ff333649"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:src="@mipmap/view_import_more" />
+
+    </RelativeLayout>
+
+    <com.fzm.walletmodule.ui.widget.LimitEditText
+        android:id="@+id/et_input"
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_remember_words"
+        android:gravity="center_vertical"
+        android:hint="@string/import_wallet_hint1"
+        android:paddingLeft="14dp"
+        android:paddingRight="14dp"
+        android:textColor="@color/color_333649"
+        android:textColorHint="@color/gray_8e"
+        android:textSize="16sp" />
+
+
+</LinearLayout>

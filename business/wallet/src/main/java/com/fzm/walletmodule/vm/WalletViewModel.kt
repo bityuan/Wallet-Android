@@ -24,6 +24,10 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
     val getTabData: LiveData<HttpResult<List<AddCoinTabBean>>>
         get() = _getTabData
 
+    private val _getSupportedChain = MutableLiveData<HttpResult<List<Coin>>>()
+    val getSupportedChain: LiveData<HttpResult<List<Coin>>>
+        get() = _getSupportedChain
+
 
     fun getCoinList(names: List<String>) {
         viewModelScope.launch {
@@ -43,6 +47,13 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
     fun getTabData() {
         viewModelScope.launch {
             _getTabData.value = walletRepository.getTabData()
+        }
+    }
+
+
+    fun getSupportedChain() {
+        viewModelScope.launch {
+            _getSupportedChain.value = walletRepository.getSupportedChain()
         }
     }
 

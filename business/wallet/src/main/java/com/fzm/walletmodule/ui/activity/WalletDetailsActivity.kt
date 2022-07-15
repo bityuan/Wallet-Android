@@ -1,107 +1,132 @@
 package com.fzm.walletmodule.ui.activity
 
-import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
-import android.text.TextUtils
-import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
-import com.alibaba.fastjson.JSON
+import com.alibaba.android.arouter.facade.annotation.Autowired
+import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.BWallet
-import com.fzm.wallet.sdk.bean.StringResult
+import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.R
+import com.fzm.walletmodule.databinding.ActivityWalletDetailsBinding
+import com.fzm.walletmodule.databinding.DialogCommonBinding
+import com.fzm.walletmodule.databinding.DialogEditBinding
 import com.fzm.walletmodule.event.CheckMnemEvent
 import com.fzm.walletmodule.event.UpdatePasswordEvent
 import com.fzm.walletmodule.manager.WalletManager
 import com.fzm.walletmodule.ui.base.BaseActivity
-import com.fzm.walletmodule.ui.widget.CommonDialogFragment
-import com.fzm.walletmodule.ui.widget.EditDialogFragment
 import com.fzm.walletmodule.utils.ListUtils
-import com.fzm.walletmodule.utils.ToastUtils
-import com.fzm.walletmodule.utils.WalletRecoverUtils
 import com.fzm.walletmodule.utils.isFastClick
-import kotlinx.android.synthetic.main.activity_wallet_details.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
+import org.jetbrains.anko.textColor
+import org.jetbrains.anko.toast
 import org.litepal.LitePal.find
 import org.litepal.LitePal.select
-import walletapi.*
-import java.util.*
-import kotlin.coroutines.resume
 
-/**
- * 账户详情页面
- */
+@Route(path = RouterPath.WALLET_WALLET_DETAILS)
 class WalletDetailsActivity : BaseActivity() {
+
+    @JvmField
+    @Autowired(name = PWallet.PWALLET_ID)
+    var walletid: Long = 0
     private var mPWallet: PWallet? = null
-    private var mEditDialogFragment: EditDialogFragment? = null
-    private var mPasswordDialogFragment: EditDialogFragment? = null
-    private var mCommonDialogFragment: CommonDialogFragment? = null
     private var needUpdate = false
+    private val binding by lazy { ActivityWalletDetailsBinding.inflate(layoutInflater) }
+    private val editBinding by lazy { DialogEditBinding.inflate(layoutInflater) }
+    private val editDialog by lazy {
+        AlertDialog.Builder(this).setView(editBinding.root).create().apply {
+            window?.setBackgroundDrawableResource(android.R.color.transparent)
+        }
+    }
+    private val commonBinding by lazy { DialogCommonBinding.inflate(layoutInflater) }
+    private val commonDialog by lazy {
+        AlertDialog.Builder(this).setView(commonBinding.root).create().apply {
+            window?.setBackgroundDrawableResource(android.R.color.transparent)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_wallet_details)
-        tvTitle.text = getString(R.string.title_wallet_details)
+        setContentView(binding.root)
+        ARouter.getInstance().inject(this)
+        initView()
         EventBus.getDefault().register(this)
-        initIntent()
         initListener()
     }
 
-    override fun initIntent() {
-        val pWalletId = intent.getLongExtra(PWallet.PWALLET_ID, 0L)
-        mPWallet = find(PWallet::class.java, pWalletId)
+    override fun initView() {
+        super.initView()
+        tvTitle.text = getString(R.string.title_wallet_details)
+        lifecycleScope.launch(Dispatchers.IO) {
+            mPWallet = find(PWallet::class.java, walletid)
+            withContext(Dispatchers.Main) {
+                mPWallet?.let {
+                    if (it.type == PWallet.TYPE_PRI_KEY) {
+                        binding.tvOutMnem.visibility = View.GONE
+                    } else {
+                        binding.tvOutMnem.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
+
+
     }
 
+
     override fun initListener() {
-        tv_forget_password.setOnClickListener {
+        binding.tvForgetPassword.setOnClickListener {
             if (isFastClick()) {
                 return@setOnClickListener
             }
-            val `in` = Intent(this, CheckMnemActivity::class.java)
-            `in`.putExtra(PWallet.PWALLET_ID, mPWallet!!.id)
-            startActivity(`in`)
+            mPWallet?.let {
+                ARouter.getInstance().build(RouterPath.WALLET_CHECK_MNEM)
+                    .withLong(PWallet.PWALLET_ID, it.id).navigation()
+            }
+
         }
-        updatePassword.setOnClickListener {
+        binding.tvUpdatePassword.setOnClickListener {
             if (isFastClick()) {
                 return@setOnClickListener
             }
-            val intent = Intent()
-            intent.setClass(
-                this,
-                if (TextUtils.isEmpty(mPWallet!!.password)) SetPasswordActivity::class.java else ChangePasswordActivity::class.java
-            )
-            intent.putExtra(ChangePasswordActivity.PWALLET_ID, mPWallet!!.id)
-            startActivity(intent)
+            mPWallet?.let {
+                ARouter.getInstance()
+                    .build(if (it.password.isNullOrEmpty()) RouterPath.WALLET_SET_PASSWORD else RouterPath.WALLET_CHANGE_PASSWORD)
+                    .withLong(PWallet.PWALLET_ID, it.id).navigation()
+            }
         }
-        outPriv.setOnClickListener {
+        binding.tvOutPriv.setOnClickListener {
             if (isFastClick()) {
                 return@setOnClickListener
             }
             checkPassword(1)
         }
-        updateName.setOnClickListener {
+        binding.tvUpdateName.setOnClickListener {
             if (isFastClick()) {
                 return@setOnClickListener
             }
             updateWalletName()
         }
-        outMnem.setOnClickListener {
-            if (isFastClick()){
+        binding.tvOutMnem.setOnClickListener {
+            if (isFastClick()) {
                 return@setOnClickListener
             }
             checkPassword(3)
         }
-        delete.setOnClickListener {
-            if (isFastClick()){
+        binding.tvDelete.setOnClickListener {
+            if (isFastClick()) {
                 return@setOnClickListener
             }
             checkPassword(2)
@@ -110,186 +135,150 @@ class WalletDetailsActivity : BaseActivity() {
 
 
     private fun updateWalletName() {
-        if (mEditDialogFragment == null) {
-            mEditDialogFragment =
-                EditDialogFragment()
-            mEditDialogFragment!!.setTitle(getString(R.string.my_wallet_detail_name))
-            mEditDialogFragment!!.setInput(mPWallet!!.name)
-            mEditDialogFragment!!.type = 1
-            mEditDialogFragment!!.setInputType(InputType.TYPE_CLASS_TEXT)
-            mEditDialogFragment!!.setRightButtonStr(getString(R.string.ok))
-            mEditDialogFragment!!.setOnButtonClickListener(object :
-                EditDialogFragment.OnButtonClickListener {
-                override fun onRightButtonClick(v: View?) {
-                    val input = mEditDialogFragment!!.etInput.text.toString().trim()
-                    if (TextUtils.isEmpty(input)) {
-                        ToastUtils.show(
-                            this@WalletDetailsActivity,
-                            getString(R.string.my_wallet_detail_name)
-                        )
-                        return
-                    }
-                    lifecycleScope.launch {
-                        try {
-                            BWallet.get().changeWalletName(input)
-                            needUpdate = true
-                            ToastUtils.show(
-                                this@WalletDetailsActivity,
-                                getString(R.string.my_wallet_modified_success)
-                            )
-                        } catch (e: Exception) {
-//                            ToastUtils.show(
-//                                this@WalletDetailsActivity,
-//                                getString(R.string.my_wallet_detail_name_exist)
-//                            )
-                            ToastUtils.show(this@WalletDetailsActivity, e.message)
-                            return@launch
-                        }
-                    }
-
-                }
-
-                override fun onLeftButtonClick(v: View?) {
-
-                }
-
-            })
+        editBinding.etInput.inputType = InputType.TYPE_CLASS_TEXT
+        editBinding.tvTitle.text = getString(R.string.my_wallet_detail_name)
+        mPWallet?.let {
+            editBinding.etInput.setText(it.name)
+            editBinding.etInput.setSelection(it.name.length)
         }
-        mEditDialogFragment!!.showDialog(
-            getString(R.string.my_wallet_detail_modify_name),
-            supportFragmentManager
-        )
+
+        editBinding.ivClose.setOnClickListener {
+            editDialog.dismiss()
+        }
+        editBinding.btnRight.setOnClickListener {
+            val input = editBinding.etInput.text.toString()
+            if (input.isEmpty()) {
+                toast(getString(R.string.my_wallet_detail_name))
+                return@setOnClickListener
+            }
+            lifecycleScope.launch(Dispatchers.IO) {
+                BWallet.get().changeWalletName(input)
+                withContext(Dispatchers.Main) {
+                    toast(getString(R.string.my_wallet_modified_success))
+                    editDialog.dismiss()
+                }
+            }
+
+        }
+        editDialog.show()
     }
 
-    /**
-     * 校验密码
-     * type   1 代表查看私钥   2 代表删除账户   3 代表查看助记词
-     */
+
     private fun checkPassword(type: Int) {
-        if (mPasswordDialogFragment == null) {
-            mPasswordDialogFragment =
-                EditDialogFragment()
-            mPasswordDialogFragment!!.setTitle(getString(R.string.my_wallet_detail_password))
-            mPasswordDialogFragment!!.setHint(getString(R.string.my_wallet_detail_password))
-            mPasswordDialogFragment!!.setAutoDismiss(false)
-            mPasswordDialogFragment!!.setType(1)
-                .setRightButtonStr(getString(R.string.ok))
-        }
-        mPasswordDialogFragment!!.setOnButtonClickListener(object :
-            EditDialogFragment.OnButtonClickListener {
-            override fun onRightButtonClick(v: View?) {
-                val password = mPasswordDialogFragment!!.etInput.text.toString().trim()
-                if (TextUtils.isEmpty(password)) {
-                    ToastUtils.show(
-                        this@WalletDetailsActivity,
-                        R.string.my_wallet_detail_password
-                    )
-                    return
-                }
-                mPasswordDialogFragment?.dismiss()
-                val localPassword = mPWallet?.password
-                showLoading()
-                doAsync {
-                    val result = GoWallet.checkPasswd(password, localPassword!!)
+        editBinding.etInput.inputType =
+            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        editBinding.etInput.setText("")
+        editBinding.tvTitle.text = getString(R.string.my_wallet_detail_password)
+        editBinding.etInput.hint = getString(R.string.my_wallet_detail_password)
+        editBinding.ivClose.setOnClickListener { editDialog.dismiss() }
+        editBinding.btnRight.setOnClickListener {
+            val input = editBinding.etInput.text.toString()
+            if (input.isEmpty()) {
+                toast(getString(R.string.my_wallet_detail_password))
+                return@setOnClickListener
+            }
+            editDialog.dismiss()
+            showLoading()
+            lifecycleScope.launch(Dispatchers.IO) {
+                mPWallet?.let {
+                    val result = GoWallet.checkPasswd(input, it.password)
                     if (result) {
-                        handlePasswordAfter(type, password)
+                        handlePasswordAfter(type, input)
                     } else {
-                        uiThread {
-                            ToastUtils.show(
-                                this@WalletDetailsActivity,
-                                getString(R.string.my_wallet_detail_wrong_password)
-                            )
+                        withContext(Dispatchers.Main) {
+                            toast(getString(R.string.my_wallet_detail_wrong_password))
                             dismiss()
                         }
                     }
                 }
 
             }
-
-            override fun onLeftButtonClick(v: View?) {
-            }
-        })
-        mPasswordDialogFragment?.showDialog("tag", supportFragmentManager)
+        }
+        editDialog.show()
     }
 
-    private fun handlePasswordAfter(type: Int, password: String) {
+    /**
+     * type   1 代表查看私钥   2 代表删除账户   3 代表查看助记词
+     */
+    private suspend fun handlePasswordAfter(type: Int, password: String) {
         when (type) {
             1 -> {
                 val mnem = getMnem(password)
-                outPriv(mnem!!, password)
+                outPriv(mnem, password)
             }
             2 -> {
-                lifecycleScope.launch {
-                    BWallet.get().deleteWallet(password) { handleDelete() }
-                    dismiss()
-                    needUpdate = true
-                    finish()
+                dismiss()
+                withContext(Dispatchers.Main) {
+                    commonBinding.tvResult.text = getString(R.string.my_wallet_detail_safe)
+                    commonBinding.tvResult.textColor = Color.RED
+                    commonBinding.tvResultDetails.text =
+                        getString(R.string.my_wallet_detail_delete_message)
+                    commonBinding.btnLeft.visibility = View.VISIBLE
+                    commonBinding.btnLeft.setOnClickListener {
+                        commonDialog.dismiss()
+                    }
+                    commonBinding.btnRight.setOnClickListener {
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            BWallet.get().deleteWallet(password)
+                            withContext(Dispatchers.Main) {
+                                commonDialog.dismiss()
+                                finish()
+                            }
+                        }
+
+                    }
+                    commonDialog.show()
                 }
+
             }
             3 -> {
                 val mnem = getMnem(password)
-                runOnUiThread {
+                withContext(Dispatchers.Main) {
                     dismiss()
-                    WalletManager().exportMnem(this@WalletDetailsActivity, mnem!!, mPWallet!!)
+                    WalletManager().exportMnem(this@WalletDetailsActivity, mnem, mPWallet!!)
                 }
 
             }
         }
     }
 
-    private fun getMnem(password: String): String? {
+    private fun getMnem(password: String): String {
         return GoWallet.decMenm(GoWallet.encPasswd(password)!!, mPWallet!!.mnem)
     }
 
-    private suspend fun handleDelete() = suspendCancellableCoroutine<Boolean> { cont ->
-        dismiss()
-        if (mCommonDialogFragment == null) {
-            mCommonDialogFragment =
-                CommonDialogFragment()
-            mCommonDialogFragment!!.setResult(getString(R.string.my_wallet_detail_safe))
-                .setResultColor(resources.getColor(R.color.red_common))
-                .setResultDetails(getString(R.string.my_wallet_detail_delete_message))
-                .setLeftButtonStr(getString(R.string.cancel))
-                .setRightButtonStr(getString(R.string.ok))
-                .setOnDismissListener { cont.resume(false) }
-                .setOnButtonClickListener(object : CommonDialogFragment.OnButtonClickListener {
-                    override fun onLeftButtonClick(v: View?) {
-                        cont.resume(false)
-                    }
+    suspend fun outPriv(mnem: String, password: String) {
+        mPWallet?.let {
+            val coinList: List<Coin> =
+                select().where("pwallet_id = ?", "${mPWallet!!.id}").find(Coin::class.java)
+            if (!ListUtils.isEmpty(coinList)) {
+                withContext(Dispatchers.Main) {
+                    dismiss()
+                    val walletManager = WalletManager()
+                    walletManager.chooseChain(this@WalletDetailsActivity, coinList)
+                    walletManager.setOnItemClickListener(object :
+                        WalletManager.OnItemClickListener {
+                        override fun onItemClick(position: Int) {
+                            if (position < coinList.size) {
+                                val coin = coinList[position]
 
-                    override fun onRightButtonClick(v: View?) {
-                        cont.resume(true)
-                    }
-                })
-        }
-        mCommonDialogFragment?.show(
-            supportFragmentManager,
-            getString(R.string.my_wallet_detail_delete)
-        )
-    }
+                                if (it.type == PWallet.TYPE_PRI_KEY) {
+                                    WalletManager().exportPriv(
+                                        this@WalletDetailsActivity,
+                                        coin.getPrivkey(password)
+                                    )
+                                } else {
+                                    WalletManager().exportPriv(
+                                        this@WalletDetailsActivity,
+                                        coin.getPrivkey(coin.chain, mnem)
+                                    )
+                                }
+                            }
 
-    fun outPriv(mnem: String, password: String) {
-        val coinList: List<Coin> =
-            select().where("pwallet_id = ?", java.lang.String.valueOf(mPWallet!!.id))
-                .find(Coin::class.java)
-        if (!ListUtils.isEmpty(coinList)) {
-            runOnUiThread {
-                dismiss()
-                val walletManager = WalletManager()
-                walletManager.chooseChain(this@WalletDetailsActivity, coinList)
-                walletManager.setOnItemClickListener(object : WalletManager.OnItemClickListener {
-                    override fun onItemClick(position: Int) {
-                        if (position < coinList.size) {
-                            val coin = coinList[position]
-                            WalletManager().exportPriv(
-                                this@WalletDetailsActivity,
-                                coin.getPrivkey(coin.chain, mnem)
-                            )
+
                         }
-                    }
-                })
+                    })
+                }
             }
-
         }
     }
 

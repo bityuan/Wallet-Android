@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import com.fzm.wallet.sdk.alpha.EmptyWallet
 import com.fzm.wallet.sdk.alpha.NormalWallet
+import com.fzm.wallet.sdk.alpha.PrivateKeyWallet
 import com.fzm.wallet.sdk.alpha.Wallet
 import com.fzm.wallet.sdk.base.FZM_PLATFORM_ID
 import com.fzm.wallet.sdk.bean.ExploreBean
@@ -139,6 +140,7 @@ internal class BWalletImpl : BWallet {
     override suspend fun importWallet(configuration: WalletConfiguration, switch: Boolean): String {
         val wallet = when (configuration.type) {
             PWallet.TYPE_NOMAL -> NormalWallet(PWallet())
+            PWallet.TYPE_PRI_KEY -> PrivateKeyWallet(PWallet())
             else -> NormalWallet(PWallet())
         }
         return wallet.init(configuration).also { id ->

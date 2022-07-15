@@ -9,6 +9,8 @@ import com.fzm.wallet.sdk.bean.log
 import com.fzm.wallet.sdk.bean.response.BalanceResponse
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.db.entity.PWallet.TYPE_NOMAL
+import com.fzm.wallet.sdk.db.entity.PWallet.TYPE_PRI_KEY
 import com.fzm.wallet.sdk.net.UrlConfig
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
@@ -22,11 +24,6 @@ import java.util.*
 
 class GoWallet {
     companion object {
-        const val testContractAddr = "0x9A534628B4062E123cE7Ee2222ec20B86e16Ca8F"
-        const val testEthAddr = "0x9a534628b4062e123ce7ee2222ec20b86e16ca8f"
-        const val BTY = "BTY"
-        const val PLATFORM_BTY = "bty"
-        const val APPSYMBOL_P = "p"
 
         private val gson = Gson()
 
@@ -79,7 +76,7 @@ class GoWallet {
         fun pubToAddr(chain: String, pub: String): String? {
             try {
                 return Walletapi.pubToAddress_v2(chain, Walletapi.hexTobyte(pub))
-            } catch (e: java.lang.Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
             return null
@@ -91,9 +88,23 @@ class GoWallet {
          * @param priv String    私钥
          * @return String
          */
-        fun privToAddr(chain: String, priv: String): String {
-            val pub = Walletapi.privkeyToPub_v2(chain, Walletapi.hexTobyte(priv))
-            return Walletapi.pubToAddress_v2(chain, pub)
+        fun privToAddr(chain: String, priv: String): String? {
+            try {
+                val pub = Walletapi.privkeyToPub_v2(chain, Walletapi.hexTobyte(priv))
+                return Walletapi.pubToAddress_v2(chain, pub)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return null
+        }
+
+        fun priToPub(chain: String, priv: String): ByteArray? {
+            try {
+                return Walletapi.privkeyToPub_v2(chain, Walletapi.hexTobyte(priv))
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return null
         }
 
         fun byteTohex(byteArray: ByteArray): String {
@@ -679,41 +690,6 @@ class GoWallet {
             mulAddr.mulAddr = mulAddress
             return Walletapi.imortMulAddress(mulAddr)
         }
-
-
-        internal suspend fun createWallet(wallet: PWallet, coinList: List<Coin>): PWallet {
-            return withContext(Dispatchers.IO) {
-                coinList.forEachIndexed { index, coin ->
-                    val hdWallet = getHDWallet(coin.chain, wallet.mnem)
-                    val pubkey = hdWallet!!.newKeyPub(0)
-                    val address = hdWallet.newAddress_v2(0)
-                    val pubkeyStr = encodeToStrings(pubkey)
-                    coin.sort = index
-                    coin.status = Coin.STATUS_ENABLE
-                    coin.pubkey = pubkeyStr
-                    coin.address = address
-                    if (Walletapi.TypeBtyString == coin.chain) {
-                        val bWalletImpl = BWallet.get() as BWalletImpl
-                        bWalletImpl.setBtyPrivkey(encodeToStrings(hdWallet.newKeyPriv(0)))
-                    }
-                }
-                saveAll(coinList)
-                wallet.coinList.addAll(coinList)
-                if (MnemonicManager.DEFAULT_STORE == MnemonicManager.store) {
-                    // 如果是默认实现，则保存到wallet数据库中
-                    val bpassword = encPasswd(wallet.password)
-                    wallet.mnem = encMenm(bpassword!!, wallet.mnem)
-                    wallet.password = passwdHash(bpassword)
-                } else {
-                    MnemonicManager.saveMnemonicWords(wallet.mnem, wallet.password)
-                    wallet.mnem = null
-                    wallet.password = null
-                }
-                wallet.save()
-                return@withContext wallet
-            }
-        }
-
 
         fun getChain(chain: String): Coin? {
             val chains = where(

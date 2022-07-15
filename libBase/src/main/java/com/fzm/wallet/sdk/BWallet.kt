@@ -33,10 +33,10 @@ interface BWallet {
      * @param context       Context
      * @param module        用于Koin依赖注入
      * @param platformId    平台码，用于php后端区别不同业务
-     * @param appSymbol     应用标识符，用于钱包网关后端区别不同业务
-     * @param appId         平台码，用于钱包网关后端区别不同业务
+     * @param appSymbol     应用标识符，用于账户网关后端区别不同业务
+     * @param appId         平台码，用于账户网关后端区别不同业务
      * @param appKey        appKey，用于验证平台
-     * @param device        设备，用于钱包网关后端
+     * @param device        设备，用于账户网关后端
      */
     fun init(context: Context, module: Module?, platformId: String, appSymbol: String, appId: String, appKey: String, device: String)
 
@@ -44,30 +44,30 @@ interface BWallet {
     fun setUrls(baseUrl:String,goUrl:String)
 
     /**
-     * 切换钱包
+     * 切换账户
      */
     fun changeWallet(wallet: WalletBean?): Boolean
 
     /**
-     * 切换钱包
+     * 切换账户
      */
     fun changeWallet(id: String): Boolean
 
     /**
-     * 获取当前正在使用的钱包
+     * 获取当前正在使用的账户
      *
      */
     fun getCurrentWallet(): WalletBean?
 
     /**
-     * 获取用户所有的钱包
+     * 获取用户所有的账户
      */
     suspend fun getAllWallet(user: String): List<WalletBean>
 
     /**
-     * 获取指定id的钱包
+     * 获取指定id的账户
      *
-     * @param id    钱包id
+     * @param id    账户id
      */
     @Deprecated(
         level = DeprecationLevel.WARNING,
@@ -77,37 +77,37 @@ interface BWallet {
     fun findWallet(id: String?): PWallet?
 
     /**
-     * 获取指定id的钱包
+     * 获取指定id的账户
      *
-     * @param id    钱包id
+     * @param id    账户id
      */
     fun getWallet(id: String?): WalletBean?
 
     /**
-     * 导入钱包
+     * 导入账户
      *
-     * @param configuration     导入钱包参数配置
-     * @param switch            是否自动切换到新钱包
+     * @param configuration     导入账户参数配置
+     * @param switch            是否自动切换到新账户
      */
     @Throws(Exception::class)
     suspend fun importWallet(configuration: WalletConfiguration, switch: Boolean): String
 
     /**
-     * 修改钱包名称
+     * 修改账户名称
      */
     @Throws(Exception::class)
     suspend fun changeWalletName(name: String): Boolean
 
     /**
-     * 修改钱包密码
+     * 修改账户密码
      */
     @Throws(Exception::class)
     suspend fun changeWalletPassword(old: String, password: String): Boolean
 
     /**
-     * 删除当前钱包
+     * 删除当前账户
      *
-     * @param password  钱包密码
+     * @param password  账户密码
      */
     suspend fun deleteWallet(password: String, confirmation: suspend () -> Boolean = { true })
 
@@ -132,7 +132,7 @@ interface BWallet {
      * @param toAddress 目标地址
      * @param amount    转账金额
      * @param fee       矿工费
-     * @param password  钱包密码
+     * @param password  账户密码
      */
     @Throws(Exception::class)
     suspend fun transfer(coin: Coin, toAddress: String, amount: Double, fee: Double, note: String?, password: String): String
@@ -250,7 +250,7 @@ interface BWallet {
     suspend fun getRedPacketAssets(address: String): List<Coin>
 
     /**
-     * 关闭钱包
+     * 关闭账户
      */
     fun close()
 

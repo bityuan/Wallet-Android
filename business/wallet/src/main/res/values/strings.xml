@@ -21,7 +21,8 @@
     <string name="import_wallet_hint2">请输入地址或扫描地址生成的二维码录入</string>
     <string name="import_wallet_wallet_name">账户</string>
     <string name="my_scan">扫一扫</string>
-    <string name="my_import_backup_null">助记词不能为空</string>
+    <string name="please_input_mnem">请输入助记词</string>
+    <string name="please_input_prikey">请输入私钥</string>
     <string name="my_wallet_detail_name">请输入账户名称</string>
     <string name="my_wallet_detail_name_exist">账户名称重复</string>
     <string name="my_wallet_detail_password">请输入账户密码</string>

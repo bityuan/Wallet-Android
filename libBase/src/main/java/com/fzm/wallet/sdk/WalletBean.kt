@@ -10,20 +10,21 @@ import java.io.Serializable
  */
 data class WalletBean(
     /**
-     * 钱包id
+     * 账户id
      */
     val id: Long,
     /**
-     * 钱包名称
+     * 账户名称
      */
     val name: String,
     /**
-     * 钱包所属用户
+     * 账户所属用户
      */
     val user: String,
     /**
-     * 钱包类型
-     * 2：普通钱包
+     * 账户类型
+     * 2：普通账户
+     * 4：私钥账户
      */
     val type: Int,
     /**

@@ -34,7 +34,7 @@ import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 
 /**
- * 创建账户时验证助记词和导入钱包页面
+ * 创建账户时验证助记词和导入账户页面
  */
 class BackUpWalletActivity : BaseActivity() {
     private lateinit var mPWallet: PWallet

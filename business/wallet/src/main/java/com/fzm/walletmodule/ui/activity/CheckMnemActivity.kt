@@ -4,16 +4,19 @@ import android.os.Bundle
 import com.fzm.walletmodule.R
 import android.text.TextUtils
 import androidx.core.widget.doOnTextChanged
+import com.alibaba.android.arouter.facade.annotation.Autowired
+import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
+import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.walletmodule.event.CheckMnemEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.LimitEditText
 import com.fzm.wallet.sdk.utils.GoWallet
+import com.fzm.walletmodule.databinding.ActivityCheckMnemBinding
 import com.fzm.walletmodule.utils.ToastUtils
 import com.fzm.walletmodule.utils.isFastClick
-import kotlinx.android.synthetic.main.activity_check_mnem.*
-import kotlinx.android.synthetic.main.view_import0.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -22,19 +25,25 @@ import org.jetbrains.anko.startActivity
 import org.litepal.LitePal
 import org.litepal.extension.count
 import walletapi.Walletapi
+
 /**
  * 忘记密码时验证助记词页面
  */
+@Route(path = RouterPath.WALLET_CHECK_MNEM)
 class CheckMnemActivity : BaseActivity() {
-    private var walletId: Long = 0
+    @JvmField
+    @Autowired(name = PWallet.PWALLET_ID)
+    var walletid: Long = 0
+
+    private val binding by lazy { ActivityCheckMnemBinding.inflate(layoutInflater) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_check_mnem)
-        walletId = intent.getLongExtra(PWallet.PWALLET_ID, -1)
-        tvTitle.text ="校验助记词"
-        et_mnem.setRegex(LimitEditText.REGEX_CHINESE_ENGLISH)
-        et_mnem.doOnTextChanged { text, start, count, after ->
+        setContentView(binding.root)
+        ARouter.getInstance().inject(this)
+        tvTitle.text = "校验助记词"
+        binding.viewMnem.etMnem.setRegex(LimitEditText.REGEX_CHINESE_ENGLISH)
+        binding.viewMnem.etMnem.doOnTextChanged { text, start, count, after ->
             val lastString = text.toString()
             if (!TextUtils.isEmpty(lastString)) {
                 val first = lastString.substring(0, 1)
@@ -53,20 +62,20 @@ class CheckMnemActivity : BaseActivity() {
                             }
                         }
                         if (!TextUtils.equals(lastString, stringBuffer)) {
-                            et_mnem.setText(stringBuffer.toString())
-                            et_mnem.setSelection(stringBuffer.toString().length)
+                            binding.viewMnem.etMnem.setText(stringBuffer.toString())
+                            binding.viewMnem.etMnem.setSelection(stringBuffer.toString().length)
                         }
                     }
                 }
             }
         }
 
-        btn_check.setOnClickListener {
-            if (isFastClick()){
+        binding.btnCheck.setOnClickListener {
+            if (isFastClick()) {
                 return@setOnClickListener
             }
-            val mnem = et_mnem.text.toString()
-            if(mnem.isEmpty()) {
+            val mnem = binding.viewMnem.etMnem.text.toString()
+            if (mnem.isEmpty()) {
                 return@setOnClickListener
             }
             lateinit var newMnem: String
@@ -80,16 +89,24 @@ class CheckMnemActivity : BaseActivity() {
                 val hdWallet = GoWallet.getHDWallet(Walletapi.TypeBtyString, newMnem)
                 runOnUiThread {
                     if (null == hdWallet) {
-                        ToastUtils.show(this@CheckMnemActivity,getString(R.string.my_import_backup_none))
+                        ToastUtils.show(
+                            this@CheckMnemActivity,
+                            getString(R.string.my_import_backup_none)
+                        )
                         return@runOnUiThread
                     }
                     val pubkeyStr = GoWallet.encodeToStrings(hdWallet.newKeyPub(0))
-                    val count = LitePal.where("pubkey = ? and pwallet_id = ?", pubkeyStr,"$walletId").count<Coin>()
+                    val count =
+                        LitePal.where("pubkey = ? and pwallet_id = ?", pubkeyStr, "$walletid")
+                            .count<Coin>()
                     if (count > 0) {
-                        ToastUtils.show(this@CheckMnemActivity,"校验成功")
-                        startActivity<MnemPasswordActivity>(PWallet.PWALLET_MNEM to newMnem, PWallet.PWALLET_ID to walletId)
+                        ToastUtils.show(this@CheckMnemActivity, "校验成功")
+                        startActivity<MnemPasswordActivity>(
+                            PWallet.PWALLET_MNEM to newMnem,
+                            PWallet.PWALLET_ID to walletid
+                        )
                     } else {
-                        ToastUtils.show(this@CheckMnemActivity,"校验失败")
+                        ToastUtils.show(this@CheckMnemActivity, "校验失败")
                     }
                 }
             }

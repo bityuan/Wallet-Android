@@ -46,4 +46,7 @@ interface Apis {
     @GET("interface/explore")
     suspend fun getExploreList(): HttpResponse<List<ExploreBean>>
 
+    @GET("interface/supported-chain")
+    suspend fun getSupportedChain(): HttpResponse<List<Coin>>
+
 }

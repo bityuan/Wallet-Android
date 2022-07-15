@@ -17,6 +17,7 @@ import walletapi.Walletapi;
 
 public class Coin extends BaseBean implements Comparable<Coin>{
 
+    public static final String COIN_ID = "coin_id";
     public static final int STATUS_ENABLE = 1;
     public static final int STATUS_DISABLE = -1;
     //静态的私钥
@@ -169,6 +170,18 @@ public class Coin extends BaseBean implements Comparable<Coin>{
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getPrivkey(String password) {
+        try {
+            byte[] bpassword = Walletapi.encPasswd(password);
+            byte[] encPrivateKey = Walletapi.hexTobyte(privkey);
+            byte[] newKey = Walletapi.decKey(bpassword, encPrivateKey);
+            return Walletapi.byteTohex(newKey);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public String getPrivkey(String coinType, String mnem) {

@@ -127,7 +127,7 @@ public class EditDialogFragment extends DialogFragment {
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View rootView = inflater.inflate(R.layout.dialog_fragment_edit, null);
+        View rootView = inflater.inflate(R.layout.dialog_edit, null);
 
 
         ImageView ivClose = (ImageView) rootView.findViewById(R.id.iv_close);
