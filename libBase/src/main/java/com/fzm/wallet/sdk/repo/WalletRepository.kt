@@ -8,18 +8,29 @@ import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.HttpResult
 import com.fzm.wallet.sdk.net.apiCall
+import com.fzm.wallet.sdk.net.dnsCall
+import com.fzm.wallet.sdk.net.goCall
+import retrofit2.http.Query
 
 class WalletRepository constructor(private val apis: Apis) {
     suspend fun getCoinList(names: List<String>): HttpResult<List<Coin>> {
         return apiCall { apis.getCoinList(mapOf("names" to names)) }
     }
-    suspend fun searchCoinList(page: Int, limit: Int, keyword: String, chain: String, platform: String): HttpResult<List<Coin>> {
+
+    suspend fun searchCoinList(
+        page: Int,
+        limit: Int,
+        keyword: String,
+        chain: String,
+        platform: String
+    ): HttpResult<List<Coin>> {
         val body = toRequestBody(
             "page" to page,
             "limit" to limit,
             "keyword" to keyword,
             "chain" to chain,
-            "platform" to platform)
+            "platform" to platform
+        )
         return apiCall { apis.searchCoinList(body) }
     }
 
@@ -37,6 +48,10 @@ class WalletRepository constructor(private val apis: Apis) {
 
     suspend fun getSupportedChain(): HttpResult<List<Coin>> {
         return apiCall { apis.getSupportedChain() }
+    }
+
+    suspend fun getDNSResolve(type: Int, key: String, kind: Int): HttpResult<List<String>> {
+        return dnsCall { apis.getDNSResolve(type, key, kind) }
     }
 
 }

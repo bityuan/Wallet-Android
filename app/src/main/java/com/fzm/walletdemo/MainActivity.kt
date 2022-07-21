@@ -6,7 +6,9 @@ import android.util.Log
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.fzm.wallet.sdk.BWallet
+import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.alpha.EmptyWallet
 import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
 import com.fzm.wallet.sdk.db.entity.Coin
@@ -24,9 +26,11 @@ import kotlinx.coroutines.flow.collect
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import org.jetbrains.anko.toast
 import org.litepal.LitePal.count
 import walletapi.Walletapi
 
+@Route(path = RouterPath.APP_MAIN)
 class MainActivity : BaseActivity() {
     private var walletFragment: WalletFragment? = null
     private var exploreFragment: ExploreFragment? = null
@@ -203,5 +207,17 @@ class MainActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         EventBus.getDefault().unregister(this)
+    }
+
+    private var lastExitTime: Long = 0
+
+    override fun onBackPressed() {
+        val l = System.currentTimeMillis()
+        if (l - lastExitTime > 2000) {
+            toast("再按一次退出程序")
+            lastExitTime = l
+        } else {
+            finish()
+        }
     }
 }

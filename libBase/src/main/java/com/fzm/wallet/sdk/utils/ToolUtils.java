@@ -7,8 +7,10 @@ import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.widget.EditText;
@@ -493,38 +495,6 @@ public class ToolUtils {
         return charSequence;
     }
 
-    public static String getMobileRecord(String ifsub) {
-        if (!stringNotEmpty(ifsub)) {
-            return "";
-        }
-        String subString = "";
-        switch (ifsub) {
-            case "0":
-                subString = "待付款";
-                break;
-            case "1":
-                subString = "充值已完成";
-                break;
-            case "2":
-                subString = "已退款";
-                break;
-            case "3":
-                subString = "待退款";
-                break;
-            case "4":
-                subString = "充值处理中";
-                break;
-            case "5":
-                subString = "已撤单";
-                break;
-            case "6":
-                subString = "已过期";
-                break;
-            default:
-                break;
-        }
-        return subString;
-    }
 
 
     public static byte[] bmpToByteArray(final Bitmap bmp, final boolean needRecycle) {
@@ -761,6 +731,35 @@ public class ToolUtils {
         return " ≈ ￥ " + amount;
     }
 
+    public static String getMyUUID(Context context) {
+        String deviceId = "Android_ID";
+        try {
+
+            final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            if (Build.VERSION.SDK_INT < 23) {
+                deviceId = tm.getDeviceId();
+            } else if (Build.VERSION.SDK_INT < 26) {
+                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                    deviceId = tm.getDeviceId();
+                } else {
+                    deviceId = Settings.System.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+                }
+            } else if (Build.VERSION.SDK_INT < 29) {
+                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                    deviceId = tm.getImei();
+                } else {
+                    deviceId = Settings.System.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+                }
+            } else {
+                deviceId = Settings.System.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return deviceId;
+    }
 
 }
 

@@ -28,6 +28,10 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
     val getSupportedChain: LiveData<HttpResult<List<Coin>>>
         get() = _getSupportedChain
 
+    private val _getDNSResolve = MutableLiveData<HttpResult<List<String>>>()
+    val getDNSResolve: LiveData<HttpResult<List<String>>>
+        get() = _getDNSResolve
+
 
     fun getCoinList(names: List<String>) {
         viewModelScope.launch {
@@ -54,6 +58,12 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
     fun getSupportedChain() {
         viewModelScope.launch {
             _getSupportedChain.value = walletRepository.getSupportedChain()
+        }
+    }
+
+    fun getDNSResolve(type: Int, key: String, kind: Int) {
+        viewModelScope.launch {
+            _getDNSResolve.value = walletRepository.getDNSResolve(type, key, kind)
         }
     }
 

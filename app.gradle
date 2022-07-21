@@ -47,4 +47,14 @@ android {
     buildFeatures {
         viewBinding true
     }
+
+
+    flavorDimensions 'app'
+    productFlavors {
+        mydao {
+            dimension 'app'
+            applicationId 'com.i.mydao'
+        }
+
+    }
 }

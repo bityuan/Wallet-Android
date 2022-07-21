@@ -8,7 +8,7 @@ public class AddressCheckUtils {
 
 
     public static boolean check(String chain, String toAddress) {
-        if (!RegularUtils.isAddress(toAddress)) {
+        if (!RegularUtils.isEnglish(toAddress)) {
             return false;
         }
         switch (chain) {
@@ -39,7 +39,7 @@ public class AddressCheckUtils {
 
 
     public static boolean isBTYAddress(String input) {
-        if (TextUtils.isEmpty(input) || !input.startsWith("1") || input.length() < 20) {
+        if (TextUtils.isEmpty(input)) {
             return false;
         }
         return true;

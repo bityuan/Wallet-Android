@@ -136,8 +136,9 @@ public class RegularUtils {
     }
 
     public static boolean isEnglish(String str) {
-        Pattern pattern = Pattern.compile("[a-zA-Z]+");
-        return pattern.matcher(str).matches();
+        //Pattern pattern = Pattern.compile("[a-zA-Z.]+");
+        //return pattern.matcher(str).matches();
+        return true;
     }
 
     public static boolean isAddress(String str) {

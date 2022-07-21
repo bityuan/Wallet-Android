@@ -83,6 +83,27 @@
             android:paddingBottom="8dp"
             android:textColor="#666666"
             android:textSize="14sp" />
+        <TextView
+            android:id="@+id/tv_dns"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="13dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="13dp"
+            android:layout_marginBottom="26dp"
+            android:background="@drawable/bg_share_content"
+            app:drawableRightCompat="@mipmap/icon_copy_default"
+            android:gravity="center"
+            android:maxLines="2"
+            android:paddingLeft="30dp"
+            android:paddingTop="8dp"
+            android:paddingRight="30dp"
+            android:paddingBottom="8dp"
+            android:textColor="#666666"
+            android:textSize="14sp" />
+
+
+
     </LinearLayout>
 
 </LinearLayout>

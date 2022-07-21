@@ -3,11 +3,13 @@ package com.fzm.walletmodule.ui.activity
 
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.SeekBar
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -29,6 +31,7 @@ import com.fzm.walletmodule.ui.widget.RemarksTipsDialogView
 import com.fzm.walletmodule.utils.ClickUtils
 import com.fzm.walletmodule.utils.ToastUtils
 import com.fzm.walletmodule.vm.OutViewModel
+import com.fzm.walletmodule.vm.WalletViewModel
 import com.google.gson.Gson
 import com.jeremyliao.liveeventbus.LiveEventBus
 import kotlinx.android.synthetic.main.activity_out.*
@@ -38,6 +41,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import walletapi.Walletapi
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -45,8 +49,10 @@ import java.text.DecimalFormat
 @Route(path = RouterPath.WALLET_OUT)
 class OutActivity : BaseActivity() {
 
+    private var toAddress: String = ""
     private lateinit var privkey: String
-    private val outViewModel: OutViewModel by inject(walletQualifier)
+    private val outViewModel by viewModel<OutViewModel>(walletQualifier)
+    private val walletViewModel by viewModel<WalletViewModel>(walletQualifier)
     private val binding by lazy { ActivityOutBinding.inflate(layoutInflater) }
     private val loading by lazy {
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_loading, null)
@@ -143,12 +149,32 @@ class OutActivity : BaseActivity() {
             if (ClickUtils.isFastDoubleClick()) {
                 return@setOnClickListener
             }
-            val toAddress = binding.tvToAddress.text.toString()
+            toAddress = binding.tvToAddress.text.toString()
             val money = binding.etMoney.text.toString()
             if (!checkAddressAndMoney(toAddress, money)) {
                 return@setOnClickListener
             }
-            showPwdDialog()
+            if (RegularUtils.isAddress(toAddress)) {
+                showPwdDialog()
+            } else {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    loading.show()
+                    walletViewModel.getDNSResolve.observe(this@OutActivity, Observer {
+                        if (it.isSucceed()) {
+                            it.data()?.let { list ->
+                                if (list.isNotEmpty()) {
+                                    loading.dismiss()
+                                    toAddress = list[0]
+                                    Log.v("zx", toAddress)
+                                    showPwdDialog()
+                                }
+                            }
+                        }
+                    })
+                    walletViewModel.getDNSResolve(1, toAddress, 0)
+                }
+            }
+
 
         }
 
@@ -166,9 +192,7 @@ class OutActivity : BaseActivity() {
             dialog.dismiss()
         }
         bindingDialog.btnOk.setOnClickListener {
-            val toAddress = binding.tvToAddress.text.toString()
             val money = binding.etMoney.text.toString()
-
             val password = bindingDialog.etInput.text.toString()
             if (password.isNullOrEmpty()) {
                 toast("请输入密码")
@@ -286,7 +310,7 @@ class OutActivity : BaseActivity() {
         } else if (toAddress == coin?.address) {
             ToastUtils.show(this, R.string.home_receipt_send_address_is_same)
             return false
-        } else if (toAddress.length < 20 || !RegularUtils.isAddress(toAddress)) {
+        } else if (!RegularUtils.isEnglish(toAddress)) {
             ToastUtils.show(this, R.string.home_receipt_address_is_illegal)
             return false
         } else if (!AddressCheckUtils.check(coin?.chain, toAddress)) {

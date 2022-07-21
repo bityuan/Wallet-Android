@@ -13,28 +13,32 @@ class WalletRecoverUtils {
         try {
 
             //找回账户
-            val hdWallet1 =
-                Walletapi.newWalletFromMnemonic_v2("BTY", "")
-            val hdWallet2 =
-                Walletapi.newWalletFromMnemonic_v2("ETH", "")
+            val hdWallet1 = Walletapi.newWalletFromMnemonic_v2("BTY", "")
+            val hdWallet2 = Walletapi.newWalletFromMnemonic_v2("BTY", "")
+            val hdWallet3 = Walletapi.newWalletFromMnemonic_v2("BTY", "")
 
             val pub1 = Walletapi.byteTohex(hdWallet1.newKeyPub(0))
             val pub2 = Walletapi.byteTohex(hdWallet2.newKeyPub(0))
+            val pub3 = Walletapi.byteTohex(hdWallet3.newKeyPub(0))
 
             val privkey1 = Walletapi.byteTohex(hdWallet1.newKeyPriv(0))
             val privkey2 = Walletapi.byteTohex(hdWallet2.newKeyPriv(0))
+            val privkey3 = Walletapi.byteTohex(hdWallet3.newKeyPriv(0))
 
 
             val address1 = hdWallet1.newAddress_v2(0)//控制地址
             val address2 = hdWallet2.newAddress_v2(0)//找回地址
+            val address3 = hdWallet3.newAddress_v2(0)//找回地址
             //val X = "1to3VXGj7DkhyXEzxygmau6F379biWk8x"
-            val X = "1FEAhVvtyaNjRqh3NLGC7s9z5goeodBHDW"
+            //val X = "1FEAhVvtyaNjRqh3NLGC7s9z5goeodBHDW"
+            val X = "1C3pVsMKY7PjmFHd75JZu7wE7Ld4q4jRux"
+
 
 
             val walletRecover = WalletRecover().apply {
                 param = WalletRecoverParam().apply {
                     ctrPubKey = pub1
-                    backupPubKey = pub2
+                    backupPubKeys = "$pub2,$pub3"
                     addressID = 0
                     chainID = 0
                     relativeDelayTime = 30
@@ -48,7 +52,8 @@ class WalletRecoverUtils {
                 cointype = "BTY"
                 tokenSymbol = ""
                 tx = Txdata().apply {
-                    from = address2
+                    //from可以填写任何一个备份地址（找回地址）
+                    from = address3
                     amount = 0.2
                     fee = 0.01
                     note = "找回test"

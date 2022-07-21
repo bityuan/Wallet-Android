@@ -15,7 +15,9 @@ object RouterPath {
     const val WALLET_SET_PASSWORD = "/wallet/SetPasswordActivity"
     const val WALLET_CHANGE_PASSWORD = "/wallet/ChangePasswordActivity"
 
-    const val EX_DAPP = "/ex/DappActivity"
+    const val APP_SPLASH = "/app/SplashActivity"
+    const val APP_MAIN = "/app/MainActivity"
+    const val APP_DAPP = "/app/DappActivity"
     const val WALLET_CAPTURE = "/wallet/CaptureCustomActivity"
 
     const val PARAM_COIN = "coin"

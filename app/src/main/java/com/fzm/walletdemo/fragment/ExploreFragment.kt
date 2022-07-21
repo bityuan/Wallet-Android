@@ -71,7 +71,7 @@ class ExploreFragment : Fragment() {
 
         adapter.setOnItemClickListener {
             exList[it].let { appBean ->
-                ARouter.getInstance().build(RouterPath.EX_DAPP).withString("name", appBean.name)
+                ARouter.getInstance().build(RouterPath.APP_DAPP).withString("name", appBean.name)
                     .withString("url", appBean.app_url).navigation()
             }
 

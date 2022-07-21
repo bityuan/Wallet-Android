@@ -47,6 +47,7 @@ dependencies {
     api cfg.fragmentKtx
     api cfg.dsBridge
     api cfg.livedatabus
+    api cfg.permissionx
 }
 
 //注意放置位置，复制此段代码稍加修改即可

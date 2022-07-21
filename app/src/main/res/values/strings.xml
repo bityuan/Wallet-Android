@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BitYuanDAO</string>
+    <string name="app_name">MyDao</string>
     <string name="main_home">首页</string>
     <string name="main_market">行情</string>
     <string name="main_explore">探索</string>

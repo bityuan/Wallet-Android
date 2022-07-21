@@ -6,6 +6,8 @@ import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.bean.WithHold
 import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
 import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.net.DNSResponse
+import com.fzm.wallet.sdk.net.GoResponse
 import com.fzm.wallet.sdk.net.HttpResponse
 import okhttp3.RequestBody
 import retrofit2.http.Body
@@ -48,5 +50,18 @@ interface Apis {
 
     @GET("interface/supported-chain")
     suspend fun getSupportedChain(): HttpResponse<List<Coin>>
+
+    /**
+     * DNS域名查询
+     * @param type 记录类型：1-地址类型 2-身份类型 9-自定义，默认为地址
+     * @param key 解析关键字，正向为域名，反向为地址或取值
+     * @param kind 正向(0)/反向(1)解析，默认正向
+     */
+    @GET("https://dns.bityuan.com/dns/dns/resolve")
+    suspend fun getDNSResolve(
+        @Query("type") type: Int,
+        @Query("key") key: String,
+        @Query("kind") kind: Int
+    ): DNSResponse<List<String>>
 
 }
