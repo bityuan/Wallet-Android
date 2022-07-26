@@ -1,4 +1,4 @@
-package com.fzm.walletdemo
+package com.fzm.walletdemo.ui.activity
 
 import android.Manifest
 import android.os.Bundle
@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.walletdemo.R
 import com.permissionx.guolindev.PermissionX
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

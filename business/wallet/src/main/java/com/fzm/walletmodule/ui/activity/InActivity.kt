@@ -3,6 +3,7 @@ package com.fzm.walletmodule.ui.activity
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.Observer
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -58,10 +59,13 @@ class InActivity : BaseActivity() {
         }
 
         binding.ivMyWallet.setOnClickListener {
-            ClipboardUtils.clip(this, tv_address.text.toString())
+            ClipboardUtils.clip(this, binding.tvAddress.text.toString())
         }
         binding.tvAddress.setOnClickListener {
-            ClipboardUtils.clip(this, tv_address.text.toString())
+            ClipboardUtils.clip(this, binding.tvAddress.text.toString())
+        }
+        binding.tvDns.setOnClickListener {
+            ClipboardUtils.clip(this, binding.tvDns.text.toString())
         }
 
 
@@ -73,6 +77,7 @@ class InActivity : BaseActivity() {
             if (it.isSucceed()) {
                 it.data()?.let { list ->
                     if (list.isNotEmpty()) {
+                        binding.tvDns.visibility = View.VISIBLE
                         binding.tvDns.text = list[0]
                     }
                 }

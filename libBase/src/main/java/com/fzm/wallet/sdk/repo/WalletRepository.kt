@@ -1,6 +1,7 @@
 package com.fzm.wallet.sdk.repo
 
 import com.fzm.wallet.sdk.api.Apis
+import com.fzm.wallet.sdk.bean.AppVersion
 import com.fzm.wallet.sdk.bean.BrowserBean
 import com.fzm.wallet.sdk.bean.ExploreBean
 import com.fzm.wallet.sdk.bean.toRequestBody
@@ -52,6 +53,9 @@ class WalletRepository constructor(private val apis: Apis) {
 
     suspend fun getDNSResolve(type: Int, key: String, kind: Int): HttpResult<List<String>> {
         return dnsCall { apis.getDNSResolve(type, key, kind) }
+    }
+    suspend fun getUpdate(): HttpResult<AppVersion> {
+        return apiCall { apis.getUpdate() }
     }
 
 }

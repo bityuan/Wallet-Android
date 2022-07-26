@@ -1,7 +1,5 @@
-package com.fzm.walletdemo
+package com.fzm.walletdemo.ui.activity
 
-import android.content.Intent
-import android.net.Uri
 import android.net.wifi.WifiInfo
 import android.os.Bundle
 import android.util.Log
@@ -20,19 +18,24 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.WalletBean
 import com.fzm.wallet.sdk.databinding.DialogLoadingBinding
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
+import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.ext.jsonToMap
 import com.fzm.wallet.sdk.ext.maptoJsonStr
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.StatusBarUtil
 import com.fzm.wallet.sdk.utils.ToolUtils
+import com.fzm.walletdemo.BuildConfig
 import com.fzm.walletdemo.databinding.ActivityDappBinding
 import com.fzm.walletmodule.utils.NetWorkUtils
-import com.fzm.walletmodule.utils.WalletRecoverUtils
 import com.google.gson.Gson
 import kotlinx.coroutines.*
 import org.jetbrains.anko.toast
+import org.litepal.LitePal
+import org.litepal.extension.find
+import walletapi.Walletapi
 import wendu.dsbridge.CompletionHandler
 import wendu.dsbridge.DWebView
 import java.net.DatagramPacket
@@ -48,6 +51,7 @@ class DappActivity : AppCompatActivity() {
     private val loading by lazy {
         val loadingBinding = DialogLoadingBinding.inflate(layoutInflater)
         return@lazy AlertDialog.Builder(this).setView(loadingBinding.root).create().apply {
+            setCancelable(false)
             window?.setBackgroundDrawableResource(android.R.color.transparent)
         }
     }
@@ -126,6 +130,13 @@ class DappActivity : AppCompatActivity() {
 
 
     inner class JsApi {
+        private var cointype = ""
+        private var createHash = ""
+        private var exer = ""
+        private var withhold = -1
+
+        //addressID 比特币格式的地址传0， 以太坊格式的地址发送的时候addressID 传2
+        private var addressid = -1
 
         @JavascriptInterface
         fun getCurrentBTYAddress(msg: Any, handler: CompletionHandler<String?>) {
@@ -136,8 +147,8 @@ class DappActivity : AppCompatActivity() {
         @JavascriptInterface
         fun getAddress(msg: Any, handler: CompletionHandler<String?>) {
             val map = msg.toString().jsonToMap<String>()
-            val cointype = map["cointype"]
-            cointype?.let {
+            val chain = map["cointype"]
+            chain?.let {
                 val chain = GoWallet.getChain(it)
                 handler.complete(chain?.address)
             }
@@ -219,43 +230,50 @@ class DappActivity : AppCompatActivity() {
             handler.complete(map.maptoJsonStr())
         }
 
-        private var importSeedHandler: CompletionHandler<String?>? = null
-
-        @JavascriptInterface
-        fun importSeed(msg: Any?, handler: CompletionHandler<String?>?) {
-            importSeedHandler = handler
-            showPwdDialog()
-        }
-
-        @JavascriptInterface
-        fun configPriv(msg: Any?, handler: CompletionHandler<String?>?) {
-            val map = msg.toString().jsonToMap<Any?>()
-            val cachePriv = map["cachePriv"]
-            if (cachePriv == 1) {
-
-            }
-        }
 
         @JavascriptInterface
         fun sign(msg: Any?, handler: CompletionHandler<String?>?) {
             val map = msg.toString().jsonToMap<Any?>()
-            val cointype = map["cointype"]
-            val createHash = map["createHash"]
-            val exer = map["exer"]
-            val withhold = map["withhold"]
+            cointype = map["cointype"] as String
+            createHash = map["createHash"] as String
+            exer = map["exer"] as String
+            withhold = map["withhold"] as Int
+            addressid = getAddressId()
+            showPwdDialog(1, handler)
         }
 
         @JavascriptInterface
         fun signTxGroup(msg: Any?, handler: CompletionHandler<String?>?) {
             val map = msg.toString().jsonToMap<Any?>()
-            val cointype = map["cointype"]
-            val createHash = map["createHash"]
-            val exer = map["exer"]
-            val withhold = map["withhold"]
+            cointype = map["cointype"] as String
+            createHash = map["createHash"] as String
+            exer = map["exer"] as String
+            withhold = map["withhold"] as Int
+            addressid = getAddressId()
+            showPwdDialog(2, handler)
+        }
+
+        private fun getAddressId(): Int {
+            addressid = when (cointype) {
+                "BTY" -> {
+                    0
+                }
+                "YCC" -> {
+                    2
+                }
+                else -> -1
+            }
+
+            return -1
         }
 
 
-        private fun showPwdDialog() {
+        @JavascriptInterface
+        fun importSeed(msg: Any?, handler: CompletionHandler<String?>?) {
+            showPwdDialog(3, handler)
+        }
+
+        private fun showPwdDialog(from: Int, handler: CompletionHandler<String?>?) {
             val bindingDialog = DialogPwdBinding.inflate(layoutInflater)
             val dialog =
                 AlertDialog.Builder(this@DappActivity).setView(bindingDialog.root).create().apply {
@@ -266,11 +284,11 @@ class DappActivity : AppCompatActivity() {
                 dialog.dismiss()
                 val map: ArrayMap<String, String> = ArrayMap()
                 map["error"] = "取消"
-                importSeedHandler?.complete(map.maptoJsonStr())
+                handler?.complete(map.maptoJsonStr())
             }
             bindingDialog.btnOk.setOnClickListener {
                 val password = bindingDialog.etInput.text.toString()
-                if (password.isNullOrEmpty()) {
+                if (password.isEmpty()) {
                     toast("请输入密码")
                     return@setOnClickListener
                 }
@@ -293,13 +311,51 @@ class DappActivity : AppCompatActivity() {
                                 loading.show()
                             }
 
+                            when (from) {
+                                1 -> {
+                                    val priKey = getPrikey(it, password, cointype)
+                                    val signTx = GoWallet.signTran(
+                                        cointype,
+                                        Walletapi.hexTobyte(createHash),
+                                        priKey,
+                                        addressid
+                                    )
+                                    val map: ArrayMap<String, String> = ArrayMap()
+                                    map["signHash"] = signTx
+                                    handler?.complete(map.maptoJsonStr())
+                                    loading.dismiss()
+
+                                }
+                                2 -> {
+                                    val priKey = getPrikey(it, password, cointype)
+                                    val signTx = GoWallet.signTxGroup(
+                                        exer,
+                                        createHash,
+                                        priKey,
+                                        priKey,
+                                        0.01,
+                                        addressid
+                                    )
+                                    val map: ArrayMap<String, String> = ArrayMap()
+                                    map["signHash"] = signTx
+                                    handler?.complete(map.maptoJsonStr())
+                                    loading.dismiss()
+
+                                }
+                                3 -> {
+                                    val bPassword = GoWallet.encPasswd(password)!!
+                                    val mnem: String = GoWallet.decMenm(bPassword, it.mnem)
+                                    val map: ArrayMap<String, String> = ArrayMap()
+                                    map["passwd"] = password
+                                    map["seed"] = mnem
+                                    handler?.complete(map.maptoJsonStr())
+                                    loading.dismiss()
+                                }
+                                else -> {}
+                            }
+
                         }
-                        val bPassword = GoWallet.encPasswd(password)!!
-                        val mnem: String = GoWallet.decMenm(bPassword, it.mnem)
-                        val map: ArrayMap<String, String> = ArrayMap()
-                        map["passwd"] = password
-                        map["seed"] = mnem
-                        importSeedHandler?.complete(map.maptoJsonStr())
+
 
                     }
 
@@ -307,6 +363,30 @@ class DappActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    private fun getPrikey(walletBean: WalletBean, password: String, cointype: String): String {
+        val bPassword = GoWallet.encPasswd(password)!!
+        val priKey: String = when (walletBean.type) {
+            2 -> {
+                val mnem: String = GoWallet.decMenm(bPassword, walletBean.mnem)
+                val priKey = GoWallet.getPrikey(cointype, mnem)
+                priKey
+            }
+            //私钥
+            4 -> {
+                val priKey = LitePal.find<PWallet>(
+                    walletBean.id,
+                    true
+                ).coinList[0].getPrivkey(password)
+                priKey
+
+            }
+            else -> {
+                ""
+            }
+        }
+        return priKey
     }
 
 
@@ -321,30 +401,14 @@ class DappActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val menuItem = menu.add(0, 1, 0, "刷新")
-        menuItem.setIcon(R.mipmap.ic_refresh)
         menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == 1) {
-            //binding.webDapp.reload()
-            //openMetaMask()
-            WalletRecoverUtils().test()
+            binding.webDapp.reload()
         }
         return super.onOptionsItemSelected(item)
-    }
-
-
-    private fun openMetaMask() {
-        //https://github.com/WalletConnect/kotlin-walletconnect-lib/issues/59
-        intent = Intent(Intent.ACTION_VIEW)
-        intent?.setPackage("io.metamask")
-        //intent?.data = Uri.parse(config.toWCUri())
-        startActivity(intent)
-
-        //钱包的trustwallet/wallet-connect-kotlin
-        //
-
     }
 }

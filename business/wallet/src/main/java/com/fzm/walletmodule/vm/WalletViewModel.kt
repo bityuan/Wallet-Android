@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fzm.wallet.sdk.WalletBean
+import com.fzm.wallet.sdk.bean.AppVersion
 import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.HttpResult
@@ -31,6 +32,10 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
     private val _getDNSResolve = MutableLiveData<HttpResult<List<String>>>()
     val getDNSResolve: LiveData<HttpResult<List<String>>>
         get() = _getDNSResolve
+
+    private val _getUpdate = MutableLiveData<HttpResult<AppVersion>>()
+    val getUpdate: LiveData<HttpResult<AppVersion>>
+        get() = _getUpdate
 
 
     fun getCoinList(names: List<String>) {
@@ -64,6 +69,11 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
     fun getDNSResolve(type: Int, key: String, kind: Int) {
         viewModelScope.launch {
             _getDNSResolve.value = walletRepository.getDNSResolve(type, key, kind)
+        }
+    }
+    fun getUpdate() {
+        viewModelScope.launch {
+            _getUpdate.value = walletRepository.getUpdate()
         }
     }
 

@@ -1,9 +1,12 @@
 package com.fzm.walletmodule.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -11,8 +14,12 @@ import android.view.Window;
 import android.view.WindowManager;
 
 
+import androidx.core.content.FileProvider;
+
 import com.fzm.walletmodule.R;
 
+import java.io.File;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
@@ -264,6 +271,41 @@ public class AppUtils {
             e.printStackTrace();
         }
         return null;
+    }
+
+
+    public static void install(File apkFile, Context context) {
+        if (apkFile == null) {
+            return;
+        }
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        try {
+            String[] command = {"chmod", "777", apkFile.toString()};
+            ProcessBuilder builder = new ProcessBuilder(command);
+            builder.start();
+        } catch (IOException ignored) {
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            Uri contentUri = FileProvider.getUriForFile(context,
+                      "com.i.mydao.fileProvider", apkFile);
+            intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);//添加这一句表示对目标应用临时授权该Uri所代表的文件（不然会出现华为mate10，8.0上面出现解析软件包失败）
+
+        } else {
+            intent.setDataAndType(Uri.fromFile(apkFile), "application/vnd.android.package-archive");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        if (apkFile != null) {
+            String name = apkFile.getName();
+            String keyId = name.substring(0, name.length() - 4);
+
+            PreferencesUtils.putString(context, LAST_INSTALL_APK, keyId);
+        }
+
+        context.startActivity(intent);
     }
 
 }

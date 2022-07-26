@@ -1,4 +1,4 @@
-package com.fzm.walletdemo
+package com.fzm.walletdemo.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,9 +13,11 @@ import com.fzm.wallet.sdk.alpha.EmptyWallet
 import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.ActivityMainBinding
-import com.fzm.walletdemo.fragment.ExploreFragment
-import com.fzm.walletdemo.fragment.HomeFragment
+import com.fzm.walletdemo.ui.fragment.ExploreFragment
+import com.fzm.walletdemo.ui.fragment.HomeFragment
+import com.fzm.walletdemo.ui.fragment.MyFragment
 import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.event.MainCloseEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
@@ -28,7 +30,6 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.toast
 import org.litepal.LitePal.count
-import walletapi.Walletapi
 
 @Route(path = RouterPath.APP_MAIN)
 class MainActivity : BaseActivity() {
@@ -36,6 +37,7 @@ class MainActivity : BaseActivity() {
     private var exploreFragment: ExploreFragment? = null
     private var mWalletIndexFragment: WalletIndexFragment? = null
     private var mHomeFragment: HomeFragment? = null
+    private var myFragment: MyFragment? = null
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,6 +93,10 @@ class MainActivity : BaseActivity() {
                     Log.e("MainAc", "fragment_explore")
                     setTabSelection(1)
                 }
+                R.id.fragment_my -> {
+                    Log.e("MainAc", "fragment_explore")
+                    setTabSelection(2)
+                }
             }
             true
         }
@@ -115,6 +121,10 @@ class MainActivity : BaseActivity() {
                 //showWalletFragment(fragmentTransaction)
                 showExploreFragment(fragmentTransaction)
             }
+            2 -> {
+                //showWalletFragment(fragmentTransaction)
+                showMyFragment(fragmentTransaction)
+            }
         }
 
     }
@@ -133,6 +143,7 @@ class MainActivity : BaseActivity() {
         mWalletIndexFragment?.let { transaction.hide(it) }
         mHomeFragment?.let { transaction.hide(it) }
         exploreFragment?.let { transaction.hide(it) }
+        myFragment?.let { transaction.hide(it) }
     }
 
 
@@ -186,6 +197,20 @@ class MainActivity : BaseActivity() {
                 R.id.fl_tabcontent,
                 exploreFragment!!,
                 "HomeFragment"
+            )
+
+        }
+        fragmentTransaction.commitAllowingStateLoss()
+    }
+    private fun showMyFragment(fragmentTransaction: FragmentTransaction) {
+        if (myFragment != null) {
+            fragmentTransaction.show(myFragment!!)
+        } else {
+            myFragment = MyFragment()
+            fragmentTransaction.add(
+                R.id.fl_tabcontent,
+                myFragment!!,
+                "myFragment"
             )
 
         }

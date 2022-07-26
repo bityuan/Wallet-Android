@@ -3,20 +3,11 @@ package com.fzm.wallet.sdk.utils
 import android.text.TextUtils
 import android.util.Log
 import com.fzm.wallet.sdk.BWallet
-import com.fzm.wallet.sdk.BWalletImpl
-import com.fzm.wallet.sdk.MnemonicManager
 import com.fzm.wallet.sdk.bean.log
 import com.fzm.wallet.sdk.bean.response.BalanceResponse
 import com.fzm.wallet.sdk.db.entity.Coin
-import com.fzm.wallet.sdk.db.entity.PWallet
-import com.fzm.wallet.sdk.db.entity.PWallet.TYPE_NOMAL
-import com.fzm.wallet.sdk.db.entity.PWallet.TYPE_PRI_KEY
 import com.fzm.wallet.sdk.net.UrlConfig
 import com.google.gson.Gson
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import org.litepal.LitePal
-import org.litepal.LitePal.saveAll
 import org.litepal.LitePal.where
 import org.litepal.extension.find
 import walletapi.*
@@ -49,6 +40,18 @@ class GoWallet {
                 2 -> Walletapi.newMnemonicString(0, 128)
                 else -> Walletapi.newMnemonicString(1, 160)
             }
+        }
+
+
+        fun getPrikey(chain: String, mnem: String): String {
+            try {
+                val hdWallet = Walletapi.newWalletFromMnemonic_v2(chain, mnem)
+                val prikey = hdWallet.newKeyPriv(0)
+                return Walletapi.byteTohex(prikey)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return ""
         }
 
         /**
@@ -144,12 +147,13 @@ class GoWallet {
             addresss: String,
             chain: String,
             tokenSymbol: String,
-            goNoderUrl: String
+            goNoderUrl: String,
+            netId: String
         ): String? {
             try {
                 checkSessionID()
                 val balance = WalletBalance()
-                val coinToken = newCoinType(chain, tokenSymbol)
+                val coinToken = newCoinType(chain, tokenSymbol,netId.toInt())
                 balance.cointype = coinToken.cointype
                 balance.address = addresss
                 balance.tokenSymbol = coinToken.tokenSymbol
@@ -170,8 +174,13 @@ class GoWallet {
          * @return String?   币种余额data数据
          * {"id": 1,"result": {"address": "0x632d8B07CDE8B2dcc3645148d2fa76647565664","balance": "0.02091716"},"error": null}
          */
-        fun getbalance(addresss: String, chain: String, tokenSymbol: String): String? {
-            return getbalance(addresss, chain, tokenSymbol, UrlConfig.GO_URL)
+        fun getbalance(
+            addresss: String,
+            chain: String,
+            tokenSymbol: String,
+            netId: String
+        ): String? {
+            return getbalance(addresss, chain, tokenSymbol, UrlConfig.GO_URL, netId)
         }
 
 
@@ -191,7 +200,7 @@ class GoWallet {
                     }
                 }
             }*/
-            val balanceStr = getbalance(lCoin.address, lCoin.chain, tokensymbol)
+            val balanceStr = getbalance(lCoin.address, lCoin.chain, tokensymbol, lCoin.netId)
             log(balanceStr)
             if (!TextUtils.isEmpty(balanceStr)) {
                 val balanceResponse = gson.fromJson(balanceStr, BalanceResponse::class.java)
@@ -462,11 +471,11 @@ class GoWallet {
             return null
         }
 
-        fun signTran(chain: String, unSignData: String, priv: String, addressId: Int): String? {
+        fun signTran(chain: String, unSignData: ByteArray, priv: String, addressId: Int): String? {
             try {
                 val signData = SignData()
                 signData.cointype = chain
-                signData.data = Walletapi.stringTobyte(unSignData)
+                signData.data = unSignData
                 signData.privKey = priv
                 if (addressId != -1) {
                     signData.addressID = addressId
@@ -492,6 +501,33 @@ class GoWallet {
                 Log.v("tag", "签名交易: $signRawTransaction")
                 return signRawTransaction
             } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+            }
+            return null
+        }
+
+        fun signTxGroup(
+            execer: String,
+            createTx: String,
+            txPriv: String,
+            feePriv: String,
+            btyfee: Double,
+            addressId: Int
+        ): String? {
+            try {
+                val gWithoutTx = GWithoutTx()
+                gWithoutTx.noneExecer = execer
+                gWithoutTx.feepriv = feePriv //代扣手续费的BTY私钥
+                gWithoutTx.txpriv = txPriv
+                gWithoutTx.rawTx = createTx
+                //bty的推荐手续费设置
+                gWithoutTx.fee = btyfee
+                if (addressId != -1) {
+                    gWithoutTx.addressID = addressId
+                }
+                val txResp = Walletapi.coinsWithoutTxGroup(gWithoutTx)
+                return txResp.signedTx
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
             return null
@@ -704,14 +740,18 @@ class GoWallet {
 
         }
 
-        fun newCoinType(cointype: String, tokenSymbol: String): CoinToken {
+        fun newCoinType(cointype: String, tokenSymbol: String, netId: Int): CoinToken {
             val coinToken = CoinToken()
-            if (tokenSymbol == Walletapi.TypeYccString && (cointype == "BTC" || cointype == "ETH")) {
-                coinToken.cointype = "YCC"
-                coinToken.tokenSymbol = ""
-            } else {
-                coinToken.cointype = cointype
-                coinToken.tokenSymbol = if (cointype == tokenSymbol) "" else tokenSymbol
+            coinToken.cointype = cointype
+            coinToken.tokenSymbol = if (cointype == tokenSymbol) "" else tokenSymbol
+            if (cointype == "BTC" || cointype == "ETH") {
+                if (tokenSymbol == "YCC" && netId != 729) {
+                    coinToken.cointype = "YCC"
+                    coinToken.tokenSymbol = ""
+                } else if (tokenSymbol == "BTY") {
+                    coinToken.cointype = "BTY"
+                    coinToken.tokenSymbol = ""
+                }
             }
             return coinToken
         }

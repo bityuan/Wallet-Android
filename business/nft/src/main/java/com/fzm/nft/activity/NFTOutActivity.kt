@@ -26,6 +26,7 @@ import com.fzm.wallet.sdk.net.UrlConfig
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.StatusBarUtil
+import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.vm.OutViewModel
 import com.jeremyliao.liveeventbus.LiveEventBus
 import kotlinx.coroutines.CoroutineScope
@@ -40,7 +41,7 @@ import java.text.DecimalFormat
 
 
 @Route(path = RouterPath.NFT_OUT)
-class NFTOutActivity : AppCompatActivity() {
+class NFTOutActivity : BaseActivity() {
     private val binding by lazy { ActivityNftoutBinding.inflate(layoutInflater) }
     private val nftViewModel: NFTViewModel by inject(walletQualifier)
     private lateinit var privkey: String
@@ -63,7 +64,6 @@ class NFTOutActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         ARouter.getInstance().inject(this)
-        doBar()
         initObserver()
         coin?.let {
             binding.tvBalance.text = " 余额：${it.balance}"
@@ -105,18 +105,9 @@ class NFTOutActivity : AppCompatActivity() {
 
     }
 
-    private fun doBar() {
-        setSupportActionBar(binding.xbar.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.xbar.toolbar.setNavigationOnClickListener { onBackPressed() }
-        val view = (findViewById<View>(android.R.id.content) as ViewGroup).getChildAt(0)
-        view.fitsSystemWindows = true
-        StatusBarUtil.StatusBarLightMode(this)
-    }
-
 
     private var min = 0
-    private fun initObserver() {
+     override fun initObserver() {
         outViewModel.getMiner.observe(this, Observer {
             if (it.isSucceed()) {
                 it.data()?.let { miner: Miner ->
@@ -230,12 +221,5 @@ class NFTOutActivity : AppCompatActivity() {
 
             }
         }
-    }
-
-
-    override fun onTitleChanged(title: CharSequence?, color: Int) {
-        super.onTitleChanged(title, color)
-        binding.xbar.toolbar.title = ""
-        binding.xbar.tvToolbar.text = title
     }
 }

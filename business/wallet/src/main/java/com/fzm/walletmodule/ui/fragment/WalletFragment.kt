@@ -125,7 +125,7 @@ class WalletFragment : BaseFragment() {
                 }
                 val coin: Coin = mCoinList[coinPosition]
                 val intent = Intent(activity, TransactionsActivity::class.java)
-                val coinToken = GoWallet.newCoinType(coin.chain, coin.tokenSymbol)
+                val coinToken = GoWallet.newCoinType(coin.chain, coin.tokenSymbol,coin.netId.toInt())
                 coin.chain = coinToken.cointype
                 intent.putExtra(Coin::class.java.simpleName, coin)
                 startActivity(intent)

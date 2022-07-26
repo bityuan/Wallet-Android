@@ -14,11 +14,13 @@ object RouterPath {
     const val WALLET_CHECK_MNEM = "/wallet/CheckMnemActivity"
     const val WALLET_SET_PASSWORD = "/wallet/SetPasswordActivity"
     const val WALLET_CHANGE_PASSWORD = "/wallet/ChangePasswordActivity"
-
+    const val WALLET_CAPTURE = "/wallet/CaptureCustomActivity"
+    //app
     const val APP_SPLASH = "/app/SplashActivity"
     const val APP_MAIN = "/app/MainActivity"
     const val APP_DAPP = "/app/DappActivity"
-    const val WALLET_CAPTURE = "/wallet/CaptureCustomActivity"
+    const val APP_ABOUT = "/app/AboutActivity"
+    const val APP_DOWNLOAD = "/app/DownLoadActivity"
 
     const val PARAM_COIN = "coin"
     const val PARAM_NFT_TRAN = "nft_tran"

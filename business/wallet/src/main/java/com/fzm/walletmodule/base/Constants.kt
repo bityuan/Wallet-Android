@@ -39,4 +39,5 @@ open class Constants {
             return coinList
         }
     }
+
 }

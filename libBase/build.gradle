@@ -48,6 +48,7 @@ dependencies {
     api cfg.dsBridge
     api cfg.livedatabus
     api cfg.permissionx
+    api cfg.materialDialogs
 }
 
 //注意放置位置，复制此段代码稍加修改即可

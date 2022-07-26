@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="30dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_share"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@android:color/white"
+        android:drawableLeft="@mipmap/icon_fenxiang"
+        android:drawableRight="@drawable/ic_right"
+        android:drawablePadding="14dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="18dp"
+        android:text="@string/my_download"
+        android:textColor="@color/my_item_text"
+        android:textSize="16sp" />
+
+    <LinearLayout
+        android:id="@+id/ll_check_update"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="18dp"
+        android:textStyle="bold">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableLeft="@mipmap/icon_jiance"
+            android:drawablePadding="14dp"
+            android:gravity="center_vertical"
+            android:text="检测更新"
+            android:textColor="@color/my_item_text"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_check_update"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/ic_right"
+            android:drawablePadding="8dp"
+            android:gravity="center_vertical"
+            android:text="1.0.0"
+            android:textColor="@color/gray_8e"
+            android:textSize="15sp" />
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_about"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@android:color/white"
+        android:drawableLeft="@mipmap/icon_guanyu"
+        android:drawableRight="@drawable/ic_right"
+        android:drawablePadding="14dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="18dp"
+        android:text="@string/my_about"
+        android:textColor="@color/my_item_text"
+        android:textSize="16sp" />
+</LinearLayout>

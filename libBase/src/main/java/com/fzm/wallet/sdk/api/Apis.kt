@@ -1,9 +1,6 @@
 package com.fzm.wallet.sdk.api
 
-import com.fzm.wallet.sdk.bean.BrowserBean
-import com.fzm.wallet.sdk.bean.ExploreBean
-import com.fzm.wallet.sdk.bean.Miner
-import com.fzm.wallet.sdk.bean.WithHold
+import com.fzm.wallet.sdk.bean.*
 import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.DNSResponse
@@ -63,5 +60,6 @@ interface Apis {
         @Query("key") key: String,
         @Query("kind") kind: Int
     ): DNSResponse<List<String>>
-
+    @POST("")
+    suspend fun getUpdate(): HttpResponse<AppVersion>
 }

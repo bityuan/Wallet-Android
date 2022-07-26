@@ -47,8 +47,8 @@ ext {
             buildToolsVersion: "30.0.3",
             minSdkVersion    : 21,
             targetSdkVersion : 31,
-            versionCode      : 1,
-            versionName      : "1.0"
+            versionCode      : 10000,
+            versionName      : "1.0.0"
     ]
 
     applicationId = [
@@ -110,6 +110,7 @@ ext {
     dsBridge = "com.github.wendux:DSBridge-Android:3.0-SNAPSHOT"
     livedatabus = "io.github.jeremyliao:live-event-bus-x:1.8.0"
     permissionx = "com.guolindev.permissionx:permissionx:1.6.4"
+    materialDialogs = "com.afollestad.material-dialogs:core:0.9.6.0"
 
 
 }

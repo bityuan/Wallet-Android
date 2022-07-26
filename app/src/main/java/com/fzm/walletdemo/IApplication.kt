@@ -1,6 +1,7 @@
 package com.fzm.walletdemo
 
 import android.app.Application
+import android.content.Context
 import android.os.Build
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.nft.nftModule
@@ -12,7 +13,6 @@ import org.koin.core.context.startKoin
 import org.koin.dsl.module
 
 class IApplication : Application() {
-
 
     companion object {
         const val APP_SYMBOL = "open_wallet"

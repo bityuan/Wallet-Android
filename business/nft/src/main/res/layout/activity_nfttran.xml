@@ -5,10 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include
-        android:id="@+id/xbar"
-        layout="@layout/xbar" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -72,12 +68,12 @@
 
         <TextView
             android:id="@+id/tv_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:drawableRight="@mipmap/icon_copy_default"
             android:drawablePadding="5dp"
             android:ellipsize="middle"
-            android:singleLine="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:singleLine="true" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -129,7 +125,13 @@
             android:id="@+id/tab_tran"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:tabMode="auto" />
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rv_hotcoinslist"
+            app:tabIndicatorFullWidth="false"
+            app:tabSelectedTextColor="@android:color/black"
+            app:tabTextAppearance="@style/text_tablayout"
+            app:tabTextColor="@color/color_8E92A3" />
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/vp_tran"

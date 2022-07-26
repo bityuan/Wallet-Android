@@ -266,7 +266,7 @@ class OutActivity : BaseActivity() {
                 return
             }
             //签名交易
-            val signtx = GoWallet.signTran(it.chain, createRawResult!!, privkey, addressId)
+            val signtx = GoWallet.signTran(it.chain, Walletapi.stringTobyte(createRawResult), privkey, addressId)
             if (TextUtils.isEmpty(signtx)) {
                 return
             }

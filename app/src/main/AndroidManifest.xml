@@ -11,8 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+
         <activity
-            android:name=".SplashActivity"
+            android:name=".ui.activity.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
@@ -23,15 +24,23 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DappActivity"
+            android:name=".ui.activity.DappActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.activity.MainActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait">
-
-        </activity>
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.fzm.walletdemo.ui.activity.AboutActivity"
+            android:label="@string/my_about"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.fzm.walletdemo.ui.activity.DownLoadActivity"
+            android:label="@string/my_download"
+            android:exported="false"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

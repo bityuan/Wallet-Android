@@ -4,6 +4,10 @@
     <string name="main_market">行情</string>
     <string name="main_explore">探索</string>
     <string name="main_my">我的</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="my_about">关于我们</string>
+    <string name="my_download">应用下载</string>
+
+    <string name="my_share_copy_address">复制下载地址</string>
+    <string name="app_content">MyDao是一款移动端货币账户App，旨在为用户提供安全，好用，功能强大数字资产管理工具。</string>
+
 </resources>

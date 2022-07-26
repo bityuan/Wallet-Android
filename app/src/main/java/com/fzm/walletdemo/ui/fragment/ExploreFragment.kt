@@ -1,4 +1,4 @@
-package com.fzm.walletdemo.fragment
+package com.fzm.walletdemo.ui.fragment
 
 import android.content.Context
 import android.os.Bundle

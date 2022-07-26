@@ -11,5 +11,9 @@
         android:icon="@mipmap/tab_icon_explore_nor"
         android:title="探索"
         />
+    <item
+        android:id="@+id/fragment_my"
+        android:icon="@mipmap/tab_icon_my_nor"
+        android:title="我的" />
 
 </menu>

@@ -11,9 +11,10 @@ import com.fzm.nft.databinding.ActivityNftoutBinding
 import com.fzm.nft.databinding.ActivityNfttranDetailsBinding
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.walletmodule.ui.base.BaseActivity
 
 @Route(path = RouterPath.NFT_TRAN_DETAIL)
-class NFTTranDetailsActivity : AppCompatActivity() {
+class NFTTranDetailsActivity : BaseActivity() {
     @JvmField
     @Autowired
     var nftTran: NftTran? = null
