@@ -66,6 +66,7 @@ class NFTOutActivity : BaseActivity() {
         ARouter.getInstance().inject(this)
         initObserver()
         coin?.let {
+            binding.tvCoinName.text = it.name + getString(com.fzm.walletmodule.R.string.home_transfer)
             binding.tvBalance.text = " 余额：${it.balance}"
         }
 
@@ -86,12 +87,13 @@ class NFTOutActivity : BaseActivity() {
         outViewModel.getMiner(Walletapi.TypeETHString)
         binding.seekbarFee.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val value: Double = progress.plus(min).div(100000000.00)
+                val value: Double = progress.plus(min).div(100000000.0000)
                 //val rmb = eth.rmb.times(value)
-                val format = DecimalFormat("0.##")
+                val format = DecimalFormat("0.####")
                 //未保留小数的舍弃规则，RoundingMode.FLOOR表示直接舍弃。
                 format.roundingMode = RoundingMode.FLOOR
-                binding.tvFee.text = "$value ETH"
+                val formatValue = format.format(value)
+                binding.tvFee.text = "$formatValue ETH"
 
             }
 

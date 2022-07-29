@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fzm.wallet.sdk.net.HttpResult
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import walletapi.Walletapi
 

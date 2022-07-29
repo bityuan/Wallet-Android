@@ -18,11 +18,16 @@ import com.bumptech.glide.request.RequestOptions
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.bean.ExploreBean
+import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.walletdemo.databinding.FragmentExploreBinding
 import com.fzm.walletdemo.databinding.ItemExploreBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.anko.support.v4.toast
+import org.litepal.LitePal
+import org.litepal.extension.count
+import org.litepal.extension.find
 
 class ExploreFragment : Fragment() {
     private lateinit var binding: FragmentExploreBinding
@@ -71,6 +76,13 @@ class ExploreFragment : Fragment() {
 
         adapter.setOnItemClickListener {
             exList[it].let { appBean ->
+                if (appBean.type == 1) {
+                    val count = LitePal.count<PWallet>()
+                    if (count == 0) {
+                        toast("请先创建钱包")
+                        return@let
+                    }
+                }
                 ARouter.getInstance().build(RouterPath.APP_DAPP).withString("name", appBean.name)
                     .withString("url", appBean.app_url).navigation()
             }

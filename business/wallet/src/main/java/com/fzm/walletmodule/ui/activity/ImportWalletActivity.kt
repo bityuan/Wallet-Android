@@ -46,12 +46,7 @@ import org.litepal.extension.find
 import walletapi.Walletapi
 import java.util.ArrayList
 
-/**
- * 导入账户页面
- */
 class ImportWalletActivity : BaseActivity() {
-
-    private var isOK: Boolean = false
 
     private val wallet: BWallet get() = BWallet.get()
     private val views by lazy { listOf(mnemBinding.root, privateKeyBinding.root) }
@@ -102,7 +97,6 @@ class ImportWalletActivity : BaseActivity() {
 
         })
         mnemBinding.etMnem.doOnTextChanged { text, start, count, after ->
-            importButtonState()
             val lastString = text.toString()
             if (!TextUtils.isEmpty(lastString)) {
                 val first = lastString.substring(0, 1)
@@ -144,16 +138,6 @@ class ImportWalletActivity : BaseActivity() {
                 binding.tvPasswordAgainTip.visibility = View.VISIBLE
                 binding.tvPasswordAgainTip.text = getString(R.string.confirm_wallet_password)
             }
-        }
-
-        binding.etWalletName.doOnTextChanged { text, start, count, after ->
-            importButtonState()
-        }
-        binding.etWalletPassword.doOnTextChanged { text, start, count, after ->
-            importButtonState()
-        }
-        binding.etWalletPasswordAgain.doOnTextChanged { text, start, count, after ->
-            importButtonState()
         }
 
         privateKeyBinding.rlChooseChain.setOnClickListener {
@@ -286,39 +270,6 @@ class ImportWalletActivity : BaseActivity() {
         }
 
     }
-
-    private fun importButtonState() {
-        val ok = importButtonState
-        if (isOK == ok) {
-            return
-        } else {
-            isOK = ok
-            if (ok) {
-                binding.btnImport.background =
-                    ContextCompat.getDrawable(this, R.drawable.bg_import_wallet_button_ok)
-            } else {
-                binding.btnImport.background =
-                    ContextCompat.getDrawable(this, R.drawable.bg_import_wallet_button)
-            }
-        }
-    }
-
-    private val importButtonState: Boolean
-        get() {
-            if (TextUtils.isEmpty(mnemBinding.etMnem.text.toString())) {
-                return false
-            }
-            if (TextUtils.isEmpty(binding.etWalletPassword.text.toString())) {
-                return false
-            }
-            if (TextUtils.isEmpty(binding.etWalletPasswordAgain.text.toString())) {
-                return false
-            }
-            if (TextUtils.isEmpty(binding.etWalletName.text.toString())) {
-                return false
-            }
-            return true
-        }
 
 
     private fun checked(name: String, password: String, passwordAgain: String): Boolean {

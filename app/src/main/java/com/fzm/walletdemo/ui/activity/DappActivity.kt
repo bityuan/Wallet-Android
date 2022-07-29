@@ -1,9 +1,14 @@
 package com.fzm.walletdemo.ui.activity
 
+import android.content.Intent
+import android.net.Uri
 import android.net.wifi.WifiInfo
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebView
@@ -23,15 +28,18 @@ import com.fzm.wallet.sdk.databinding.DialogLoadingBinding
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.ext.jsonToMap
-import com.fzm.wallet.sdk.ext.maptoJsonStr
+import com.fzm.wallet.sdk.ext.toJSONStr
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.StatusBarUtil
 import com.fzm.wallet.sdk.utils.ToolUtils
 import com.fzm.walletdemo.BuildConfig
 import com.fzm.walletdemo.databinding.ActivityDappBinding
+import com.fzm.walletmodule.utils.ClipboardUtils
 import com.fzm.walletmodule.utils.NetWorkUtils
 import com.google.gson.Gson
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
 import org.litepal.LitePal
 import org.litepal.extension.find
@@ -105,6 +113,7 @@ class DappActivity : AppCompatActivity() {
     private fun initWebView() {
         DWebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
         binding.webDapp.addJavascriptObject(JsApi(), null)
+        //binding.webDapp.addJavascriptObject(JSApi(this), null)
         binding.webDapp.settings.javaScriptEnabled = true
         binding.webDapp.settings.domStorageEnabled = true
         //解决http图片不显示
@@ -128,6 +137,7 @@ class DappActivity : AppCompatActivity() {
 
     }
 
+    // JS调用
 
     inner class JsApi {
         private var cointype = ""
@@ -137,6 +147,8 @@ class DappActivity : AppCompatActivity() {
 
         //addressID 比特币格式的地址传0， 以太坊格式的地址发送的时候addressID 传2
         private var addressid = -1
+
+
 
         @JavascriptInterface
         fun getCurrentBTYAddress(msg: Any, handler: CompletionHandler<String?>) {
@@ -150,8 +162,9 @@ class DappActivity : AppCompatActivity() {
             val chain = map["cointype"]
             chain?.let {
                 val chain = GoWallet.getChain(it)
-                handler.complete(chain?.address)
+                handler.complete(toJSONStr("address" to chain?.address))
             }
+
         }
 
         @JavascriptInterface
@@ -217,17 +230,14 @@ class DappActivity : AppCompatActivity() {
         fun setTitle(msg: Any, handler: CompletionHandler<String?>?) {
             val map = msg.toString().jsonToMap<String>()
             val title = map["title"]
-            title?.let {
-                setTitle(it)
-            }
+            binding.xbar.tvToolbar.text = title
+            handler?.complete()
         }
 
         @JavascriptInterface
         fun getCurrentWifi(msg: Any?, handler: CompletionHandler<String?>) {
             val wifiInfo: WifiInfo = NetWorkUtils.getWifi(this@DappActivity)
-            val map = arrayMapOf<String, String>()
-            map["name"] = wifiInfo.ssid
-            handler.complete(map.maptoJsonStr())
+            handler.complete(toJSONStr("name" to wifiInfo.ssid))
         }
 
 
@@ -282,9 +292,7 @@ class DappActivity : AppCompatActivity() {
                 }
             bindingDialog.ivClose.setOnClickListener {
                 dialog.dismiss()
-                val map: ArrayMap<String, String> = ArrayMap()
-                map["error"] = "取消"
-                handler?.complete(map.maptoJsonStr())
+                handler?.complete(toJSONStr("error" to "取消"))
             }
             bindingDialog.btnOk.setOnClickListener {
                 val password = bindingDialog.etInput.text.toString()
@@ -320,9 +328,7 @@ class DappActivity : AppCompatActivity() {
                                         priKey,
                                         addressid
                                     )
-                                    val map: ArrayMap<String, String> = ArrayMap()
-                                    map["signHash"] = signTx
-                                    handler?.complete(map.maptoJsonStr())
+                                    handler?.complete(toJSONStr("signHash" to signTx))
                                     loading.dismiss()
 
                                 }
@@ -336,19 +342,14 @@ class DappActivity : AppCompatActivity() {
                                         0.01,
                                         addressid
                                     )
-                                    val map: ArrayMap<String, String> = ArrayMap()
-                                    map["signHash"] = signTx
-                                    handler?.complete(map.maptoJsonStr())
+                                    handler?.complete(toJSONStr("signHash" to signTx))
                                     loading.dismiss()
 
                                 }
                                 3 -> {
                                     val bPassword = GoWallet.encPasswd(password)!!
                                     val mnem: String = GoWallet.decMenm(bPassword, it.mnem)
-                                    val map: ArrayMap<String, String> = ArrayMap()
-                                    map["passwd"] = password
-                                    map["seed"] = mnem
-                                    handler?.complete(map.maptoJsonStr())
+                                    handler?.complete(toJSONStr("passwd" to password,"seed" to mnem))
                                     loading.dismiss()
                                 }
                                 else -> {}
@@ -401,13 +402,33 @@ class DappActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val menuItem = menu.add(0, 1, 0, "刷新")
-        menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+        val menuItem1 = menu.add(0, 2, 0, "复制链接")
+        val menuItem2 = menu.add(0, 3, 0, "在浏览器中打开")
+        val menuItem3 = menu.add(0, 4, 0, "退出")
+        //menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == 1) {
             binding.webDapp.reload()
+        }
+        when (item.itemId) {
+            1 -> {
+                binding.webDapp.reload()
+            }
+            2 -> {
+                ClipboardUtils.clip(this, url)
+            }
+            3 -> {
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.addCategory(Intent.CATEGORY_BROWSABLE)
+                intent.data = Uri.parse(url)
+                startActivity(intent)
+            }
+            4 -> {
+                finish()
+            }
         }
         return super.onOptionsItemSelected(item)
     }

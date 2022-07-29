@@ -112,8 +112,11 @@ class OutActivity : BaseActivity() {
                 val format = DecimalFormat("0.####")
                 //未保留小数的舍弃规则，RoundingMode.FLOOR表示直接舍弃。
                 format.roundingMode = RoundingMode.FLOOR
+                val formatValue = format.format(value)
+
+
                 fee = value
-                binding.tvFee.text = "$value ${coin?.chain}"
+                binding.tvFee.text = "$formatValue ${coin?.chain}"
 
             }
 

@@ -53,12 +53,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#ffd9dce9"
-                android:textSize="14sp"
+                android:textSize="18sp"
                 tools:text="xx的账户（￥）" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/tv_money"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"

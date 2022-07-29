@@ -45,9 +45,6 @@ import org.koin.android.ext.android.inject
 import org.litepal.LitePal.select
 import org.litepal.LitePal.where
 import walletapi.HDWallet
-import java.lang.Exception
-import java.util.ArrayList
-import java.util.HashMap
 
 class AddCoinActivity : BaseActivity() {
     private val GUIDE_ADD_COIN = "guide_add_coin5"
@@ -68,6 +65,7 @@ class AddCoinActivity : BaseActivity() {
     private var mAdapter: FragmentPagerAdapter? = null
     private var page = 0
     private val walletViewModel: WalletViewModel by inject(walletQualifier)
+    private var isChainCoin = false
     override fun onCreate(savedInstanceState: Bundle?) {
         mCustomToobar = true
         super.onCreate(savedInstanceState)
@@ -177,6 +175,8 @@ class AddCoinActivity : BaseActivity() {
             java.lang.String.valueOf(mPWallet.id)
         ).find(Coin::class.java, true)
 
+        isChainCoin = mPWallet.type == PWallet.TYPE_PRI_KEY
+
         if (ListUtils.isEmpty(homeData)) {
             chain = ""
             platform = ""
@@ -251,7 +251,16 @@ class AddCoinActivity : BaseActivity() {
                     val localList = ArrayList<Coin>()
                     localBean.items = localList
                     for (coin in coinTabBean.items!!) {
-                        localList.add(coin)
+
+                        if (isChainCoin) {
+                            for (homeCoin in homeData) {
+                                if (TextUtils.equals(homeCoin.chain, coin.chain)) {
+                                    localList.add(coin)
+                                }
+                            }
+                        } else {
+                            localList.add(coin)
+                        }
                     }
                     if (!ListUtils.isEmpty(localList)) {
                         titles.add(coinTabBean.name)
@@ -307,7 +316,7 @@ class AddCoinActivity : BaseActivity() {
                 }
                 mCommonAdapter!!.notifyDataSetChanged()
             } else {
-                Log.e("addCoin","请求失败${it.error()}")
+                Log.e("addCoin", "请求失败${it.error()}")
                 toast(it.error())
             }
         })
@@ -371,7 +380,7 @@ class AddCoinActivity : BaseActivity() {
             val chainCoin = select().where(
                 "chain = ? and pwallet_id = ?",
                 coin.chain,
-              mPWallet.id.toString()
+                mPWallet.id.toString()
             ).findFirst(
                 Coin::class.java
             )
@@ -448,7 +457,7 @@ class AddCoinActivity : BaseActivity() {
     inner class DelaySearchHandler : Handler() {
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
-            Log.e("addCoin","handleMessage")
+            Log.e("addCoin", "handleMessage")
             page = 1
             walletViewModel.searchCoinList(
                 page,

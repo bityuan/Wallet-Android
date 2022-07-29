@@ -11,7 +11,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-
+        <activity
+            android:name=".ui.activity.WebTestActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.SplashActivity"
             android:exported="true"
@@ -32,21 +35,21 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.fzm.walletdemo.ui.activity.AboutActivity"
-            android:label="@string/my_about"
+            android:name=".ui.activity.AboutActivity"
             android:exported="false"
+            android:label="@string/my_about"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.fzm.walletdemo.ui.activity.DownLoadActivity"
-            android:label="@string/my_download"
+            android:name=".ui.activity.DownLoadActivity"
             android:exported="false"
+            android:label="@string/my_download"
             android:screenOrientation="portrait" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileProvider"
             android:exported="false"
-            android:grantUriPermissions="true" >
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />

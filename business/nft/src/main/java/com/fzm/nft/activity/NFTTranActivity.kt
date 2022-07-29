@@ -44,7 +44,6 @@ class NFTTranActivity : BaseActivity() {
             Glide.with(this).load(it.icon).apply(RequestOptions.bitmapTransform(CircleCrop()))
                 .into(binding.ivIcon)
             binding.tvBalance.text = it.balance
-            binding.tvRmb.text = "￥${it.rmb}"
             val bitmap = CodeUtils.createQRCode(it.address, 200)
             binding.ivAddress.setImageBitmap(bitmap)
             binding.tvAddress.text = it.address

@@ -53,12 +53,12 @@ class InActivity : BaseActivity() {
             val pWallet: PWallet = find(PWallet::class.java, it.getpWallet().id)
             binding.tvWalletName.text = pWallet.name
             val bitmap: Bitmap = CodeUtils.createQRCode(it.address, 190)
-            binding.ivMyWallet.setImageBitmap(bitmap)
+            binding.ivAddress.setImageBitmap(bitmap)
             binding.tvAddress.text = HtmlUtils.change4(it.address)
 
         }
 
-        binding.ivMyWallet.setOnClickListener {
+        binding.ivAddress.setOnClickListener {
             ClipboardUtils.clip(this, binding.tvAddress.text.toString())
         }
         binding.tvAddress.setOnClickListener {

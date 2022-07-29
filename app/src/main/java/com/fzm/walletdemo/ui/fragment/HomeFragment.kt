@@ -54,11 +54,11 @@ class HomeFragment : Fragment() {
         paramViewModel.walletName.observe(viewLifecycleOwner, Observer {
             binding.header.tvName.text = it
         })
-        paramViewModel.walletMoney.observe(viewLifecycleOwner, Observer {
+    /*    paramViewModel.walletMoney.observe(viewLifecycleOwner, Observer {
             binding.header.tvMoney.text = it
 
 
-        })
+        })*/
 
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {

@@ -151,14 +151,19 @@ class TransactionFragment : BaseFragment() {
     override fun initRefresh() {
         super.initRefresh()
         binding.swlLayout.setOnRefreshListener {
-            getDatas(0)
-            (activity as TransactionsActivity).doRefreshBalance()
+            doRefresh()
         }
-        binding.swlLayout.autoRefresh()
+        doRefresh()
+        //binding.swlLayout.autoRefresh()
 
         binding.rvList.setOnLoadMoreListener {
             getDatas(mIndex)
         }
+    }
+
+    private fun doRefresh() {
+        getDatas(0)
+        (activity as TransactionsActivity).doRefreshBalance()
     }
 
 

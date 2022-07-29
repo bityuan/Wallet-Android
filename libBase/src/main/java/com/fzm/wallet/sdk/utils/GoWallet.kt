@@ -121,7 +121,7 @@ class GoWallet {
         }
 
         fun checkSessionID(force: Boolean = false) {
-            if (System.currentTimeMillis() - lastRefreshSessionTime < 29 * 60 * 1000 && !force) {
+            /*if (System.currentTimeMillis() - lastRefreshSessionTime < 29 * 60 * 1000 && !force) {
                 // sessionID半小时过期，提前1分钟刷新
                 return
             }
@@ -131,7 +131,7 @@ class GoWallet {
                 lastRefreshSessionTime = System.currentTimeMillis()
             } catch (e: Exception) {
                 e.printStackTrace()
-            }
+            }*/
         }
 
         /**
