@@ -79,6 +79,12 @@ class MainActivity : BaseActivity() {
             platform = "ethereum"
             netId = "90"
         },
+        Coin().apply {
+            name = "YCC"
+            chain = "ETH"
+            platform = "ethereum"
+            netId = "155"
+        },
 
         )
 
@@ -118,11 +124,9 @@ class MainActivity : BaseActivity() {
                 }
             }
             1 -> {
-                //showWalletFragment(fragmentTransaction)
                 showExploreFragment(fragmentTransaction)
             }
             2 -> {
-                //showWalletFragment(fragmentTransaction)
                 showMyFragment(fragmentTransaction)
             }
         }
@@ -202,6 +206,7 @@ class MainActivity : BaseActivity() {
         }
         fragmentTransaction.commitAllowingStateLoss()
     }
+
     private fun showMyFragment(fragmentTransaction: FragmentTransaction) {
         if (myFragment != null) {
             fragmentTransaction.show(myFragment!!)

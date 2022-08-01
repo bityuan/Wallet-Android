@@ -3,7 +3,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F7F7FB"
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
@@ -35,5 +34,4 @@
         android:paddingRight="28dp"
         android:text="@string/app_content"
         android:textColor="@color/gray_99" />
-
 </LinearLayout>

@@ -517,7 +517,7 @@ class GoWallet {
             try {
                 val gWithoutTx = GWithoutTx()
                 gWithoutTx.noneExecer = execer
-                gWithoutTx.feepriv = feePriv //代扣手续费的BTY私钥
+                gWithoutTx.feepriv = feePriv //代扣手续费的私钥
                 gWithoutTx.txpriv = txPriv
                 gWithoutTx.rawTx = createTx
                 //bty的推荐手续费设置

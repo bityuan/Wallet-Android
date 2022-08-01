@@ -17,6 +17,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.collection.ArrayMap
 import androidx.collection.arrayMapOf
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -24,6 +25,7 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.WalletBean
+import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
 import com.fzm.wallet.sdk.databinding.DialogLoadingBinding
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
 import com.fzm.wallet.sdk.db.entity.PWallet
@@ -37,6 +39,8 @@ import com.fzm.walletdemo.databinding.ActivityDappBinding
 import com.fzm.walletmodule.utils.ClipboardUtils
 import com.fzm.walletmodule.utils.NetWorkUtils
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.jeremyliao.liveeventbus.LiveEventBus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -149,7 +153,6 @@ class DappActivity : AppCompatActivity() {
         private var addressid = -1
 
 
-
         @JavascriptInterface
         fun getCurrentBTYAddress(msg: Any, handler: CompletionHandler<String?>) {
             val chain = GoWallet.getChain("BTY")
@@ -228,8 +231,9 @@ class DappActivity : AppCompatActivity() {
 
         @JavascriptInterface
         fun setTitle(msg: Any, handler: CompletionHandler<String?>?) {
-            val map = msg.toString().jsonToMap<String>()
-            val title = map["title"]
+            //val map = msg.toString().jsonToMap<String>()
+            val jsTitle = Gson().fromJson(msg.toString(), JsTitle::class.java)
+            val title = jsTitle.title
             binding.xbar.tvToolbar.text = title
             handler?.complete()
         }
@@ -243,28 +247,39 @@ class DappActivity : AppCompatActivity() {
 
         @JavascriptInterface
         fun sign(msg: Any?, handler: CompletionHandler<String?>?) {
-            val map = msg.toString().jsonToMap<Any?>()
-            cointype = map["cointype"] as String
-            createHash = map["createHash"] as String
-            exer = map["exer"] as String
-            withhold = map["withhold"] as Int
+            val jsSign = Gson().fromJson(msg.toString(), JsSign::class.java)
+            cointype = jsSign.cointype
+            createHash = jsSign.createHash
+            exer = jsSign.exer
+            withhold = jsSign.withhold
             addressid = getAddressId()
             showPwdDialog(1, handler)
         }
 
+        inner class JsTitle {
+            var title = ""
+        }
+
+        inner class JsSign {
+            var cointype = ""
+            var createHash = ""
+            var exer = ""
+            var withhold = -1
+        }
+
         @JavascriptInterface
         fun signTxGroup(msg: Any?, handler: CompletionHandler<String?>?) {
-            val map = msg.toString().jsonToMap<Any?>()
-            cointype = map["cointype"] as String
-            createHash = map["createHash"] as String
-            exer = map["exer"] as String
-            withhold = map["withhold"] as Int
+            val jsSign = Gson().fromJson(msg.toString(), JsSign::class.java)
+            cointype = jsSign.cointype
+            createHash = jsSign.createHash
+            exer = jsSign.exer
+            withhold = jsSign.withhold
             addressid = getAddressId()
             showPwdDialog(2, handler)
         }
 
         private fun getAddressId(): Int {
-            addressid = when (cointype) {
+            return when (cointype) {
                 "BTY" -> {
                     0
                 }
@@ -273,14 +288,20 @@ class DappActivity : AppCompatActivity() {
                 }
                 else -> -1
             }
-
-            return -1
         }
 
 
         @JavascriptInterface
         fun importSeed(msg: Any?, handler: CompletionHandler<String?>?) {
             showPwdDialog(3, handler)
+        }
+
+        @JavascriptInterface
+        fun scanQRCode(msg: Any?, handler: CompletionHandler<String?>?) {
+            LiveEventBus.get<String>(LIVE_KEY_SCAN).observe(this@DappActivity, Observer { scan ->
+                handler?.complete(scan)
+            })
+            ARouter.getInstance().build(RouterPath.WALLET_CAPTURE).navigation()
         }
 
         private fun showPwdDialog(from: Int, handler: CompletionHandler<String?>?) {
@@ -339,7 +360,7 @@ class DappActivity : AppCompatActivity() {
                                         createHash,
                                         priKey,
                                         priKey,
-                                        0.01,
+                                        0.03,
                                         addressid
                                     )
                                     handler?.complete(toJSONStr("signHash" to signTx))
@@ -349,7 +370,12 @@ class DappActivity : AppCompatActivity() {
                                 3 -> {
                                     val bPassword = GoWallet.encPasswd(password)!!
                                     val mnem: String = GoWallet.decMenm(bPassword, it.mnem)
-                                    handler?.complete(toJSONStr("passwd" to password,"seed" to mnem))
+                                    handler?.complete(
+                                        toJSONStr(
+                                            "passwd" to password,
+                                            "seed" to mnem
+                                        )
+                                    )
                                     loading.dismiss()
                                 }
                                 else -> {}
@@ -370,8 +396,15 @@ class DappActivity : AppCompatActivity() {
         val bPassword = GoWallet.encPasswd(password)!!
         val priKey: String = when (walletBean.type) {
             2 -> {
+                var thisCointype = ""
                 val mnem: String = GoWallet.decMenm(bPassword, walletBean.mnem)
-                val priKey = GoWallet.getPrikey(cointype, mnem)
+                if (cointype == "YCC") {
+                    thisCointype = Walletapi.TypeETHString
+                } else {
+                    thisCointype = Walletapi.TypeBtyString
+                }
+
+                val priKey = GoWallet.getPrikey(thisCointype, mnem)
                 priKey
             }
             //私钥

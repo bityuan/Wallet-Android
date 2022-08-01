@@ -20,6 +20,7 @@ import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.utils.StatusBarUtil
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.ClipboardUtils
+import com.fzm.walletmodule.utils.isFastClick
 import com.king.zxing.util.CodeUtils
 
 @Route(path = RouterPath.NFT_TRAN)
@@ -57,12 +58,18 @@ class NFTTranActivity : BaseActivity() {
         }
 
         binding.btnTo.setOnClickListener {
+            if (isFastClick()) {
+                return@setOnClickListener
+            }
             ARouter.getInstance().build(RouterPath.NFT_OUT)
                 .withSerializable(RouterPath.PARAM_COIN, coin)
                 .navigation()
 
         }
         binding.btnReceive.setOnClickListener {
+            if (isFastClick()) {
+                return@setOnClickListener
+            }
             ARouter.getInstance().build(RouterPath.NFT_IN)
                 .withSerializable(RouterPath.PARAM_COIN, coin)
                 .navigation()

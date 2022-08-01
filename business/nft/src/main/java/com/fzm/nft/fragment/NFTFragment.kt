@@ -15,6 +15,7 @@ import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.nft.adapter.NFTAdapter
 import com.fzm.nft.databinding.FragmentNftBinding
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.walletmodule.utils.isFastClick
 import com.fzm.walletmodule.vm.WalletViewModel
 import org.jetbrains.anko.support.v4.onRefresh
 import org.jetbrains.anko.support.v4.toast
@@ -58,8 +59,13 @@ class NFTFragment : Fragment() {
         binding.rvList.layoutManager = LinearLayoutManager(context)
         binding.rvList.adapter = nftAdapter
         nftAdapter.setOnItemClickListener {
+            if (isFastClick()) {
+                return@setOnItemClickListener
+            }
             val coin = list[it]
-            ARouter.getInstance().build(RouterPath.NFT_TRAN).withSerializable(RouterPath.PARAM_COIN, coin).navigation()
+            coin.address?.let {
+                ARouter.getInstance().build(RouterPath.NFT_TRAN).withSerializable(RouterPath.PARAM_COIN, coin).navigation()
+            }
         }
     }
 
@@ -86,17 +92,20 @@ class NFTFragment : Fragment() {
                         val coin = list[i]
                         val chain = chains.find { coin.chain == it.chain }
                         coin.address = chain?.address
+                        coin.address?.let {
+                            //list[i].address = eth.address
+                            //list[i].address = GoWallet.testEthAddr
+                            //list[i].address = GoWallet.testEthAddr
+                            nftViewModel.getNFTBalance(
+                                i,
+                                Walletapi.TypeETHString,
+                                "",
+                                list[i].address,
+                                list[i].contract_address
+                            )
+                        }
 
-                        //list[i].address = eth.address
-                        //list[i].address = GoWallet.testEthAddr
-                        //list[i].address = GoWallet.testEthAddr
-                        nftViewModel.getNFTBalance(
-                            i,
-                            Walletapi.TypeETHString,
-                            "",
-                            list[i].address,
-                            list[i].contract_address
-                        )
+
                     }
                 }
             } else {

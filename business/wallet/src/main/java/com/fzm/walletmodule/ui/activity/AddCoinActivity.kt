@@ -102,11 +102,6 @@ class AddCoinActivity : BaseActivity() {
                     if (coin.status == Coin.STATUS_ENABLE) R.mipmap.icon_removecoin else R.mipmap.icon_addcoin
                 )
                 holder.setOnClickListener(R.id.iv_add_remove_coin) {
-                    Log.e(
-                        "pass",
-                        "password = " + mPWallet.password
-                            .toString() + "   id =" + mPWallet.id
-                    )
                     if (coin.status == Coin.STATUS_ENABLE) {
                         updateCoin(coin, false, false)
                     } else {
@@ -253,11 +248,16 @@ class AddCoinActivity : BaseActivity() {
                     for (coin in coinTabBean.items!!) {
 
                         if (isChainCoin) {
-                            for (homeCoin in homeData) {
-                                if (TextUtils.equals(homeCoin.chain, coin.chain)) {
-                                    localList.add(coin)
+                            if (chain == coin.chain) {
+                                localList.add(coin)
+                            } else {
+                                for (homeCoin in homeData) {
+                                    if (TextUtils.equals(homeCoin.chain, coin.chain)) {
+                                        localList.add(coin)
+                                    }
                                 }
                             }
+
                         } else {
                             localList.add(coin)
                         }

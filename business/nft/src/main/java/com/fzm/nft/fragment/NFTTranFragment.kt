@@ -19,6 +19,7 @@ import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.ui.fragment.TransactionFragment
+import com.fzm.walletmodule.utils.isFastClick
 import org.jetbrains.anko.support.v4.onRefresh
 import org.koin.android.ext.android.inject
 import walletapi.HDWallet
@@ -60,6 +61,9 @@ class NFTTranFragment : Fragment() {
         adapter = NFTTranAdapter(list, coin)
         binding.rvList.adapter = adapter
         adapter.setOnItemClickListener {
+            if (isFastClick()) {
+                return@setOnItemClickListener
+            }
             val tran = list[it]
             ARouter.getInstance().build(RouterPath.NFT_TRAN_DETAIL).withSerializable(PARAM_NFT_TRAN,tran).navigation()
         }

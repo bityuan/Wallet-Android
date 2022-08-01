@@ -20,6 +20,7 @@ import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.bean.StringResult
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
 import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.utils.AddressCheckUtils
 import com.fzm.wallet.sdk.utils.GoWallet
@@ -221,22 +222,30 @@ class OutActivity : BaseActivity() {
                         }
 
                     }
-                    val bPassword = GoWallet.encPasswd(password)!!
-                    val mnem: String = GoWallet.decMenm(bPassword, it.getpWallet().mnem)
-                    val hdWallet = GoWallet.getHDWallet(it.chain, mnem)
-                    privkey = Walletapi.byteTohex(hdWallet?.newKeyPriv(0))
 
-
-                    if ("YCC" == it.chain || "BTY" == it.chain) {
-                        if ("ethereum" == it.platform) {
-                            addressId = 2
-                            privkey = it.getPrivkey("ETH", mnem)
-                        } else if ("btc" == it.platform) {
-                            privkey = it.getPrivkey("BTC", mnem)
-                            addressId = 0
+                    if (it.getpWallet().type == PWallet.TYPE_PRI_KEY) {
+                        if ("YCC" == it.chain || "BTY" == it.chain) {
+                            if ("ethereum" == it.platform) {
+                                addressId = 2
+                            } else if ("btc" == it.platform) {
+                                addressId = 0
+                            }
                         }
+                        privkey = it.getPrivkey(password)
                     } else {
-                        privkey = it.getPrivkey(it.chain, mnem)
+                        val bPassword = GoWallet.encPasswd(password)!!
+                        val mnem: String = GoWallet.decMenm(bPassword, it.getpWallet().mnem)
+                        if ("YCC" == it.chain || "BTY" == it.chain) {
+                            if ("ethereum" == it.platform) {
+                                addressId = 2
+                                privkey = it.getPrivkey("ETH", mnem)
+                            } else if ("btc" == it.platform) {
+                                privkey = it.getPrivkey("BTC", mnem)
+                                addressId = 0
+                            }
+                        } else {
+                            privkey = it.getPrivkey(it.chain, mnem)
+                        }
                     }
 
                     loading.dismiss()
@@ -269,7 +278,12 @@ class OutActivity : BaseActivity() {
                 return
             }
             //签名交易
-            val signtx = GoWallet.signTran(it.chain, Walletapi.stringTobyte(createRawResult), privkey, addressId)
+            val signtx = GoWallet.signTran(
+                it.chain,
+                Walletapi.stringTobyte(createRawResult),
+                privkey,
+                addressId
+            )
             if (TextUtils.isEmpty(signtx)) {
                 return
             }
