@@ -2,6 +2,7 @@ package com.fzm.walletmodule.ui.fragment
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -187,22 +188,34 @@ class TransactionFragment : BaseFragment() {
             if (index == 0L && datas != null) {
                 MMkvUtil.encode(getKey(tokensymbol), datas)
             }
-            val response = Gson().fromJson(datas, TransactionResponse::class.java)
-            val list = response.result as List<Transactions>
 
-            mIndex = index + Constants.PAGE_LIMIT
-            isCanLoadMore = list.size < Constants.PAGE_LIMIT
-            withContext(Dispatchers.Main) {
-                if (index == 0L) {
-                    mList.clear()
+            try {
+                val response = Gson().fromJson(datas, TransactionResponse::class.java)
+                if (response.result.isNullOrEmpty()) {
                     binding.swlLayout.onRefreshComplete()
+                    binding.rvList.onLoadMoreComplete()
+                } else {
+                    val list = response.result as List<Transactions>
+                    mIndex = index + Constants.PAGE_LIMIT
+                    isCanLoadMore = list.size < Constants.PAGE_LIMIT
+                    withContext(Dispatchers.Main) {
+                        if (index == 0L) {
+                            mList.clear()
+                            binding.swlLayout.onRefreshComplete()
+                        }
+
+                        addList(list)
+                        binding.rvList.setHasLoadMore(!isCanLoadMore)
+                        binding.rvList.onLoadMoreComplete()
+                        mCommonAdapter.notifyDataSetChanged()
+                    }
                 }
 
-                addList(list)
-                binding.rvList.setHasLoadMore(!isCanLoadMore)
-                binding.rvList.onLoadMoreComplete()
-                mCommonAdapter.notifyDataSetChanged()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.e("error", e.toString())
             }
+
 
         }
 

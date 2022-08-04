@@ -31,7 +31,7 @@ public class UpdateUtils {
 
     private AppVersion mData;
     private FragmentManager mFragmentManager;
-    private  Context mContext;
+    private Context mContext;
     public static final String DOWNLOAD_ID = "download_id";
     private DownloadChangeObserver downloadObserver;
     private static long lastDownloadId = 0;
@@ -63,6 +63,7 @@ public class UpdateUtils {
         }
     }
 
+    //4代表强制更新，1代表普通更新
     public void updating() {
         final UpdateDialogFragment fragment = new UpdateDialogFragment();
         fragment.setResult("版本更新" + mData.getVersion())

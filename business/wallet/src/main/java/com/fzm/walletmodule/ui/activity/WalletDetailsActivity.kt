@@ -264,12 +264,13 @@ class WalletDetailsActivity : BaseActivity() {
                                 if (it.type == PWallet.TYPE_PRI_KEY) {
                                     WalletManager().exportPriv(
                                         this@WalletDetailsActivity,
-                                        coin.getPrivkey(password)
+                                        coin.getPrivkey(password), "${coin.name}私钥"
                                     )
                                 } else {
                                     WalletManager().exportPriv(
                                         this@WalletDetailsActivity,
-                                        coin.getPrivkey(coin.chain, mnem)
+                                        coin.getPrivkey(coin.chain, mnem),
+                                        "${coin.name}私钥"
                                     )
                                 }
                             }

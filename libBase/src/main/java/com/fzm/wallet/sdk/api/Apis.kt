@@ -60,6 +60,6 @@ interface Apis {
         @Query("key") key: String,
         @Query("kind") kind: Int
     ): DNSResponse<List<String>>
-    @POST("")
+    @GET("https://mydao.s3.ap-northeast-2.amazonaws.com/Mydao/mydao.json")
     suspend fun getUpdate(): HttpResponse<AppVersion>
 }

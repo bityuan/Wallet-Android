@@ -471,6 +471,7 @@ class GoWallet {
             return null
         }
 
+        //unSignData只有dapp签名（16进制）的时候才是hexTobyte，普通转账是stringTobyte
         fun signTran(chain: String, unSignData: ByteArray, priv: String, addressId: Int): String? {
             try {
                 val signData = SignData()

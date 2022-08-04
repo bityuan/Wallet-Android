@@ -65,21 +65,28 @@ class InActivity : BaseActivity() {
             ClipboardUtils.clip(this, binding.tvAddress.text.toString())
         }
         binding.tvDns.setOnClickListener {
-            ClipboardUtils.clip(this, binding.tvDns.text.toString())
+            ClipboardUtils.clip(this, dnsString)
         }
 
 
     }
 
+    private var dnsString = ""
     override fun initData() {
         super.initData()
         walletViewModel.getDNSResolve.observe(this, Observer {
             if (it.isSucceed()) {
                 it.data()?.let { list ->
-                    if (list.isNotEmpty()) {
-                        binding.tvDns.visibility = View.VISIBLE
-                        binding.tvDns.text = list[0]
+                    try {
+                        if (list.isNotEmpty()) {
+                            dnsString = list[0]
+                            binding.llDns.visibility = View.VISIBLE
+                            binding.tvDns.text = dnsString
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
+
                 }
             }
         })

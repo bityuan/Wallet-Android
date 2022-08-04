@@ -242,6 +242,8 @@ class OutActivity : BaseActivity() {
                             } else if ("btc" == it.platform) {
                                 privkey = it.getPrivkey("BTC", mnem)
                                 addressId = 0
+                            } else {
+                                privkey = it.getPrivkey(it.chain, mnem)
                             }
                         } else {
                             privkey = it.getPrivkey(it.chain, mnem)

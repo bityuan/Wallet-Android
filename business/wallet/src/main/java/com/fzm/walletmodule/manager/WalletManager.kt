@@ -72,10 +72,6 @@ class WalletManager {
         fun onItemClick(position: Int)
     }
 
-    //导出私钥
-    fun exportPriv(activity: AppCompatActivity, priv: String) {
-        exportPriv(activity, priv, activity.getString(R.string.my_wallet_detail_export))
-    }
 
     //导出私钥
     fun exportPriv(activity: AppCompatActivity?, content: String, title: String) {
@@ -116,7 +112,6 @@ class WalletManager {
         tvMnem.text = if (pWallet.mnemType == PWallet.TYPE_CHINESE) configSpace(mnem, false) else mnem
         ivClose.setOnClickListener { alertDialog.dismiss() }
         btnCopy.setOnClickListener {
-            alertDialog.dismiss()
             ClipboardUtils.clip(activity, mnem)
         }
     }

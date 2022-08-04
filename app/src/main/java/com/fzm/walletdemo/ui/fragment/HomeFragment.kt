@@ -53,12 +53,23 @@ class HomeFragment : Fragment() {
 
         paramViewModel.walletName.observe(viewLifecycleOwner, Observer {
             binding.header.tvName.text = it
+            if (BWallet.get().getCurrentWallet()?.type != 2) {
+                if (binding.tabHome.tabCount > 1) {
+                    binding.tabHome.getTabAt(1)?.view?.visibility = View.GONE
+                }
+            } else {
+                if (binding.tabHome.tabCount > 1) {
+                    binding.tabHome.getTabAt(1)?.view?.visibility = View.VISIBLE
+                }
+            }
+
+
         })
-    /*    paramViewModel.walletMoney.observe(viewLifecycleOwner, Observer {
-            binding.header.tvMoney.text = it
+        /*    paramViewModel.walletMoney.observe(viewLifecycleOwner, Observer {
+                binding.header.tvMoney.text = it
 
 
-        })*/
+            })*/
 
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
@@ -113,6 +124,11 @@ class HomeFragment : Fragment() {
         fun addFragment(fragment: Fragment, title: String) {
             mFragments.add(fragment)
             mFragmentTitles.add(title)
+        }
+
+        fun removeFragment(fragment: Fragment, title: String) {
+            mFragments.remove(fragment)
+            mFragmentTitles.remove(title)
         }
 
         override fun getItem(position: Int): Fragment {

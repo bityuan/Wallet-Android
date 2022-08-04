@@ -15,7 +15,7 @@ import org.jetbrains.anko.toast
 @Route(path = RouterPath.APP_DOWNLOAD)
 class DownLoadActivity : BaseActivity() {
     private val binding by lazy { ActivityDownLoadBinding.inflate(layoutInflater) }
-    val downloadUrl = "wwww.baidu.com"
+    val downloadUrl = "https://d.mydao.plus"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)

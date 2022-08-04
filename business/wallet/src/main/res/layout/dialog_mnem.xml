@@ -113,7 +113,7 @@
             android:layout_gravity="center_horizontal"
             android:background="@drawable/bg_shape_button"
             android:gravity="center"
-            android:text="@string/ok"
+            android:text="@string/copy"
             android:textColor="@android:color/white"
             android:textSize="17sp" />
     </LinearLayout>
