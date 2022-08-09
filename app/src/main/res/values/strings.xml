@@ -9,5 +9,8 @@
 
     <string name="my_share_copy_address">复制下载地址</string>
     <string name="app_content">MyDao是一款移动端货币账户App，旨在为用户提供安全，好用，功能强大数字资产管理工具。</string>
+    <string name="tab_home">首页</string>
+    <string name="tab_explore">探索</string>
+    <string name="tab_my">我的</string>
 
 </resources>

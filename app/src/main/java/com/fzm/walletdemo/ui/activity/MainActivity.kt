@@ -2,7 +2,7 @@ package com.fzm.walletdemo.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.view.ViewGroup
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -21,7 +21,6 @@ import com.fzm.walletdemo.ui.fragment.MyFragment
 import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.event.MainCloseEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
-import com.fzm.walletmodule.ui.fragment.WalletFragment
 import com.fzm.walletmodule.ui.fragment.WalletIndexFragment
 import com.jeremyliao.liveeventbus.LiveEventBus
 import kotlinx.coroutines.flow.collect
@@ -33,7 +32,6 @@ import org.litepal.LitePal.count
 
 @Route(path = RouterPath.APP_MAIN)
 class MainActivity : BaseActivity() {
-    private var walletFragment: WalletFragment? = null
     private var exploreFragment: ExploreFragment? = null
     private var mWalletIndexFragment: WalletIndexFragment? = null
     private var mHomeFragment: HomeFragment? = null
@@ -60,7 +58,7 @@ class MainActivity : BaseActivity() {
 
     }
 
-    val DEFAULT_COINS = listOf(
+    private val DEFAULT_COINS = listOf(
         Coin().apply {
             name = "BTC"
             chain = "BTC"
@@ -89,26 +87,20 @@ class MainActivity : BaseActivity() {
         )
 
     override fun initView() {
-        binding.bottomNavigationView.setOnNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.fragment_home -> {
-                    Log.e("MainAc", "fragment_home")
-                    setTabSelection(0)
-                }
-                R.id.fragment_explore -> {
-                    Log.e("MainAc", "fragment_explore")
-                    setTabSelection(1)
-                }
-                R.id.fragment_my -> {
-                    Log.e("MainAc", "fragment_explore")
-                    setTabSelection(2)
-                }
-            }
-            true
+        setTabSelection(0)
+        binding.lyHome.setOnClickListener {
+            setTabSelection(0)
+        }
+        binding.lyExplore.setOnClickListener {
+            setTabSelection(1)
+        }
+        binding.lyMy.setOnClickListener {
+            setTabSelection(2)
         }
     }
 
 
+    var currentTab: ViewGroup? = null
     private fun setTabSelection(index: Int) {
         // 开启一个Fragment事务
         val fragmentTransaction = supportFragmentManager.beginTransaction()
@@ -116,18 +108,27 @@ class MainActivity : BaseActivity() {
         hideFragments(fragmentTransaction)
         when (index) {
             0 -> {
+                currentTab?.isSelected = false
+                binding.lyHome.isSelected = true
                 val count: Int = count(PWallet::class.java)
                 if (count > 0) {
                     showHomeFragment(fragmentTransaction)
                 } else {
                     showWalletIndexFragment(fragmentTransaction)
                 }
+                currentTab = binding.lyHome
             }
             1 -> {
+                currentTab?.isSelected = false
+                binding.lyExplore.isSelected = true
                 showExploreFragment(fragmentTransaction)
+                currentTab = binding.lyExplore
             }
             2 -> {
+                currentTab?.isSelected = false
+                binding.lyMy.isSelected = true
                 showMyFragment(fragmentTransaction)
+                currentTab = binding.lyMy
             }
         }
 
@@ -143,22 +144,10 @@ class MainActivity : BaseActivity() {
     }
 
     private fun hideFragments(transaction: FragmentTransaction) {
-        walletFragment?.let { transaction.hide(it) }
         mWalletIndexFragment?.let { transaction.hide(it) }
         mHomeFragment?.let { transaction.hide(it) }
         exploreFragment?.let { transaction.hide(it) }
         myFragment?.let { transaction.hide(it) }
-    }
-
-
-    private fun showWalletFragment(fragmentTransaction: FragmentTransaction) {
-        if (walletFragment != null) {
-            fragmentTransaction.show(walletFragment!!)
-        } else {
-            walletFragment = WalletFragment()
-            fragmentTransaction.add(R.id.fl_tabcontent, walletFragment!!, "walletFragment")
-        }
-        fragmentTransaction.commitAllowingStateLoss()
     }
 
 
@@ -170,7 +159,7 @@ class MainActivity : BaseActivity() {
             fragmentTransaction.add(
                 R.id.fl_tabcontent,
                 mWalletIndexFragment!!,
-                "WalletIndexFragment"
+                "showWalletIndexFragment"
             )
 
         }
@@ -185,7 +174,7 @@ class MainActivity : BaseActivity() {
             fragmentTransaction.add(
                 R.id.fl_tabcontent,
                 mHomeFragment!!,
-                "HomeFragment"
+                "showHomeFragment"
             )
 
         }
@@ -200,7 +189,7 @@ class MainActivity : BaseActivity() {
             fragmentTransaction.add(
                 R.id.fl_tabcontent,
                 exploreFragment!!,
-                "HomeFragment"
+                "showExploreFragment"
             )
 
         }
@@ -215,7 +204,7 @@ class MainActivity : BaseActivity() {
             fragmentTransaction.add(
                 R.id.fl_tabcontent,
                 myFragment!!,
-                "myFragment"
+                "showMyFragment"
             )
 
         }

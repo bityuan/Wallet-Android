@@ -40,8 +40,9 @@ dependencies {
     api cfg.eventbus
     api cfg.antifake
     api cfg.glide
-    api cfg.runtime
-    api cfg.viewmodel
+    api cfg.lifecycleRuntime
+    api cfg.lifecycleLivedata
+    api cfg.lifecycleViewmodel
     api cfg.zxingLite
     api cfg.backgroundLibrary
     api cfg.fragmentKtx
@@ -49,6 +50,8 @@ dependencies {
     api cfg.livedatabus
     api cfg.permissionx
     api cfg.materialDialogs
+    api cfg.navigationUi
+    api cfg.navigationFragment
 }
 
 //注意放置位置，复制此段代码稍加修改即可
