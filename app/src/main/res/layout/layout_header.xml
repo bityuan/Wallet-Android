@@ -5,7 +5,6 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingLeft="16dp"
-    android:paddingTop="30dp"
     android:paddingRight="16dp">
 
     <FrameLayout
@@ -59,13 +58,13 @@
 
         <TextView
             android:id="@+id/tv_money"
-            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="44dp"
             android:textColor="#fff5f5f5"
             android:textSize="36sp"
+            android:visibility="gone"
             tools:text="69373.53" />
 
         <TextView
