@@ -1,5 +1,6 @@
 package com.fzm.wallet.sdk.api
 
+import com.fzm.wallet.sdk.IPConfig
 import com.fzm.wallet.sdk.bean.*
 import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
 import com.fzm.wallet.sdk.db.entity.Coin
@@ -54,7 +55,7 @@ interface Apis {
      * @param key 解析关键字，正向为域名，反向为地址或取值
      * @param kind 正向(0)/反向(1)解析，默认正向
      */
-    @GET("https://dns.bityuan.com/dns/dns/resolve")
+    @GET(IPConfig.DNS)
     suspend fun getDNSResolve(
         @Query("type") type: Int,
         @Query("key") key: String,

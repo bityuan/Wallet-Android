@@ -66,6 +66,16 @@ public class ExploreBean {
         private int email;
         private int phone;
         private int real_name;
+        //1：占用整行 2：GridLayout
+        private int style;
+
+        public int getStyle() {
+            return style;
+        }
+
+        public void setStyle(int style) {
+            this.style = style;
+        }
 
         public int getEmail() {
             return email;

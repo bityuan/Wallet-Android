@@ -16,6 +16,6 @@
 local.properties
 /build/
 /.idea/
-/app/src/main/java/com/fzm/walletdemo/IPConfig.kt
+/libBase/src/main/java/com/fzm/wallet/sdk/IPConfig.kt
 /help.txt
 
