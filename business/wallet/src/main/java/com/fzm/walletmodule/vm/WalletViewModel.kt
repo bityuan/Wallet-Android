@@ -66,7 +66,9 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
         }
     }
 
-    fun getDNSResolve(type: Int, key: String, kind: Int) {
+    //通过域名查询地址的时候，type字段用不上
+    //通过地址查询域名的时候，type字段只支持1，所以type默认设置为1
+    fun getDNSResolve(type: Int = 1, key: String, kind: Int) {
         viewModelScope.launch {
             _getDNSResolve.value = walletRepository.getDNSResolve(type, key, kind)
         }

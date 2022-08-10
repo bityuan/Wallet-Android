@@ -10,6 +10,8 @@ import android.widget.SeekBar
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -35,7 +37,11 @@ import com.fzm.walletmodule.vm.OutViewModel
 import com.fzm.walletmodule.vm.WalletViewModel
 import com.google.gson.Gson
 import com.jeremyliao.liveeventbus.LiveEventBus
+import com.zhy.adapter.recyclerview.CommonAdapter
+import com.zhy.adapter.recyclerview.MultiItemTypeAdapter
+import com.zhy.adapter.recyclerview.base.ViewHolder
 import kotlinx.android.synthetic.main.activity_out.*
+import kotlinx.android.synthetic.main.item_text.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -84,12 +90,44 @@ class OutActivity : BaseActivity() {
             if ("TRX" == it.chain) {
                 binding.llOutMiner.visibility = View.GONE
             }
+
+            binding.etToAddress.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+                if (!hasFocus) {
+                    val input = binding.etToAddress.text.toString()
+                    if (input.isNotEmpty()) {
+                        if (input.contains(".")) {
+                            getAddressByDns(input)
+                        } else {
+                            getDnsByAddress(input)
+                        }
+                    }
+
+                }
+            }
         }
+    }
+
+    //通过地址查询域名为反向解析kind=1，只有地址类型才支持
+    private fun getDnsByAddress(address: String) {
+        walletViewModel.getDNSResolve(key = address, kind = 1)
+
+    }
+
+    //通过域名查询地址为正向解析kind=0，类型不重要
+    private fun getAddressByDns(dns: String) {
+        walletViewModel.getDNSResolve(key = dns, kind = 0)
     }
 
     private var min = 0
     private var fee = 0.0
     override fun initData() {
+        walletViewModel.getDNSResolve.observe(this, Observer {
+            if (it.isSucceed()) {
+                it.data()?.let { list ->
+                    showDnsList(list)
+                }
+            }
+        })
         outViewModel.getMiner.observe(this, Observer {
             dismiss()
             if (it.isSucceed()) {
@@ -131,8 +169,55 @@ class OutActivity : BaseActivity() {
 
         //扫一扫
         LiveEventBus.get<String>(LIVE_KEY_SCAN).observe(this, Observer { scan ->
-            binding.tvToAddress.setText(scan)
+            binding.etToAddress.setText(scan)
         })
+    }
+
+
+    private fun showDnsList(list: List<String>) {
+        try {
+            if (list.isNotEmpty()) {
+                binding.rvDnsList.visibility = View.VISIBLE
+                binding.rvDnsList.layoutManager = LinearLayoutManager(this)
+                val dnsAdapter =
+                    object : CommonAdapter<String>(this, R.layout.item_text, list) {
+                        override fun convert(
+                            holder: ViewHolder,
+                            t: String,
+                            position: Int
+                        ) {
+                            holder.setText(R.id.tv_text, t)
+
+                        }
+
+                    }
+                binding.rvDnsList.adapter = dnsAdapter
+                dnsAdapter.setOnItemClickListener(object :
+                    MultiItemTypeAdapter.OnItemClickListener {
+                    override fun onItemClick(
+                        view: View,
+                        viewHolder: RecyclerView.ViewHolder,
+                        position: Int
+                    ) {
+                        val item = list[position]
+                        binding.etToAddress.setText(item)
+                        binding.etToAddress.requestFocus()
+                        binding.etToAddress.setSelection(item.length)
+                    }
+
+                    override fun onItemLongClick(
+                        view: View,
+                        viewHolder: RecyclerView.ViewHolder,
+                        position: Int
+                    ): Boolean {
+                        return false
+                    }
+
+                })
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
 
@@ -153,7 +238,7 @@ class OutActivity : BaseActivity() {
             if (ClickUtils.isFastDoubleClick()) {
                 return@setOnClickListener
             }
-            toAddress = binding.tvToAddress.text.toString()
+            toAddress = binding.etToAddress.text.toString()
             val money = binding.etMoney.text.toString()
             if (!checkAddressAndMoney(toAddress, money)) {
                 return@setOnClickListener

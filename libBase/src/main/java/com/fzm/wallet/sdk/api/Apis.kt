@@ -51,16 +51,16 @@ interface Apis {
 
     /**
      * DNS域名查询
-     * @param type 记录类型：1-地址类型 2-身份类型 9-自定义，默认为地址
+     * @param type 记录类型：1-地址类型 2-身份类型 9-自定义，默认为地址，只有地址类型支持反向解析，其他不支持
      * @param key 解析关键字，正向为域名，反向为地址或取值
-     * @param kind 正向(0)/反向(1)解析，默认正向
+     * @param kind 正向(0)/反向(1)解析，默认正向:域名查询地址
      */
-    @GET(IPConfig.DNS)
+    @GET(IPConfig.DNS_TEST)
     suspend fun getDNSResolve(
         @Query("type") type: Int,
         @Query("key") key: String,
         @Query("kind") kind: Int
     ): DNSResponse<List<String>>
-    @GET("https://mydao.s3.ap-northeast-2.amazonaws.com/Mydao/mydao.json")
+    @GET(IPConfig.UPDATE_JSON)
     suspend fun getUpdate(): HttpResponse<AppVersion>
 }

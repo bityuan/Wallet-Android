@@ -138,7 +138,7 @@
 
 
                     <EditText
-                        android:id="@+id/tv_to_address"
+                        android:id="@+id/et_to_address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="29dp"
@@ -158,6 +158,12 @@
 
 
             </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_dns_list"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
