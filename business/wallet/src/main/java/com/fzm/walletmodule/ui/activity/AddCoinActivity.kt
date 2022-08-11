@@ -47,7 +47,6 @@ import org.litepal.LitePal.where
 import walletapi.HDWallet
 
 class AddCoinActivity : BaseActivity() {
-    private val GUIDE_ADD_COIN = "guide_add_coin5"
     private val data: ArrayList<Coin> = ArrayList<Coin>()
     private val mStatusMap = HashMap<String, Int>()
     private val mCoinsMap = HashMap<String, Coin>()

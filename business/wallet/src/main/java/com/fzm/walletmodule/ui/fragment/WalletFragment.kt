@@ -70,7 +70,7 @@ class WalletFragment : BaseFragment() {
                         //  Log.e("wallet","getCoinBalance")
                         mCoinList.clear()
                         mCoinList.addAll(it)
-                        //mCoinList.sort()
+                        mCoinList.sort()
                         mWalletAdapter?.notifyDataSetChanged()
                         val moneys = DecimalUtils.subWithNum(it.sumOf { c -> c.totalAsset }, 2)
                         money?.text = moneys
@@ -223,6 +223,7 @@ class WalletFragment : BaseFragment() {
             mPWallet?.coinList?.addAll(localCoinList)
             mCoinList.clear()
             mCoinList.addAll(localCoinList)
+
             uiThread {
                 mWalletAdapter?.notifyDataSetChanged()
                 job?.start()

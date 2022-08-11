@@ -66,22 +66,40 @@ class MainActivity : BaseActivity() {
             netId = "89"
         },
         Coin().apply {
-            name = "BTY"
-            chain = "BTY"
-            platform = "bty"
-            netId = "154"
-        },
-        Coin().apply {
             name = "ETH"
             chain = "ETH"
             platform = "ethereum"
             netId = "90"
         },
         Coin().apply {
-            name = "YCC"
+            name = "TRX"
+            chain = "TRX"
+            platform = "trx"
+            netId = "1"
+        },
+        Coin().apply {
+            name = "BNB"
+            chain = "BNB"
+            platform = "bnb"
+            netId = "641"
+        },
+        Coin().apply {
+            name = "USDT"
             chain = "ETH"
             platform = "ethereum"
-            netId = "155"
+            netId = "288"
+        },
+        Coin().apply {
+            name = "USDT"
+            chain = "TRX"
+            platform = "trx"
+            netId = "600"
+        },
+        Coin().apply {
+            name = "USDT"
+            chain = "BNB"
+            platform = "bnb"
+            netId = "694"
         },
 
         )
@@ -101,7 +119,7 @@ class MainActivity : BaseActivity() {
 
 
     var currentTab: ViewGroup? = null
-    private fun setTabSelection(index: Int) {
+    public fun setTabSelection(index: Int) {
         // 开启一个Fragment事务
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         // 先隐藏掉所有的Fragment，以防止有多个Fragment显示在界面上的情况

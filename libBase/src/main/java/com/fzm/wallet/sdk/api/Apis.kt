@@ -55,7 +55,7 @@ interface Apis {
      * @param key 解析关键字，正向为域名，反向为地址或取值
      * @param kind 正向(0)/反向(1)解析，默认正向:域名查询地址
      */
-    @GET(IPConfig.DNS_TEST)
+    @GET(IPConfig.DNS)
     suspend fun getDNSResolve(
         @Query("type") type: Int,
         @Query("key") key: String,

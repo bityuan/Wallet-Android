@@ -17,6 +17,7 @@ import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.FragmentHomeBinding
+import com.fzm.walletdemo.ui.activity.MainActivity
 import com.fzm.walletmodule.ui.activity.AddCoinActivity
 import com.fzm.walletmodule.ui.activity.MyWalletsActivity
 import com.fzm.walletmodule.ui.fragment.WalletFragment
@@ -47,13 +48,14 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val adapter = Adapter(childFragmentManager)
         adapter.addFragment(WalletFragment(), "资产")
-        adapter.addFragment(NFTFragment(), "NFT")
+        //adapter.addFragment(NFTFragment(), "NFT")
         binding.vpHome.adapter = adapter
         binding.tabHome.setupWithViewPager(binding.vpHome)
 
         paramViewModel.walletName.observe(viewLifecycleOwner, Observer {
             binding.header.tvName.text = it
-            if (BWallet.get().getCurrentWallet()?.type != 2) {
+
+            /*if (BWallet.get().getCurrentWallet()?.type != 2) {
                 if (binding.tabHome.tabCount > 1) {
                     binding.tabHome.getTabAt(1)?.view?.visibility = View.GONE
                 }
@@ -61,7 +63,7 @@ class HomeFragment : Fragment() {
                 if (binding.tabHome.tabCount > 1) {
                     binding.tabHome.getTabAt(1)?.view?.visibility = View.VISIBLE
                 }
-            }
+            }*/
 
 
         })
@@ -73,9 +75,20 @@ class HomeFragment : Fragment() {
 
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                val id = BWallet.get().getCurrentWallet()?.id ?: 0
-                val pWallet = LitePal.find(PWallet::class.java, id, true)
-                refreshWallet(pWallet)
+                try {
+                    val id = BWallet.get().getCurrentWallet()?.id ?: 0
+                    val pWallet = LitePal.find(PWallet::class.java, id, true)
+                    if(pWallet != null){
+                        refreshWallet(pWallet)
+                    }else {
+                        activity?.let {
+                            (it as MainActivity).setTabSelection(0)
+                        }
+                    }
+                }catch (e:Exception){
+                    e.printStackTrace()
+                }
+
             }
         }
 

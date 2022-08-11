@@ -6,6 +6,7 @@ buildscript {
         jcenter()
         mavenCentral()
         maven { url "https://jitpack.io" }
+        maven { url 'https://repo1.maven.org/maven2/' }
 
     }
     dependencies {
@@ -22,6 +23,7 @@ allprojects {
         jcenter()
         mavenCentral()
         maven { url "https://jitpack.io" }
+        maven { url 'https://repo1.maven.org/maven2/' }
 
         flatDir {
             dirs 'libs'
@@ -47,8 +49,8 @@ ext {
             buildToolsVersion: "30.0.3",
             minSdkVersion    : 21,
             targetSdkVersion : 31,
-            versionCode      : 12000,
-            versionName      : "1.2.0"
+            versionCode      : 12100,
+            versionName      : "1.2.1"
     ]
 
     applicationId = [

@@ -8,6 +8,7 @@ import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.IPConfig
 import com.fzm.wallet.sdk.base.WalletModuleApp
 import com.fzm.walletmodule.net.walletModule
+import com.umeng.commonsdk.UMConfigure
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
@@ -32,13 +33,30 @@ class IApplication : Application() {
             modules(module {
                 //开源环境
                 //BWallet.get().init(this@IApplication, this, "1", APP_SYMBOL, "", APP_KEY, "${Build.MANUFACTURER} ${Build.MODEL}")
-                BWallet.get().init(this@IApplication, this, "1", IPConfig.APP_SYMBOL, "", IPConfig.APP_KEY, "${Build.MANUFACTURER} ${Build.MODEL}")
+                BWallet.get().init(
+                    this@IApplication,
+                    this,
+                    "1",
+                    IPConfig.APP_SYMBOL,
+                    "",
+                    IPConfig.APP_KEY,
+                    "${Build.MANUFACTURER} ${Build.MODEL}"
+                )
             })
             modules(walletModule)
             modules(nftModule)
         }
-        ARouter.openLog()
-        ARouter.openDebug()
+        if (BuildConfig.DEBUG) {
+            ARouter.openLog()
+            ARouter.openDebug()
+        }
         ARouter.init(this)
+        initUmeng()
+    }
+
+
+    private fun initUmeng() {
+        UMConfigure.setLogEnabled(BuildConfig.DEBUG);
+        UMConfigure.init(this, IPConfig.UMENG_APP_KEY, "test", UMConfigure.DEVICE_TYPE_PHONE, "");
     }
 }
