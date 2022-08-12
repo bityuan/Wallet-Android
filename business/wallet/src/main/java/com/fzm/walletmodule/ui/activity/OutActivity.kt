@@ -288,59 +288,62 @@ class OutActivity : BaseActivity() {
                 return@setOnClickListener
             }
             CoroutineScope(Dispatchers.IO).launch {
-                coin?.let {
-                    withContext(Dispatchers.Main) {
-                        loading.show()
-                    }
-                    val check = GoWallet.checkPasswd(password, it.getpWallet().password)
-                    if (!check) {
+                try {
+                    coin?.let {
                         withContext(Dispatchers.Main) {
-                            toast("密码错误")
-                            loading.dismiss()
-                        }
-                        return@let
-                    }
-                    withContext(Dispatchers.Main) {
-                        dialog.dismiss()
-                        if (!loading.isShowing) {
                             loading.show()
                         }
-
-                    }
-
-                    if (it.getpWallet().type == PWallet.TYPE_PRI_KEY) {
-                        if ("YCC" == it.chain || "BTY" == it.chain) {
-                            if ("ethereum" == it.platform) {
-                                addressId = 2
-                            } else if ("btc" == it.platform) {
-                                addressId = 0
+                        val check = GoWallet.checkPasswd(password, it.getpWallet().password)
+                        if (!check) {
+                            withContext(Dispatchers.Main) {
+                                toast("密码错误")
+                                loading.dismiss()
                             }
+                            return@let
                         }
-                        privkey = it.getPrivkey(password)
-                    } else {
-                        val bPassword = GoWallet.encPasswd(password)!!
-                        val mnem: String = GoWallet.decMenm(bPassword, it.getpWallet().mnem)
-                        if ("YCC" == it.chain || "BTY" == it.chain) {
-                            if ("ethereum" == it.platform) {
-                                addressId = 2
-                                privkey = it.getPrivkey("ETH", mnem)
-                            } else if ("btc" == it.platform) {
-                                privkey = it.getPrivkey("BTC", mnem)
-                                addressId = 0
+                        withContext(Dispatchers.Main) {
+                            dialog.dismiss()
+                            if (!loading.isShowing) {
+                                loading.show()
+                            }
+
+                        }
+
+                        if (it.getpWallet().type == PWallet.TYPE_PRI_KEY) {
+                            if ("YCC" == it.chain || "BTY" == it.chain) {
+                                if ("ethereum" == it.platform) {
+                                    addressId = 2
+                                } else if ("btc" == it.platform) {
+                                    addressId = 0
+                                }
+                            }
+                            privkey = it.getPrivkey(password)
+                        } else {
+                            val bPassword = GoWallet.encPasswd(password)!!
+                            val mnem: String = GoWallet.decMenm(bPassword, it.getpWallet().mnem)
+                            if ("YCC" == it.chain || "BTY" == it.chain) {
+                                if ("ethereum" == it.platform) {
+                                    addressId = 2
+                                    privkey = it.getPrivkey("ETH", mnem)
+                                } else if ("btc" == it.platform) {
+                                    privkey = it.getPrivkey("BTC", mnem)
+                                    addressId = 0
+                                } else {
+                                    privkey = it.getPrivkey(it.chain, mnem)
+                                }
                             } else {
                                 privkey = it.getPrivkey(it.chain, mnem)
                             }
-                        } else {
-                            privkey = it.getPrivkey(it.chain, mnem)
                         }
+
+                        loading.dismiss()
+                        handleTransactions(toAddress, money)
+
+
                     }
-
-                    loading.dismiss()
-                    handleTransactions(toAddress, money)
-
-
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
-
             }
         }
     }
@@ -348,49 +351,60 @@ class OutActivity : BaseActivity() {
 
     private fun handleTransactions(toAddress: String, money: String) {
         coin?.let {
-            val tokensymbol = if (it.name == it.chain) "" else it.name
-            //构造交易
-            val createRaw = GoWallet.createTran(
-                it.chain,
-                it.address,
-                toAddress,
-                money.toDouble(),
-                fee,
-                et_note.text.toString(),
-                tokensymbol
-            )
-            val stringResult = JSON.parseObject(createRaw, StringResult::class.java)
-            val createRawResult: String? = stringResult.result
-            if (TextUtils.isEmpty(createRawResult)) {
-                return
-            }
-            //签名交易
-            val signtx = GoWallet.signTran(
-                it.chain,
-                Walletapi.stringTobyte(createRawResult),
-                privkey,
-                addressId
-            )
-            if (TextUtils.isEmpty(signtx)) {
-                return
-            }
-            //发送交易
-            val sendRawTransaction = GoWallet.sendTran(it.chain, signtx!!, tokensymbol)
-            runOnUiThread {
-                dismiss()
-                val result: StringResult? = parseResult(sendRawTransaction!!)
-                if (result == null) {
-                    ToastUtils.show(this, getString(R.string.home_transfer_currency_fails))
-                    finish()
-                    return@runOnUiThread
+            try {
+
+                val tokensymbol = if (it.name == it.chain) "" else it.name
+                //构造交易
+                val createRaw = GoWallet.createTran(
+                    it.chain,
+                    it.address,
+                    toAddress,
+                    money.toDouble(),
+                    fee,
+                    et_note.text.toString(),
+                    tokensymbol
+                )
+                val stringResult = JSON.parseObject(createRaw, StringResult::class.java)
+                val createRawResult: String? = stringResult.result
+                if (createRawResult.isNullOrEmpty()) {
+                    return
                 }
-                if (!TextUtils.isEmpty(result.error)) {
-                    ToastUtils.show(this, result.error)
-                    finish()
-                    return@runOnUiThread
+                //签名交易
+                val signtx = GoWallet.signTran(
+                    it.chain,
+                    Walletapi.stringTobyte(createRawResult),
+                    privkey,
+                    addressId
+                )
+                if (signtx.isNullOrEmpty()) {
+                    return
                 }
-                ToastUtils.show(this, R.string.home_transfer_currency_success)
-                finish()
+                //发送交易
+                val sendRawTransaction = GoWallet.sendTran(it.chain, signtx!!, tokensymbol)
+                runOnUiThread {
+                    dismiss()
+                    if (sendRawTransaction.isNullOrEmpty()) {
+                        ToastUtils.show(this, getString(R.string.home_transfer_currency_fails))
+                        finish()
+                        return@runOnUiThread
+                    }
+                    val result: StringResult? = parseResult(sendRawTransaction)
+                    if (result == null) {
+                        ToastUtils.show(this, getString(R.string.out_result_fails))
+                        finish()
+                        return@runOnUiThread
+                    }
+                    if (!TextUtils.isEmpty(result.error)) {
+                        ToastUtils.show(this, result.error)
+                        finish()
+                        return@runOnUiThread
+                    }
+                    ToastUtils.show(this, R.string.home_transfer_currency_success)
+                    finish()
+                }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
 

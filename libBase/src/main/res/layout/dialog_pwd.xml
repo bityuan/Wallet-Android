@@ -53,8 +53,7 @@
 
         <EditText
             android:id="@+id/et_input"
-            android:inputType="number"
-            android:password="true"
+            android:inputType="textPassword"
             android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIGKLMNOPQRSTUVWXYZ"
             android:layout_width="match_parent"
             android:layout_height="44dp"

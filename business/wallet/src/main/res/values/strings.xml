@@ -137,8 +137,8 @@
     <string name="home_transaction_success">完成</string>
     <string name="capture_no_coin">请添加对应币种</string>
     <string name="home_transfer_currency_fails">获取结果失败，请至区块链浏览器查看</string>
+    <string name="out_result_fails">解析结果失败，请至区块链浏览器查看</string>
     <string name="home_transfer_currency_success">操作完成</string>
-
     <string name="home_transfer_address">转账地址</string>
     <string name="home_no">无</string>
     <string name="home_block_info">区块信息</string>
