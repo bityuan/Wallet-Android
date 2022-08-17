@@ -229,14 +229,14 @@ class DappActivity : AppCompatActivity() {
             }
         }
 
-        @JavascriptInterface
+     /*   @JavascriptInterface
         fun setTitle(msg: Any, handler: CompletionHandler<String?>?) {
             //val map = msg.toString().jsonToMap<String>()
             val jsTitle = Gson().fromJson(msg.toString(), JsTitle::class.java)
             val title = jsTitle.title
             binding.xbar.tvToolbar.text = title
             handler?.complete()
-        }
+        }*/
 
         @JavascriptInterface
         fun getCurrentWifi(msg: Any?, handler: CompletionHandler<String?>) {
