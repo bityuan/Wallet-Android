@@ -149,7 +149,7 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
                 withholdCoins(gsendTx, withHold)
             }
         } else {
-            //转coins币除了代扣bty作为手续费，自己也要扣点coins
+            //转coins除了代扣bty作为手续费，自己也要扣点coins
             gsendTx.amount = amount + withHold.fee
             withholdCoins(gsendTx, withHold)
         }

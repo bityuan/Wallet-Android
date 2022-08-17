@@ -12,6 +12,9 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:name="com.fzm.walletdemo.ui.activity.ExploresActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activity.WebTestActivity"
             android:exported="false"
             android:launchMode="singleTask"
@@ -29,8 +32,8 @@
         </activity>
         <activity
             android:name=".ui.activity.DappActivity"
-            android:launchMode="singleTask"
             android:exported="false"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.MainActivity"
@@ -38,15 +41,15 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.AboutActivity"
-            android:launchMode="singleTask"
             android:exported="false"
             android:label="@string/my_about"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.DownLoadActivity"
-            android:launchMode="singleTask"
             android:exported="false"
             android:label="@string/my_download"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
         <provider

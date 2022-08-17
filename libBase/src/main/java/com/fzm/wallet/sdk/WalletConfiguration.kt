@@ -51,7 +51,6 @@ class WalletConfiguration {
         private set
 
     /**
-     * 账户币种
      */
     var coins: List<Coin> = ArrayList()
 

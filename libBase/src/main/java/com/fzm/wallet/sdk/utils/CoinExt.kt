@@ -35,9 +35,6 @@ val Coin.tokenSymbol: String
         }
     }
 
-/**
- * 币种精度
- */
 inline val Coin.decimalPlaces: Int get() = 4
     /*get() {
         return if (balance.contains(".")) {
@@ -48,9 +45,6 @@ inline val Coin.decimalPlaces: Int get() = 4
         }
     }*/
 
-/**
- * 币种唯一表识符
- */
 inline val Coin.uid: String get() = "$chain-$name-$platform"
 
 /**

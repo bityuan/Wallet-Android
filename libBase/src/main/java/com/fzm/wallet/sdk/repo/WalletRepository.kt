@@ -46,6 +46,9 @@ class WalletRepository constructor(private val apis: Apis) {
     suspend fun getExploreList(): HttpResult<List<ExploreBean>> {
         return apiCall { apis.getExploreList() }
     }
+    suspend fun getExploreCategory(id:Int): HttpResult<List<ExploreBean>> {
+        return apiCall { apis.getExploreCategory(id) }
+    }
 
     suspend fun getSupportedChain(): HttpResult<List<Coin>> {
         return apiCall { apis.getSupportedChain() }

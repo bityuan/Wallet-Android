@@ -1,13 +1,14 @@
 package com.fzm.wallet.sdk.bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+
 public class ExploreBean {
 
     /**
      * id : 1
      * name : 热门应用
      * style : 2
-     * apps : [{"id":1,"name":"红包","icon":"https://service.biqianbao.net/upload/coin/2018102215083121087196435.jpg","type":1,"app_url":"https://www.zhengfan.com","slogan":"这是红包"},{"id":2,"name":"找币","icon":"https://service.biqianbao.net/upload/coin/2019062719421156978110432.png","type":1,"app_url":"https://www.fan.com","slogan":"这是找币"},{"id":3,"name":"云矿机","icon":"https://service.biqianbao.net/upload/coin/2019062719421156978110432.png","type":2,"app_url":"https://www.fana.com","slogan":"这是云矿机"}]
      */
 
     private int id;

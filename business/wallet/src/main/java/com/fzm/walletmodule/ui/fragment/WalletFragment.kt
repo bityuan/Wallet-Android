@@ -205,7 +205,6 @@ class WalletFragment : BaseFragment() {
     }
 
 
-    //回调 - 添加币种
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onAddCoinEvent(event: AddCoinEvent) {
         mPWallet = WalletUtils.getUsingWallet()

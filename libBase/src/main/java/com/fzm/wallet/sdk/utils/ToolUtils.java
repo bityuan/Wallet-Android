@@ -589,9 +589,6 @@ public class ToolUtils {
     }
 
 
-    /**
-     * 给提币地址加密
-     */
     public static String encryptCoinAddress(String coinAddress) {
         if (TextUtils.isEmpty(coinAddress)) {
             return "";
@@ -615,9 +612,6 @@ public class ToolUtils {
         }
     }
 
-    /**
-     * 给提币地址加密
-     */
     public static String encryptBankcardCode(String bankcardCode) {
         if (TextUtils.isEmpty(bankcardCode)) {
             return "";

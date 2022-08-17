@@ -136,11 +136,9 @@ class GoWallet {
 
         /**
          * 获取余额
-         * @param addresss String  币种地址
          * @param chain String    主链名称，例如：“BTC”
          * @param tokenSymbol String   token名称，例如ETH下的“YCC”
          * @param goNoderUrl String    服务器节点
-         * @return String?   币种余额data数据
          * 服务器挂掉{"id":1,"result":null,"error":"cointype EEE no support"}
          */
         fun getbalance(
@@ -168,10 +166,8 @@ class GoWallet {
 
         /**
          * 获取余额数据
-         * @param addresss String  币种地址
          * @param chain String    主链名称，例如：“BTC”
          * @param tokenSymbol String   token名称，例如ETH下的“YCC”
-         * @return String?   币种余额data数据
          * {"id": 1,"result": {"address": "0x632d8B07CDE8B2dcc3645148d2fa76647565664","balance": "0.02091716"},"error": null}
          */
         fun getbalance(
@@ -186,7 +182,6 @@ class GoWallet {
 
         /**
          * 获取余额
-         * @param lCoin Coin   币种
          * @return String?  余额
          */
         fun handleBalance(lCoin: Coin): String {
@@ -278,7 +273,6 @@ class GoWallet {
 
         /**
          * 获取交易记录
-         * @param addr String    币种地址
          * @param chain String  主链名称，例如：“BTC”
          * @param tokenSymbol String   token名称，例如ETH下的“YCC”
          * @param type Long         交易账单类型（0全部 1入账，2出账）
@@ -322,7 +316,6 @@ class GoWallet {
 
         /**
          * 获取交易记录
-         * @param addr String    币种地址
          * @param chain String  主链名称，例如：“BTC”
          * @param tokenSymbol String   token名称，例如ETH下的“YCC”
          * @param type Long        交易账单类型（0全部 1入账，2出账）
@@ -578,14 +571,10 @@ class GoWallet {
 
         /**
          * 平行链构造+签名
-         * @param to String             入币地址
-         * @param tokenSymbol String    coins币：链名.coins（xx.coins）；token币：链名.币名(xx.x)
-         * @param execer String         执行器：coins币：user.p.链名.coins ；token币：user.p.链名.token
          * @param txpriv String         本地BTY的私钥
          * @param amount Double         数量
          * @param note String           备注
          * @param feePriv String      	代扣手续费的私钥
-         * @param coinsForFee Boolean   coinsForFee 为true,代扣coins币作为手续费
          * @param tokenfee Double       代扣多少coins作为手续费，例如：0.001
          * @param tokenfeeAddr String   代扣的手续费接收地址
          * @param fee Double            代扣BTY作为整个交易的手续费，单笔交易最低0.001，交易组建议0.003

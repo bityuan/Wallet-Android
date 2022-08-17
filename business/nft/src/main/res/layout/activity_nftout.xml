@@ -40,7 +40,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="收币地址" />
+                    android:text="收款地址" />
 
                 <ImageView
                     android:id="@+id/iv_scan"

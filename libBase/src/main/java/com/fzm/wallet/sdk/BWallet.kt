@@ -111,24 +111,13 @@ interface BWallet {
      */
     suspend fun deleteWallet(password: String, confirmation: suspend () -> Boolean = { true })
 
-    /**
-     * 添加币种
-     *
-     * @param coins     要添加的币种
-     */
     suspend fun addCoins(coins: List<Coin>, password: suspend () -> String)
 
-    /**
-     * 删除币种
-     *
-     * @param coins     要删除的币种
-     */
     suspend fun deleteCoins(coins: List<Coin>)
 
     /**
      * 转账
      *
-     * @param coin      币种
      * @param toAddress 目标地址
      * @param amount    转账金额
      * @param fee       矿工费
@@ -143,15 +132,12 @@ interface BWallet {
      * @param initialDelay      初始延迟
      * @param period            查询间隔
      * @param requireQuotation  是否查询市场行情
-     * @param predicate         币种过滤
      */
     fun getCoinBalance(initialDelay: Long, period: Long, requireQuotation: Boolean,
                        predicate: ((Coin) -> Boolean)? = null): Flow<List<Coin>>
 
     /**
-     * 获取单个币种的资产余额与行情
      *
-     * @param coin              币种
      * @param requireQuotation  是否查询市场行情
      */
     suspend fun getCoinBalance(coin: Coin, requireQuotation: Boolean): Coin
@@ -159,7 +145,6 @@ interface BWallet {
     /**
      * 获取交易列表
      *
-     * @param coin      币种
      * @param type      账单类型
      * @param index     查询索引
      * @param size      查询数量
@@ -170,7 +155,6 @@ interface BWallet {
      * 通过hash查询交易
      *
      * @param chain         链名
-     * @param tokenSymbol   币种symbol
      * @param hash          交易hash
      */
     @Throws(Exception::class)
@@ -183,14 +167,7 @@ interface BWallet {
      */
     suspend fun getAddress(chain: String): String
 
-    /**
-     * 获取所有币种
-     */
     suspend fun getAllCoins(): List<Coin>
-
-    /**
-     * 获取所有币种
-     */
     fun getCoinsFlow(): Flow<List<Coin>>
 
     /**
@@ -201,16 +178,11 @@ interface BWallet {
     suspend fun getBrowserUrl(platform: String): String
 
     suspend fun getExploreList(): List<ExploreBean>
+    suspend fun getExploreCategory(id:Int): List<ExploreBean>
 
-
-
-    /**
-     * 获取各主链的币种
-     */
     suspend fun getChainAssets(): List<AddCoinTabBean>
 
     /**
-     * 搜索币种
      *
      * @param page      页数
      * @param limit     每页数据条数
@@ -221,9 +193,7 @@ interface BWallet {
     suspend fun searchCoins(page: Int, limit: Int, keywords: String, chain: String, platform: String): List<Coin>
 
     /**
-     * 修改币种排序
      *
-     * @param coin  币种
      * @param sort  排序权重
      */
     fun changeCoinOrder(coin: Coin, sort: Int)
@@ -236,7 +206,6 @@ interface BWallet {
     suspend fun getRecommendedFee(chain: String): Miner?
 
     /**
-     * 获取所在链的主代币
      *
      * @param chain     链名
      */

@@ -109,7 +109,7 @@ class HomeCoinFragment : BaseFragment() {
                                 newCoin.name + newCoin.chain + newCoin.platform
                             )
                         ) {
-                            //更新图标等信息,通过go查出来有余额的币种没有图标
+                            //更新图标等信息,通过go查出来有余额的种没有图标
                             newCoin.update(oldCoin.id)
                         }
                     }

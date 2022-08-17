@@ -286,6 +286,9 @@ internal class BWalletImpl : BWallet {
     override suspend fun getExploreList(): List<ExploreBean> {
         return walletRepository.getExploreList().dataOrNull()?: emptyList()
     }
+    override suspend fun getExploreCategory(id:Int): List<ExploreBean> {
+        return walletRepository.getExploreCategory(id).dataOrNull()?: emptyList()
+    }
 
     override suspend fun getChainAssets(): List<AddCoinTabBean> {
         return walletRepository.getTabData().dataOrNull() ?: emptyList()

@@ -19,10 +19,12 @@ object RouterPath {
     const val APP_SPLASH = "/app/SplashActivity"
     const val APP_MAIN = "/app/MainActivity"
     const val APP_DAPP = "/app/DappActivity"
+    const val APP_EXPLORES = "/app/ExploresActivity"
     const val APP_ABOUT = "/app/AboutActivity"
     const val APP_DOWNLOAD = "/app/DownLoadActivity"
     const val APP_WEBTEST = "/app/WebTestActivity"
 
     const val PARAM_COIN = "coin"
     const val PARAM_NFT_TRAN = "nft_tran"
+    const val PARAM_APPS_ID = "apps_id"
 }

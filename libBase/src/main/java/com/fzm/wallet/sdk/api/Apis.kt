@@ -46,6 +46,9 @@ interface Apis {
     @GET("interface/explore")
     suspend fun getExploreList(): HttpResponse<List<ExploreBean>>
 
+    @GET("interface/explore/category")
+    suspend fun getExploreCategory(@Query("id") id: Int): HttpResponse<List<ExploreBean>>
+
     @GET("interface/supported-chain")
     suspend fun getSupportedChain(): HttpResponse<List<Coin>>
 
@@ -61,6 +64,7 @@ interface Apis {
         @Query("key") key: String,
         @Query("kind") kind: Int
     ): DNSResponse<List<String>>
+
     @GET(IPConfig.UPDATE_JSON)
     suspend fun getUpdate(): HttpResponse<AppVersion>
 }

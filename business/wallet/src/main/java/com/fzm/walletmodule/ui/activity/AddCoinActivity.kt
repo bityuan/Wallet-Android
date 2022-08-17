@@ -343,7 +343,7 @@ class AddCoinActivity : BaseActivity() {
     }
 
 
-    //不返回列表，连续添加BTY-LM-SG和YX，后添加的币种地址为空，（原因是homedata是一打开添加币种页面就查询了，如果没返回，那么homeData就没更新，所以查不到主链）
+    //不返回列表，连续添加BTY-LM-SG和YX，后添加的种地址为空，（原因是homedata是一打开添加种页面就查询了，如果没返回，那么homeData就没更新，所以查不到主链）
     private fun updateCoin(coin: Coin, save: Boolean, visible: Boolean) {
         homeData = where(
             "pwallet_id = ?",

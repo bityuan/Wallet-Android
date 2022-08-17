@@ -149,7 +149,7 @@ class DappActivity : AppCompatActivity() {
         private var exer = ""
         private var withhold = -1
 
-        //addressID 比特币格式的地址传0， 以太坊格式的地址发送的时候addressID 传2
+        //addressID 比特格式的地址传0， 以太坊格式的地址发送的时候addressID 传2
         private var addressid = -1
 
 
