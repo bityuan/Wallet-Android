@@ -16,6 +16,7 @@ import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.FragmentExploreNewBinding
+import com.fzm.walletdemo.databinding.ViewExploreBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -53,41 +54,27 @@ class ExploreFragment : Fragment() {
                 binding.llExplore.removeAllViews()
 
                 for (ex in list) {
-                    val tvTitle = titleTextView(ex.name)
-                    val ivTitle = ImageView(context)
-                    ivTitle.backgroundResource = R.mipmap.header_wallet_hd_wallet
-                    ivTitle.setOnClickListener {
+                    val exploreBinding = ViewExploreBinding.inflate(layoutInflater)
+                    exploreBinding.tvTitle.text = ex.name
+                    val bg = when (ex.id) {
+                        1 -> R.mipmap.bg_explore_eth
+                        2 -> R.mipmap.bg_explore_bty
+                        3 -> R.mipmap.bg_explore_ycc
+                        else -> R.mipmap.bg_explore_eth
+                    }
+                    exploreBinding.ivBg.backgroundResource = bg
+                    exploreBinding.ivBg.setOnClickListener {
                         ARouter.getInstance().build(RouterPath.APP_EXPLORES)
                             .withInt(RouterPath.PARAM_APPS_ID, ex.id).navigation()
 
                     }
-                    binding.llExplore.addView(tvTitle)
-                    binding.llExplore.addView(ivTitle)
+                    binding.llExplore.addView(exploreBinding.root)
                 }
 
 
             }
         }
 
-    }
-
-
-    private fun titleTextView(name: String): TextView {
-        val tvTitle = TextView(context)
-        tvTitle.text = name
-        val layoutParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
-        layoutParams.leftMargin = 40
-        layoutParams.topMargin = 40
-        layoutParams.bottomMargin = 40
-
-        tvTitle.layoutParams = layoutParams
-        tvTitle.textSize = 16f
-        tvTitle.textColor = Color.parseColor("#333333")
-        tvTitle.typeface = Typeface.DEFAULT_BOLD
-        return tvTitle
     }
 
 

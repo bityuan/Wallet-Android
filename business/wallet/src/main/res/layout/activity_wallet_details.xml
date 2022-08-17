@@ -136,7 +136,8 @@
             android:paddingRight="@dimen/dp_16"
             android:text="生成找回地址"
             android:textColor="@color/gray_349"
-            android:textSize="@dimen/sp_16" />
+            android:textSize="@dimen/sp_16"
+            android:visibility="gone" />
 
         <View
             android:layout_width="match_parent"
@@ -156,7 +157,8 @@
             android:paddingRight="@dimen/dp_16"
             android:text="找回资产"
             android:textColor="@color/gray_349"
-            android:textSize="@dimen/sp_16" />
+            android:textSize="@dimen/sp_16"
+            android:visibility="gone" />
 
 
         <View

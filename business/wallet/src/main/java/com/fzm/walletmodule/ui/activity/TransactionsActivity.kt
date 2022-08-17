@@ -18,7 +18,6 @@ import com.fzm.walletmodule.ui.fragment.TransactionFragment
 import com.fzm.walletmodule.ui.widget.InQrCodeDialogView
 import com.fzm.walletmodule.utils.ClipboardUtils
 import com.fzm.walletmodule.utils.DecimalUtils
-import com.fzm.walletmodule.utils.GlideUtils
 import com.fzm.walletmodule.utils.isFastClick
 import com.king.zxing.util.CodeUtils
 import kotlinx.coroutines.Dispatchers
@@ -56,6 +55,7 @@ class TransactionsActivity : BaseActivity() {
 
     override fun initView() {
         setupViewPager()
+        Glide.with(this).load(coin.icon).into(binding.ivBName)
     }
 
     override fun initListener() {
@@ -109,12 +109,7 @@ class TransactionsActivity : BaseActivity() {
         title = if (coin.nickname.isNullOrEmpty()) coin.name else "${coin.name}(${coin.nickname})"
         binding.tvBalance.text = DecimalUtils.subZeroAndDot(coin.balance)
         binding.tvAddress.text = coin.address
-        if (TextUtils.isEmpty(coin.icon)) {
-            binding.ivErCode.setImageBitmap(CodeUtils.createQRCode(coin.address, 200))
-        } else {
-            Glide.with(this).load(coin.icon).into(binding.ivBName)
-            GlideUtils.intoQRBitmap(this, coin.icon, binding.ivErCode, coin.address)
-        }
+        binding.ivErCode.setImageBitmap(CodeUtils.createQRCode(coin.address, 200))
 
     }
 

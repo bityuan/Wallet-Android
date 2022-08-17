@@ -53,11 +53,7 @@ public class InQrCodeDialogView {
             Bitmap logo = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_app);
             Bitmap bitmap = CodeUtils.createQRCode(url, 190, logo);
             imageView.setImageBitmap(bitmap);
-            if (TextUtils.isEmpty(imgUrl)) {
-                GlideUtils.intoQRBitmap(imageView, url);
-            } else {
-                GlideUtils.intoQRBitmap(context, imgUrl, imageView, url);
-            }
+            GlideUtils.intoQRBitmap(imageView, url);
             addressTv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
