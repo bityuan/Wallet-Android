@@ -6,6 +6,7 @@ object RouterPath {
     const val NFT_TRAN = "/nft/NFTTranActivity"
     const val NFT_OUT = "/nft/NFTOutActivity"
     const val NFT_IN = "/nft/NFTInActivity"
+
     //wallet
     const val WALLET_OUT = "/wallet/OutActivity"
     const val WALLET_IN = "/wallet/InActivity"
@@ -15,6 +16,9 @@ object RouterPath {
     const val WALLET_SET_PASSWORD = "/wallet/SetPasswordActivity"
     const val WALLET_CHANGE_PASSWORD = "/wallet/ChangePasswordActivity"
     const val WALLET_CAPTURE = "/wallet/CaptureCustomActivity"
+    const val WALLET_NEW_RECOVER_ADDRESS = "/wallet/NewRecoverAddressActivity"
+    const val WALLET_RECOVER = "/wallet/RecoverActivity"
+
     //app
     const val APP_SPLASH = "/app/SplashActivity"
     const val APP_MAIN = "/app/MainActivity"

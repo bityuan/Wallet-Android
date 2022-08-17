@@ -98,6 +98,66 @@
             android:textColor="@color/gray_349"
             android:textSize="@dimen/sp_16" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_line"
+            android:layout_marginLeft="18dp"
+            android:background="@color/lineColor" />
+
+        <TextView
+            android:id="@+id/tv_out_pub"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@color/white"
+            android:drawableRight="@mipmap/icon_right_wallet"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/dp_16"
+            android:paddingRight="@dimen/dp_16"
+            android:text="@string/export_pub"
+            android:textColor="@color/gray_349"
+            android:textSize="@dimen/sp_16" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_line"
+            android:layout_marginLeft="18dp"
+            android:background="@color/lineColor" />
+
+        <TextView
+            android:id="@+id/tv_new_recover_address"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@color/white"
+            android:drawableRight="@mipmap/icon_right_wallet"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/dp_16"
+            android:paddingRight="@dimen/dp_16"
+            android:text="生成找回地址"
+            android:textColor="@color/gray_349"
+            android:textSize="@dimen/sp_16" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_line"
+            android:layout_marginLeft="18dp"
+            android:background="@color/lineColor" />
+
+        <TextView
+            android:id="@+id/tv_recover"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@color/white"
+            android:drawableRight="@mipmap/icon_right_wallet"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/dp_16"
+            android:paddingRight="@dimen/dp_16"
+            android:text="找回资产"
+            android:textColor="@color/gray_349"
+            android:textSize="@dimen/sp_16" />
+
 
         <View
             android:layout_width="match_parent"

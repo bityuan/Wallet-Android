@@ -34,6 +34,7 @@ import org.jetbrains.anko.textColor
 import org.jetbrains.anko.toast
 import org.litepal.LitePal.find
 import org.litepal.LitePal.select
+import org.litepal.extension.find
 
 @Route(path = RouterPath.WALLET_WALLET_DETAILS)
 class WalletDetailsActivity : BaseActivity() {
@@ -82,7 +83,6 @@ class WalletDetailsActivity : BaseActivity() {
             }
         }
 
-
     }
 
 
@@ -113,6 +113,12 @@ class WalletDetailsActivity : BaseActivity() {
             }
             checkPassword(1)
         }
+        binding.tvOutPub.setOnClickListener {
+            if (isFastClick()) {
+                return@setOnClickListener
+            }
+            outPub()
+        }
         binding.tvUpdateName.setOnClickListener {
             if (isFastClick()) {
                 return@setOnClickListener
@@ -130,6 +136,17 @@ class WalletDetailsActivity : BaseActivity() {
                 return@setOnClickListener
             }
             checkPassword(2)
+        }
+
+        binding.tvNewRecoverAddress.setOnClickListener {
+            ARouter.getInstance().build(RouterPath.WALLET_NEW_RECOVER_ADDRESS)
+                .withLong(PWallet.PWALLET_ID, walletid)
+                .navigation()
+        }
+        binding.tvRecover.setOnClickListener {
+            ARouter.getInstance().build(RouterPath.WALLET_RECOVER)
+                .withLong(PWallet.PWALLET_ID, walletid)
+                .navigation()
         }
     }
 
@@ -248,8 +265,7 @@ class WalletDetailsActivity : BaseActivity() {
 
     suspend fun outPriv(mnem: String, password: String) {
         mPWallet?.let {
-            val coinList: List<Coin> =
-                select().where("pwallet_id = ?", "${mPWallet!!.id}").find(Coin::class.java)
+            val coinList = select().where("pwallet_id = ?", "${it.id}").find<Coin>()
             if (!ListUtils.isEmpty(coinList)) {
                 withContext(Dispatchers.Main) {
                     dismiss()
@@ -281,6 +297,44 @@ class WalletDetailsActivity : BaseActivity() {
                 }
             }
         }
+    }
+
+    private fun outPub() {
+        mPWallet?.let {
+            lifecycleScope.launch(Dispatchers.IO) {
+                val coinList = select().where("pwallet_id = ?", "${it.id}").find<Coin>()
+                withContext(Dispatchers.Main) {
+                    if (!ListUtils.isEmpty(coinList)) {
+                        val walletManager = WalletManager()
+                        walletManager.chooseChain(this@WalletDetailsActivity, coinList)
+                        walletManager.setOnItemClickListener(object :
+                            WalletManager.OnItemClickListener {
+                            override fun onItemClick(position: Int) {
+                                if (position < coinList.size) {
+                                    val coin = coinList[position]
+
+                                    if (it.type == PWallet.TYPE_PRI_KEY) {
+                                        WalletManager().exportPriv(
+                                            this@WalletDetailsActivity,
+                                            coin.pubkey, "${coin.name}公钥"
+                                        )
+                                    } else {
+                                        WalletManager().exportPriv(
+                                            this@WalletDetailsActivity,
+                                            coin.pubkey,
+                                            "${coin.name}公钥"
+                                        )
+                                    }
+                                }
+
+                            }
+                        })
+                    }
+                }
+            }
+        }
+
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

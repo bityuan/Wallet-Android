@@ -31,6 +31,14 @@
             android:label=""
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.activity.NewRecoverAddressActivity"
+            android:label=""
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.RecoverActivity"
+            android:label=""
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.activity.MyWalletsActivity"
             android:label="@string/my_wallets_chose1"
             android:launchMode="singleTask"

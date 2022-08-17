@@ -54,6 +54,7 @@
     <string name="state_reloading">重新加载</string>
     <string name="my_wallet_detail_delete">删除账户</string>
     <string name="my_wallet_detail_export">导出私钥</string>
+    <string name="export_pub">导出公钥</string>
     <string name="my_wallet_detail_out_mnem">导出助记词</string>
     <string name="my_wallet_detail_update_name">修改账户名称</string>
     <string name="change_password">修改密码</string>

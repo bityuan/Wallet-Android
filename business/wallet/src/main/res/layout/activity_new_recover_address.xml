@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    android:paddingStart="18dp"
+    android:paddingTop="20dp"
+    android:paddingEnd="18sp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="找回地址绑定"
+        android:textColor="@color/color_7190FF"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/rg_menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_default"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="默认地址"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <RadioButton
+            android:id="@+id/rb_custom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="自设地址"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+
+    </RadioGroup>
+
+
+    <LinearLayout
+        android:id="@+id/ll_custom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/et_back_pub1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="请输入第一个备份地址对应的公钥" />
+
+
+        <EditText
+            android:id="@+id/et_back_pub2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="请输入第二个备份地址对应的公钥" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_default"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_back_address_default"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/et_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="请输入找回邮箱" />
+
+    </LinearLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="找回时间设置"
+        android:textColor="@color/color_7190FF"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+
+    <RadioGroup
+        android:id="@+id/rg_day"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_7day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="7天" />
+
+        <RadioButton
+            android:id="@+id/rb_30day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="30天" />
+
+        <RadioButton
+            android:id="@+id/rb_90day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="90天" />
+
+
+    </RadioGroup>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:lineSpacingMultiplier="1.3"
+        android:text="找回钱包使用说明：\n
+1.找回钱包目前仅限于chain33为底层的链\n\n
+2.设置的找回钱包地址可以在您设置的找回时间后，进行资产的找回，将资产转移到您指定的钱包地址\n\n
+3.选择默认地址找回时，必须填写找回邮箱，通过找回邮箱来确认身份，由第三方机构帮助找回" />
+
+
+    <Button
+        android:id="@+id/btn_ok"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="生成找回地址" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="找回地址:"
+        android:textColor="@color/color_7190FF"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_new_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>
