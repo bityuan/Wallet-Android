@@ -264,13 +264,6 @@ abstract class BaseActivity : AppCompatActivity() {
         activities!!.clear()
     }
 
-    open fun hideKeyboard() {
-        val manager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        manager.hideSoftInputFromWindow(
-            currentFocus!!.windowToken,
-            InputMethodManager.HIDE_NOT_ALWAYS
-        )
-    }
 
     open fun hideKeyboard(view: View): Boolean {
         if (null == view) return false

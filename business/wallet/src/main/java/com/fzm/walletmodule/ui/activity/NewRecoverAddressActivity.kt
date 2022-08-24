@@ -12,6 +12,7 @@ import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.databinding.ActivityNewRecoverAddressBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
+import com.fzm.walletmodule.utils.ClipboardUtils
 import com.fzm.walletmodule.utils.ListUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,7 +30,6 @@ class NewRecoverAddressActivity : BaseActivity() {
     @JvmField
     @Autowired(name = PWallet.PWALLET_ID)
     var walletid: Long = 0
-    private var checkValue = 1
     private var recoverTime: Long = 0//单位为秒
 
     companion object {
@@ -49,6 +49,9 @@ class NewRecoverAddressActivity : BaseActivity() {
 
     override fun initView() {
         super.initView()
+        binding.tvNewAddress.setOnClickListener {
+            ClipboardUtils.clip(this, binding.tvNewAddress.text.toString())
+        }
         binding.tvBackAddressDefault.text = OFFICIAL_ADDRESS
         binding.rgDay.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
@@ -64,39 +67,16 @@ class NewRecoverAddressActivity : BaseActivity() {
 
             }
         }
-        binding.rgMenu.setOnCheckedChangeListener { _, checkedId ->
-            when (checkedId) {
-                R.id.rb_default -> {
-                    checkValue = 1
-                    binding.llDefault.visibility = View.VISIBLE
-                    binding.llCustom.visibility = View.GONE
-                }
-                R.id.rb_custom -> {
-                    checkValue = 2
-                    binding.llCustom.visibility = View.VISIBLE
-                    binding.llDefault.visibility = View.GONE
-                }
 
-            }
+        binding.checkDefault.setOnCheckedChangeListener { _, isChecked ->
+            binding.etEmail.visibility = if (isChecked) View.VISIBLE else View.GONE
         }
 
         binding.btnOk.setOnClickListener {
-            var myBackPub = ""
-            if (checkValue == 1) {
-                myBackPub = OFFICIAL_PUB
-
-            } else if (checkValue == 2) {
-                val pub1 = binding.etBackPub1.text.toString()
-                val pub2 = binding.etBackPub2.text.toString()
-                if (pub1.isEmpty()) {
-                    toast("请输入第一个备份地址的公钥")
-                    return@setOnClickListener
-                } else if (pub2.isEmpty()) {
-                    toast("请输入第二个备份地址的公钥")
-                    return@setOnClickListener
-                }
-                myBackPub = "$pub1,$pub2"
-            }
+            val pub1 = binding.etBackPub1.text.toString()
+            val pub2 = binding.etBackPub2.text.toString()
+            val newPub1 = if (pub1.isEmpty()) "" else ",$pub1"
+            val newPub2 = if (pub2.isEmpty()) "" else ",$pub2"
             lifecycleScope.launch(Dispatchers.IO) {
                 val chains = LitePal.where(
                     "pwallet_id=? and chain = ?",
@@ -108,7 +88,7 @@ class NewRecoverAddressActivity : BaseActivity() {
                         val walletRecover = WalletRecover().apply {
                             param = WalletRecoverParam().apply {
                                 ctrPubKey = chains[0].pubkey
-                                backupPubKeys = myBackPub
+                                backupPubKeys = "$OFFICIAL_PUB$newPub1$newPub2"
                                 addressID = 0
                                 chainID = 0
                                 relativeDelayTime = recoverTime

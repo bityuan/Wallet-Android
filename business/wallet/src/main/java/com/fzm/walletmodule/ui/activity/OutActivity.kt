@@ -254,7 +254,6 @@ class OutActivity : BaseActivity() {
                                 if (list.isNotEmpty()) {
                                     loading.dismiss()
                                     toAddress = list[0]
-                                    Log.v("zx", toAddress)
                                     showPwdDialog()
                                 }
                             }

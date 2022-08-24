@@ -52,7 +52,7 @@ dependencies {
     api cfg.materialDialogs
     api cfg.navigationUi
     api cfg.navigationFragment
-    api cfg.glance
+    debugApi  cfg.glance
 }
 
 //注意放置位置，复制此段代码稍加修改即可

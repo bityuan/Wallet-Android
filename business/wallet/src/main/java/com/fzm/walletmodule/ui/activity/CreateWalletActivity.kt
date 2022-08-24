@@ -66,10 +66,9 @@ class CreateWalletActivity : BaseActivity() {
     override fun initListener() {
         super.initListener()
         binding.btnCreate.setOnClickListener {
-            if (isFastClick()){
+            if (isFastClick()) {
                 return@setOnClickListener
             }
-            hideKeyboard()
             gotoFinishTask()
         }
     }
@@ -103,27 +102,27 @@ class CreateWalletActivity : BaseActivity() {
         var checked = true
 
         if (TextUtils.isEmpty(name)) {
-            ToastUtils.show(this, getString(R.string.my_wallet_detail_name),Gravity.CENTER)
+            ToastUtils.show(this, getString(R.string.my_wallet_detail_name), Gravity.CENTER)
             checked = false
         } else if (!ListUtils.isEmpty(pWallets)) {
-            ToastUtils.show(this, getString(R.string.my_wallet_detail_name_exist),Gravity.CENTER)
+            ToastUtils.show(this, getString(R.string.my_wallet_detail_name_exist), Gravity.CENTER)
             checked = false
         } else if (TextUtils.isEmpty(password)) {
-            ToastUtils.show(this, getString(R.string.my_wallet_set_password),Gravity.CENTER)
+            ToastUtils.show(this, getString(R.string.my_wallet_set_password), Gravity.CENTER)
             checked = false
         } else if (password.length < 8 || password.length > 16) {
-            ToastUtils.show(this, getString(R.string.my_create_letter),Gravity.CENTER)
+            ToastUtils.show(this, getString(R.string.my_create_letter), Gravity.CENTER)
             checked = false
             binding.tvPrompt.setTextColor(resources.getColor(R.color.color_EA2551))
         } else if (TextUtils.isEmpty(passwordAgain)) {
-            ToastUtils.show(this, getString(R.string.my_change_password_again),Gravity.CENTER)
+            ToastUtils.show(this, getString(R.string.my_change_password_again), Gravity.CENTER)
             checked = false
         } else if (password != passwordAgain) {
-            ToastUtils.show(this, getString(R.string.my_set_password_different),Gravity.CENTER)
+            ToastUtils.show(this, getString(R.string.my_set_password_different), Gravity.CENTER)
             binding.tvTipError.visibility = View.VISIBLE
             checked = false
         } else if (!AppUtils.ispassWord(password) || !AppUtils.ispassWord(passwordAgain)) {
-            ToastUtils.show(this, getString(R.string.my_set_password_number_letter),Gravity.CENTER)
+            ToastUtils.show(this, getString(R.string.my_set_password_number_letter), Gravity.CENTER)
             checked = false
         }
         return checked

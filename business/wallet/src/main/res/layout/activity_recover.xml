@@ -9,13 +9,41 @@
     android:paddingTop="20dp"
     android:paddingEnd="18sp">
 
-    <TextView
-        android:text="使用控制地址提取资产"
+
+
+    <EditText
+        android:id="@+id/et_amount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="请输入数量" />
+    <EditText
+        android:id="@+id/et_fee"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="请输入矿工费" />
+
+    <EditText
+        android:id="@+id/et_to_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="请输入收款地址" />
+
+    <Button
+        android:id="@+id/btn_out"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-    <TextView
-        android:text="使用备份地址提取资产"
+        android:layout_height="wrap_content"
+        android:text="提取我的资产" />
+
+    <EditText
+        android:id="@+id/et_back_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="请输入任何一个备份地址" />
+
+    <Button
+        android:id="@+id/btn_recover"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="找回我的资产" />
 
 </LinearLayout>

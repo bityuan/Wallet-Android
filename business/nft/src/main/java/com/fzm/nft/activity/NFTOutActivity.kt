@@ -190,7 +190,7 @@ class NFTOutActivity : BaseActivity() {
                     val check = GoWallet.checkPasswd(password, it.password)
                     if (!check) {
                         withContext(Dispatchers.Main) {
-                            toast("密码错误")
+                            toast("密码不正确")
                             loading.dismiss()
                         }
                         return@let

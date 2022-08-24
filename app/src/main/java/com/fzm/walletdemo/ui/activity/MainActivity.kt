@@ -13,6 +13,7 @@ import com.fzm.wallet.sdk.alpha.EmptyWallet
 import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.ActivityMainBinding
 import com.fzm.walletdemo.ui.fragment.ExploreFragment
@@ -22,12 +23,16 @@ import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.event.MainCloseEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.fragment.WalletIndexFragment
+import com.fzm.walletmodule.update.UpdateUtils
+import com.fzm.walletmodule.vm.WalletViewModel
 import com.jeremyliao.liveeventbus.LiveEventBus
 import kotlinx.coroutines.flow.collect
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import org.jetbrains.anko.support.v4.toast
 import org.jetbrains.anko.toast
+import org.koin.android.ext.android.inject
 import org.litepal.LitePal.count
 
 @Route(path = RouterPath.APP_MAIN)
@@ -36,6 +41,7 @@ class MainActivity : BaseActivity() {
     private var mWalletIndexFragment: WalletIndexFragment? = null
     private var mHomeFragment: HomeFragment? = null
     private var myFragment: MyFragment? = null
+    private val walletViewModel: WalletViewModel by inject(walletQualifier)
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +61,21 @@ class MainActivity : BaseActivity() {
                 }
             }
         }
+        gotoUpdate()
+    }
 
+    private fun gotoUpdate() {
+        walletViewModel.getUpdate.observe(this, Observer {
+            if (it.isSucceed()) {
+                it.data()?.let {
+                    UpdateUtils(this).update(it, supportFragmentManager, this, true)
+                }
+            } else {
+                toast(it.error())
+            }
+
+        })
+        walletViewModel.getUpdate()
     }
 
     private val DEFAULT_COINS = listOf(

@@ -86,7 +86,7 @@ class CheckMnemActivity : BaseActivity() {
                 newMnem = mnem
             }
             doAsync {
-                val hdWallet = GoWallet.getHDWallet(Walletapi.TypeBtyString, newMnem)
+                val hdWallet = GoWallet.getHDWallet(Walletapi.TypeETHString, newMnem)
                 runOnUiThread {
                     if (null == hdWallet) {
                         ToastUtils.show(

@@ -73,7 +73,7 @@ abstract class BaseWallet(protected val wallet: PWallet) : Wallet<Coin> {
 
     private suspend fun changePassword(old: String, password: String): Boolean {
         if (!MnemonicManager.checkPassword(old)) {
-            throw Exception("密码错误")
+            throw Exception("密码不正确")
         }
         val mnem = MnemonicManager.getMnemonicWords(old)
         return MnemonicManager.saveMnemonicWords(mnem, password)
