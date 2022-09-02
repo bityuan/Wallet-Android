@@ -10,7 +10,9 @@ import com.fzm.wallet.sdk.db.entity.PWallet
  */
 class WalletConfiguration {
 
-
+    /**
+     * 钱包类型
+     */
 
     var type: Int = 0
 
@@ -79,6 +81,20 @@ class WalletConfiguration {
             coins: List<Coin>
         ) = WalletConfiguration().apply {
             this.type = PWallet.TYPE_PRI_KEY
+            this.privateKey = privateKey
+            this.walletName = walletName
+            this.password = password
+            this.user = user
+            this.coins = coins
+        }
+        fun recoverWallet(
+            privateKey: String,
+            walletName: String,
+            password: String,
+            user: String,
+            coins: List<Coin>
+        ) = WalletConfiguration().apply {
+            this.type = PWallet.TYPE_RECOVER
             this.privateKey = privateKey
             this.walletName = walletName
             this.password = password

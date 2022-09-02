@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.lifecycleScope
+import com.alibaba.android.arouter.facade.annotation.Autowired
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bumptech.glide.Glide
 import com.fzm.wallet.sdk.RouterPath
@@ -24,38 +26,36 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-
+@Route(path = RouterPath.WALLET_TRANSACTIONS)
 class TransactionsActivity : BaseActivity() {
 
     private lateinit var transactionFragment0: TransactionFragment
     private lateinit var transactionFragment1: TransactionFragment
     private lateinit var transactionFragment2: TransactionFragment
     private var mDialogView: InQrCodeDialogView? = null
-    private lateinit var coin: Coin
     private lateinit var pagerAdapter: Adapter
     private val binding by lazy { ActivityTransactionsBinding.inflate(layoutInflater) }
+
+    @JvmField
+    @Autowired(name = RouterPath.PARAM_COIN)
+    var coin: Coin? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         mCustomToobar = true
         setStatusColor(R.color.color_333649)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        ARouter.getInstance().inject(this)
         setCustomToobar(binding.bar.myToolbar, R.drawable.ic_back_white)
-        initIntent()
         initView()
         initListener()
         initData()
     }
 
-    override fun initIntent() {
-        super.initIntent()
-        coin = intent.getSerializableExtra(Coin::class.java.simpleName) as Coin
-    }
-
 
     override fun initView() {
         setupViewPager()
-        Glide.with(this).load(coin.icon).into(binding.ivBName)
+        Glide.with(this).load(coin?.icon).into(binding.ivBName)
     }
 
     override fun initListener() {
@@ -81,8 +81,7 @@ class TransactionsActivity : BaseActivity() {
             if (mDialogView == null) {
                 mDialogView = InQrCodeDialogView(
                     this,
-                    coin.address,
-                    coin.icon
+                    coin?.address
                 )
             } else {
                 mDialogView?.show()
@@ -92,9 +91,12 @@ class TransactionsActivity : BaseActivity() {
 
 
     private fun setupViewPager() {
-        transactionFragment0 = TransactionFragment.newInstance(0, coin)
-        transactionFragment1 = TransactionFragment.newInstance(1, coin)
-        transactionFragment2 = TransactionFragment.newInstance(2, coin)
+        coin?.let {
+            transactionFragment0 = TransactionFragment.newInstance(0, it)
+            transactionFragment1 = TransactionFragment.newInstance(1, it)
+            transactionFragment2 = TransactionFragment.newInstance(2, it)
+        }
+
         pagerAdapter = Adapter(supportFragmentManager)
         pagerAdapter.addFragment(transactionFragment0, getString(R.string.trans_all))
         pagerAdapter.addFragment(transactionFragment1, getString(R.string.home_transfer))
@@ -106,10 +108,13 @@ class TransactionsActivity : BaseActivity() {
 
     override fun initData() {
         super.initData()
-        title = if (coin.nickname.isNullOrEmpty()) coin.name else "${coin.name}(${coin.nickname})"
-        binding.tvBalance.text = DecimalUtils.subZeroAndDot(coin.balance)
-        binding.tvAddress.text = coin.address
-        binding.ivErCode.setImageBitmap(CodeUtils.createQRCode(coin.address, 200))
+        coin?.let {
+            title = if (it.nickname.isNullOrEmpty()) it.name else "${it.name}(${it.nickname})"
+            binding.tvBalance.text = DecimalUtils.subZeroAndDot(it.balance)
+            binding.tvAddress.text = it.address
+            binding.ivErCode.setImageBitmap(CodeUtils.createQRCode(it.address, 200))
+        }
+
 
     }
 
@@ -144,11 +149,14 @@ class TransactionsActivity : BaseActivity() {
 
     fun doRefreshBalance() {
         lifecycleScope.launch(Dispatchers.IO) {
-            val balance = GoWallet.handleBalance(coin)
-            withContext(Dispatchers.Main) {
-                coin.balance = balance
-                binding.tvBalance.text = DecimalUtils.subZeroAndDot(coin.balance)
+            coin?.let {
+                val balance = GoWallet.handleBalance(it)
+                withContext(Dispatchers.Main) {
+                    it.balance = balance
+                    binding.tvBalance.text = DecimalUtils.subZeroAndDot(it.balance)
+                }
             }
+
         }
     }
 }

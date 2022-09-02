@@ -26,6 +26,7 @@ import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.WalletBean
 import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
+import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.databinding.DialogLoadingBinding
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
 import com.fzm.wallet.sdk.db.entity.PWallet
@@ -149,7 +150,7 @@ class DappActivity : AppCompatActivity() {
         private var exer = ""
         private var withhold = -1
 
-        //addressID 比特格式的地址传0， 以太坊格式的地址发送的时候addressID 传2
+        //addressID 比特格式的地址传0， 以太坊格式传2
         private var addressid = -1
 
 
@@ -286,7 +287,7 @@ class DappActivity : AppCompatActivity() {
                 "YCC" -> {
                     2
                 }
-                else -> -1
+                else -> 0
             }
         }
 
@@ -322,7 +323,8 @@ class DappActivity : AppCompatActivity() {
                     return@setOnClickListener
                 }
                 this@DappActivity.lifecycleScope.launch(Dispatchers.IO) {
-                    BWallet.get().getCurrentWallet()?.let {
+                    val wallet = LitePal.find<PWallet>(MyWallet.getId())
+                    wallet?.let {
                         withContext(Dispatchers.Main) {
                             loading.show()
                         }
@@ -392,12 +394,12 @@ class DappActivity : AppCompatActivity() {
 
     }
 
-    private fun getPrikey(walletBean: WalletBean, password: String, cointype: String): String {
+    private fun getPrikey(wallet: PWallet, password: String, cointype: String): String {
         val bPassword = GoWallet.encPasswd(password)!!
-        val priKey: String = when (walletBean.type) {
+        val priKey: String = when (wallet.type) {
             2 -> {
                 var thisCointype = ""
-                val mnem: String = GoWallet.decMenm(bPassword, walletBean.mnem)
+                val mnem: String = GoWallet.decMenm(bPassword, wallet.mnem)
                 if (cointype == "YCC") {
                     thisCointype = Walletapi.TypeETHString
                 } else {
@@ -410,7 +412,7 @@ class DappActivity : AppCompatActivity() {
             //私钥
             4 -> {
                 val priKey = LitePal.find<PWallet>(
-                    walletBean.id,
+                    wallet.id,
                     true
                 ).coinList[0].getPrivkey(password)
                 priKey

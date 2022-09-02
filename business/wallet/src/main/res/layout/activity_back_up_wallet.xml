@@ -9,7 +9,6 @@
     android:paddingTop="25dp">
 
 
-
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -75,29 +74,48 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:fillViewport="true"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_height="0dp">
-        <com.fzm.walletmodule.ui.widget.FlowTagLayout
-            android:id="@+id/ftl_mnem"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="17dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginRight="17dp" />
+            android:fillViewport="true">
+
+            <com.fzm.walletmodule.ui.widget.FlowTagLayout
+                android:id="@+id/ftl_mnem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="17dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginRight="17dp" />
         </ScrollView>
 
-
-        <Button
-            android:id="@+id/btn_ok"
-            style="@style/buttonWord"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp_16"
-            android:layout_marginRight="@dimen/dp_16"
+            android:layout_marginTop="5dp"
             android:layout_marginBottom="30dp"
-            android:text="@string/ok"
-            android:textColor="@color/color_9EA2AD" />
+            android:paddingLeft="@dimen/dp_16"
+            android:paddingRight="@dimen/dp_16">
+
+            <Button
+                android:id="@+id/btn_mnem"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_change_word_frame"
+                android:text="创建助记词钱包"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/btn_recover"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_change_word_frame"
+                android:text="创建找回钱包"
+                android:textColor="@android:color/white" />
+
+        </LinearLayout>
+
 
     </LinearLayout>
 

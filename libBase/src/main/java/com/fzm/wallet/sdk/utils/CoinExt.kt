@@ -23,27 +23,7 @@ inline val Coin.isBtyToken: Boolean get() = isBtyChild && !isCoin
  */
 inline val Coin.isCoin: Boolean get() = if (isBtyChild) treaty == "2" else name == chain
 
-/**
- * 查询交易记录时使用的tokenSymbol
- */
-val Coin.tokenSymbol: String
-    get() {
-        return when {
-            isBtyCoins -> "$platform.coins"
-            isBtyToken -> "$platform.$name"
-            else -> name
-        }
-    }
 
-inline val Coin.decimalPlaces: Int get() = 4
-    /*get() {
-        return if (balance.contains(".")) {
-            val array = balance.split(".")
-            if (array.size == 2) array[1].length else 0
-        } else {
-            0
-        }
-    }*/
 
 inline val Coin.uid: String get() = "$chain-$name-$platform"
 

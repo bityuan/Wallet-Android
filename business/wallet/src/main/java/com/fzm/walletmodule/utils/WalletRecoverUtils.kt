@@ -3,12 +3,13 @@ package com.fzm.walletmodule.utils
 import android.util.Log
 import com.alibaba.fastjson.JSON
 import com.fzm.wallet.sdk.bean.StringResult
+import com.fzm.wallet.sdk.net.UrlConfig
 import com.fzm.wallet.sdk.utils.GoWallet
 import walletapi.*
 
 class WalletRecoverUtils {
 
-    public fun test(){
+    public fun test() {
 
 
         try {
@@ -35,11 +36,10 @@ class WalletRecoverUtils {
             val X = "1C3pVsMKY7PjmFHd75JZu7wE7Ld4q4jRux"
 
 
-
             val walletRecover = WalletRecover().apply {
                 param = WalletRecoverParam().apply {
                     ctrPubKey = pub1
-                    backupPubKeys = "$pub2,$pub3"
+                    recoverPubKeys = "$pub2,$pub3"
                     addressID = 0
                     chainID = 0
                     relativeDelayTime = 30
@@ -98,11 +98,13 @@ class WalletRecoverUtils {
             fee = 0.01
         }
         val noneDelaytx = walletRecover.createNoneDelayTx(noneDelayTxParam)
-        val signtx2 = walletRecover.signRecoverTxWithBackupKey(
+        val signtx2 = walletRecover.signRecoverTxWithRecoverKey(
             Walletapi.stringTobyte(result),
             privkey,
             noneDelaytx
         )
         val sendRawTransaction2 = GoWallet.sendTran("BTY", signtx2, "")
     }
+
+
 }

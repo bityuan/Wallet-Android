@@ -19,6 +19,7 @@ import com.fzm.wallet.sdk.WalletConfiguration
 import com.fzm.wallet.sdk.base.LIVE_KEY_CHOOSE_CHAIN
 import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
 import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
+import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.exception.ImportWalletException
@@ -188,7 +189,7 @@ class ImportWalletActivity : BaseActivity() {
 
         lifecycleScope.launch(Dispatchers.Main) {
 
-            var id = "-1"
+            var id: Long = -1
             when (importType) {
                 0 -> {
                     val mnem = mnemBinding.etMnem.text.toString()
@@ -255,9 +256,9 @@ class ImportWalletActivity : BaseActivity() {
 
                 }
             }
-
-            if (id != "-1") {
-                val pWallet = wallet.findWallet(id)
+            if (id != (-1).toLong()) {
+                MyWallet.setId(id)
+                val pWallet = LitePal.find<PWallet>(id)
                 dismiss()
                 LiveEventBus.get<PWallet>(LIVE_KEY_WALLET).post(pWallet)
                 ToastUtils.show(

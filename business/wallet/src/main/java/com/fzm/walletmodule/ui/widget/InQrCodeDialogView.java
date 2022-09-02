@@ -34,13 +34,13 @@ public class InQrCodeDialogView {
     }
 
 
-    public InQrCodeDialogView(Activity context, String address, String imgUrl) {
+    public InQrCodeDialogView(Activity context, String address) {
         this.context = context;
-        showNoticeDialogCustom(address, imgUrl);
+        showNoticeDialogCustom(address);
 
     }
 
-    private void showNoticeDialogCustom(final String url, final String imgUrl) {
+    private void showNoticeDialogCustom(final String url) {
         lDialog = new Dialog(context,
                 android.R.style.Theme_Translucent_NoTitleBar);
         lDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);

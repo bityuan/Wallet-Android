@@ -45,6 +45,7 @@
             android:label="@string/my_about"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".ui.activity.DownLoadActivity"
             android:exported="false"

@@ -1,12 +1,14 @@
 package com.fzm.walletmodule.ui.activity
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
+import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.databinding.ActivityCreateWalletBinding
@@ -14,10 +16,13 @@ import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.*
 import com.snail.antifake.jni.EmulatorDetectUtil
 import org.litepal.LitePal
+import org.litepal.LitePal.where
+import org.litepal.extension.find
 
 /**
  * 创建账户页面
  */
+@Route(path = RouterPath.WALLET_CREATE_WALLET)
 class CreateWalletActivity : BaseActivity() {
     private var viewHeight = 0
     private val binding by lazy { ActivityCreateWalletBinding.inflate(layoutInflater) }
@@ -86,18 +91,17 @@ class CreateWalletActivity : BaseActivity() {
         val password: String = binding.etPassword.text.toString()
         val passwordAgain: String = binding.etPasswordAgain.text.toString()
         if (checked(name, password, passwordAgain)) {
-            val intent = Intent(this, CreateMnemActivity::class.java)
             val wallet = PWallet()
             wallet.name = name
             wallet.password = password
-            intent.putExtra(PWallet::class.java.simpleName, wallet)
-            startActivity(intent)
+            ARouter.getInstance().build(RouterPath.WALLET_CREATE_MNEM)
+                .withSerializable(RouterPath.PARAM_WALLET, wallet).navigation()
         }
 
     }
 
     private fun checked(name: String, password: String, passwordAgain: String): Boolean {
-        val pWallets = LitePal.where("name = ?", name).find(PWallet::class.java)
+        val pWallets = where("name = ?", name).find<PWallet>()
 
         var checked = true
 

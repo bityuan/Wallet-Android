@@ -1,6 +1,7 @@
 package com.fzm.walletmodule.ui.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AlertDialog
@@ -12,6 +13,7 @@ import com.alibaba.fastjson.JSON
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.IPConfig
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.bean.StringResult
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
 import com.fzm.wallet.sdk.db.entity.Coin
@@ -23,6 +25,7 @@ import com.fzm.walletmodule.databinding.ActivityNewRecoverAddressBinding
 import com.fzm.walletmodule.databinding.ActivityRecoverBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.ListUtils
+import com.fzm.walletmodule.utils.WalletRecoverUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -57,7 +60,6 @@ class RecoverActivity : BaseActivity() {
 
     override fun initView() {
         super.initView()
-        binding.etBackAddress.setText("1NinUtSXP2wE6tJDMEpJwA8UBpyskSo8yd")
         binding.etToAddress.setText("1P7P4v3kL39zugQgDDLRqxzGjQd7aEbfKs")
         binding.etAmount.setText("0.02")
         binding.etFee.setText("0.001")
@@ -86,7 +88,8 @@ class RecoverActivity : BaseActivity() {
                 return@setOnClickListener
             }
             CoroutineScope(Dispatchers.IO).launch {
-                BWallet.get().getCurrentWallet()?.let {
+                val wallet = LitePal.find<PWallet>(MyWallet.getId())
+                wallet?.let {
                     withContext(Dispatchers.Main) {
                         loading.show()
                     }
@@ -110,74 +113,75 @@ class RecoverActivity : BaseActivity() {
                     val mnem: String = GoWallet.decMenm(bPassword, it.mnem)
                     val hdWallet = GoWallet.getHDWallet(Walletapi.TypeBtyString, mnem)
                     val privkey = Walletapi.byteTohex(hdWallet?.newKeyPriv(0))
-                    doRecover(type,privkey)
+                    val address = hdWallet?.newAddress_v2(0)
+                    //当前钱包为控制地址，那么prikey就是控制地址的
+                    //当前钱包为备份地址，那么prikey就是备份地址的
+                    //所以我们只需要获取当前钱包的私钥即可
+                    loading.dismiss()
+                    doRecover(type, privkey)
                 }
 
             }
         }
     }
 
-
-    private fun doRecover(type:Int,privkey:String){
-        val fromAddress = binding.etBackAddress.text.toString()
+    private fun doRecover(type: Int, privkey: String) {
         val toAddress = binding.etToAddress.text.toString()
         val inputAmount = binding.etAmount.text.toString()
         val inputFee = binding.etFee.text.toString()
+        val xAddress = binding.etXAddress.text.toString()
 
-        //使用控制地址提取X资产
-        val walletTx = WalletTx().apply {
-            cointype = "BTY"
-            tokenSymbol = ""
-            tx = Txdata().apply {
-                //from可以填写任何一个备份地址，控制地址提取填写""
-                from = if (type == 1) "" else fromAddress
-                amount = inputAmount.toDouble()
-                fee = inputFee.toDouble()
-                note = "找回test"
-                to = toAddress
+        val walletRecoverParam = GoWallet.queryRecover(xAddress)
+        val walletRecover = WalletRecover()
+        walletRecover.param = walletRecoverParam
+        val createRaw = GoWallet.createTran(
+            "BTY",
+            xAddress,
+            toAddress,
+            inputAmount.toDouble(),
+            inputFee.toDouble(),
+            "zh测试",
+            ""
+        )
+        val strResult = JSON.parseObject(createRaw, StringResult::class.java)
+        val createRawResult: String? = strResult.result
+        if (!createRawResult.isNullOrEmpty()) {
+            when (type) {
+                1 -> {
+                    ckrSend(walletRecover, createRawResult, privkey)
+                }
+                2 -> {
+                    backSend(walletRecover, createRawResult, privkey)
+                }
             }
-            util = GoWallet.getUtil(UrlConfig.GO_URL)
+
         }
-
-        val create = Walletapi.createRawTransaction(walletTx)
-        val stringResult = JSON.parseObject(Walletapi.byteTostring(create), StringResult::class.java)
-        val result = stringResult.result
-        when(type){
-            1->{
-                ckrSend(result!!, privkey)
-            }
-            2->{
-                backSend(result!!, privkey)
-            }
-        }
-
-
     }
 
     //控制地址提取资产
-    private fun ckrSend(result: String, privkey: String) {
+    private fun ckrSend(walletRecover: WalletRecover, result: String, privkey: String) {
         val signtx =
-            WalletRecover().signRecoverTxWithCtrKey(Walletapi.stringTobyte(result), privkey)
+            walletRecover.signRecoverTxWithCtrKey(Walletapi.stringTobyte(result), privkey)
         val sendRawTransaction = GoWallet.sendTran("BTY", signtx, "")
+        Log.v("wlike", "控制地址找回 == " + sendRawTransaction)
     }
 
     //备份地址（找回地址）提取资产
-    private fun backSend(result: String, privkey: String) {
-        //找回地址提取资产
+    private fun backSend(walletRecover: WalletRecover, result: String, privkey: String) {
         val noneDelayTxParam = NoneDelayTxParam().apply {
             execer = "none"
             addressID = 0
             chainID = 0
-            fee = 0.01
+            fee = 0.003
         }
-        val walletRecover = WalletRecover()
         val noneDelaytx = walletRecover.createNoneDelayTx(noneDelayTxParam)
-        val signtx2 = walletRecover.signRecoverTxWithBackupKey(
+        val signtx2 = walletRecover.signRecoverTxWithRecoverKey(
             Walletapi.stringTobyte(result),
             privkey,
             noneDelaytx
         )
         val sendRawTransaction2 = GoWallet.sendTran("BTY", signtx2, "")
+        Log.v("wlike", "备份找回 == " + sendRawTransaction2)
     }
 
 }

@@ -335,7 +335,6 @@ class OutActivity : BaseActivity() {
                             }
                         }
 
-                        loading.dismiss()
                         handleTransactions(toAddress, money)
 
 
@@ -381,7 +380,7 @@ class OutActivity : BaseActivity() {
                 //发送交易
                 val sendRawTransaction = GoWallet.sendTran(it.chain, signtx!!, tokensymbol)
                 runOnUiThread {
-                    dismiss()
+                    loading.dismiss()
                     if (sendRawTransaction.isNullOrEmpty()) {
                         ToastUtils.show(this, getString(R.string.home_transfer_currency_fails))
                         finish()

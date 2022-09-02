@@ -60,7 +60,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginRight="25dp"
             android:background="@color/gray_f8"
-            android:maxLength="16"
+            android:maxLength="50"
             android:paddingLeft="10dp"
             android:textColor="@color/gray_33"
             android:textColorHint="@color/color_8E92A3"

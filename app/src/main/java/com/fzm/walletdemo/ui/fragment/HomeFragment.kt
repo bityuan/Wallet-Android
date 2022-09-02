@@ -9,12 +9,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.alibaba.android.arouter.launcher.ARouter
-import com.fzm.nft.fragment.NFTFragment
-import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.db.entity.PWallet.*
 import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.FragmentHomeBinding
 import com.fzm.walletdemo.ui.activity.MainActivity
@@ -33,6 +36,7 @@ class HomeFragment : Fragment() {
 
     private val paramViewModel by activityViewModels<ParamViewModel>()
     private lateinit var binding: FragmentHomeBinding
+    private var cWalletId:Long = -1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -67,25 +71,20 @@ class HomeFragment : Fragment() {
 
 
         })
-        /*    paramViewModel.walletMoney.observe(viewLifecycleOwner, Observer {
-                binding.header.tvMoney.text = it
-
-
-            })*/
 
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 try {
-                    val id = BWallet.get().getCurrentWallet()?.id ?: 0
-                    val pWallet = LitePal.find(PWallet::class.java, id, true)
-                    if(pWallet != null){
+                    cWalletId = MyWallet.getId()
+                    val pWallet = LitePal.find(PWallet::class.java, cWalletId, true)
+                    if (pWallet != null) {
                         refreshWallet(pWallet)
-                    }else {
+                    } else {
                         activity?.let {
                             (it as MainActivity).setTabSelection(0)
                         }
                     }
-                }catch (e:Exception){
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
 
@@ -105,7 +104,7 @@ class HomeFragment : Fragment() {
                 return@setOnClickListener
             }
             ARouter.getInstance().build(RouterPath.WALLET_WALLET_DETAILS)
-                .withLong(PWallet.PWALLET_ID, BWallet.get().getCurrentWallet()?.id ?: 0L)
+                .withLong(PWallet.PWALLET_ID, cWalletId)
                 .navigation()
         }
         binding.header.ivAddCoin.setOnClickListener {
@@ -120,13 +119,21 @@ class HomeFragment : Fragment() {
 
 
     private fun refreshWallet(pWallet: PWallet) {
-        if (pWallet.type == PWallet.TYPE_PRI_KEY) {
-            val chain = pWallet.coinList[0].chain
-            binding.header.rlWalletBg.backgroundResource = getWalletBg(chain)
-            binding.header.tvWalletName.text = "私钥账户"
-        } else {
-            binding.header.tvWalletName.text = "助记词账户"
-            binding.header.rlWalletBg.backgroundResource = R.mipmap.header_wallet_hd_wallet
+        when (pWallet.type) {
+            TYPE_PRI_KEY -> {
+                val chain = pWallet.coinList[0].chain
+                binding.header.rlWalletBg.backgroundResource = getWalletBg(chain)
+                binding.header.tvWalletName.text = "私钥账户"
+            }
+            TYPE_RECOVER -> {
+                val chain = pWallet.coinList[0].chain
+                binding.header.rlWalletBg.backgroundResource = getWalletBg(chain)
+                binding.header.tvWalletName.text = "找回账户"
+            }
+            TYPE_NOMAL -> {
+                binding.header.tvWalletName.text = "助记词账户"
+                binding.header.rlWalletBg.backgroundResource = R.mipmap.header_wallet_hd_wallet
+            }
         }
     }
 

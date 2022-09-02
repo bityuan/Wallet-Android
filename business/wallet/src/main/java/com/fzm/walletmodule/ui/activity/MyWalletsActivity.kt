@@ -9,11 +9,13 @@ import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.BWallet
+import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
+import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.db.entity.PWallet
-import com.fzm.wallet.sdk.db.entity.PWallet.TYPE_NOMAL
-import com.fzm.wallet.sdk.db.entity.PWallet.TYPE_PRI_KEY
+import com.fzm.wallet.sdk.db.entity.PWallet.*
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.databinding.ActivityMyWalletsBinding
 import com.fzm.walletmodule.databinding.ItemMyWalletBinding
@@ -52,14 +54,14 @@ class MyWalletsActivity : BaseActivity() {
         binding.rvList.adapter = mAdapter
         mAdapter.setOnItemClickListener { position ->
             val wallet = list[position]
-            BWallet.get().changeWallet(wallet.id.toString())
+            MyWallet.setId(wallet.id)
             LiveEventBus.get<PWallet>(LIVE_KEY_WALLET).post(wallet)
             finish()
         }
     }
 
     private fun refresh() {
-        mSelectedId = BWallet.get().getCurrentWallet()?.id ?: 0L
+        mSelectedId = MyWallet.getId()
         list.clear()
         lifecycleScope.launch(Dispatchers.IO) {
             val walletList = LitePal.findAll<PWallet>(true)
@@ -84,7 +86,7 @@ class MyWalletsActivity : BaseActivity() {
             if (isFastClick()) {
                 return@setOnClickListener
             }
-            startActivity<CreateWalletActivity>()
+            ARouter.getInstance().build(RouterPath.WALLET_CREATE_WALLET).navigation()
         }
         binding.tvImport.setOnClickListener {
             if (isFastClick()) {
@@ -123,6 +125,12 @@ class MyWalletsActivity : BaseActivity() {
                         }
                         TYPE_PRI_KEY -> {
                             tvWalletType.text = "私钥账户"
+                            val chain = wallet.coinList[0].chain
+                            ivWalletType.imageResource = getWalletIcon(chain)
+                            rlWallet.backgroundResource = getWalletBg(chain)
+                        }
+                        TYPE_RECOVER -> {
+                            tvWalletType.text = "找回账户"
                             val chain = wallet.coinList[0].chain
                             ivWalletType.imageResource = getWalletIcon(chain)
                             rlWallet.backgroundResource = getWalletBg(chain)

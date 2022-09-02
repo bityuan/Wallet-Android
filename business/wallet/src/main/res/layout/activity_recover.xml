@@ -35,10 +35,10 @@
         android:text="提取我的资产" />
 
     <EditText
-        android:id="@+id/et_back_address"
+        android:id="@+id/et_x_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="请输入任何一个备份地址" />
+        android:hint="请输入X地址" />
 
     <Button
         android:id="@+id/btn_recover"

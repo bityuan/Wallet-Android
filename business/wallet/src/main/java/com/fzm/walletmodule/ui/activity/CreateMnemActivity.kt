@@ -2,53 +2,55 @@ package com.fzm.walletmodule.ui.activity
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import com.alibaba.android.arouter.facade.annotation.Autowired
+import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
+import com.fzm.wallet.sdk.RouterPath
 import com.fzm.walletmodule.R
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.wallet.sdk.utils.GoWallet
+import com.fzm.walletmodule.databinding.ActivityCreateMnemBinding
 import com.fzm.walletmodule.utils.isFastClick
-import kotlinx.android.synthetic.main.activity_create_mnem.*
 
-/**
- * 创建助记词页面
- */
+@Route(path = RouterPath.WALLET_CREATE_MNEM)
 class CreateMnemActivity : BaseActivity() {
-    private val TAG: String = "CreateMnemActivityNew"
-    private lateinit var mWallet: PWallet
+
+
+    @JvmField
+    @Autowired(name = RouterPath.PARAM_WALLET)
+    var mWallet: PWallet? = null
+
     private var mEnglishMnem: String? = null
     private var mChineseMnem: String? = null
 
+    private val binding by lazy { ActivityCreateMnemBinding.inflate(layoutInflater) }
     override fun onCreate(savedInstanceState: Bundle?) {
         mConfigFinish = true
         mStatusColor = Color.TRANSPARENT
         mCustomToobar = true
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_create_mnem)
+        setContentView(binding.root)
+        ARouter.getInstance().inject(this)
         setToolBar(R.id.toolbar, R.id.tv_title)
-        title =""
-        initIntent()
+        title = ""
         initData()
         initListener()
-    }
-
-    override fun initIntent() {
-        mWallet = intent.getSerializableExtra(PWallet::class.java.simpleName) as PWallet
     }
 
     override fun initData() {
         try {
             mChineseMnem = GoWallet.createMnem(1)
             mEnglishMnem = GoWallet.createMnem(2)
-            tv_mnem.text = configSpace(mChineseMnem!!)
-            mWallet.mnemType = PWallet.TYPE_CHINESE
+            binding.tvMnem.text = configSpace(mChineseMnem!!)
+            mWallet?.mnemType = PWallet.TYPE_CHINESE
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    private fun configSpace(mnem: String): String? {
+    private fun configSpace(mnem: String): String {
         val chineses = mnem.replace(" ".toRegex(), "")
         var chinese = ""
         for (i in chineses.indices) {
@@ -68,68 +70,65 @@ class CreateMnemActivity : BaseActivity() {
     }
 
     override fun initListener() {
-        btn_replace_mnem.setOnClickListener {
+        binding.btnReplaceMnem.setOnClickListener {
             try {
                 var mnem: String? = ""
-                if (view_chinese.visibility == View.VISIBLE) {
-                    mChineseMnem =  GoWallet.createMnem(1)
+                if (binding.viewChinese.visibility == View.VISIBLE) {
+                    mChineseMnem = GoWallet.createMnem(1)
                     mnem = configSpace(mChineseMnem!!)
                 } else {
                     mEnglishMnem = GoWallet.createMnem(2)
                     mnem = mEnglishMnem
                 }
-                tv_mnem.text = mnem
+                binding.tvMnem.text = mnem
             } catch (e: Exception) {
-                Log.e(TAG, "btn_replace_mnem 错误 = ${e.message}")
             }
         }
-        btn_ok.setOnClickListener {
-            if (isFastClick()){
+        binding.btnOk.setOnClickListener {
+            if (isFastClick()) {
                 return@setOnClickListener
             }
             gotoBackUpWalletActivity()
         }
-        lv_chinese.setOnClickListener {
+        binding.lvChinese.setOnClickListener {
             showChineseView()
         }
-        lv_english.setOnClickListener {
+        binding.lvEnglish.setOnClickListener {
             showEnglishView()
         }
     }
 
     private fun showEnglishView() {
-        tv_chinese.setTextColor(resources.getColor(R.color.color_8E92A3))
-        tv_english.setTextColor(resources.getColor(R.color.white))
-        view_chinese.visibility = View.GONE
-        view_english.visibility = View.VISIBLE
-        tv_mnem.text = mEnglishMnem
-        mWallet.mnemType = PWallet.TYPE_ENGLISH
+        binding.tvChinese.setTextColor(resources.getColor(R.color.color_8E92A3))
+        binding.tvEnglish.setTextColor(resources.getColor(R.color.white))
+        binding.viewChinese.visibility = View.GONE
+        binding.viewEnglish.visibility = View.VISIBLE
+        binding.tvMnem.text = mEnglishMnem
+        mWallet?.mnemType = PWallet.TYPE_ENGLISH
     }
 
     private fun showChineseView() {
-        tv_chinese.setTextColor(resources.getColor(R.color.white))
-        tv_english.setTextColor(resources.getColor(R.color.color_8E92A3))
-        view_chinese.visibility = View.VISIBLE
-        view_english.visibility = View.GONE
-        tv_mnem.text = configSpace(mChineseMnem!!)
-        mWallet.mnemType = PWallet.TYPE_CHINESE
+        binding.tvChinese.setTextColor(resources.getColor(R.color.white))
+        binding.tvEnglish.setTextColor(resources.getColor(R.color.color_8E92A3))
+        binding.viewChinese.visibility = View.VISIBLE
+        binding.viewEnglish.visibility = View.GONE
+        binding.tvMnem.text = configSpace(mChineseMnem!!)
+        mWallet?.mnemType = PWallet.TYPE_CHINESE
     }
 
     private fun gotoBackUpWalletActivity() {
         var mnem: String? = ""
-        if (view_chinese.visibility == View.VISIBLE) {
-            mWallet.mnem = mChineseMnem
+        if (binding.viewChinese.visibility == View.VISIBLE) {
+            mWallet?.mnem = mChineseMnem
             mnem = mChineseMnem
-        } else if (view_english.visibility == View.VISIBLE) {
-            mWallet.mnem = mEnglishMnem
+        } else if (binding.viewEnglish.visibility == View.VISIBLE) {
+            mWallet?.mnem = mEnglishMnem
             mnem = mEnglishMnem
         }
-        BackUpWalletActivity.launch(
-            this,
-            mWallet,
-            mnem!!,
-            CreateMnemActivity::class.java.simpleName
-        )
+        ARouter.getInstance().build(RouterPath.WALLET_BACKUP_WALLET)
+            .withSerializable(RouterPath.PARAM_WALLET, mWallet)
+            .withString(RouterPath.PARAM_VISIBLE_MNEM, mnem)
+            .navigation()
     }
 
 }

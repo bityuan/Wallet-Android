@@ -5,8 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.alibaba.android.arouter.launcher.ARouter
+import com.fzm.wallet.sdk.RouterPath
 import com.fzm.walletmodule.databinding.FragmentWalletIndexBinding
-import com.fzm.walletmodule.ui.activity.CreateWalletActivity
 import com.fzm.walletmodule.ui.activity.ImportWalletActivity
 import com.fzm.walletmodule.ui.base.BaseFragment
 import com.fzm.walletmodule.utils.isFastClick
@@ -35,7 +36,7 @@ class WalletIndexFragment : BaseFragment() {
             if (isFastClick()) {
                 return@setOnClickListener
             }
-            startActivity(Intent(activity, CreateWalletActivity::class.java))
+            ARouter.getInstance().build(RouterPath.WALLET_CREATE_WALLET).navigation()
         }
         binding.walletImport.setOnClickListener {
             if (isFastClick()) {

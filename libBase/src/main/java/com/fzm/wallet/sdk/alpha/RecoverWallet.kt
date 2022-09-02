@@ -10,24 +10,21 @@ import kotlinx.coroutines.withContext
 import org.litepal.LitePal
 import walletapi.Walletapi
 
-class PrivateKeyWallet(wallet: PWallet) : BaseWallet(wallet) {
-
+class RecoverWallet(wallet: PWallet) : BaseWallet(wallet) {
 
     suspend fun init(configuration: WalletConfiguration): Long {
         return with(configuration) {
-            configuration.coins[0].let { chooseChain ->
+            coins[0].let { chooseChain ->
                 val pubkey = GoWallet.priToPub(chooseChain.chain, privateKey!!)
                     ?: throw ImportWalletException("私钥有误")
-                val address = Walletapi.pubToAddress_v2(chooseChain.chain, pubkey)
                 chooseChain.status = Coin.STATUS_ENABLE
                 chooseChain.pubkey = Walletapi.byteTohex(pubkey)
-                chooseChain.address = address
 
                 val bPassword = Walletapi.encPasswd(password)
                 val encByteKey = Walletapi.encKey(bPassword, Walletapi.hexTobyte(privateKey))
                 val encPrivateKey = Walletapi.byteTohex(encByteKey)
                 chooseChain.setPrivkey(encPrivateKey)
-                configuration.coins = listOf(chooseChain)
+                coins = listOf(chooseChain)
             }
             withContext(Dispatchers.IO) {
                 wallet.also {

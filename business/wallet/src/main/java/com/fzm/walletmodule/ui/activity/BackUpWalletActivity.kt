@@ -1,23 +1,24 @@
 package com.fzm.walletmodule.ui.activity
 
-import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.RecyclerView
-import com.chad.library.adapter.base.listener.OnItemDragListener
+import com.alibaba.android.arouter.facade.annotation.Autowired
+import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.BWallet
+import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.WalletConfiguration
 import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
+import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.adapter.BackUpWalletAdapter
 import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.bean.WalletBackUp
-import com.fzm.walletmodule.manager.WalletManager
+import com.fzm.walletmodule.databinding.ActivityBackUpWalletBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.AutoLineFeedLayoutManager
 import com.fzm.walletmodule.ui.widget.FlowTagLayout
@@ -29,43 +30,39 @@ import com.fzm.walletmodule.utils.isFastClick
 import com.jeremyliao.liveeventbus.LiveEventBus
 import com.zhy.adapter.abslistview.CommonAdapter
 import com.zhy.adapter.abslistview.ViewHolder
-import kotlinx.android.synthetic.main.activity_back_up_wallet.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.greenrobot.eventbus.EventBus
+import kotlinx.coroutines.withContext
+import org.jetbrains.anko.toast
+import org.litepal.LitePal
+import org.litepal.extension.find
 
-/**
- * 创建账户时验证助记词和导入账户页面
- */
+@Route(path = RouterPath.WALLET_BACKUP_WALLET)
 class BackUpWalletActivity : BaseActivity() {
-    private lateinit var mPWallet: PWallet
-    private var mFrom: String? = null
-    private var mnemFrom: String? = null
+
+
+    @JvmField
+    @Autowired(name = RouterPath.PARAM_WALLET)
+    var mPWallet: PWallet? = null
+
+    @JvmField
+    @Autowired(name = RouterPath.PARAM_VISIBLE_MNEM)
+    var visibleMnem: String? = null
+
     private var mMnemAdapter: CommonAdapter<WalletBackUp>? = null
     private val mMnemList: ArrayList<WalletBackUp> = ArrayList()
     private val mMnemResultList: ArrayList<WalletBackUp> = ArrayList()
     private var mMnemResultAdapter: BackUpWalletAdapter? = null
-    var onItemDragListener: OnItemDragListener = object : OnItemDragListener {
-        override fun onItemDragStart(viewHolder: RecyclerView.ViewHolder, pos: Int) {}
-        override fun onItemDragMoving(
-            source: RecyclerView.ViewHolder,
-            from: Int,
-            target: RecyclerView.ViewHolder,
-            to: Int
-        ) {
-        }
-
-        override fun onItemDragEnd(viewHolder: RecyclerView.ViewHolder, pos: Int) {}
-    }
-
+    private val binding by lazy { ActivityBackUpWalletBinding.inflate(layoutInflater) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         mConfigFinish = true
         mCustomToobar = true
         mStatusColor = Color.TRANSPARENT
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_back_up_wallet)
+        setContentView(binding.root)
+        ARouter.getInstance().inject(this)
         setToolBar(R.id.toolbar, R.id.tv_title)
-        title = ""
         initIntent()
         initData()
         initMnem()
@@ -73,33 +70,26 @@ class BackUpWalletActivity : BaseActivity() {
         initListener()
     }
 
-    override fun initIntent() {
-        mPWallet = intent.getSerializableExtra(PWallet::class.java.simpleName) as PWallet
-        mnemFrom = intent.getStringExtra(MNEM_TAG)
-        if (mnemFrom == null) {
-            mnemFrom = ""
-        }
-        mFrom = intent.getStringExtra(Constants.FROM)
-
-    }
-
     override fun initData() {
-        val mnemArrays = mnemFrom!!.split(" ").toTypedArray()
-        for (i in mnemArrays.indices) {
-            val backUp = WalletBackUp()
-            backUp.mnem = mnemArrays[i]
-            backUp.select = 0
-            mMnemList.add(backUp)
+        visibleMnem?.let {
+            val mnemArrays = it.split(" ").toTypedArray()
+            for (i in mnemArrays.indices) {
+                val backUp = WalletBackUp()
+                backUp.mnem = mnemArrays[i]
+                backUp.select = 0
+                mMnemList.add(backUp)
+            }
         }
+
     }
 
-    fun initMnem() {
-        ftl_mnem.setTagCheckedMode(FlowTagLayout.FLOW_TAG_CHECKED_MULTI)
+    private fun initMnem() {
+        binding.ftlMnem.setTagCheckedMode(FlowTagLayout.FLOW_TAG_CHECKED_MULTI)
         mMnemAdapter = object :
             CommonAdapter<WalletBackUp>(this, R.layout.listitem_tag_mnem_chinese, mMnemList) {
             override fun convert(viewHolder: ViewHolder, backUp: WalletBackUp, position: Int) {
                 val view: TextView = viewHolder.getView(R.id.tv_tag)
-                if (mPWallet.mnemType == PWallet.TYPE_CHINESE) {
+                if (mPWallet?.mnemType == PWallet.TYPE_CHINESE) {
                     val pra =
                         view.layoutParams as LinearLayout.LayoutParams
                     pra.width = ScreenUtils.dp2px(mContext, 40f)
@@ -136,10 +126,10 @@ class BackUpWalletActivity : BaseActivity() {
                 viewHolder.setText(R.id.tv_tag, backUp.mnem)
             }
         }
-        ftl_mnem.adapter = mMnemAdapter
+        binding.ftlMnem.adapter = mMnemAdapter
         mMnemList.shuffle()
         mMnemAdapter?.notifyDataSetChanged()
-        ftl_mnem.setOnTagSelectListener { parent, selectedList, position, isSelect ->
+        binding.ftlMnem.setOnTagSelectListener { parent, selectedList, position, isSelect ->
             if (!ListUtils.isEmpty(selectedList)) {
                 val backUp = parent.adapter.getItem(position) as WalletBackUp
 
@@ -156,28 +146,10 @@ class BackUpWalletActivity : BaseActivity() {
                 if (!isHave) {
                     updateMenmResult(backUp);
                 }
-                checkButton()
             }
         }
     }
 
-    private fun checkButton() {
-        var clickEnable = true
-        for (i in mMnemList.indices) {
-            if (mMnemList[i].select == WalletBackUp.UN_SELECTED) {
-                clickEnable = false
-                break
-            }
-        }
-        if (clickEnable) {
-            btn_ok.setTextColor(resources.getColor(R.color.white))
-            btn_ok.setBackgroundResource(R.drawable.bg_button_word_press)
-        } else {
-            btn_ok.setTextColor(resources.getColor(R.color.color_9EA2AD))
-            btn_ok.setBackgroundResource(R.drawable.bg_button_word)
-        }
-        btn_ok.isEnabled = clickEnable
-    }
 
     private fun updateMenmResult(backUp: WalletBackUp) {
         mMnemResultList.add(backUp)
@@ -186,42 +158,36 @@ class BackUpWalletActivity : BaseActivity() {
     }
 
     private fun initMnemResult() {
-        if (mPWallet.mnemType == PWallet.TYPE_CHINESE) {
+        if (mPWallet?.mnemType == PWallet.TYPE_CHINESE) {
             val layoutManager =
                 AutoLineFeedLayoutManager()
-            ftl_mnem_result.layoutManager = layoutManager
-            ftl_mnem_result.addItemDecoration(TestDividerItemDecoration())
+            binding.ftlMnemResult.layoutManager = layoutManager
+            binding.ftlMnemResult.addItemDecoration(TestDividerItemDecoration())
         } else {
             // 设置布局管理器
             val layoutManager =
                 AutoLineFeedLayoutManager()
             layoutManager.isAutoMeasureEnabled = true
-            ftl_mnem_result.layoutManager = layoutManager
+            binding.ftlMnemResult.layoutManager = layoutManager
         }
 
         // 设置适配器
-        mMnemResultAdapter = BackUpWalletAdapter(
-            this@BackUpWalletActivity,
-            R.layout.activity_back_up_wallet_item,
-            mMnemResultList,
-            mPWallet.mnemType
-        )
-        //给RecyclerView设置适配器
-        ftl_mnem_result.adapter = mMnemResultAdapter
-        mMnemResultAdapter?.notifyDataSetChanged()
-        //val itemDragAndSwipeCallback = ItemDragAndSwipeCallback(mMnemResultAdapter)
-        //val itemTouchHelper = ItemTouchHelper(itemDragAndSwipeCallback)
-        //itemTouchHelper.attachToRecyclerView(ftl_mnem_result)
-
-        // 开启拖拽
-        //mMnemResultAdapter?.enableDragItem(itemTouchHelper, R.id.recycle_text, true)
-        //mMnemResultAdapter?.setOnItemDragListener(onItemDragListener)
+        mPWallet?.let {
+            mMnemResultAdapter = BackUpWalletAdapter(
+                this@BackUpWalletActivity,
+                R.layout.activity_back_up_wallet_item,
+                mMnemResultList,
+                it.mnemType
+            )
+            //给RecyclerView设置适配器
+            binding.ftlMnemResult.adapter = mMnemResultAdapter
+            mMnemResultAdapter?.notifyDataSetChanged()
+        }
 
         mMnemResultAdapter?.setOnItemClickListener { adapter, view, position ->
             val backUp = adapter.getItem(position) as WalletBackUp
             backUp.select = WalletBackUp.UN_SELECTED
             updateMenm(backUp)
-            checkButton()
         }
     }
 
@@ -233,44 +199,60 @@ class BackUpWalletActivity : BaseActivity() {
 
 
     override fun initListener() {
-        btn_ok.setOnClickListener {
-            if (isFastClick()) {
-                return@setOnClickListener
-            }
-            val mnemString: String? = getMnemString()
-            val mnem = mnemFrom!!.replace(" ", "")
-            if (mnemString != mnem) {
-                ToastUtils.show(this, getString(R.string.mnemonic_wrong))
-                return@setOnClickListener
-            }
-            if (mFrom == WalletManager::class.java.simpleName) {
-                ToastUtils.show(this, getString(R.string.backup_success))
-                finish()
-                return@setOnClickListener
-            }
-            showLoading()
-
-            lifecycleScope.launch {
-                val id = BWallet.get().importWallet(
-                    WalletConfiguration.mnemonicWallet(
-                        mnemFrom!!,
-                        mPWallet.name,
-                        mPWallet.password,
-                        "",
-                        Constants.getCoins()
-                    ), true
-                )
-                val pWallet = BWallet.get().findWallet(id)
-
-                dismiss()
-                LiveEventBus.get<PWallet>(LIVE_KEY_WALLET).post(pWallet)
-                closeSomeActivitys()
+        binding.btnMnem.setOnClickListener {
+            if (checked()) {
+                gotoMain()
             }
 
         }
+        binding.btnRecover.setOnClickListener {
+            //if (checked()) {
+            ARouter.getInstance().build(RouterPath.WALLET_NEW_RECOVER_ADDRESS)
+                .withSerializable(RouterPath.PARAM_WALLET, mPWallet)
+                .withString(RouterPath.PARAM_VISIBLE_MNEM, visibleMnem)
+                .navigation()
+            //}
+        }
     }
 
-    private fun getMnemString(): String? {
+    private fun checked(): Boolean {
+        if (isFastClick()) {
+            return false
+        }
+        val mnemString: String = getMnemString()
+        val mnem = visibleMnem!!.replace(" ", "")
+        if (mnemString != mnem) {
+            toast(getString(R.string.mnemonic_wrong))
+            return false
+        }
+        return true
+    }
+
+    private fun gotoMain() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            showLoading()
+            withContext(Dispatchers.IO) {
+                mPWallet?.let {
+                    val id = BWallet.get().importWallet(
+                        WalletConfiguration.mnemonicWallet(
+                            visibleMnem!!,
+                            it.name,
+                            it.password,
+                            "",
+                            Constants.getCoins()
+                        ), true
+                    )
+                    MyWallet.setId(id)
+                    val pWallet = LitePal.find<PWallet>(id)
+                    LiveEventBus.get<PWallet>(LIVE_KEY_WALLET).post(pWallet)
+                }
+            }
+            dismiss()
+            closeSomeActivitys()
+        }
+    }
+
+    private fun getMnemString(): String {
         var string = ""
         for (backUp in mMnemResultList) {
             string += backUp.mnem
@@ -278,23 +260,4 @@ class BackUpWalletActivity : BaseActivity() {
         return string
     }
 
-
-    companion object {
-        const val MNEM_TAG = "mnem"
-
-        fun launch(context: Context, pWallet: PWallet, from: String) {
-            val intent = Intent(context, BackUpWalletActivity::class.java)
-            intent.putExtra(PWallet::class.java.simpleName, pWallet)
-            intent.putExtra(Constants.FROM, from)
-            context.startActivity(intent)
-        }
-
-        fun launch(context: Context, pWallet: PWallet?, mnem: String?, from: String?) {
-            val `in` = Intent(context, BackUpWalletActivity::class.java)
-            `in`.putExtra(PWallet::class.java.simpleName, pWallet)
-            `in`.putExtra(MNEM_TAG, mnem)
-            `in`.putExtra(Constants.FROM, from)
-            context.startActivity(`in`)
-        }
-    }
 }

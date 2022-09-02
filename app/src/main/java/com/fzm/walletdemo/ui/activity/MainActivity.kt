@@ -5,11 +5,8 @@ import android.os.Bundle
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import com.alibaba.android.arouter.facade.annotation.Route
-import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.RouterPath
-import com.fzm.wallet.sdk.alpha.EmptyWallet
 import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
@@ -26,11 +23,9 @@ import com.fzm.walletmodule.ui.fragment.WalletIndexFragment
 import com.fzm.walletmodule.update.UpdateUtils
 import com.fzm.walletmodule.vm.WalletViewModel
 import com.jeremyliao.liveeventbus.LiveEventBus
-import kotlinx.coroutines.flow.collect
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import org.jetbrains.anko.support.v4.toast
 import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
 import org.litepal.LitePal.count
@@ -54,13 +49,6 @@ class MainActivity : BaseActivity() {
         setTabSelection(0)
         initObserver()
         Constants.setCoins(DEFAULT_COINS)
-        lifecycleScope.launchWhenResumed {
-            BWallet.get().current.collect {
-                if (it is EmptyWallet) {
-                    setTabSelection(0)
-                }
-            }
-        }
         gotoUpdate()
     }
 

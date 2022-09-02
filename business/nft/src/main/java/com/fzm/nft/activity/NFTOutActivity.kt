@@ -19,9 +19,11 @@ import com.fzm.nft.databinding.ActivityNftoutBinding
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
+import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
 import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.net.UrlConfig
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.utils.GoWallet
@@ -35,6 +37,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
+import org.litepal.LitePal
+import org.litepal.extension.find
 import walletapi.Walletapi
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -133,7 +137,7 @@ class NFTOutActivity : BaseActivity() {
             )
             sign?.let { signHash ->
                 val send =
-                    GoWallet.sendTran(Walletapi.TypeETHString, signHash, "", UrlConfig.GO_URL)
+                    GoWallet.sendTran(Walletapi.TypeETHString, signHash, "")
                 Log.v("nft", "send = $send")
                 toast("操作成功" + send)
                 loading.dismiss()
@@ -183,7 +187,8 @@ class NFTOutActivity : BaseActivity() {
                 return@setOnClickListener
             }
             CoroutineScope(Dispatchers.IO).launch {
-                BWallet.get().getCurrentWallet()?.let {
+                val wallet = LitePal.find<PWallet>(MyWallet.getId())
+                wallet?.let {
                     withContext(Dispatchers.Main) {
                         loading.show()
                     }

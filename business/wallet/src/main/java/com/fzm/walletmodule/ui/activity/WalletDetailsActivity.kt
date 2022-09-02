@@ -9,10 +9,11 @@ import androidx.lifecycle.lifecycleScope
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
-import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.db.entity.PWallet.TYPE_PRI_KEY
+import com.fzm.wallet.sdk.db.entity.PWallet.TYPE_RECOVER
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.databinding.ActivityWalletDetailsBinding
@@ -24,6 +25,7 @@ import com.fzm.walletmodule.manager.WalletManager
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.ListUtils
 import com.fzm.walletmodule.utils.isFastClick
+import com.jeremyliao.liveeventbus.LiveEventBus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -70,19 +72,26 @@ class WalletDetailsActivity : BaseActivity() {
     override fun initView() {
         super.initView()
         tvTitle.text = getString(R.string.title_wallet_details)
+        configWallets()
+
+    }
+
+    override fun configWallets() {
+        super.configWallets()
         lifecycleScope.launch(Dispatchers.IO) {
             mPWallet = find(PWallet::class.java, walletid)
             withContext(Dispatchers.Main) {
                 mPWallet?.let {
-                    if (it.type == PWallet.TYPE_PRI_KEY) {
-                        binding.tvOutMnem.visibility = View.GONE
-                    } else {
-                        binding.tvOutMnem.visibility = View.VISIBLE
+                    when (it.type) {
+                        TYPE_PRI_KEY, TYPE_RECOVER -> {
+                            binding.tvForgetPassword.visibility = View.GONE
+                            binding.tvOutMnem.visibility = View.GONE
+                            binding.tvNewRecoverAddress.visibility = View.GONE
+                        }
                     }
                 }
             }
         }
-
     }
 
 
@@ -169,7 +178,10 @@ class WalletDetailsActivity : BaseActivity() {
                 return@setOnClickListener
             }
             lifecycleScope.launch(Dispatchers.IO) {
-                BWallet.get().changeWalletName(input)
+                mPWallet?.let {
+                    it.name = input
+                    it.update(it.id)
+                }
                 withContext(Dispatchers.Main) {
                     toast(getString(R.string.my_wallet_modified_success))
                     editDialog.dismiss()
@@ -236,9 +248,8 @@ class WalletDetailsActivity : BaseActivity() {
                     }
                     commonBinding.btnRight.setOnClickListener {
                         lifecycleScope.launch(Dispatchers.IO) {
-                            BWallet.get().deleteWallet(password)
+                            mPWallet?.delete()
                             withContext(Dispatchers.Main) {
-                                commonDialog.dismiss()
                                 finish()
                             }
                         }

@@ -3,7 +3,6 @@ package com.fzm.wallet.sdk.alpha
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.BWalletImpl
 import com.fzm.wallet.sdk.WalletConfiguration
-import com.fzm.wallet.sdk.base.DEFAULT_COINS
 import com.fzm.wallet.sdk.base.REGEX_CHINESE
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
@@ -15,14 +14,9 @@ import org.litepal.LitePal
 import org.litepal.extension.find
 import walletapi.Walletapi
 
-/**
- * @author zhengjy
- * @since 2022/01/12
- * Description:
- */
 class NormalWallet(wallet: PWallet) : BaseWallet(wallet) {
 
-    override suspend fun init(configuration: WalletConfiguration): String {
+    suspend fun init(configuration: WalletConfiguration): Long {
         return with(configuration) {
             val mnemType = if (mnemonic!!.substring(0, 1).matches(REGEX_CHINESE.toRegex())) {
                 PWallet.TYPE_CHINESE
@@ -60,7 +54,7 @@ class NormalWallet(wallet: PWallet) : BaseWallet(wallet) {
                 }
                 wallet.also {
                     it.mnemType = mnemType
-                    it.type = PWallet.TYPE_NOMAL
+                    it.type = type
                     it.name = walletName
                     it.user = configuration.user
                     val bPassword = Walletapi.encPasswd(password)
@@ -71,7 +65,7 @@ class NormalWallet(wallet: PWallet) : BaseWallet(wallet) {
                 LitePal.saveAll(coins)
                 wallet.coinList.addAll(coins)
                 wallet.save()
-                wallet.id.toString()
+                wallet.id
             }
 
 
