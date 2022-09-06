@@ -18,6 +18,7 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.alibaba.fastjson.JSON
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
+import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.bean.StringResult
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
@@ -49,6 +50,7 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import walletapi.WalletRecover
 import walletapi.Walletapi
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -282,7 +284,7 @@ class OutActivity : BaseActivity() {
         bindingDialog.btnOk.setOnClickListener {
             val money = binding.etMoney.text.toString()
             val password = bindingDialog.etInput.text.toString()
-            if (password.isNullOrEmpty()) {
+            if (password.isEmpty()) {
                 toast("请输入密码")
                 return@setOnClickListener
             }
@@ -308,34 +310,49 @@ class OutActivity : BaseActivity() {
 
                         }
 
-                        if (it.getpWallet().type == PWallet.TYPE_PRI_KEY) {
-                            if ("YCC" == it.chain || "BTY" == it.chain) {
-                                if ("ethereum" == it.platform) {
-                                    addressId = 2
-                                } else if ("btc" == it.platform) {
-                                    addressId = 0
-                                }
-                            }
-                            privkey = it.getPrivkey(password)
-                        } else {
-                            val bPassword = GoWallet.encPasswd(password)!!
-                            val mnem: String = GoWallet.decMenm(bPassword, it.getpWallet().mnem)
-                            if ("YCC" == it.chain || "BTY" == it.chain) {
-                                if ("ethereum" == it.platform) {
-                                    addressId = 2
-                                    privkey = it.getPrivkey("ETH", mnem)
-                                } else if ("btc" == it.platform) {
-                                    privkey = it.getPrivkey("BTC", mnem)
-                                    addressId = 0
+                        when (it.getpWallet().type) {
+                            PWallet.TYPE_NOMAL -> {
+                                val bPassword = GoWallet.encPasswd(password)!!
+                                val mnem: String = GoWallet.decMenm(bPassword, it.getpWallet().mnem)
+                                if ("YCC" == it.chain || "BTY" == it.chain) {
+                                    if ("ethereum" == it.platform) {
+                                        addressId = 2
+                                        privkey = it.getPrivkey("ETH", mnem)
+                                    } else if ("btc" == it.platform) {
+                                        privkey = it.getPrivkey("BTC", mnem)
+                                        addressId = 0
+                                    } else {
+                                        privkey = it.getPrivkey(it.chain, mnem)
+                                    }
                                 } else {
                                     privkey = it.getPrivkey(it.chain, mnem)
                                 }
-                            } else {
-                                privkey = it.getPrivkey(it.chain, mnem)
+                                handleTransactions(toAddress, money)
+                            }
+                            PWallet.TYPE_PRI_KEY -> {
+                                if ("YCC" == it.chain || "BTY" == it.chain) {
+                                    if ("ethereum" == it.platform) {
+                                        addressId = 2
+                                    } else if ("btc" == it.platform) {
+                                        addressId = 0
+                                    }
+                                }
+                                privkey = it.getPrivkey(password)
+                                handleTransactions(toAddress, money)
+                            }
+                            PWallet.TYPE_RECOVER -> {
+                                if ("YCC" == it.chain || "BTY" == it.chain) {
+                                    if ("ethereum" == it.platform) {
+                                        addressId = 2
+                                    } else if ("btc" == it.platform) {
+                                        addressId = 0
+                                    }
+                                }
+                                privkey = it.getPrivkey(password)
+                                //找回钱包发送交易
+                                doRecover(toAddress, money)
                             }
                         }
-
-                        handleTransactions(toAddress, money)
 
 
                     }
@@ -344,6 +361,56 @@ class OutActivity : BaseActivity() {
                 }
             }
         }
+    }
+
+    private suspend fun doRecover(toAddress: String, money: String) {
+        coin?.let {
+            val tokenSymbol = if (it.name == it.chain) "" else it.name
+            val walletRecoverParam = GoWallet.queryRecover(it.address)
+            val walletRecover = WalletRecover()
+            walletRecover.param = walletRecoverParam
+            val createRaw = GoWallet.createTran(
+                it.chain,
+                it.address,
+                toAddress,
+                money.toDouble(),
+                fee,
+                "",
+                tokenSymbol
+            )
+            val strResult = JSON.parseObject(createRaw, StringResult::class.java)
+            val createRawResult: String? = strResult.result
+            if (!createRawResult.isNullOrEmpty()) {
+                val signtx = walletRecover.signRecoverTxWithCtrKey(
+                    Walletapi.stringTobyte(createRawResult),
+                    privkey
+                )
+                val sendRawTransaction = GoWallet.sendTran(it.chain, signtx, tokenSymbol)
+                withContext(Dispatchers.Main) {
+                    loading.dismiss()
+                    if (sendRawTransaction.isNullOrEmpty()) {
+                        toast(getString(R.string.home_transfer_currency_fails))
+                        finish()
+                        return@withContext
+                    }
+                    val result: StringResult? = parseResult(sendRawTransaction)
+                    if (result == null) {
+                        toast(getString(R.string.out_result_fails))
+                        finish()
+                        return@withContext
+                    }
+                    if (!TextUtils.isEmpty(result.error)) {
+                        toast(result.error!!)
+                        finish()
+                        return@withContext
+                    }
+                    toast(getString(R.string.home_transfer_currency_success))
+                    finish()
+                }
+            }
+        }
+
+
     }
 
 

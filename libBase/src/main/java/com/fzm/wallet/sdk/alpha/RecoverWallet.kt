@@ -15,14 +15,12 @@ class RecoverWallet(wallet: PWallet) : BaseWallet(wallet) {
     suspend fun init(configuration: WalletConfiguration): Long {
         return with(configuration) {
             coins[0].let { chooseChain ->
-                val pubkey = GoWallet.priToPub(chooseChain.chain, privateKey!!)
+                GoWallet.priToPub(chooseChain.chain, privateKey!!)
                     ?: throw ImportWalletException("私钥有误")
-                chooseChain.status = Coin.STATUS_ENABLE
-                chooseChain.pubkey = Walletapi.byteTohex(pubkey)
-
                 val bPassword = Walletapi.encPasswd(password)
                 val encByteKey = Walletapi.encKey(bPassword, Walletapi.hexTobyte(privateKey))
                 val encPrivateKey = Walletapi.byteTohex(encByteKey)
+                chooseChain.status = Coin.STATUS_ENABLE
                 chooseChain.setPrivkey(encPrivateKey)
                 coins = listOf(chooseChain)
             }
@@ -35,7 +33,6 @@ class RecoverWallet(wallet: PWallet) : BaseWallet(wallet) {
                     password?.let { p ->
                         it.password = GoWallet.passwdHash(Walletapi.encPasswd(p))
                     }
-                    it.user = configuration.user
                 }
                 LitePal.saveAll(coins)
                 wallet.coinList.addAll(coins)

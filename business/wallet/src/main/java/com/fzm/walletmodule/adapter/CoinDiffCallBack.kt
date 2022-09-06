@@ -38,7 +38,6 @@ class CoinDiffCallBack(
         }
 
         //这里返回false，getChangePayload才会被调用
-        logDebug("same$same")
         return same
     }
 

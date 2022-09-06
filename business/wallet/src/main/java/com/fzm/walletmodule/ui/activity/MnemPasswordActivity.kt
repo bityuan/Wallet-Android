@@ -4,13 +4,13 @@ import android.os.Bundle
 import android.text.TextUtils
 
 import android.view.View
+import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.walletmodule.R
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.walletmodule.event.CheckMnemEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.AppUtils
 import com.fzm.wallet.sdk.utils.GoWallet
-import com.fzm.walletmodule.utils.WalletUtils
 import com.fzm.walletmodule.utils.ToastUtils
 import com.fzm.walletmodule.utils.isFastClick
 import kotlinx.android.synthetic.main.activity_set_password.*
@@ -20,6 +20,8 @@ import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.doAsync
 
 import org.jetbrains.anko.uiThread
+import org.litepal.LitePal
+import org.litepal.extension.find
 
 class MnemPasswordActivity : BaseActivity() {
     private var mnem: String? = ""
@@ -31,7 +33,7 @@ class MnemPasswordActivity : BaseActivity() {
         mnem = intent.getStringExtra(PWallet.PWALLET_MNEM)
         walletId = intent.getLongExtra(PWallet.PWALLET_ID, -1)
         btn_sure.setOnClickListener {
-            if (isFastClick()){
+            if (isFastClick()) {
                 return@setOnClickListener
             }
             val newPassword = et_password.text.toString()
@@ -39,17 +41,19 @@ class MnemPasswordActivity : BaseActivity() {
             if (checked(newPassword, passwordAgain)) {
                 showLoading()
                 doAsync {
-                    val pWallet =
-                        WalletUtils.getUsingWallet()
+                    val pWallet = LitePal.find<PWallet>(MyWallet.getId())
                     val encPasswd = GoWallet.encPasswd(newPassword)
                     val passwdHash = GoWallet.passwdHash(encPasswd!!)
                     val encMnem = GoWallet.encMenm(encPasswd, mnem!!)
-                    pWallet.password = passwdHash
-                    pWallet.mnem = encMnem
-                    pWallet.update(pWallet.id)
+                    pWallet?.let {
+                        it.password = passwdHash
+                        it.mnem = encMnem
+                        it.update(it.id)
+                    }
+
                     uiThread {
                         dismiss()
-                        ToastUtils.show(this@MnemPasswordActivity,"设置成功")
+                        ToastUtils.show(this@MnemPasswordActivity, "设置成功")
                         finish()
                         EventBus.getDefault().post(CheckMnemEvent())
                     }

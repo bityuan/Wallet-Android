@@ -46,7 +46,6 @@ class MainActivity : BaseActivity() {
         setContentView(binding.root)
         EventBus.getDefault().register(this)
         initView()
-        setTabSelection(0)
         initObserver()
         Constants.setCoins(DEFAULT_COINS)
         gotoUpdate()
@@ -162,7 +161,7 @@ class MainActivity : BaseActivity() {
 
     override fun initObserver() {
         super.initObserver()
-        LiveEventBus.get<PWallet>(LIVE_KEY_WALLET).observeSticky(this, Observer {
+        LiveEventBus.get<Long>(LIVE_KEY_WALLET).observeSticky(this, Observer {
             it?.let {
                 setTabSelection(0)
             }

@@ -38,7 +38,6 @@ class PrivateKeyWallet(wallet: PWallet) : BaseWallet(wallet) {
                     password?.let { p ->
                         it.password = GoWallet.passwdHash(Walletapi.encPasswd(p))
                     }
-                    it.user = configuration.user
                 }
                 LitePal.saveAll(coins)
                 wallet.coinList.addAll(coins)

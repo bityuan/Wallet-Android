@@ -29,10 +29,6 @@ interface Apis {
         @Query("coinname") coinName: String
     ): HttpResponse<WithHold>
 
-    @GET("goapi/interface/tokenview/explore")
-    suspend fun getBrowserUrl(@Query("platform") platform: String): HttpResponse<BrowserBean>
-
-
     @POST("interface/wallet-coin")
     suspend fun getCoinList(@Body body: Map<String, Any>): HttpResponse<List<Coin>>
 

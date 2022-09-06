@@ -8,9 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.alibaba.android.arouter.launcher.ARouter
@@ -25,7 +23,6 @@ import com.fzm.walletmodule.ui.activity.AddCoinActivity
 import com.fzm.walletmodule.ui.activity.MyWalletsActivity
 import com.fzm.walletmodule.ui.fragment.WalletFragment
 import com.fzm.walletmodule.utils.ClickUtils
-import com.fzm.walletmodule.vm.ParamViewModel
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.backgroundResource
 import org.jetbrains.anko.support.v4.startActivity
@@ -34,9 +31,8 @@ import walletapi.Walletapi
 
 class HomeFragment : Fragment() {
 
-    private val paramViewModel by activityViewModels<ParamViewModel>()
     private lateinit var binding: FragmentHomeBinding
-    private var cWalletId:Long = -1
+    private var cWalletId: Long = -1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,21 +52,17 @@ class HomeFragment : Fragment() {
         binding.vpHome.adapter = adapter
         binding.tabHome.setupWithViewPager(binding.vpHome)
 
-        paramViewModel.walletName.observe(viewLifecycleOwner, Observer {
-            binding.header.tvName.text = it
-
-            /*if (BWallet.get().getCurrentWallet()?.type != 2) {
-                if (binding.tabHome.tabCount > 1) {
-                    binding.tabHome.getTabAt(1)?.view?.visibility = View.GONE
-                }
-            } else {
-                if (binding.tabHome.tabCount > 1) {
-                    binding.tabHome.getTabAt(1)?.view?.visibility = View.VISIBLE
-                }
-            }*/
+        /*if (BWallet.get().getCurrentWallet()?.type != 2) {
+            if (binding.tabHome.tabCount > 1) {
+                binding.tabHome.getTabAt(1)?.view?.visibility = View.GONE
+            }
+        } else {
+            if (binding.tabHome.tabCount > 1) {
+                binding.tabHome.getTabAt(1)?.view?.visibility = View.VISIBLE
+            }
+        }*/
 
 
-        })
 
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
@@ -119,6 +111,7 @@ class HomeFragment : Fragment() {
 
 
     private fun refreshWallet(pWallet: PWallet) {
+        binding.header.tvName.text = pWallet.name
         when (pWallet.type) {
             TYPE_PRI_KEY -> {
                 val chain = pWallet.coinList[0].chain

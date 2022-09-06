@@ -264,7 +264,7 @@ class NewRecoverAddressActivity : BaseActivity() {
                         recoverTime
                     )
 
-                    submitRecover(address!!, recoverParam, privateKey, it.password)
+                    submitRecover(address!!, recoverParam, privateKey, password)
 
                 }
 
@@ -277,7 +277,7 @@ class NewRecoverAddressActivity : BaseActivity() {
         fromAddr: String,
         recoverParam: WalletRecoverParam,
         crtPrivKey: String,
-        passwordHash: String
+        password: String
     ): String {
         val walletRecover = WalletRecover()
         walletRecover.param = recoverParam
@@ -287,7 +287,7 @@ class NewRecoverAddressActivity : BaseActivity() {
                 "BTY",
                 fromAddr,
                 walletRecover.walletRecoverAddr,
-                0.001,
+                0.1,
                 0.1,
                 paramNote,
                 ""
@@ -320,21 +320,33 @@ class NewRecoverAddressActivity : BaseActivity() {
                         try {
                             val id = wallet.importWallet(
                                 WalletConfiguration.recoverWallet(
-                                    crtPrivKey, walletRecover.walletRecoverAddr, passwordHash, "",
+                                    crtPrivKey, walletRecover.walletRecoverAddr, password,
                                     listOf(Coin().apply {
                                         chain = "BTY"
                                         name = "BTY"
                                         platform = "bty"
                                         netId = "154"
                                         address = walletRecover.walletRecoverAddr
+                                    },Coin().apply {
+                                        chain = "ETH"
+                                        name = "BTY"
+                                        platform = "ethereum"
+                                        netId = "732"
+                                        address = walletRecover.walletRecoverAddr
+                                    },Coin().apply {
+                                        chain = "ETH"
+                                        name = "YCC"
+                                        platform = "ethereum"
+                                        netId = "155"
+                                        address = walletRecover.walletRecoverAddr
                                     })
-                                ), true
+                                )
                             )
 
-                            if (id != (-1).toLong()) {
-                                val pWallet = LitePal.find<PWallet>(id)
+                            if (id != MyWallet.ID_DEFAULT) {
+                                MyWallet.setId(id)
                                 dismiss()
-                                LiveEventBus.get<PWallet>(LIVE_KEY_WALLET).post(pWallet)
+                                LiveEventBus.get<Long>(LIVE_KEY_WALLET).post(id)
                                 toast("创建成功")
                                 closeSomeActivitys()
                                 finish()

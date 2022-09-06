@@ -8,8 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.utils.GoWallet
@@ -19,17 +21,18 @@ import com.fzm.walletmodule.event.AddCoinEvent
 import com.fzm.walletmodule.ui.base.BaseFragment
 import com.fzm.walletmodule.ui.widget.EditDialogFragment
 import com.fzm.walletmodule.utils.ToastUtils
-import com.fzm.walletmodule.utils.WalletUtils
 import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
-import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.support.v4.toast
-import org.jetbrains.anko.uiThread
+import org.litepal.LitePal
 import org.litepal.LitePal.select
 import org.litepal.LitePal.where
+import org.litepal.extension.find
 import walletapi.HDWallet
-import java.util.HashMap
 
 
 class TokenCoinFragment : BaseFragment() {
@@ -38,7 +41,7 @@ class TokenCoinFragment : BaseFragment() {
     private var mPWallet: PWallet? = null
     private val mStatusMap = HashMap<String, Int>()
     private val mCoinsMap = HashMap<String, Coin>()
-    private lateinit var binding:FragmentTokenCoinBinding
+    private lateinit var binding: FragmentTokenCoinBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -56,7 +59,7 @@ class TokenCoinFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentTokenCoinBinding.inflate(inflater,container,false)
+        binding = FragmentTokenCoinBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -159,7 +162,7 @@ class TokenCoinFragment : BaseFragment() {
     }
 
     private fun refreshPWallet() {
-        mPWallet = WalletUtils.getUsingWallet()
+        mPWallet = LitePal.find<PWallet>(MyWallet.getId())
         val homeData = where(
             "pwallet_id = ?",
             java.lang.String.valueOf(mPWallet?.id)
@@ -204,29 +207,59 @@ class TokenCoinFragment : BaseFragment() {
 
     private fun handlePasswordAfter(coin: Coin, password: String) {
         showLoading()
-        doAsync {
-            val bPassword: ByteArray? = GoWallet.encPasswd(password)
-            val mnem: String = GoWallet.decMenm(bPassword!!, mPWallet!!.mnem)
-            if (!TextUtils.isEmpty(mnem)) {
-                val hdWallet: HDWallet? = GoWallet.getHDWallet(coin.chain, mnem)
-                val address = hdWallet!!.newAddress_v2(0)
-                val pubkey = hdWallet.newKeyPub(0)
-                val pubkeyStr: String = GoWallet.encodeToStrings(pubkey)
-                coin.address = address
-                coin.pubkey = pubkeyStr
-                // GoManager.importAddress(coin.chain, address)
-                uiThread {
-                    dismiss()
-                    updateCoin(coin, true, true)
+        mPWallet?.let {
+            lifecycleScope.launch(Dispatchers.IO) {
+                val result = GoWallet.checkPasswd(password, it.password)
+                if (result) {
+                    when (it.type) {
+                        PWallet.TYPE_NOMAL -> {
+                            val bPassword = GoWallet.encPasswd(password)
+                            val mnem: String = GoWallet.decMenm(bPassword!!, it.mnem)
+                            val hdWallet: HDWallet? = GoWallet.getHDWallet(coin.chain, mnem)
+                            val address = hdWallet!!.newAddress_v2(0)
+                            val pubkey = hdWallet.newKeyPub(0)
+                            val pubkeyStr: String = GoWallet.encodeToStrings(pubkey)
+                            coin.address = address
+                            coin.pubkey = pubkeyStr
+                            withContext(Dispatchers.Main) {
+                                dismiss()
+                                updateCoin(coin, true, true)
+                            }
+                        }
+                        PWallet.TYPE_PRI_KEY -> {
+                            val chain = where(
+                                "pwallet_id = ? and chain = name",
+                                it.id.toString()
+                            ).find<Coin>(true)
+                            coin.pubkey = chain[0].pubkey
+                            coin.address = chain[0].address
+                            coin.setPrivkey(chain[0].encPrivkey)
+                            updateCoin(coin, true, true)
+
+                        }
+                        PWallet.TYPE_RECOVER -> {
+                            val chain = where(
+                                "pwallet_id = ? and chain = name",
+                                it.id.toString()
+                            ).find<Coin>(true)
+                            coin.address = chain[0].address
+                            coin.setPrivkey(chain[0].encPrivkey)
+                            updateCoin(coin, true, true)
+                        }
+                        else -> {}
+                    }
+
+                } else {
+                    withContext(Dispatchers.Main) {
+                        dismiss()
+                        toast(getString(R.string.my_wallet_detail_wrong_password))
+                    }
                 }
-            } else {
-                uiThread {
-                    dismiss()
-                    toast(getString(R.string.my_wallet_detail_wrong_password))
-                   // ToastUtils.show(activity, getString(R.string.my_wallet_detail_wrong_password))
-                }
+
             }
+
         }
+
     }
 
 

@@ -14,6 +14,7 @@ import com.fzm.wallet.sdk.WalletConfiguration
 import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
 import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.walletmodule.BuildConfig
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.adapter.BackUpWalletAdapter
 import com.fzm.walletmodule.base.Constants
@@ -206,16 +207,20 @@ class BackUpWalletActivity : BaseActivity() {
 
         }
         binding.btnRecover.setOnClickListener {
-            //if (checked()) {
-            ARouter.getInstance().build(RouterPath.WALLET_NEW_RECOVER_ADDRESS)
-                .withSerializable(RouterPath.PARAM_WALLET, mPWallet)
-                .withString(RouterPath.PARAM_VISIBLE_MNEM, visibleMnem)
-                .navigation()
-            //}
+            if (checked()) {
+                ARouter.getInstance().build(RouterPath.WALLET_NEW_RECOVER_ADDRESS)
+                    .withSerializable(RouterPath.PARAM_WALLET, mPWallet)
+                    .withString(RouterPath.PARAM_VISIBLE_MNEM, visibleMnem)
+                    .navigation()
+            }
         }
     }
 
     private fun checked(): Boolean {
+        if (BuildConfig.DEBUG) {
+            return true
+        }
+
         if (isFastClick()) {
             return false
         }
@@ -238,13 +243,11 @@ class BackUpWalletActivity : BaseActivity() {
                             visibleMnem!!,
                             it.name,
                             it.password,
-                            "",
                             Constants.getCoins()
-                        ), true
+                        )
                     )
                     MyWallet.setId(id)
-                    val pWallet = LitePal.find<PWallet>(id)
-                    LiveEventBus.get<PWallet>(LIVE_KEY_WALLET).post(pWallet)
+                    LiveEventBus.get<Long>(LIVE_KEY_WALLET).post(id)
                 }
             }
             dismiss()

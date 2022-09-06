@@ -13,47 +13,17 @@ class WalletConfiguration {
     /**
      * 钱包类型
      */
-
     var type: Int = 0
-
-    /**
-     * 助记词
-     */
     var mnemonic: String? = null
         private set
-
-    /**
-     * 私钥
-     */
     var privateKey: String? = null
         private set
-
-    /**
-     * 地址
-     */
     var address: String? = null
         private set
-
-    /**
-     * 账户名
-     */
     var walletName: String? = null
         private set
-
-    /**
-     * 账户密码
-     */
     var password: String? = null
         private set
-
-    /**
-     * 用户标识符
-     */
-    var user: String = ""
-        private set
-
-    /**
-     */
     var coins: List<Coin> = ArrayList()
 
     companion object {
@@ -62,14 +32,12 @@ class WalletConfiguration {
             mnemonic: String,
             walletName: String,
             password: String,
-            user: String,
             coins: List<Coin>
         ) = WalletConfiguration().apply {
             this.type = PWallet.TYPE_NOMAL
             this.mnemonic = mnemonic
             this.walletName = walletName
             this.password = password
-            this.user = user
             this.coins = coins
         }
 
@@ -77,28 +45,24 @@ class WalletConfiguration {
             privateKey: String,
             walletName: String,
             password: String,
-            user: String,
             coins: List<Coin>
         ) = WalletConfiguration().apply {
             this.type = PWallet.TYPE_PRI_KEY
             this.privateKey = privateKey
             this.walletName = walletName
             this.password = password
-            this.user = user
             this.coins = coins
         }
         fun recoverWallet(
             privateKey: String,
             walletName: String,
             password: String,
-            user: String,
             coins: List<Coin>
         ) = WalletConfiguration().apply {
             this.type = PWallet.TYPE_RECOVER
             this.privateKey = privateKey
             this.walletName = walletName
             this.password = password
-            this.user = user
             this.coins = coins
         }
 
@@ -106,13 +70,11 @@ class WalletConfiguration {
             address: String,
             walletName: String,
             password: String,
-            user: String,
             coins: List<Coin>
         ) = WalletConfiguration().apply {
             this.address = address
             this.walletName = walletName
             this.password = password
-            this.user = user
             this.coins = coins
         }
     }

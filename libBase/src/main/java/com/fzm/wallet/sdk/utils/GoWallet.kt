@@ -623,7 +623,6 @@ class GoWallet {
         }
 
 
-
         fun queryRecover(xAddress: String): WalletRecoverParam {
             val r = WalletRecover()
             val walletRecoverParam = r.transportQueryRecoverInfo(QueryRecoverParam().apply {

@@ -10,6 +10,7 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.walletmodule.BuildConfig
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.databinding.ActivityCreateWalletBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
@@ -36,6 +37,11 @@ class CreateWalletActivity : BaseActivity() {
 
     override fun initView() {
         super.initView()
+        if(BuildConfig.DEBUG){
+            binding.etName.setText("test")
+            binding.etPassword.setText("12345678a")
+            binding.etPasswordAgain.setText("12345678a")
+        }
         binding.etName.setSelection(binding.etName.text.length)
         title = ""
         binding.btnCreate.viewTreeObserver.addOnPreDrawListener {
@@ -71,6 +77,7 @@ class CreateWalletActivity : BaseActivity() {
     override fun initListener() {
         super.initListener()
         binding.btnCreate.setOnClickListener {
+            hideKeyboard(binding.btnCreate)
             if (isFastClick()) {
                 return@setOnClickListener
             }

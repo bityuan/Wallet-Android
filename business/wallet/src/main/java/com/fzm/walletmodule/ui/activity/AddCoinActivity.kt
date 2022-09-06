@@ -16,6 +16,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.bumptech.glide.Glide
+import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
@@ -30,7 +31,6 @@ import com.fzm.walletmodule.ui.fragment.TokenCoinFragment
 import com.fzm.walletmodule.ui.widget.EditDialogFragment
 import com.fzm.walletmodule.utils.ListUtils
 import com.fzm.walletmodule.utils.ToastUtils
-import com.fzm.walletmodule.utils.WalletUtils
 import com.fzm.walletmodule.vm.WalletViewModel
 import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
@@ -42,8 +42,10 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
+import org.litepal.LitePal
 import org.litepal.LitePal.select
 import org.litepal.LitePal.where
+import org.litepal.extension.find
 import walletapi.HDWallet
 
 class AddCoinActivity : BaseActivity() {
@@ -51,7 +53,7 @@ class AddCoinActivity : BaseActivity() {
     private val mStatusMap = HashMap<String, Int>()
     private val mCoinsMap = HashMap<String, Coin>()
     private lateinit var homeData: List<Coin>
-    private lateinit var mPWallet: PWallet
+    private var mPWallet: PWallet? = null
     private var mCommonAdapter: CommonAdapter<Coin>? = null
     private var homeCoinFragment: HomeCoinFragment? = null
     private val mTabTradeType = mutableListOf<Fragment>()
@@ -163,13 +165,14 @@ class AddCoinActivity : BaseActivity() {
 
     override fun initData() {
         showLoading()
-        mPWallet = WalletUtils.getUsingWallet()
+        mPWallet = LitePal.find<PWallet>(MyWallet.getId())
         homeData = where(
             "pwallet_id = ?",
-            java.lang.String.valueOf(mPWallet.id)
+            java.lang.String.valueOf(mPWallet?.id)
         ).find(Coin::class.java, true)
 
-        isChainCoin = mPWallet.type == PWallet.TYPE_PRI_KEY
+        isChainCoin =
+            mPWallet?.type == PWallet.TYPE_PRI_KEY || mPWallet?.type == PWallet.TYPE_RECOVER
 
         if (ListUtils.isEmpty(homeData)) {
             chain = ""
@@ -205,7 +208,7 @@ class AddCoinActivity : BaseActivity() {
                 page,
                 Constants.PAGE_LIMIT.toInt(),
                 keyWord,
-                "",
+                if (isChainCoin) chain else "",
                 ""
             )
 
@@ -219,7 +222,7 @@ class AddCoinActivity : BaseActivity() {
                 page,
                 Constants.PAGE_LIMIT.toInt(),
                 keyWord,
-                "",
+                if (isChainCoin) chain else "",
                 ""
             )
         }
@@ -347,7 +350,7 @@ class AddCoinActivity : BaseActivity() {
     private fun updateCoin(coin: Coin, save: Boolean, visible: Boolean) {
         homeData = where(
             "pwallet_id = ?",
-            java.lang.String.valueOf(mPWallet.id)
+            java.lang.String.valueOf(mPWallet?.id)
         ).find(Coin::class.java, true)
         coin.status = if (visible) Coin.STATUS_ENABLE else Coin.STATUS_DISABLE
         mStatusMap[coin.netId] = coin.status
@@ -379,7 +382,7 @@ class AddCoinActivity : BaseActivity() {
             val chainCoin = select().where(
                 "chain = ? and pwallet_id = ?",
                 coin.chain,
-                mPWallet.id.toString()
+                mPWallet?.id.toString()
             ).findFirst(
                 Coin::class.java
             )
@@ -423,7 +426,7 @@ class AddCoinActivity : BaseActivity() {
         doAsync {
             try {
                 val bPassword: ByteArray? = GoWallet.encPasswd(password)
-                val mnem: String = GoWallet.decMenm(bPassword!!, mPWallet.mnem)
+                val mnem: String = GoWallet.decMenm(bPassword!!, mPWallet!!.mnem)
                 if (!TextUtils.isEmpty(mnem)) {
                     val hdWallet: HDWallet? = GoWallet.getHDWallet(coin.chain, mnem)
                     val address = hdWallet!!.newAddress_v2(0)
@@ -462,7 +465,7 @@ class AddCoinActivity : BaseActivity() {
                 page,
                 Constants.PAGE_LIMIT.toInt(),
                 keyWord,
-                "",
+                if (isChainCoin) chain else "",
                 ""
             )
         }

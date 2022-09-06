@@ -55,7 +55,7 @@ class MyWalletsActivity : BaseActivity() {
         mAdapter.setOnItemClickListener { position ->
             val wallet = list[position]
             MyWallet.setId(wallet.id)
-            LiveEventBus.get<PWallet>(LIVE_KEY_WALLET).post(wallet)
+            LiveEventBus.get<Long>(LIVE_KEY_WALLET).post(wallet.id)
             finish()
         }
     }

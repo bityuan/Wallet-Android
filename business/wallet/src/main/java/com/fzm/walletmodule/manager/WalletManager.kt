@@ -73,8 +73,8 @@ class WalletManager {
     }
 
 
-    //导出私钥
-    fun exportPriv(activity: AppCompatActivity?, content: String, title: String) {
+    //导出私钥和公钥
+    fun exportContent(activity: AppCompatActivity?, content: String, title: String) {
         val builder = AlertDialog.Builder(activity)
         val view: View =
             LayoutInflater.from(activity).inflate(R.layout.dialog_priv, null)

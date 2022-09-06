@@ -57,9 +57,11 @@
 
                         <TextView
                             android:id="@+id/tv_wallet_name"
-                            android:layout_width="wrap_content"
+                            android:layout_width="100dp"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="-22dp"
+                            android:ellipsize="middle"
+                            android:singleLine="true"
                             android:textColor="#ff333649"
                             android:textSize="16sp" />
 
@@ -161,9 +163,9 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_dns_list"
-                android:visibility="gone"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -215,16 +217,15 @@
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_number_flag"
-                    android:paddingLeft="10dp"
                     android:hint="@string/home_hint_please_input_count"
-
                     android:inputType="number|numberDecimal"
+
                     android:maxLength="15"
+                    android:paddingLeft="10dp"
                     android:text=""
                     android:textColor="@color/color_333649"
                     android:textColorHint="#C8CEE5"
                     android:textSize="18sp" />
-
 
 
             </LinearLayout>
@@ -324,12 +325,14 @@
 
 
             </LinearLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/height_line"
                 android:layout_marginLeft="@dimen/dp_16"
                 android:layout_marginRight="@dimen/dp_16"
                 android:background="@color/color_D9DCE9" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

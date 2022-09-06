@@ -46,7 +46,7 @@ internal class BWalletImpl : BWallet {
     }
 
 
-    override suspend fun importWallet(configuration: WalletConfiguration, switch: Boolean): Long {
+    override suspend fun importWallet(configuration: WalletConfiguration): Long {
         return when (configuration.type) {
             PWallet.TYPE_NOMAL -> {
                 NormalWallet(PWallet()).init(configuration)

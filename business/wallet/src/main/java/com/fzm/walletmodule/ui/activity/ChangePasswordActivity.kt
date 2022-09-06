@@ -106,7 +106,7 @@ class ChangePasswordActivity : BaseActivity() {
                 //同时更改助记词的加密
                 val bOldPassword = GoWallet.encPasswd(oldPassword)
                 val mnem = GoWallet.decMenm(bOldPassword!!, mPWallet!!.mnem)
-                val encMenm = GoWallet.encMenm(encPasswd, mnem!!)
+                val encMenm = GoWallet.encMenm(encPasswd, mnem)
                 pWallet.mnem = encMenm
                 pWallet.update(walletid)
                 runOnUiThread {

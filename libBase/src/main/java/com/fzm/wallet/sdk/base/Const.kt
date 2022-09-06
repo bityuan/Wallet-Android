@@ -20,7 +20,7 @@ class MyWallet {
     companion object {
         //当前钱包的ID
         private const val ID_KEY = "id_key"
-        private const val ID_DEFAULT: Long = -1
+        const val ID_DEFAULT: Long = -1
         private var id: Long = ID_DEFAULT
 
         fun getId(): Long {

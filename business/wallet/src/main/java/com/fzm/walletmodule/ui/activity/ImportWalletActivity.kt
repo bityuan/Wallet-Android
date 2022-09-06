@@ -208,9 +208,8 @@ class ImportWalletActivity : BaseActivity() {
                                     mnem,
                                     name,
                                     password,
-                                    "",
                                     Constants.getCoins()
-                                ), true
+                                )
                             )
 
                         } catch (e: ImportWalletException) {
@@ -241,9 +240,9 @@ class ImportWalletActivity : BaseActivity() {
                             try {
                                 id = wallet.importWallet(
                                     WalletConfiguration.privateKeyWallet(
-                                        privateKey, name, password, "",
+                                        privateKey, name, password,
                                         listOf(chooseChain)
-                                    ), true
+                                    )
                                 )
                             } catch (e: ImportWalletException) {
                                 dismiss()
@@ -256,11 +255,10 @@ class ImportWalletActivity : BaseActivity() {
 
                 }
             }
-            if (id != (-1).toLong()) {
+            if (id != MyWallet.ID_DEFAULT) {
                 MyWallet.setId(id)
-                val pWallet = LitePal.find<PWallet>(id)
                 dismiss()
-                LiveEventBus.get<PWallet>(LIVE_KEY_WALLET).post(pWallet)
+                LiveEventBus.get<Long>(LIVE_KEY_WALLET).post(id)
                 ToastUtils.show(
                     this@ImportWalletActivity,
                     getString(R.string.my_import_success)

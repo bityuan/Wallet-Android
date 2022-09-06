@@ -10,6 +10,7 @@ import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.db.entity.PWallet.TYPE_PRI_KEY
@@ -34,9 +35,13 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.textColor
 import org.jetbrains.anko.toast
+import org.litepal.LitePal
 import org.litepal.LitePal.find
 import org.litepal.LitePal.select
+import org.litepal.extension.delete
+import org.litepal.extension.deleteAll
 import org.litepal.extension.find
+import org.litepal.extension.findFirst
 
 @Route(path = RouterPath.WALLET_WALLET_DETAILS)
 class WalletDetailsActivity : BaseActivity() {
@@ -83,10 +88,17 @@ class WalletDetailsActivity : BaseActivity() {
             withContext(Dispatchers.Main) {
                 mPWallet?.let {
                     when (it.type) {
-                        TYPE_PRI_KEY, TYPE_RECOVER -> {
+                        TYPE_PRI_KEY -> {
                             binding.tvForgetPassword.visibility = View.GONE
                             binding.tvOutMnem.visibility = View.GONE
                             binding.tvNewRecoverAddress.visibility = View.GONE
+                        }
+                        TYPE_RECOVER -> {
+                            binding.tvForgetPassword.visibility = View.GONE
+                            binding.tvOutMnem.visibility = View.GONE
+                            binding.tvNewRecoverAddress.visibility = View.GONE
+                            binding.tvOutPriv.visibility = View.GONE
+                            binding.tvOutPub.visibility = View.GONE
                         }
                     }
                 }
@@ -232,8 +244,42 @@ class WalletDetailsActivity : BaseActivity() {
     private suspend fun handlePasswordAfter(type: Int, password: String) {
         when (type) {
             1 -> {
-                val mnem = getMnem(password)
-                outPriv(mnem, password)
+                mPWallet?.let {
+                    val coinList = select().where("pwallet_id = ?", "${it.id}").find<Coin>()
+                    if (!ListUtils.isEmpty(coinList)) {
+                        withContext(Dispatchers.Main) {
+                            dismiss()
+                            val walletManager = WalletManager()
+                            walletManager.chooseChain(this@WalletDetailsActivity, coinList)
+                            walletManager.setOnItemClickListener(object :
+                                WalletManager.OnItemClickListener {
+                                override fun onItemClick(position: Int) {
+                                    if (position < coinList.size) {
+                                        val coin = coinList[position]
+
+                                        if (it.type == PWallet.TYPE_NOMAL) {
+                                            val mnem = getMnem(password)
+                                            WalletManager().exportContent(
+                                                this@WalletDetailsActivity,
+                                                coin.getPrivkey(coin.chain, mnem),
+                                                "${coin.name}私钥"
+                                            )
+                                        } else if (it.type == PWallet.TYPE_PRI_KEY) {
+                                            WalletManager().exportContent(
+                                                this@WalletDetailsActivity,
+                                                coin.getPrivkey(password), "${coin.name}私钥"
+                                            )
+                                        }
+                                    }
+
+
+                                }
+                            })
+                        }
+                    }
+                }
+
+
             }
             2 -> {
                 dismiss()
@@ -247,11 +293,23 @@ class WalletDetailsActivity : BaseActivity() {
                         commonDialog.dismiss()
                     }
                     commonBinding.btnRight.setOnClickListener {
-                        lifecycleScope.launch(Dispatchers.IO) {
-                            mPWallet?.delete()
-                            withContext(Dispatchers.Main) {
-                                finish()
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            val job1 = lifecycleScope.launch(Dispatchers.IO) {
+                                mPWallet?.let {
+                                    LitePal.delete<PWallet>(it.id)
+                                }
                             }
+                            job1.join()
+
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                val wallet = LitePal.findFirst<PWallet>()
+                                MyWallet.setId(wallet?.id ?: MyWallet.ID_DEFAULT)
+                                withContext(Dispatchers.Main) {
+                                    commonDialog.dismiss()
+                                    finish()
+                                }
+                            }
+
                         }
 
                     }
@@ -274,42 +332,6 @@ class WalletDetailsActivity : BaseActivity() {
         return GoWallet.decMenm(GoWallet.encPasswd(password)!!, mPWallet!!.mnem)
     }
 
-    suspend fun outPriv(mnem: String, password: String) {
-        mPWallet?.let {
-            val coinList = select().where("pwallet_id = ?", "${it.id}").find<Coin>()
-            if (!ListUtils.isEmpty(coinList)) {
-                withContext(Dispatchers.Main) {
-                    dismiss()
-                    val walletManager = WalletManager()
-                    walletManager.chooseChain(this@WalletDetailsActivity, coinList)
-                    walletManager.setOnItemClickListener(object :
-                        WalletManager.OnItemClickListener {
-                        override fun onItemClick(position: Int) {
-                            if (position < coinList.size) {
-                                val coin = coinList[position]
-
-                                if (it.type == PWallet.TYPE_PRI_KEY) {
-                                    WalletManager().exportPriv(
-                                        this@WalletDetailsActivity,
-                                        coin.getPrivkey(password), "${coin.name}私钥"
-                                    )
-                                } else {
-                                    WalletManager().exportPriv(
-                                        this@WalletDetailsActivity,
-                                        coin.getPrivkey(coin.chain, mnem),
-                                        "${coin.name}私钥"
-                                    )
-                                }
-                            }
-
-
-                        }
-                    })
-                }
-            }
-        }
-    }
-
     private fun outPub() {
         mPWallet?.let {
             lifecycleScope.launch(Dispatchers.IO) {
@@ -324,16 +346,16 @@ class WalletDetailsActivity : BaseActivity() {
                                 if (position < coinList.size) {
                                     val coin = coinList[position]
 
-                                    if (it.type == PWallet.TYPE_PRI_KEY) {
-                                        WalletManager().exportPriv(
-                                            this@WalletDetailsActivity,
-                                            coin.pubkey, "${coin.name}公钥"
-                                        )
-                                    } else {
-                                        WalletManager().exportPriv(
+                                    if (it.type == PWallet.TYPE_NOMAL) {
+                                        WalletManager().exportContent(
                                             this@WalletDetailsActivity,
                                             coin.pubkey,
                                             "${coin.name}公钥"
+                                        )
+                                    } else if (it.type == PWallet.TYPE_PRI_KEY) {
+                                        WalletManager().exportContent(
+                                            this@WalletDetailsActivity,
+                                            coin.pubkey, "${coin.name}公钥"
                                         )
                                     }
                                 }

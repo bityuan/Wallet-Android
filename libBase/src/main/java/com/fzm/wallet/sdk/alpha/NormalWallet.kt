@@ -25,7 +25,7 @@ class NormalWallet(wallet: PWallet) : BaseWallet(wallet) {
                 if (mnemType == PWallet.TYPE_CHINESE) getChineseMnem(mnemonic!!) else mnemonic!!
 
             val hdWallet = withContext(Dispatchers.IO) {
-                GoWallet.getHDWallet(Walletapi.TypeBtyString, mnem)
+                GoWallet.getHDWallet(Walletapi.TypeETHString, mnem)
             } ?: throw ImportWalletException("助记词有误")
 
             val pubKey = GoWallet.encodeToStrings(hdWallet.newKeyPub(0))
@@ -56,7 +56,6 @@ class NormalWallet(wallet: PWallet) : BaseWallet(wallet) {
                     it.mnemType = mnemType
                     it.type = type
                     it.name = walletName
-                    it.user = configuration.user
                     val bPassword = Walletapi.encPasswd(password)
                     it.password = GoWallet.passwdHash(bPassword)
                     it.mnem = GoWallet.encMenm(bPassword, mnem)

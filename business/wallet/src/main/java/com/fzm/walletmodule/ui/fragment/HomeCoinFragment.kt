@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.net.walletQualifier
@@ -22,26 +23,23 @@ import com.fzm.walletmodule.R
 import com.fzm.walletmodule.databinding.FragmentHomeCoinBinding
 import com.fzm.walletmodule.event.AddCoinEvent
 import com.fzm.walletmodule.ui.base.BaseFragment
-import com.fzm.walletmodule.utils.WalletUtils
 import com.fzm.walletmodule.vm.WalletViewModel
 import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.anko.support.v4.toast
 import org.koin.android.ext.android.inject
+import org.litepal.LitePal
 import org.litepal.LitePal.where
+import org.litepal.extension.find
 import java.lang.String
 import java.util.*
 
 
-/**
- *
- * create an instance of this fragment.
- */
 class HomeCoinFragment : BaseFragment() {
     private var mCommonAdapter: CommonAdapter<Coin>? = null
     private var data = mutableListOf<Coin>()
-    private lateinit var mPWallet: PWallet
+    private var mPWallet: PWallet? = null
     private val walletViewModel: WalletViewModel by inject(walletQualifier)
     var needUpdate = false
     private lateinit var binding:FragmentHomeCoinBinding
@@ -63,8 +61,8 @@ class HomeCoinFragment : BaseFragment() {
     }
 
     override fun initView() {
-        mPWallet = WalletUtils.getUsingWallet()
-        data = where("pwallet_id = ? ", String.valueOf(mPWallet.id)).find(Coin::class.java, true)
+        mPWallet = LitePal.find<PWallet>(MyWallet.getId())
+        data = where("pwallet_id = ? ", String.valueOf(mPWallet?.id)).find(Coin::class.java, true)
         binding.swipeTarget.layoutManager = LinearLayoutManager(activity)
         mCommonAdapter = object : CommonAdapter<Coin>(activity, R.layout.listitem_addcoin, data) {
             override fun convert(holder: ViewHolder, coin: Coin, position: Int) {
@@ -218,7 +216,7 @@ class HomeCoinFragment : BaseFragment() {
         data.addAll(
             where(
                 "pwallet_id = ? ",
-                String.valueOf(mPWallet.id)
+                String.valueOf(mPWallet?.id)
             ).find(Coin::class.java, true)
         )
         //        data = LitePal.where("pwallet_id = ? ", String.valueOf(mPWallet.getId())).find(Coin.class, true);

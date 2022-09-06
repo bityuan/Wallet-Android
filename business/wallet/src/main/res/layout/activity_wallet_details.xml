@@ -39,11 +39,6 @@
             android:textColor="@color/gray_349"
             android:textSize="@dimen/sp_16" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/height_line"
-            android:layout_marginLeft="18dp"
-            android:background="@color/lineColor" />
 
         <TextView
             android:id="@+id/tv_update_name"
@@ -60,14 +55,11 @@
             android:textSize="@dimen/sp_16" />
 
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="10dp" />
-
         <TextView
             android:id="@+id/tv_out_mnem"
             android:layout_width="match_parent"
             android:layout_height="60dp"
+            android:layout_marginTop="10dp"
             android:background="@color/white"
             android:drawableRight="@mipmap/icon_right_wallet"
             android:drawablePadding="10dp"
@@ -78,11 +70,6 @@
             android:textColor="@color/gray_349"
             android:textSize="@dimen/sp_16" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/height_line"
-            android:layout_marginLeft="18dp"
-            android:background="@color/lineColor" />
 
         <TextView
             android:id="@+id/tv_out_priv"
@@ -98,11 +85,6 @@
             android:textColor="@color/gray_349"
             android:textSize="@dimen/sp_16" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/height_line"
-            android:layout_marginLeft="18dp"
-            android:background="@color/lineColor" />
 
         <TextView
             android:id="@+id/tv_out_pub"
@@ -118,11 +100,6 @@
             android:textColor="@color/gray_349"
             android:textSize="@dimen/sp_16" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/height_line"
-            android:layout_marginLeft="18dp"
-            android:background="@color/lineColor" />
 
         <TextView
             android:id="@+id/tv_new_recover_address"
@@ -138,11 +115,6 @@
             android:textColor="@color/gray_349"
             android:textSize="@dimen/sp_16" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/height_line"
-            android:layout_marginLeft="18dp"
-            android:background="@color/lineColor" />
 
         <TextView
             android:id="@+id/tv_recover"
@@ -157,14 +129,8 @@
             android:text="找回资产"
             android:textColor="@color/gray_349"
             android:textSize="@dimen/sp_16"
-            android:visibility="gone" />
+           />
 
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/height_line"
-            android:layout_marginLeft="18dp"
-            android:background="@color/lineColor" />
 
         <TextView
             android:id="@+id/tv_delete"
