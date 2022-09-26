@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
 
@@ -49,9 +49,8 @@ dependencies {
 
     api "com.squareup.okhttp3:okhttp:3.14.9"
     api "com.squareup.retrofit2:retrofit:2.8.2"
-    api "org.koin:koin-androidx-scope:2.1.5"
-    api "org.koin:koin-androidx-fragment:2.1.5"
-    api "org.koin:koin-androidx-ext:2.1.5"
+    api "io.insert-koin:koin-core:3.2.0-beta-1"
+    api "io.insert-koin:koin-android:3.2.0-beta-1"
     api "com.squareup.retrofit2:converter-gson:2.8.2"
     api "com.squareup.okhttp3:logging-interceptor:3.14.9"
     implementation "com.alibaba:fastjson:1.1.68.android"
