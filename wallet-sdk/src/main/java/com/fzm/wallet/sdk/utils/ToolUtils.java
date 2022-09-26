@@ -1,23 +1,18 @@
 package com.fzm.wallet.sdk.utils;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
-import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
-
-import androidx.core.app.ActivityCompat;
-
-import com.tencent.mmkv.MMKV;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -36,7 +31,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -464,13 +458,7 @@ public class ToolUtils {
      * @return
      */
     public static int getAndroidSDKVersion() {
-        int version = 0;
-        try {
-            version = Integer.valueOf(android.os.Build.VERSION.SDK);
-        } catch (NumberFormatException e) {
-
-        }
-        return version;
+        return Build.VERSION.SDK_INT;
     }
 
 

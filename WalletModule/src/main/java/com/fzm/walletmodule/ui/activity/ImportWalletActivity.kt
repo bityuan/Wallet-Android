@@ -57,7 +57,7 @@ class ImportWalletActivity : BaseActivity() {
     }
 
     override fun initListener() {
-        et_mnem.doOnTextChanged { text, start, count, after ->
+        et_mnem.doOnTextChanged { text, _, _, _ ->
             importButtonState()
             val lastString = text.toString()
             if (!TextUtils.isEmpty(lastString)) {
@@ -85,7 +85,7 @@ class ImportWalletActivity : BaseActivity() {
             }
         }
 
-        walletPassword.doOnTextChanged { text, start, count, after ->
+        walletPassword.doOnTextChanged { text, _, _, _ ->
             if (TextUtils.isEmpty(text)) {
                 passwordTip.visibility = View.INVISIBLE
             } else {
@@ -93,7 +93,7 @@ class ImportWalletActivity : BaseActivity() {
                 passwordTip.text = getString(R.string.set_wallet_password)
             }
         }
-        walletPasswordAgain.doOnTextChanged { text, start, count, after ->
+        walletPasswordAgain.doOnTextChanged { text, _, _, _ ->
             if (TextUtils.isEmpty(text)) {
                 passwordAgainTip.visibility = View.INVISIBLE
             } else {
@@ -102,13 +102,13 @@ class ImportWalletActivity : BaseActivity() {
             }
         }
 
-        walletName.doOnTextChanged { text, start, count, after ->
+        walletName.doOnTextChanged { _, _, _, _ ->
             importButtonState()
         }
-        walletPassword.doOnTextChanged { text, start, count, after ->
+        walletPassword.doOnTextChanged { _, _, _, _ ->
             importButtonState()
         }
-        walletPasswordAgain.doOnTextChanged { text, start, count, after ->
+        walletPasswordAgain.doOnTextChanged { _, _, _, _ ->
             importButtonState()
         }
 
@@ -257,7 +257,7 @@ class ImportWalletActivity : BaseActivity() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onCaptureEvent(event: CaptureEvent) {
-        if (event != null && event.type == CaptureCustomActivity.RESULT_SUCCESS) {
+        if (event.type == CaptureCustomActivity.RESULT_SUCCESS) {
             et_mnem.setText(event.text)
         }
     }
