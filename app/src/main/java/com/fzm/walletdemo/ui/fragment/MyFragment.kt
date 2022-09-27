@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.walletdemo.databinding.FragmentMyBinding
 import com.fzm.walletmodule.update.UpdateUtils
@@ -46,6 +47,9 @@ class MyFragment : Fragment() {
         }
         binding.tvAbout.setOnClickListener {
             ARouter.getInstance().build(RouterPath.APP_ABOUT).navigation()
+        }
+        binding.tvRecover.setOnClickListener {
+            ARouter.getInstance().build(RouterPath.WALLET_RECOVER).navigation()
         }
 
     }

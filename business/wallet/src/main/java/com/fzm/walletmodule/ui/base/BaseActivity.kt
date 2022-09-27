@@ -210,42 +210,8 @@ abstract class BaseActivity : AppCompatActivity() {
     protected open fun initRefresh() {}
     protected open fun initObserver() {}
 
-    //-----------------------------每隔5秒刷新一次余额----------------------------
-    //默认都自动刷新
-    protected var mDelayedRefresh = true
-    private var mIsRefreshBalance: Boolean = false
-    private val balanceHandler = Handler()
-    private var balanceRunnable: Runnable? = null
-    fun setRefreshBalance(refreshBalance: Boolean) {
-        mIsRefreshBalance = refreshBalance
-    }
 
-    var DELAYED_TIME = (8 * 1000).toLong()
-    fun delayedRefresh(isRefreshBalance: Boolean) {
-        balanceRunnable = Runnable {
-            refreshBalance()
-            balanceHandler.postDelayed(balanceRunnable!!, DELAYED_TIME)
-        }
-    }
-
-    private fun onResumeBalance() {
-        if (mIsRefreshBalance) {
-            delayedRefresh(mIsRefreshBalance)
-        }
-    }
-
-    fun onPauseBalance() {
-        if (mIsRefreshBalance) {
-            balanceHandler.removeCallbacks(balanceRunnable!!)
-        }
-
-    }
-
-    protected open fun refreshBalance() {
-
-    }
-
-    internal var activities: MutableList<AppCompatActivity>? = ArrayList()
+     var activities: MutableList<AppCompatActivity>? = ArrayList()
 
     fun addAcitivity(activity: AppCompatActivity) {
         activities!!.add(activity)

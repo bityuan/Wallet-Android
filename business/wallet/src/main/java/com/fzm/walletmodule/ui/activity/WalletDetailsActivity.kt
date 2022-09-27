@@ -164,11 +164,6 @@ class WalletDetailsActivity : BaseActivity() {
                 .withLong(PWallet.PWALLET_ID, walletid)
                 .navigation()
         }
-        binding.tvRecover.setOnClickListener {
-            ARouter.getInstance().build(RouterPath.WALLET_RECOVER)
-                .withLong(PWallet.PWALLET_ID, walletid)
-                .navigation()
-        }
     }
 
 

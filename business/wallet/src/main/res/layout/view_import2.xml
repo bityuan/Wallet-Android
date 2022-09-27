@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+
+        <com.fzm.walletmodule.ui.widget.LimitEditText
+            android:id="@+id/et_input_priv"
+            android:layout_width="0dp"
+            android:layout_height="110dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_remember_words"
+            android:gravity="center_vertical"
+            android:hint="请输入控制地址的私钥"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:textColor="@color/color_333649"
+            android:textColorHint="@color/gray_8e"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/iv_scan_priv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:src="@mipmap/import_wallet_right" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical">
+
+        <com.fzm.walletmodule.ui.widget.LimitEditText
+            android:id="@+id/et_input_xaddr"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_remember_words"
+            android:gravity="center_vertical"
+            android:hint="请输入找回地址"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:textColor="@color/color_333649"
+            android:textColorHint="@color/gray_8e"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/iv_scan_addr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:src="@mipmap/import_wallet_right" />
+    </LinearLayout>
+
+
+</LinearLayout>

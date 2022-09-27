@@ -10,16 +10,6 @@
         android:layout_height="44dp"
         android:background="@drawable/bg_import_wallet_chose_coin">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="16dp"
-            android:text="@string/import_wallet_chain_name"
-            android:textColor="#7190ff"
-            android:textSize="14sp"
-            android:visibility="gone" />
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

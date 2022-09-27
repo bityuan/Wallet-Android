@@ -98,7 +98,6 @@ class WalletFragment : Fragment() {
                 if (id == MyWallet.ID_DEFAULT) {
                     return@repeatOnLifecycle
                 }
-
                 while (true) {
                     getCoinJob?.cancel()
                     getCoinJob = lifecycleScope.launch(Dispatchers.IO) {

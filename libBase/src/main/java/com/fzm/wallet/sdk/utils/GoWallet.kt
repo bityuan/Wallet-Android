@@ -2,10 +2,7 @@ package com.fzm.wallet.sdk.utils
 
 import android.text.TextUtils
 import android.util.Log
-import com.alibaba.fastjson.JSON
-import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.base.MyWallet
-import com.fzm.wallet.sdk.bean.StringResult
 import com.fzm.wallet.sdk.bean.log
 import com.fzm.wallet.sdk.bean.response.BalanceResponse
 import com.fzm.wallet.sdk.db.entity.Coin
@@ -193,6 +190,9 @@ class GoWallet {
         //通过平行获取Tokensymbol
         fun getTokensymbol(coin: Coin): String {
             if (coin.chain == "BTY" && coin.platform != "bty") {
+                if (coin.platform == "ethereum") {
+                    return ""
+                }
                 return if (coin.treaty == "1") {
                     coin.platform + "." + coin.name
                 } else {
@@ -609,13 +609,15 @@ class GoWallet {
             dctrPubKey: String,
             defaultPub: String,
             newPub1: String,
-            recoverTime: Long
+            recoverTime: Long,
+            addressId: Int,
+            chainId: Int
         ): WalletRecoverParam {
             val param = WalletRecoverParam().apply {
                 ctrPubKey = dctrPubKey
                 recoverPubKeys = "$defaultPub$newPub1"
-                addressID = 0
-                chainID = 0
+                addressID = addressId
+                chainID = chainId
                 relativeDelayTime = recoverTime
             }
 
@@ -626,13 +628,12 @@ class GoWallet {
         fun queryRecover(xAddress: String): WalletRecoverParam {
             val r = WalletRecover()
             val walletRecoverParam = r.transportQueryRecoverInfo(QueryRecoverParam().apply {
-                cointype = "BTY"
+                cointype = Walletapi.TypeYccString
                 tokensymbol = ""
                 address = xAddress
             }, getUtil())
 
             return walletRecoverParam
         }
-
     }
 }

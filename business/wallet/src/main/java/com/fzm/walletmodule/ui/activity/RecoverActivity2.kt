@@ -1,27 +1,22 @@
+/*
 package com.fzm.walletmodule.ui.activity
 
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.lifecycleScope
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.alibaba.fastjson.JSON
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.MyWallet
-import com.fzm.wallet.sdk.base.PRE_X_RECOVER
-import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.bean.StringResult
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
 import com.fzm.wallet.sdk.db.entity.PWallet
-import com.fzm.wallet.sdk.utils.GZipUtils
 import com.fzm.wallet.sdk.utils.GoWallet
-import com.fzm.walletmodule.BuildConfig
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.databinding.ActivityRecoverBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
-import com.king.zxing.util.CodeUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,8 +29,7 @@ import walletapi.WalletRecover
 import walletapi.Walletapi
 
 @Route(path = RouterPath.WALLET_RECOVER)
-class RecoverActivity : BaseActivity() {
-    private var chooseCoin = "BTY"
+class RecoverActivity2 : BaseActivity() {
 
     private val loading by lazy {
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_loading, null)
@@ -55,24 +49,14 @@ class RecoverActivity : BaseActivity() {
 
     override fun initView() {
         super.initView()
-        if (BuildConfig.DEBUG) {
-            binding.etToAddress.setText("1P7P4v3kL39zugQgDDLRqxzGjQd7aEbfKs")
-            binding.etAmount.setText("0.02")
-        }
-        binding.rgCoin.setOnCheckedChangeListener { group, checkedId ->
-            when (checkedId) {
-                R.id.rb_bty -> {
-                    chooseCoin = "BTY"
-                }
-                R.id.rb_ycc -> {
-                    chooseCoin = "YCC"
-                }
-
-            }
+        binding.etToAddress.setText("1P7P4v3kL39zugQgDDLRqxzGjQd7aEbfKs")
+        binding.etAmount.setText("0.02")
+        binding.etFee.setText("0.001")
+        binding.btnOut.setOnClickListener {
+            showPwdDialog(1)
         }
         binding.btnRecover.setOnClickListener {
-            //showPwdDialog(2)
-            createCode()
+            showPwdDialog(2)
         }
     }
 
@@ -130,46 +114,22 @@ class RecoverActivity : BaseActivity() {
         }
     }
 
-
-    private fun createCode() {
-        val toAddress = binding.etToAddress.text.toString()
-        val amount = binding.etAmount.text.toString()
-        val xAddress = binding.etXAddress.text.toString()
-        if (toAddress.isEmpty()) {
-            toast("请输入转入地址")
-            return
-        }
-        if (amount.isEmpty()) {
-            toast("请输入数量")
-            return
-        }
-        if (xAddress.isEmpty()) {
-            toast("请输入找回地址")
-            return
-        }
-
-
-        val createParam = "$PRE_X_RECOVER,$chooseCoin,$xAddress,$toAddress,$amount"
-        val bitmapCode = CodeUtils.createQRCode(createParam, 200)
-        binding.ivCode.setImageBitmap(bitmapCode)
-        hideKeyboard(binding.etToAddress)
-    }
-
     private fun doRecover(type: Int, privkey: String) {
         val toAddress = binding.etToAddress.text.toString()
         val inputAmount = binding.etAmount.text.toString()
+        val inputFee = binding.etFee.text.toString()
         val xAddress = binding.etXAddress.text.toString()
 
         val walletRecoverParam = GoWallet.queryRecover(xAddress)
         val walletRecover = WalletRecover()
         walletRecover.param = walletRecoverParam
         val createRaw = GoWallet.createTran(
-            chooseCoin,
+            "BTY",
             xAddress,
             toAddress,
             inputAmount.toDouble(),
-            0.1,
-            "zh_test",
+            inputFee.toDouble(),
+            "zh测试",
             ""
         )
         val strResult = JSON.parseObject(createRaw, StringResult::class.java)
@@ -213,4 +173,4 @@ class RecoverActivity : BaseActivity() {
         Log.v("wlike", "备份找回 == " + sendRawTransaction2)
     }
 
-}
+}*/

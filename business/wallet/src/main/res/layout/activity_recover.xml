@@ -9,41 +9,86 @@
     android:paddingTop="20dp"
     android:paddingEnd="18sp">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="选择币种"
+        android:textColor="@color/color_7190FF"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/rg_coin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_bty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/radio_check"
+            android:checked="true"
+            android:paddingStart="10dp"
+            android:text="BTY" />
+
+        <RadioButton
+            android:id="@+id/rb_ycc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:button="@drawable/radio_check"
+            android:paddingStart="10dp"
+            android:text="YCC" />
+
+
+    </RadioGroup>
 
 
     <EditText
         android:id="@+id/et_amount"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="请输入数量" />
-    <EditText
-        android:id="@+id/et_fee"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="请输入矿工费" />
+        android:layout_height="60dp"
+        android:background="@drawable/bg_remember_words"
+        android:hint="请输入找回的数量"
+        android:paddingLeft="10dp" />
+
 
     <EditText
         android:id="@+id/et_to_address"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="请输入收款地址" />
-
-    <Button
-        android:id="@+id/btn_out"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="提取我的资产" />
+        android:layout_height="60dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_remember_words"
+        android:hint="请输入收款地址"
+        android:paddingLeft="10dp" />
 
     <EditText
         android:id="@+id/et_x_address"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="请输入X地址" />
+        android:layout_height="60dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_remember_words"
+        android:hint="请输入找回钱包的地址"
+        android:paddingLeft="10dp" />
 
     <Button
         android:id="@+id/btn_recover"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="找回我的资产" />
+        android:layout_marginTop="30dp"
+        android:background="@drawable/bg_shape_button"
+        android:text="找回我的资产"
+        android:textColor="@android:color/white"
+        android:textSize="17sp" />
+
+    <ImageView
+        android:id="@+id/iv_code"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp" />
 
 </LinearLayout>

@@ -153,6 +153,7 @@ class TransactionsActivity : BaseActivity() {
                 val balance = GoWallet.handleBalance(it)
                 withContext(Dispatchers.Main) {
                     it.balance = balance
+                    it.update(it.id)
                     binding.tvBalance.text = DecimalUtils.subZeroAndDot(it.balance)
                 }
             }

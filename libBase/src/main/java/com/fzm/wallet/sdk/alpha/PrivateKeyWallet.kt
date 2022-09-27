@@ -20,7 +20,6 @@ class PrivateKeyWallet(wallet: PWallet) : BaseWallet(wallet) {
                     ?: throw ImportWalletException("私钥有误")
                 val address = Walletapi.pubToAddress_v2(chooseChain.chain, pubkey)
                 chooseChain.status = Coin.STATUS_ENABLE
-                chooseChain.pubkey = Walletapi.byteTohex(pubkey)
                 chooseChain.address = address
 
                 val bPassword = Walletapi.encPasswd(password)

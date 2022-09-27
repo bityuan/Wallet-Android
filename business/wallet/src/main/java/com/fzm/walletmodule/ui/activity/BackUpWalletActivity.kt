@@ -14,6 +14,7 @@ import com.fzm.wallet.sdk.WalletConfiguration
 import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
 import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.exception.ImportWalletException
 import com.fzm.walletmodule.BuildConfig
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.adapter.BackUpWalletAdapter
@@ -237,18 +238,29 @@ class BackUpWalletActivity : BaseActivity() {
         lifecycleScope.launch(Dispatchers.Main) {
             showLoading()
             withContext(Dispatchers.IO) {
-                mPWallet?.let {
-                    val id = BWallet.get().importWallet(
-                        WalletConfiguration.mnemonicWallet(
-                            visibleMnem!!,
-                            it.name,
-                            it.password,
-                            Constants.getCoins()
+                try {
+                    mPWallet?.let {
+                        val id = BWallet.get().importWallet(
+                            WalletConfiguration.mnemonicWallet(
+                                visibleMnem!!,
+                                it.name,
+                                it.password,
+                                Constants.getCoins()
+                            )
                         )
-                    )
-                    MyWallet.setId(id)
-                    LiveEventBus.get<Long>(LIVE_KEY_WALLET).post(id)
+                        MyWallet.setId(id)
+                        LiveEventBus.get<Long>(LIVE_KEY_WALLET).post(id)
+                    }
+                }catch (e:ImportWalletException){
+                    withContext(Dispatchers.Main){
+                        dismiss()
+                        e.message?.let {
+                            toast(it)
+                        }
+
+                    }
                 }
+
             }
             dismiss()
             closeSomeActivitys()

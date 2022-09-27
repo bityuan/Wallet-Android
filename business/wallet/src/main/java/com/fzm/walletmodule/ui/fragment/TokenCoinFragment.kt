@@ -172,16 +172,10 @@ class TokenCoinFragment : BaseFragment() {
         for (coin in homeData) {
             mStatusMap[coin.netId] = coin.status
             mCoinsMap[coin.netId] = coin
-            //            Log.d("nyb", "初始化-" + coin.getName() + ",id:" + coin.getNetId() + ",status" + coin.getStatus());
         }
     }
 
     private fun showPwdDialog(coin: Coin) {
-        //小账户代码
-        if (TextUtils.isEmpty(mPWallet!!.password)) {
-            handlePasswordAfter(coin, mPWallet!!.password)
-            return
-        }
         val editDialogFragment =
             EditDialogFragment()
         editDialogFragment.setTitle(getString(R.string.my_wallet_detail_password))
@@ -211,42 +205,17 @@ class TokenCoinFragment : BaseFragment() {
             lifecycleScope.launch(Dispatchers.IO) {
                 val result = GoWallet.checkPasswd(password, it.password)
                 if (result) {
-                    when (it.type) {
-                        PWallet.TYPE_NOMAL -> {
-                            val bPassword = GoWallet.encPasswd(password)
-                            val mnem: String = GoWallet.decMenm(bPassword!!, it.mnem)
-                            val hdWallet: HDWallet? = GoWallet.getHDWallet(coin.chain, mnem)
-                            val address = hdWallet!!.newAddress_v2(0)
-                            val pubkey = hdWallet.newKeyPub(0)
-                            val pubkeyStr: String = GoWallet.encodeToStrings(pubkey)
-                            coin.address = address
-                            coin.pubkey = pubkeyStr
-                            withContext(Dispatchers.Main) {
-                                dismiss()
-                                updateCoin(coin, true, true)
-                            }
-                        }
-                        PWallet.TYPE_PRI_KEY -> {
-                            val chain = where(
-                                "pwallet_id = ? and chain = name",
-                                it.id.toString()
-                            ).find<Coin>(true)
-                            coin.pubkey = chain[0].pubkey
-                            coin.address = chain[0].address
-                            coin.setPrivkey(chain[0].encPrivkey)
-                            updateCoin(coin, true, true)
-
-                        }
-                        PWallet.TYPE_RECOVER -> {
-                            val chain = where(
-                                "pwallet_id = ? and chain = name",
-                                it.id.toString()
-                            ).find<Coin>(true)
-                            coin.address = chain[0].address
-                            coin.setPrivkey(chain[0].encPrivkey)
-                            updateCoin(coin, true, true)
-                        }
-                        else -> {}
+                    val bPassword = GoWallet.encPasswd(password)
+                    val mnem: String = GoWallet.decMenm(bPassword!!, it.mnem)
+                    val hdWallet: HDWallet? = GoWallet.getHDWallet(coin.chain, mnem)
+                    val address = hdWallet!!.newAddress_v2(0)
+                    val pubkey = hdWallet.newKeyPub(0)
+                    val pubkeyStr: String = GoWallet.encodeToStrings(pubkey)
+                    coin.address = address
+                    coin.pubkey = pubkeyStr
+                    withContext(Dispatchers.Main) {
+                        dismiss()
+                        updateCoin(coin, true, true)
                     }
 
                 } else {

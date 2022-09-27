@@ -2,10 +2,11 @@ package com.fzm.walletmodule.ui.activity
 
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -23,40 +24,46 @@ import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.exception.ImportWalletException
-import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.databinding.ActivityImportWalletBinding
 import com.fzm.walletmodule.databinding.ViewImport0Binding
 import com.fzm.walletmodule.databinding.ViewImport1Binding
+import com.fzm.walletmodule.databinding.ViewImport2Binding
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.LimitEditText
 import com.fzm.walletmodule.utils.AppUtils
 import com.fzm.walletmodule.utils.ListUtils
 import com.fzm.walletmodule.utils.ToastUtils
 import com.fzm.walletmodule.utils.isFastClick
-import com.google.android.material.tabs.TabLayout
 import com.jeremyliao.liveeventbus.LiveEventBus
 import com.snail.antifake.jni.EmulatorDetectUtil
-import kotlinx.android.synthetic.main.view_import1.view.*
-import kotlinx.coroutines.*
-import org.jetbrains.anko.startActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.jetbrains.anko.toast
 import org.litepal.LitePal
 import org.litepal.extension.count
 import org.litepal.extension.find
-import walletapi.Walletapi
-import java.util.ArrayList
 
 class ImportWalletActivity : BaseActivity() {
 
     private val wallet: BWallet get() = BWallet.get()
-    private val views by lazy { listOf(mnemBinding.root, privateKeyBinding.root) }
+    private val views by lazy {
+        listOf(
+            mnemBinding.root,
+            privateKeyBinding.root,
+            recoverBinding.root
+        )
+    }
     private val binding by lazy { ActivityImportWalletBinding.inflate(layoutInflater) }
     private val mnemBinding by lazy { ViewImport0Binding.inflate(layoutInflater) }
     private val privateKeyBinding by lazy { ViewImport1Binding.inflate(layoutInflater) }
-    private val titleList = listOf("导入助记词", "导入私钥")
-    private var importType: Int = 0//0导入助记次 1导入私钥 2导入地址
+    private val recoverBinding by lazy { ViewImport2Binding.inflate(layoutInflater) }
+    private val titleList = listOf("导入助记词", "导入私钥", "导入找回钱包")
+    private var importType: Int = 0//0导入助记次 1导入私钥 2导入找回钱包
+    private var scanFrom: Int = -1//1控制私钥2找回地址
     private var chooseChain: Coin? = null
+    private val count by lazy { LitePal.count<PWallet>() }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -73,14 +80,23 @@ class ImportWalletActivity : BaseActivity() {
     }
 
     override fun initData() {
-        val count = LitePal.count<PWallet>()
-        val name = getString(R.string.import_wallet_wallet_name) + (count + 1)
+        val name = "助记词账户" + (count + 1)
         binding.etWalletName.setText(name)
         mnemBinding.etMnem.setRegex(LimitEditText.REGEX_CHINESE_ENGLISH)
         privateKeyBinding.etInput.setRegex(LimitEditText.REGEX_ENGLISH_AND_NUM)
+        recoverBinding.etInputPriv.setRegex(LimitEditText.REGEX_ENGLISH_AND_NUM)
+        recoverBinding.etInputXaddr.setRegex(LimitEditText.REGEX_ENGLISH_AND_NUM)
     }
 
     override fun initListener() {
+        recoverBinding.ivScanPriv.setOnClickListener {
+            scanFrom = 1
+            ARouter.getInstance().build(RouterPath.WALLET_CAPTURE).navigation()
+        }
+        recoverBinding.ivScanAddr.setOnClickListener {
+            scanFrom = 2
+            ARouter.getInstance().build(RouterPath.WALLET_CAPTURE).navigation()
+        }
         binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrolled(
                 position: Int,
@@ -91,6 +107,24 @@ class ImportWalletActivity : BaseActivity() {
 
             override fun onPageSelected(position: Int) {
                 importType = position
+                when (importType) {
+                    0 -> {
+                        val name = "助记词账户" + (count + 1)
+                        binding.etWalletName.setText(name)
+                        updateMenu(true)
+                    }
+                    1 -> {
+                        val name = "私钥账户" + (count + 1)
+                        binding.etWalletName.setText(name)
+                        updateMenu(true)
+                    }
+                    2 -> {
+                        val name = "找回账户" + (count + 1)
+                        binding.etWalletName.setText(name)
+                        updateMenu(false)
+                    }
+                }
+
             }
 
             override fun onPageScrollStateChanged(state: Int) {
@@ -157,6 +191,12 @@ class ImportWalletActivity : BaseActivity() {
     }
 
 
+    private fun updateMenu(visible: Boolean) {
+        menuVisible = visible
+        invalidateOptionsMenu()
+    }
+
+
     override fun initObserver() {
         super.initObserver()
         //扫一扫
@@ -164,6 +204,13 @@ class ImportWalletActivity : BaseActivity() {
             when (importType) {
                 0 -> mnemBinding.etMnem.setText(scan)
                 1 -> privateKeyBinding.etInput.setText(scan)
+                2 -> {
+                    if (scanFrom == 1) {
+                        recoverBinding.etInputPriv.setText(scan)
+                    } else if (scanFrom == 2) {
+                        recoverBinding.etInputXaddr.setText(scan)
+                    }
+                }
             }
 
         })
@@ -180,10 +227,10 @@ class ImportWalletActivity : BaseActivity() {
         if (isFastClick()) {
             return
         }
-        val name = binding.etWalletName.text.toString()
+        val walletName = binding.etWalletName.text.toString()
         val password = binding.etWalletPassword.text.toString()
         val passwordAgain = binding.etWalletPasswordAgain.text.toString()
-        if (!checked(name, password, passwordAgain)) {
+        if (!checked(walletName, password, passwordAgain)) {
             return
         }
 
@@ -206,7 +253,7 @@ class ImportWalletActivity : BaseActivity() {
                             id = wallet.importWallet(
                                 WalletConfiguration.mnemonicWallet(
                                     mnem,
-                                    name,
+                                    walletName,
                                     password,
                                     Constants.getCoins()
                                 )
@@ -240,7 +287,7 @@ class ImportWalletActivity : BaseActivity() {
                             try {
                                 id = wallet.importWallet(
                                     WalletConfiguration.privateKeyWallet(
-                                        privateKey, name, password,
+                                        privateKey, walletName, password,
                                         listOf(chooseChain)
                                     )
                                 )
@@ -253,6 +300,53 @@ class ImportWalletActivity : BaseActivity() {
                         job2.join()
                     }
 
+                }
+                2 -> {
+                    val privateKey = recoverBinding.etInputPriv.text.toString()
+                    val xAddress = recoverBinding.etInputXaddr.text.toString()
+                    if (privateKey.isEmpty()) {
+                        toast(getString(R.string.please_input_prikey))
+                        return@launch
+                    }
+                    if (xAddress.isEmpty()) {
+                        toast("请输入地址")
+                        return@launch
+                    }
+
+                    val job3 = lifecycleScope.launch(Dispatchers.Main) {
+                        showLoading()
+                        try {
+                            id = wallet.importWallet(
+                                WalletConfiguration.recoverWallet(
+                                    privateKey, walletName, password,
+                                    listOf(Coin().apply {
+                                        chain = "BTY"
+                                        name = "BTY"
+                                        platform = "bty"
+                                        netId = "154"
+                                        address = xAddress
+                                    }, Coin().apply {
+                                        chain = "ETH"
+                                        name = "BTY"
+                                        platform = "ethereum"
+                                        netId = "732"
+                                        address = xAddress
+                                    }, Coin().apply {
+                                        chain = "ETH"
+                                        name = "YCC"
+                                        platform = "ethereum"
+                                        netId = "155"
+                                        address = xAddress
+                                    })
+                                )
+                            )
+                        } catch (e: ImportWalletException) {
+                            dismiss()
+                            ToastUtils.show(this@ImportWalletActivity, e.message)
+                        }
+                    }
+
+                    job3.join()
                 }
             }
             if (id != MyWallet.ID_DEFAULT) {
@@ -301,7 +395,7 @@ class ImportWalletActivity : BaseActivity() {
 
     inner class ImportAdapter : PagerAdapter() {
 
-        override fun getPageTitle(position: Int): CharSequence? {
+        override fun getPageTitle(position: Int): CharSequence {
             return titleList[position]
         }
 
@@ -318,18 +412,26 @@ class ImportWalletActivity : BaseActivity() {
             return views[position]
         }
 
+        override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
+            //super.destroyItem(container, position, obj)
+            container.removeView(obj as View)
+        }
+
     }
 
+    //默认显示
+    private var menuVisible = true
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val menuItem = menu.add(0, 1, 0, getString(R.string.my_scan))
         menuItem.setIcon(R.mipmap.import_wallet_right)
         menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+        menuItem.isVisible = menuVisible
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == 1) {
-            startActivity<CaptureCustomActivity>()
+            ARouter.getInstance().build(RouterPath.WALLET_CAPTURE).navigation()
         }
         return super.onOptionsItemSelected(item)
     }

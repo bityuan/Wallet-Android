@@ -29,11 +29,13 @@ object RouterPath {
     const val APP_DAPP = "/app/DappActivity"
     const val APP_EXPLORES = "/app/ExploresActivity"
     const val APP_ABOUT = "/app/AboutActivity"
+    const val APP_SCAN_RESULT = "/app/ScanResultActivity"
     const val APP_DOWNLOAD = "/app/DownLoadActivity"
     const val APP_WEBTEST = "/app/WebTestActivity"
 
     //param
     const val PARAM_COIN = "coin"
+    const val PARAM_SCAN = "scan"
     const val PARAM_FROM = "from"
     const val PARAM_NFT_TRAN = "nft_tran"
     const val PARAM_APPS_ID = "apps_id"

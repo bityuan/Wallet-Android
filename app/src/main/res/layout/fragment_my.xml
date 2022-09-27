@@ -81,4 +81,19 @@
         android:text="@string/my_about"
         android:textColor="@color/my_item_text"
         android:textSize="16sp" />
+    <TextView
+        android:id="@+id/tv_recover"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/white"
+        android:drawableLeft="@mipmap/icon_qianbao"
+        android:drawableRight="@drawable/ic_right"
+        android:drawablePadding="14dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="18dp"
+        android:text="找回我的资产"
+        android:textColor="@color/my_item_text"
+        android:textSize="16sp" />
 </LinearLayout>

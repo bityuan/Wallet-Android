@@ -28,6 +28,7 @@ import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.exception.ImportWalletException
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.R
+import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.databinding.ActivityNewRecoverAddressBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.InQrCodeDialogView
@@ -63,9 +64,10 @@ class NewRecoverAddressActivity : BaseActivity() {
     @Autowired(name = RouterPath.PARAM_VISIBLE_MNEM)
     var visibleMnem: String? = null
 
-    private var recoverTime: Long = 7//单位为秒
+    private var recoverTime: Long = 30//单位为秒
     private var scanFrom = -1
     private val wallet: BWallet get() = BWallet.get()
+
     private val loading by lazy {
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_loading, null)
         return@lazy AlertDialog.Builder(this).setView(view).create().apply {
@@ -74,16 +76,21 @@ class NewRecoverAddressActivity : BaseActivity() {
     }
 
     companion object {
-        const val OFFICIAL_ADDRESS = "1NinUtSXP2wE6tJDMEpJwA8UBpyskSo8yd"
+        const val OFFICIAL_ADDRESS = "0xf440B6464600D83F6AbaeBFD2773Af9B1Fd8e9dd"
         const val OFFICIAL_PUB =
-            "037f0cc5b5033e2a3a448c58987b987c801bb4632c1789184858e9e43ce8004fff"
+            "02059f401bfabd8e1c8cf099ced414fbe2fca5dae7e931a82d837c1dfd7ece17c9"
 
-        const val PUB1 = "03214206d91d77939367a0af1188bcf5f41a84ad9877acc038cb8074edac5e75a2"
-        const val PUB2 = "0317bdd0d3b9495974d0b95f59e31e2c619376f7f329671d989a94500aff9ebb9b"
+        const val PUB1 = "028af81cc6e1ad3f2d48c588b314f3d476074d03d40438c441b25f882e7bff915f"
+        const val PUB2 = "03ac79d706f303a9033acb500ec3a941c9f2d6dbee5696d963a96a13d33f2c1029"
+
+        //0是BTC格式，2是ETH格式
+        const val ADDRESS_ID = 2
+        //BTY是0，YCC是999
+        const val CHAIN_ID = 999
     }
 
     private val binding by lazy { ActivityNewRecoverAddressBinding.inflate(layoutInflater) }
-    private var myBTYAddress = ""
+    private var myRecoverAddress = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -103,23 +110,23 @@ class NewRecoverAddressActivity : BaseActivity() {
                 val coins = LitePal.where(
                     "pwallet_id = ? and name = ?",
                     walletid.toString(),
-                    Walletapi.TypeBtyString
+                    Walletapi.TypeETHString
                 ).find<Coin>()
                 if (coins.isNotEmpty()) {
-                    val bty = coins[0]
-                    myBTYAddress = bty.address
-                    binding.tvAddress.text = HtmlUtils.change4(myBTYAddress)
+                    val eth = coins[0]
+                    myRecoverAddress = eth.address
+                    binding.tvAddress.text = HtmlUtils.change4(myRecoverAddress)
                 }
             }
         } else {
             visibleMnem?.let {
-                val hdWallet = GoWallet.getHDWallet(Walletapi.TypeBtyString, it)
-                myBTYAddress = hdWallet!!.newAddress_v2(0)
-                binding.tvAddress.text = myBTYAddress
+                val hdWallet = GoWallet.getHDWallet(Walletapi.TypeETHString, it)
+                myRecoverAddress = hdWallet!!.newAddress_v2(0)
+                binding.tvAddress.text = myRecoverAddress
             }
         }
         binding.ivCode.setOnClickListener {
-            InQrCodeDialogView(this, myBTYAddress).show()
+            InQrCodeDialogView(this, myRecoverAddress).show()
         }
 
         binding.ivRefresh.setOnClickListener {
@@ -156,6 +163,11 @@ class NewRecoverAddressActivity : BaseActivity() {
         }
         binding.tvSendCode.setOnClickListener {
             val email = binding.etEmail.text.toString()
+
+
+            val addr = Walletapi.pubToAddress_v2("ETH",Walletapi.hexTobyte(OFFICIAL_PUB))
+            Log.v("wlike","addr == "+addr)
+
             if (isEmailAddress(email)) {
                 //发送验证码
             } else {
@@ -164,9 +176,27 @@ class NewRecoverAddressActivity : BaseActivity() {
         }
 
         binding.btnOk.setOnClickListener {
+            if (balance.toDouble() < 1.0) {
+                toast("请先往您的地址充值1YCC保证找回账户成功创建")
+                return@setOnClickListener
+            }
+
+
             val pub1 = binding.etBackPub1.text.toString()
             val newPub1 = if (pub1.isEmpty()) "" else ",$pub1"
-            showPwdDialog(newPub1)
+            if (visibleMnem.isNullOrEmpty()) {
+                showPwdDialog(newPub1)
+            } else {
+                loading.show()
+                lifecycleScope.launch(Dispatchers.IO) {
+                    mPWallet?.let {
+                        doRecoverParam(it.password, visibleMnem!!, newPub1)
+                    }
+                }
+
+            }
+
+
         }
     }
 
@@ -179,6 +209,7 @@ class NewRecoverAddressActivity : BaseActivity() {
         refBalance(binding.ivRefresh)
     }
 
+    var balance = "0.0"
     private fun refBalance(view: View) {
         lifecycleScope.launch(Dispatchers.Main) {
             val objectAnimator: ObjectAnimator = ObjectAnimator.ofFloat(view, "rotation", 0f, 359f)
@@ -186,18 +217,17 @@ class NewRecoverAddressActivity : BaseActivity() {
             objectAnimator.duration = 1000
             objectAnimator.interpolator = LinearInterpolator()
             objectAnimator.start()
-            var balance = "0.0"
             withContext(Dispatchers.IO) {
                 balance = GoWallet.handleBalance(Coin().apply {
-                    address = myBTYAddress
-                    chain = Walletapi.TypeBtyString
-                    name = Walletapi.TypeBtyString
-                    netId = "154"
+                    address = myRecoverAddress
+                    chain = Walletapi.TypeYccString
+                    name = ""
+                    netId = "155"
 
                 })
             }
             objectAnimator.cancel()
-            binding.tvBalance.text = "$balance BTY"
+            binding.tvBalance.text = "$balance YCC"
         }
     }
 
@@ -229,7 +259,7 @@ class NewRecoverAddressActivity : BaseActivity() {
                 toast("请输入密码")
                 return@setOnClickListener
             }
-            CoroutineScope(Dispatchers.IO).launch {
+            lifecycleScope.launch(Dispatchers.IO) {
                 val wallet = LitePal.find<PWallet>(MyWallet.getId())
                 wallet?.let {
                     withContext(Dispatchers.Main) {
@@ -245,35 +275,64 @@ class NewRecoverAddressActivity : BaseActivity() {
                     }
                     withContext(Dispatchers.Main) {
                         dialog.dismiss()
-                        if (!loading.isShowing) {
-                            loading.show()
-                        }
                     }
 
                     val bPassword = GoWallet.encPasswd(password)!!
                     val mnem: String = GoWallet.decMenm(bPassword, it.mnem)
-                    val hdWallet = GoWallet.getHDWallet(Walletapi.TypeBtyString, mnem)
-                    val privateKey = Walletapi.byteTohex(hdWallet?.newKeyPriv(0))
-                    val pubKey = Walletapi.byteTohex(hdWallet?.newKeyPub(0))
-                    val address = hdWallet?.newAddress_v2(0)
-
-                    val recoverParam = GoWallet.getRecoverParam(
-                        pubKey,
-                        OFFICIAL_PUB,
-                        newPub1,
-                        recoverTime
-                    )
-
-                    submitRecover(address!!, recoverParam, privateKey, password)
-
+                    doRecoverParam(password, mnem, newPub1)
                 }
 
             }
         }
     }
 
+    private suspend fun doRecoverParam(password: String, mnem: String, newPub1: String) {
+        val hdWallet = GoWallet.getHDWallet(Walletapi.TypeETHString, mnem)
+        val privateKey = Walletapi.byteTohex(hdWallet?.newKeyPriv(0))
+        val pubKey = Walletapi.byteTohex(hdWallet?.newKeyPub(0))
+        val address = hdWallet?.newAddress_v2(0)
 
-    private suspend fun submitRecover(
+        val recoverParam = GoWallet.getRecoverParam(
+            pubKey,
+            OFFICIAL_PUB,
+            newPub1,
+            recoverTime,
+            ADDRESS_ID,
+            CHAIN_ID
+        )
+
+        if (visibleMnem.isNullOrEmpty()) {
+            createRecoverWallet(address!!, recoverParam, privateKey, password)
+        } else {
+            try {
+                mPWallet?.let {
+                    val id = BWallet.get().importWallet(
+                        WalletConfiguration.mnemonicWallet(
+                            visibleMnem!!,
+                            it.name,
+                            it.password,
+                            Constants.getCoins()
+                        )
+                    )
+                    if (id != MyWallet.ID_DEFAULT) {
+                        createRecoverWallet(address!!, recoverParam, privateKey, password)
+                    }
+                }
+            } catch (e: ImportWalletException) {
+                withContext(Dispatchers.Main) {
+                    loading.dismiss()
+                    e.message?.let {
+                        toast(it)
+                    }
+                }
+
+            }
+
+
+        }
+    }
+
+    private suspend fun createRecoverWallet(
         fromAddr: String,
         recoverParam: WalletRecoverParam,
         crtPrivKey: String,
@@ -281,10 +340,23 @@ class NewRecoverAddressActivity : BaseActivity() {
     ): String {
         val walletRecover = WalletRecover()
         walletRecover.param = recoverParam
+        //检查是否已经存在找回钱包
+        val addrCoin = LitePal.where("address = ?",walletRecover.walletRecoverAddr).find<Coin>()
+        if(addrCoin.isNotEmpty()){
+            withContext(Dispatchers.Main){
+                toast("此找回钱包已存在")
+                loading.dismiss()
+
+            }
+            return ""
+        }
+
+
+
         val paramNote = walletRecover.encodeRecoverParam(recoverParam)
         val createRaw =
             GoWallet.createTran(
-                "BTY",
+                Walletapi.TypeYccString,
                 fromAddr,
                 walletRecover.walletRecoverAddr,
                 0.1,
@@ -297,49 +369,50 @@ class NewRecoverAddressActivity : BaseActivity() {
         if (!createRawResult.isNullOrEmpty()) {
             //签名交易
             val signtx = GoWallet.signTran(
-                Walletapi.TypeBtyString,
+                Walletapi.TypeYccString,
                 Walletapi.stringTobyte(createRawResult),
                 crtPrivKey,
-                0
+                ADDRESS_ID
             )
 
             val sendtx = SubmitRecoverParam().apply {
-                cointype = "BTY"
+                cointype = Walletapi.TypeYccString
                 tokensymbol = ""
                 address = walletRecover.walletRecoverAddr
                 signedTx = signtx
             }
-
-            val result = walletRecover.transportSubmitTxWithRecoverInfo(sendtx, GoWallet.getUtil())
-
-            Log.v("wlike", "提交完成 == " + result)
-            withContext(Dispatchers.Main) {
-                loading.dismiss()
-                if (result.isNotEmpty()) {
-                    if (visibleMnem.isNullOrEmpty()) {
+            try {
+                val result =
+                    walletRecover.transportSubmitTxWithRecoverInfo(sendtx, GoWallet.getUtil())
+                Log.v("wlike", "提交完成 == " + result)
+                withContext(Dispatchers.Main) {
+                    loading.dismiss()
+                    if (result.isNotEmpty()) {
                         try {
                             val id = wallet.importWallet(
                                 WalletConfiguration.recoverWallet(
                                     crtPrivKey, walletRecover.walletRecoverAddr, password,
-                                    listOf(Coin().apply {
-                                        chain = "BTY"
-                                        name = "BTY"
-                                        platform = "bty"
-                                        netId = "154"
-                                        address = walletRecover.walletRecoverAddr
-                                    },Coin().apply {
-                                        chain = "ETH"
-                                        name = "BTY"
-                                        platform = "ethereum"
-                                        netId = "732"
-                                        address = walletRecover.walletRecoverAddr
-                                    },Coin().apply {
-                                        chain = "ETH"
-                                        name = "YCC"
-                                        platform = "ethereum"
-                                        netId = "155"
-                                        address = walletRecover.walletRecoverAddr
-                                    })
+                                    listOf(
+                                        Coin().apply {
+                                            chain = "ETH"
+                                            name = "ETH"
+                                            platform = "ethereum"
+                                            netId = "90"
+                                            address = walletRecover.walletRecoverAddr
+                                        },
+                                        Coin().apply {
+                                            chain = "ETH"
+                                            name = "YCC"
+                                            platform = "ethereum"
+                                            netId = "155"
+                                            address = walletRecover.walletRecoverAddr
+                                        }, Coin().apply {
+                                            chain = "ETH"
+                                            name = "BTY"
+                                            platform = "ethereum"
+                                            netId = "732"
+                                            address = walletRecover.walletRecoverAddr
+                                        })
                                 )
                             )
 
@@ -356,10 +429,18 @@ class NewRecoverAddressActivity : BaseActivity() {
                             e.message?.let { toast(it) }
                         }
                     }
-                }
 
+                }
+                return result
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    e.message?.let {
+                        toast(it)
+                    }
+                }
             }
-            return result
+
+
         }
         return ""
     }

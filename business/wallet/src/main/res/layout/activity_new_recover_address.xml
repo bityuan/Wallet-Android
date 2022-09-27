@@ -91,7 +91,7 @@
                     android:singleLine="true"
                     android:textColor="@android:color/black"
                     android:textSize="14sp"
-                    tools:text="1BTY" />
+                    tools:text="1YCC" />
 
                 <ImageView
                     android:id="@+id/iv_refresh"
@@ -191,11 +191,13 @@
                     android:background="@drawable/bg_remember_words"
                     android:gravity="center_vertical"
                     android:hint="请输入找回邮箱"
+                    android:visibility="gone"
                     android:textSize="14sp"
                     android:paddingLeft="10dp" />
 
 
                 <LinearLayout
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:layout_marginTop="10dp"

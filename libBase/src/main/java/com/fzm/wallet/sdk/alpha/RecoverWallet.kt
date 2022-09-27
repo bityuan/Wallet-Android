@@ -20,9 +20,10 @@ class RecoverWallet(wallet: PWallet) : BaseWallet(wallet) {
                 val bPassword = Walletapi.encPasswd(password)
                 val encByteKey = Walletapi.encKey(bPassword, Walletapi.hexTobyte(privateKey))
                 val encPrivateKey = Walletapi.byteTohex(encByteKey)
-                chooseChain.status = Coin.STATUS_ENABLE
-                chooseChain.setPrivkey(encPrivateKey)
-                coins = listOf(chooseChain)
+                for(c in coins){
+                    c.status = Coin.STATUS_ENABLE
+                    c.setPrivkey(encPrivateKey)
+                }
             }
             withContext(Dispatchers.IO) {
                 wallet.also {

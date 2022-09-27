@@ -119,10 +119,8 @@ class CreateMnemActivity : BaseActivity() {
     private fun gotoBackUpWalletActivity() {
         var mnem: String? = ""
         if (binding.viewChinese.visibility == View.VISIBLE) {
-            mWallet?.mnem = mChineseMnem
             mnem = mChineseMnem
         } else if (binding.viewEnglish.visibility == View.VISIBLE) {
-            mWallet?.mnem = mEnglishMnem
             mnem = mEnglishMnem
         }
         ARouter.getInstance().build(RouterPath.WALLET_BACKUP_WALLET)
