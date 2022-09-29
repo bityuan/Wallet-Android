@@ -214,6 +214,7 @@ class HomeFragment : Fragment() {
             Walletapi.TypeBtyString -> R.mipmap.header_wallet_bty_wallet
             Walletapi.TypeDcrString -> R.mipmap.header_wallet_dcr_wallet
             Walletapi.TypeETHString -> R.mipmap.header_wallet_eth_wallet
+            Walletapi.TypeYccString -> R.mipmap.header_wallet_eth_wallet
             Walletapi.TypeLitecoinString -> R.mipmap.header_wallet_ltc_wallet
             Walletapi.TypeEtherClassicString -> R.mipmap.header_wallet_etc_wallet
             Walletapi.TypeZcashString -> R.mipmap.header_wallet_zec_wallet
