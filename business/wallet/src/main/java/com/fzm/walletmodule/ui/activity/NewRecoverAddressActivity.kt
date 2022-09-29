@@ -27,6 +27,7 @@ import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.exception.ImportWalletException
 import com.fzm.wallet.sdk.utils.GoWallet
+import com.fzm.walletmodule.BuildConfig
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.databinding.ActivityNewRecoverAddressBinding
@@ -68,6 +69,8 @@ class NewRecoverAddressActivity : BaseActivity() {
     private var scanFrom = -1
     private val wallet: BWallet get() = BWallet.get()
 
+    private var backState = false
+
     private val loading by lazy {
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_loading, null)
         return@lazy AlertDialog.Builder(this).setView(view).create().apply {
@@ -85,6 +88,7 @@ class NewRecoverAddressActivity : BaseActivity() {
 
         //0是BTC格式，2是ETH格式
         const val ADDRESS_ID = 2
+
         //BTY是0，YCC是999
         const val CHAIN_ID = 999
     }
@@ -132,13 +136,14 @@ class NewRecoverAddressActivity : BaseActivity() {
         binding.ivRefresh.setOnClickListener {
             refBalance(it)
         }
-        binding.tvBackAddressDefault.text = HtmlUtils.change4(OFFICIAL_ADDRESS)
+        binding.tvBackAddressDefault.text = HtmlUtils.change4(OFFICIAL_PUB)
 
         binding.tvBackAddressDefault.setOnClickListener {
-            ClipboardUtils.clip(this, OFFICIAL_ADDRESS)
+            ClipboardUtils.clip(this, OFFICIAL_PUB)
         }
-
-        binding.etBackPub1.setText(PUB1)
+        if (BuildConfig.DEBUG) {
+            binding.etBackPub1.setText(PUB1)
+        }
         binding.ivScan.setOnClickListener {
             if (ClickUtils.isFastDoubleClick()) {
                 return@setOnClickListener
@@ -165,8 +170,8 @@ class NewRecoverAddressActivity : BaseActivity() {
             val email = binding.etEmail.text.toString()
 
 
-            val addr = Walletapi.pubToAddress_v2("ETH",Walletapi.hexTobyte(OFFICIAL_PUB))
-            Log.v("wlike","addr == "+addr)
+            val addr = Walletapi.pubToAddress_v2("ETH", Walletapi.hexTobyte(OFFICIAL_PUB))
+            Log.v("wlike", "addr == " + addr)
 
             if (isEmailAddress(email)) {
                 //发送验证码
@@ -175,15 +180,23 @@ class NewRecoverAddressActivity : BaseActivity() {
             }
         }
 
+        binding.ivBackAddr.setOnClickListener {
+            backState = !backState
+            binding.ivBackAddr.setImageResource(if (backState) R.mipmap.ic_radio else R.mipmap.ic_radio_un)
+        }
+
         binding.btnOk.setOnClickListener {
             if (balance.toDouble() < 1.0) {
-                toast("请先往您的地址充值1YCC保证找回账户成功创建")
+                toast("请先往您的地址充值1个主网保证找回账户成功创建")
                 return@setOnClickListener
             }
-
-
+            val defaultPub = if (backState) OFFICIAL_PUB else ""
             val pub1 = binding.etBackPub1.text.toString()
-            val newPub1 = if (pub1.isEmpty()) "" else ",$pub1"
+            val newPub1 = pub1.ifEmpty { "" }
+            if (defaultPub.isEmpty() && newPub1.isEmpty()) {
+                toast("至少要有一个备份公钥")
+                return@setOnClickListener
+            }
             if (visibleMnem.isNullOrEmpty()) {
                 showPwdDialog(newPub1)
             } else {
@@ -286,16 +299,16 @@ class NewRecoverAddressActivity : BaseActivity() {
         }
     }
 
-    private suspend fun doRecoverParam(password: String, mnem: String, newPub1: String) {
+    private suspend fun doRecoverParam(password: String, mnem: String, pubs: String) {
         val hdWallet = GoWallet.getHDWallet(Walletapi.TypeETHString, mnem)
         val privateKey = Walletapi.byteTohex(hdWallet?.newKeyPriv(0))
         val pubKey = Walletapi.byteTohex(hdWallet?.newKeyPub(0))
         val address = hdWallet?.newAddress_v2(0)
 
+
         val recoverParam = GoWallet.getRecoverParam(
             pubKey,
-            OFFICIAL_PUB,
-            newPub1,
+            pubs,
             recoverTime,
             ADDRESS_ID,
             CHAIN_ID
@@ -341,16 +354,15 @@ class NewRecoverAddressActivity : BaseActivity() {
         val walletRecover = WalletRecover()
         walletRecover.param = recoverParam
         //检查是否已经存在找回钱包
-        val addrCoin = LitePal.where("address = ?",walletRecover.walletRecoverAddr).find<Coin>()
-        if(addrCoin.isNotEmpty()){
-            withContext(Dispatchers.Main){
+        val addrCoin = LitePal.where("address = ?", walletRecover.walletRecoverAddr).find<Coin>()
+        if (addrCoin.isNotEmpty()) {
+            withContext(Dispatchers.Main) {
                 toast("此找回钱包已存在")
                 loading.dismiss()
 
             }
             return ""
         }
-
 
 
         val paramNote = walletRecover.encodeRecoverParam(recoverParam)
@@ -386,20 +398,12 @@ class NewRecoverAddressActivity : BaseActivity() {
                     walletRecover.transportSubmitTxWithRecoverInfo(sendtx, GoWallet.getUtil())
                 Log.v("wlike", "提交完成 == " + result)
                 withContext(Dispatchers.Main) {
-                    loading.dismiss()
                     if (result.isNotEmpty()) {
                         try {
                             val id = wallet.importWallet(
                                 WalletConfiguration.recoverWallet(
                                     crtPrivKey, walletRecover.walletRecoverAddr, password,
                                     listOf(
-                                        Coin().apply {
-                                            chain = "ETH"
-                                            name = "ETH"
-                                            platform = "ethereum"
-                                            netId = "90"
-                                            address = walletRecover.walletRecoverAddr
-                                        },
                                         Coin().apply {
                                             chain = "ETH"
                                             name = "YCC"
@@ -421,6 +425,7 @@ class NewRecoverAddressActivity : BaseActivity() {
                                 dismiss()
                                 LiveEventBus.get<Long>(LIVE_KEY_WALLET).post(id)
                                 toast("创建成功")
+                                loading.dismiss()
                                 closeSomeActivitys()
                                 finish()
                             }

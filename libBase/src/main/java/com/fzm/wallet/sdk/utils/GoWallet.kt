@@ -607,15 +607,14 @@ class GoWallet {
         // recover  wallet
         fun getRecoverParam(
             dctrPubKey: String,
-            defaultPub: String,
-            newPub1: String,
+            pubs: String,
             recoverTime: Long,
             addressId: Int,
             chainId: Int
         ): WalletRecoverParam {
             val param = WalletRecoverParam().apply {
                 ctrPubKey = dctrPubKey
-                recoverPubKeys = "$defaultPub$newPub1"
+                recoverPubKeys = pubs
                 addressID = addressId
                 chainID = chainId
                 relativeDelayTime = recoverTime
