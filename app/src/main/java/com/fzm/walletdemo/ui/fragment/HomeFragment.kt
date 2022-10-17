@@ -1,11 +1,16 @@
 package com.fzm.walletdemo.ui.fragment
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -40,7 +45,7 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.anko.backgroundResource
 import org.jetbrains.anko.support.v4.startActivity
 import org.jetbrains.anko.support.v4.toast
-import org.jetbrains.anko.toast
+import org.json.JSONObject
 import org.litepal.LitePal
 import org.litepal.extension.find
 import walletapi.NoneDelayTxParam
@@ -112,21 +117,19 @@ class HomeFragment : Fragment() {
             }
         }
         LiveEventBus.get<String>(LIVE_KEY_SCAN).observe(viewLifecycleOwner, Observer { scan ->
-            if (!uiVisible) {
-                return@Observer
-            }
             if (scan.contains(PRE_X_RECOVER)) {
                 val scans = scan.split(",")
                 val chooseCoin = scans[1]
                 val xAddress = scans[2]
                 val toAddress = scans[3]
                 val amount = scans[4]
-                showPwdDialog(chooseCoin,xAddress, toAddress, amount)
+                showPwdDialog(chooseCoin, xAddress, toAddress, amount)
+            } else {
+                ARouter.getInstance().build(RouterPath.APP_SCAN_RESULT)
+                    .withString(RouterPath.PARAM_SCAN, scan).navigation()
             }
 
 
-            ARouter.getInstance().build(RouterPath.APP_SCAN_RESULT)
-                .withString(RouterPath.PARAM_SCAN, scan).navigation()
         })
         binding.header.ivScan.setOnClickListener {
             ARouter.getInstance().build(RouterPath.WALLET_CAPTURE).navigation()
@@ -167,9 +170,8 @@ class HomeFragment : Fragment() {
                 binding.header.ivAddCoin.visibility = View.VISIBLE
             }
             TYPE_RECOVER -> {
-                val chain = pWallet.coinList[0].chain
-                binding.header.rlWalletBg.backgroundResource = getWalletBg(chain)
                 binding.header.tvWalletName.text = "找回账户"
+                binding.header.rlWalletBg.backgroundResource = R.mipmap.header_wallet_recover_wallet
                 binding.header.ivAddCoin.visibility = View.GONE
             }
             TYPE_NOMAL -> {
@@ -229,7 +231,12 @@ class HomeFragment : Fragment() {
 
 
     //recover wallet
-    private fun showPwdDialog(chooseCoin:String,xAddress: String, toAddress: String, amount: String) {
+    private fun showPwdDialog(
+        chooseCoin: String,
+        xAddress: String,
+        toAddress: String,
+        amount: String
+    ) {
         activity?.let {
             val view =
                 LayoutInflater.from(it).inflate(com.fzm.walletmodule.R.layout.dialog_pwd, null)
@@ -268,14 +275,13 @@ class HomeFragment : Fragment() {
 
                         val bPassword = GoWallet.encPasswd(password)!!
                         val mnem: String = GoWallet.decMenm(bPassword, it.mnem)
-                        val hdWallet = GoWallet.getHDWallet(Walletapi.TypeBtyString, mnem)
+                        val hdWallet = GoWallet.getHDWallet(Walletapi.TypeETHString, mnem)
                         val privkey = Walletapi.byteTohex(hdWallet?.newKeyPriv(0))
                         val address = hdWallet?.newAddress_v2(0)
                         //当前钱包为控制地址，那么prikey就是控制地址的
                         //当前钱包为备份地址，那么prikey就是备份地址的
                         //所以我们只需要获取当前钱包的私钥即可
-                        loading?.dismiss()
-                        doRecover(chooseCoin,xAddress, toAddress, amount, privkey)
+                        doRecover(chooseCoin, xAddress, toAddress, amount, privkey)
                     }
 
                 }
@@ -284,8 +290,14 @@ class HomeFragment : Fragment() {
 
     }
 
-    private fun doRecover(chooseCoin:String,xAddress: String, toAddress: String, amount: String, privkey: String) {
-        val walletRecoverParam = GoWallet.queryRecover(xAddress)
+    private suspend fun doRecover(
+        chooseCoin: String,
+        xAddress: String,
+        toAddress: String,
+        amount: String,
+        privkey: String
+    ) {
+        val walletRecoverParam = GoWallet.queryRecover(xAddress, chooseCoin)
         val walletRecover = WalletRecover()
         walletRecover.param = walletRecoverParam
         val createRaw = GoWallet.createTran(
@@ -300,17 +312,22 @@ class HomeFragment : Fragment() {
         val strResult = JSON.parseObject(createRaw, StringResult::class.java)
         val createRawResult: String? = strResult.result
         if (!createRawResult.isNullOrEmpty()) {
-            backSend(walletRecover, createRawResult, privkey)
+            backSend(walletRecover, createRawResult, privkey, chooseCoin)
 
         }
     }
 
     //备份地址（找回地址）提取资产
-    private fun backSend(walletRecover: WalletRecover, result: String, privkey: String) {
+    private suspend fun backSend(
+        walletRecover: WalletRecover,
+        result: String,
+        privkey: String,
+        chooseCoin: String
+    ) {
         val noneDelayTxParam = NoneDelayTxParam().apply {
             execer = "none"
-            addressID = 0
-            chainID = 0
+            addressID = 2
+            chainID = if (chooseCoin == "YCC") 999 else 0
             fee = 0.003
         }
         val noneDelaytx = walletRecover.createNoneDelayTx(noneDelayTxParam)
@@ -319,19 +336,46 @@ class HomeFragment : Fragment() {
             privkey,
             noneDelaytx
         )
-        val sendRawTransaction2 = GoWallet.sendTran("BTY", signtx2, "")
-        Log.v("wlike", "备份找回 == " + sendRawTransaction2)
+        val sendRawTransaction2 = GoWallet.sendTran(chooseCoin, signtx2, "")
+        val sendJson = JSONObject(sendRawTransaction2)
+        val result = sendJson.getString("result")
+        withContext(Dispatchers.Main){
+            loading?.dismiss()
+            showBackTip(result)
+        }
+
     }
 
-    private var uiVisible = true
+    private fun showBackTip(result: String) {
+        activity?.let {
+            val view =
+                LayoutInflater.from(it).inflate(R.layout.dialog_common, null)
+            val tvResult = view.findViewById<TextView>(com.fzm.walletmodule.R.id.tv_result)
+            val tvResultDetails = view.findViewById<TextView>(R.id.tv_result_details)
+            val ivClose = view.findViewById<ImageView>(R.id.iv_close)
+            val line = view.findViewById<View>(R.id.v_middle_line)
+            line.visibility = View.GONE
+            val btnRight = view.findViewById<Button>(R.id.btn_right)
+            tvResult.text = "找回结果Hash"
+            tvResultDetails.text = result
+            btnRight.text = "复制"
+            ivClose.visibility = View.VISIBLE
+            val dialog = AlertDialog.Builder(it).setView(view).create().apply {
+                window?.setBackgroundDrawableResource(android.R.color.transparent)
+            }
+            dialog.setCancelable(false)
+            ivClose.setOnClickListener {
+                dialog.dismiss()
+            }
+            btnRight.setOnClickListener { view ->
+                val cm = it.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager;
+                val mClipData = ClipData.newPlainText("Label", result)
+                cm.setPrimaryClip(mClipData)
+                toast("复制成功")
+            }
+            dialog.show()
+        }
 
-    override fun onResume() {
-        super.onResume()
-        uiVisible = true
     }
 
-    override fun onPause() {
-        super.onPause()
-        uiVisible = false
-    }
 }

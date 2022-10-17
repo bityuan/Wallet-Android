@@ -11,6 +11,7 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.net.walletQualifier
+import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletdemo.databinding.FragmentMyBinding
 import com.fzm.walletmodule.update.UpdateUtils
 import com.fzm.walletmodule.utils.AppUtils
@@ -18,6 +19,7 @@ import com.fzm.walletmodule.vm.WalletViewModel
 import org.jetbrains.anko.support.v4.toast
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.compat.ScopeCompat.viewModel
+import walletapi.WalletRecover
 
 class MyFragment : Fragment() {
 
@@ -50,6 +52,9 @@ class MyFragment : Fragment() {
         }
         binding.tvRecover.setOnClickListener {
             ARouter.getInstance().build(RouterPath.WALLET_RECOVER).navigation()
+        }
+        binding.tvCheckEmail.setOnClickListener {
+            ARouter.getInstance().build(RouterPath.WALLET_CHECKEMAIL).navigation()
         }
 
     }

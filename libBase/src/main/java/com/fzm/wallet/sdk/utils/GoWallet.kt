@@ -403,6 +403,7 @@ class GoWallet {
                 if (addressId != -1) {
                     gWithoutTx.txAddressID = addressId
                     gWithoutTx.feeAddressID = addressId
+                    gWithoutTx.execerAddressID = addressId
                 }
                 val txResp = Walletapi.coinsWithoutTxGroup(gWithoutTx)
                 return txResp.signedTx
@@ -610,7 +611,8 @@ class GoWallet {
             pubs: String,
             recoverTime: Long,
             addressId: Int,
-            chainId: Int
+            chainId: Int,
+            dThirdPartyPubKey:String
         ): WalletRecoverParam {
             val param = WalletRecoverParam().apply {
                 ctrPubKey = dctrPubKey
@@ -618,16 +620,17 @@ class GoWallet {
                 addressID = addressId
                 chainID = chainId
                 relativeDelayTime = recoverTime
+                thirdPartyPubKey = dThirdPartyPubKey
             }
 
             return param
         }
 
 
-        fun queryRecover(xAddress: String): WalletRecoverParam {
+        fun queryRecover(xAddress: String,coinType:String): WalletRecoverParam {
             val r = WalletRecover()
             val walletRecoverParam = r.transportQueryRecoverInfo(QueryRecoverParam().apply {
-                cointype = Walletapi.TypeYccString
+                cointype = coinType
                 tokensymbol = ""
                 address = xAddress
             }, getUtil())

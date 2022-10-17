@@ -22,6 +22,7 @@ object RouterPath {
     const val WALLET_BACKUP_WALLET = "/wallet/BackUpWalletActivity"
     const val WALLET_NEW_RECOVER_ADDRESS = "/wallet/NewRecoverAddressActivity"
     const val WALLET_RECOVER = "/wallet/RecoverActivity"
+    const val WALLET_CHECKEMAIL = "/wallet/CheckEmailActivity"
 
     //app
     const val APP_SPLASH = "/app/SplashActivity"

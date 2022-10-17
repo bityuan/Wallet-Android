@@ -3,12 +3,15 @@ package com.fzm.walletmodule.ui.activity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.alibaba.fastjson.JSON
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
 import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.base.PRE_X_RECOVER
 import com.fzm.wallet.sdk.base.logDebug
@@ -21,6 +24,7 @@ import com.fzm.walletmodule.BuildConfig
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.databinding.ActivityRecoverBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
+import com.jeremyliao.liveeventbus.LiveEventBus
 import com.king.zxing.util.CodeUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,6 +40,7 @@ import walletapi.Walletapi
 @Route(path = RouterPath.WALLET_RECOVER)
 class RecoverActivity : BaseActivity() {
     private var chooseCoin = "BTY"
+    private var scanFrom = 1
 
     private val loading by lazy {
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_loading, null)
@@ -51,12 +56,13 @@ class RecoverActivity : BaseActivity() {
         ARouter.getInstance().inject(this)
         title = "找回资产"
         initView()
+        initListener()
     }
 
     override fun initView() {
         super.initView()
         if (BuildConfig.DEBUG) {
-            binding.etToAddress.setText("1P7P4v3kL39zugQgDDLRqxzGjQd7aEbfKs")
+            binding.etToAddress.setText("0x882Ae07ABf2ec055B24e027A0351dB5539EEDF03")
             binding.etAmount.setText("0.02")
         }
         binding.rgCoin.setOnCheckedChangeListener { group, checkedId ->
@@ -74,6 +80,28 @@ class RecoverActivity : BaseActivity() {
             //showPwdDialog(2)
             createCode()
         }
+
+        binding.ivScanInAddr.setOnClickListener {
+            scanFrom = 1
+            ARouter.getInstance().build(RouterPath.WALLET_CAPTURE).navigation()
+        }
+        binding.ivScanXAddr.setOnClickListener {
+            scanFrom = 2
+            ARouter.getInstance().build(RouterPath.WALLET_CAPTURE).navigation()
+        }
+    }
+
+    override fun initListener() {
+        super.initListener()
+        //扫一扫
+        LiveEventBus.get<String>(LIVE_KEY_SCAN).observe(this, Observer { scan ->
+            if (scanFrom == 1) {
+                binding.etToAddress.setText(scan)
+            } else if (scanFrom == 2) {
+                binding.etXAddress.setText(scan)
+            }
+
+        })
     }
 
     private fun showPwdDialog(type: Int) {
@@ -151,6 +179,7 @@ class RecoverActivity : BaseActivity() {
 
         val createParam = "$PRE_X_RECOVER,$chooseCoin,$xAddress,$toAddress,$amount"
         val bitmapCode = CodeUtils.createQRCode(createParam, 200)
+        binding.llCode.visibility = View.VISIBLE
         binding.ivCode.setImageBitmap(bitmapCode)
         hideKeyboard(binding.etToAddress)
     }
@@ -160,7 +189,7 @@ class RecoverActivity : BaseActivity() {
         val inputAmount = binding.etAmount.text.toString()
         val xAddress = binding.etXAddress.text.toString()
 
-        val walletRecoverParam = GoWallet.queryRecover(xAddress)
+        val walletRecoverParam = GoWallet.queryRecover(xAddress, chooseCoin)
         val walletRecover = WalletRecover()
         walletRecover.param = walletRecoverParam
         val createRaw = GoWallet.createTran(

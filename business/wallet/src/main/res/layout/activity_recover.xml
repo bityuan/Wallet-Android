@@ -56,39 +56,87 @@
         android:paddingLeft="10dp" />
 
 
-    <EditText
-        android:id="@+id/et_to_address"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/bg_remember_words"
-        android:hint="请输入收款地址"
-        android:paddingLeft="10dp" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingEnd="5dp">
 
-    <EditText
-        android:id="@+id/et_x_address"
+        <EditText
+            android:id="@+id/et_to_address"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_remember_words"
+            android:hint="请输入收款地址"
+            android:paddingLeft="10dp" />
+
+        <ImageView
+            android:id="@+id/iv_scan_in_addr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:src="@mipmap/import_wallet_right" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/bg_remember_words"
-        android:hint="请输入找回钱包的地址"
-        android:paddingLeft="10dp" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingEnd="5dp">
+
+        <EditText
+            android:id="@+id/et_x_address"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_remember_words"
+            android:hint="请输入找回钱包的地址"
+            android:paddingLeft="10dp" />
+
+        <ImageView
+            android:id="@+id/iv_scan_x_addr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:src="@mipmap/import_wallet_right" />
+    </LinearLayout>
+
 
     <Button
         android:id="@+id/btn_recover"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/bg_shape_button"
         android:text="找回我的资产"
         android:textColor="@android:color/white"
         android:textSize="17sp" />
 
-    <ImageView
-        android:id="@+id/iv_code"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp" />
+    <LinearLayout
+        android:id="@+id/ll_code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/iv_code"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center_horizontal" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="请使用备份钱包扫码签名" />
+
+    </LinearLayout>
+
 
 </LinearLayout>

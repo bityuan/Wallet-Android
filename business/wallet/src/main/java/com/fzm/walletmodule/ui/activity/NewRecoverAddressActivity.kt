@@ -8,6 +8,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.LinearInterpolator
+import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -45,10 +47,7 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
 import org.litepal.LitePal
 import org.litepal.extension.find
-import walletapi.SubmitRecoverParam
-import walletapi.WalletRecover
-import walletapi.WalletRecoverParam
-import walletapi.Walletapi
+import walletapi.*
 
 
 @Route(path = RouterPath.WALLET_NEW_RECOVER_ADDRESS)
@@ -66,10 +65,11 @@ class NewRecoverAddressActivity : BaseActivity() {
     var visibleMnem: String? = null
 
     private var recoverTime: Long = 30//单位为秒
+    private var chooseCoin: String = "YCC"
     private var scanFrom = -1
     private val wallet: BWallet get() = BWallet.get()
 
-    private var backState = false
+    private var backState = true
 
     private val loading by lazy {
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_loading, null)
@@ -79,12 +79,14 @@ class NewRecoverAddressActivity : BaseActivity() {
     }
 
     companion object {
-        const val OFFICIAL_ADDRESS = "0xf440B6464600D83F6AbaeBFD2773Af9B1Fd8e9dd"
-        const val OFFICIAL_PUB =
-            "02059f401bfabd8e1c8cf099ced414fbe2fca5dae7e931a82d837c1dfd7ece17c9"
-
         const val PUB1 = "028af81cc6e1ad3f2d48c588b314f3d476074d03d40438c441b25f882e7bff915f"
         const val PUB2 = "03ac79d706f303a9033acb500ec3a941c9f2d6dbee5696d963a96a13d33f2c1029"
+
+        const val OFFICIAL_ADDRESS = "0xf440B6464600D83F6AbaeBFD2773Af9B1Fd8e9dd"
+        //const val OFFICIAL_PUB = "02059f401bfabd8e1c8cf099ced414fbe2fca5dae7e931a82d837c1dfd7ece17c9"
+        const val OFFICIAL_PUB = PUB2
+
+
 
         //0是BTC格式，2是ETH格式
         const val ADDRESS_ID = 2
@@ -134,7 +136,7 @@ class NewRecoverAddressActivity : BaseActivity() {
         }
 
         binding.ivRefresh.setOnClickListener {
-            refBalance(it)
+            refBalance(it, chooseCoin)
         }
         binding.tvBackAddressDefault.text = HtmlUtils.change4(OFFICIAL_PUB)
 
@@ -155,37 +157,47 @@ class NewRecoverAddressActivity : BaseActivity() {
         binding.rgDay.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.rb_7day -> {
-                    recoverTime = 7
+                    recoverTime = if (BuildConfig.DEBUG) 7 else 7 * 24 * 60 * 60
                 }
                 R.id.rb_30day -> {
-                    recoverTime = 30
+                    recoverTime = if (BuildConfig.DEBUG) 30 else 30 * 24 * 60 * 60
                 }
                 R.id.rb_90day -> {
-                    recoverTime = 90
+                    recoverTime = if (BuildConfig.DEBUG) 90 else 90 * 24 * 60 * 60
+                }
+            }
+
+        }
+        binding.rgChooseCoin.setOnCheckedChangeListener { group, checkedId ->
+            when (checkedId) {
+                R.id.rb_bty -> {
+                    chooseCoin = Walletapi.TypeBtyString
+                    refBalance(binding.ivRefresh, chooseCoin)
+                }
+                R.id.rb_ycc -> {
+                    chooseCoin = Walletapi.TypeYccString
+                    refBalance(binding.ivRefresh, chooseCoin)
                 }
 
-            }
-        }
-        binding.tvSendCode.setOnClickListener {
-            val email = binding.etEmail.text.toString()
-
-
-            val addr = Walletapi.pubToAddress_v2("ETH", Walletapi.hexTobyte(OFFICIAL_PUB))
-            Log.v("wlike", "addr == " + addr)
-
-            if (isEmailAddress(email)) {
-                //发送验证码
-            } else {
-                toast("请填写完整邮箱")
             }
         }
 
         binding.ivBackAddr.setOnClickListener {
-            backState = !backState
-            binding.ivBackAddr.setImageResource(if (backState) R.mipmap.ic_radio else R.mipmap.ic_radio_un)
+            if (backState) {
+                showBackTip()
+            } else {
+                backState = !backState
+                binding.ivBackAddr.setImageResource(if (backState) R.mipmap.ic_radio else R.mipmap.ic_radio_un)
+            }
+
         }
 
         binding.btnOk.setOnClickListener {
+            val emailPhone = binding.etEmailPhone.text.toString()
+            if (emailPhone.isEmpty()) {
+                toast("请输入找回邮箱或手机号")
+                return@setOnClickListener
+            }
             if (balance.toDouble() < 1.0) {
                 toast("请先往您的地址充值1个主网保证找回账户成功创建")
                 return@setOnClickListener
@@ -198,12 +210,12 @@ class NewRecoverAddressActivity : BaseActivity() {
                 return@setOnClickListener
             }
             if (visibleMnem.isNullOrEmpty()) {
-                showPwdDialog(newPub1)
+                showPwdDialog(newPub1, emailPhone)
             } else {
                 loading.show()
                 lifecycleScope.launch(Dispatchers.IO) {
                     mPWallet?.let {
-                        doRecoverParam(it.password, visibleMnem!!, newPub1)
+                        doRecoverParam(it.password, visibleMnem!!, newPub1, emailPhone)
                     }
                 }
 
@@ -219,11 +231,11 @@ class NewRecoverAddressActivity : BaseActivity() {
 
     override fun initData() {
         super.initData()
-        refBalance(binding.ivRefresh)
+        refBalance(binding.ivRefresh, chooseCoin)
     }
 
     var balance = "0.0"
-    private fun refBalance(view: View) {
+    private fun refBalance(view: View, coinType: String) {
         lifecycleScope.launch(Dispatchers.Main) {
             val objectAnimator: ObjectAnimator = ObjectAnimator.ofFloat(view, "rotation", 0f, 359f)
             objectAnimator.repeatCount = ValueAnimator.INFINITE
@@ -233,14 +245,14 @@ class NewRecoverAddressActivity : BaseActivity() {
             withContext(Dispatchers.IO) {
                 balance = GoWallet.handleBalance(Coin().apply {
                     address = myRecoverAddress
-                    chain = Walletapi.TypeYccString
+                    chain = coinType
                     name = ""
                     netId = "155"
 
                 })
             }
             objectAnimator.cancel()
-            binding.tvBalance.text = "$balance YCC"
+            binding.tvBalance.text = "$balance $coinType"
         }
     }
 
@@ -256,7 +268,7 @@ class NewRecoverAddressActivity : BaseActivity() {
         })
     }
 
-    private fun showPwdDialog(newPub1: String) {
+    private fun showPwdDialog(newPub1: String, emailPhone: String) {
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_pwd, null)
         val dialog = AlertDialog.Builder(this).setView(view).create().apply {
             window?.setBackgroundDrawableResource(android.R.color.transparent)
@@ -292,14 +304,19 @@ class NewRecoverAddressActivity : BaseActivity() {
 
                     val bPassword = GoWallet.encPasswd(password)!!
                     val mnem: String = GoWallet.decMenm(bPassword, it.mnem)
-                    doRecoverParam(password, mnem, newPub1)
+                    doRecoverParam(password, mnem, newPub1, emailPhone)
                 }
 
             }
         }
     }
 
-    private suspend fun doRecoverParam(password: String, mnem: String, pubs: String) {
+    private suspend fun doRecoverParam(
+        password: String,
+        mnem: String,
+        pubs: String,
+        emailPhone: String
+    ) {
         val hdWallet = GoWallet.getHDWallet(Walletapi.TypeETHString, mnem)
         val privateKey = Walletapi.byteTohex(hdWallet?.newKeyPriv(0))
         val pubKey = Walletapi.byteTohex(hdWallet?.newKeyPub(0))
@@ -311,11 +328,12 @@ class NewRecoverAddressActivity : BaseActivity() {
             pubs,
             recoverTime,
             ADDRESS_ID,
-            CHAIN_ID
+            CHAIN_ID,
+            OFFICIAL_PUB
         )
 
         if (visibleMnem.isNullOrEmpty()) {
-            createRecoverWallet(address!!, recoverParam, privateKey, password)
+            createRecoverWallet(address!!, recoverParam, privateKey, password, emailPhone)
         } else {
             try {
                 mPWallet?.let {
@@ -328,7 +346,13 @@ class NewRecoverAddressActivity : BaseActivity() {
                         )
                     )
                     if (id != MyWallet.ID_DEFAULT) {
-                        createRecoverWallet(address!!, recoverParam, privateKey, password)
+                        createRecoverWallet(
+                            address!!,
+                            recoverParam,
+                            privateKey,
+                            password,
+                            emailPhone
+                        )
                     }
                 }
             } catch (e: ImportWalletException) {
@@ -349,10 +373,25 @@ class NewRecoverAddressActivity : BaseActivity() {
         fromAddr: String,
         recoverParam: WalletRecoverParam,
         crtPrivKey: String,
-        password: String
+        password: String,
+        dEmail: String
     ): String {
         val walletRecover = WalletRecover()
         walletRecover.param = recoverParam
+
+        //add email
+        val contactInfo = Contact().apply {
+            email = dEmail
+        }
+        val contactSignature = walletRecover.signContact(crtPrivKey, contactInfo)
+        val contactSignatureHash =
+            walletRecover.calculateHash(Walletapi.hexTobyte(contactSignature))
+        val dEncryptedContact =
+            walletRecover.encryptContact(OFFICIAL_PUB, contactInfo, contactSignature)
+        walletRecover.param.memo = RecoverMemo().apply {
+            contactSigHash = contactSignatureHash
+            encryptedContact = dEncryptedContact.encryptedData
+        }
         //检查是否已经存在找回钱包
         val addrCoin = LitePal.where("address = ?", walletRecover.walletRecoverAddr).find<Coin>()
         if (addrCoin.isNotEmpty()) {
@@ -368,7 +407,7 @@ class NewRecoverAddressActivity : BaseActivity() {
         val paramNote = walletRecover.encodeRecoverParam(recoverParam)
         val createRaw =
             GoWallet.createTran(
-                Walletapi.TypeYccString,
+                chooseCoin,
                 fromAddr,
                 walletRecover.walletRecoverAddr,
                 0.1,
@@ -381,17 +420,20 @@ class NewRecoverAddressActivity : BaseActivity() {
         if (!createRawResult.isNullOrEmpty()) {
             //签名交易
             val signtx = GoWallet.signTran(
-                Walletapi.TypeYccString,
+                chooseCoin,
                 Walletapi.stringTobyte(createRawResult),
                 crtPrivKey,
                 ADDRESS_ID
             )
 
             val sendtx = SubmitRecoverParam().apply {
-                cointype = Walletapi.TypeYccString
+                cointype = chooseCoin
                 tokensymbol = ""
                 address = walletRecover.walletRecoverAddr
                 signedTx = signtx
+                contact = contactInfo
+                contactSig = contactSignature
+                encodeRecoverInfo = paramNote
             }
             try {
                 val result =
@@ -448,6 +490,32 @@ class NewRecoverAddressActivity : BaseActivity() {
 
         }
         return ""
+    }
+
+
+    private fun showBackTip() {
+        val view = LayoutInflater.from(this).inflate(R.layout.dialog_common, null)
+        val tvResult = view.findViewById<TextView>(R.id.tv_result)
+        val tvResultDetails = view.findViewById<TextView>(R.id.tv_result_details)
+        val btnLeft = view.findViewById<Button>(R.id.btn_left)
+        btnLeft.visibility = View.VISIBLE
+        val btnRight = view.findViewById<Button>(R.id.btn_right)
+        tvResult.text = "温馨提示"
+        tvResultDetails.text = "不勾选将只能用“用户备份公钥”找回资产，是否不勾选？"
+        btnLeft.text = "否"
+        btnRight.text = "是"
+        val dialog = AlertDialog.Builder(this).setView(view).create().apply {
+            window?.setBackgroundDrawableResource(android.R.color.transparent)
+        }
+        btnLeft.setOnClickListener {
+            dialog.dismiss()
+        }
+        btnRight.setOnClickListener {
+            dialog.dismiss()
+            backState = !backState
+            binding.ivBackAddr.setImageResource(if (backState) R.mipmap.ic_radio else R.mipmap.ic_radio_un)
+        }
+        dialog.show()
     }
 
 

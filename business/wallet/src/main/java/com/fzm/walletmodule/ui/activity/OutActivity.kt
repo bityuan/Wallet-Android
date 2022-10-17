@@ -366,7 +366,7 @@ class OutActivity : BaseActivity() {
     private suspend fun doRecover(toAddress: String, money: String) {
         coin?.let {
             val tokenSymbol = if (it.name == it.chain) "" else it.name
-            val walletRecoverParam = GoWallet.queryRecover(it.address)
+            val walletRecoverParam = GoWallet.queryRecover(it.address,it.chain)
             val walletRecover = WalletRecover()
             walletRecover.param = walletRecoverParam
             val createRaw = GoWallet.createTran(

@@ -30,14 +30,6 @@ android {
         }
     }
 
-    //打包命名配置
-    android.applicationVariants.all { variant ->
-        variant.outputs.all {
-            outputFileName = "${variant.flavorName}_${defaultConfig.versionName}.apk"
-            //outputFileName = "${variant.flavorName}_${defaultConfig.versionName}_${releaseTime()}.apk"
-        }
-    }
-
     buildTypes {
         debug {
             versionNameSuffix "-debug"

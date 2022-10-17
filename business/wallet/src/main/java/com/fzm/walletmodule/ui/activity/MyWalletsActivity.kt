@@ -10,7 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.android.arouter.launcher.ARouter
-import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
 import com.fzm.wallet.sdk.base.MyWallet
@@ -119,11 +118,13 @@ class MyWalletsActivity : BaseActivity() {
 
                     when (wallet.type) {
                         TYPE_NOMAL -> {
+                            ivWalletType.visibility = View.VISIBLE
                             tvWalletType.text = "助记词账户"
                             ivWalletType.imageResource = R.mipmap.my_wallet_coins
                             rlWallet.backgroundResource = R.mipmap.my_wallet_bg_black
                         }
                         TYPE_PRI_KEY -> {
+                            ivWalletType.visibility = View.VISIBLE
                             tvWalletType.text = "私钥账户"
                             val chain = wallet.coinList[0].chain
                             ivWalletType.imageResource = getWalletIcon(chain)
@@ -131,9 +132,8 @@ class MyWalletsActivity : BaseActivity() {
                         }
                         TYPE_RECOVER -> {
                             tvWalletType.text = "找回账户"
-                            val chain = wallet.coinList[0].chain
-                            ivWalletType.imageResource = getWalletIcon(chain)
-                            rlWallet.backgroundResource = getWalletBg(chain)
+                            ivWalletType.visibility = View.GONE
+                            rlWallet.backgroundResource = R.mipmap.my_wallet_bg_recover
                         }
                         else -> {}
                     }
