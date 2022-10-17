@@ -83,8 +83,8 @@ class NewRecoverAddressActivity : BaseActivity() {
         const val PUB2 = "03ac79d706f303a9033acb500ec3a941c9f2d6dbee5696d963a96a13d33f2c1029"
 
         const val OFFICIAL_ADDRESS = "0xf440B6464600D83F6AbaeBFD2773Af9B1Fd8e9dd"
-        //const val OFFICIAL_PUB = "02059f401bfabd8e1c8cf099ced414fbe2fca5dae7e931a82d837c1dfd7ece17c9"
-        const val OFFICIAL_PUB = PUB2
+        const val OFFICIAL_PUB = "02059f401bfabd8e1c8cf099ced414fbe2fca5dae7e931a82d837c1dfd7ece17c9"
+        //const val OFFICIAL_PUB = PUB2
 
 
 
@@ -195,7 +195,11 @@ class NewRecoverAddressActivity : BaseActivity() {
         binding.btnOk.setOnClickListener {
             val emailPhone = binding.etEmailPhone.text.toString()
             if (emailPhone.isEmpty()) {
-                toast("请输入找回邮箱或手机号")
+                toast("请输入找回邮箱")
+                return@setOnClickListener
+            }
+            if (!isEmailAddress(emailPhone)) {
+                toast("邮箱格式不正确")
                 return@setOnClickListener
             }
             if (balance.toDouble() < 1.0) {

@@ -235,7 +235,7 @@
                     android:layout_height="45dp"
                     android:background="@drawable/bg_remember_words"
                     android:gravity="center_vertical"
-                    android:hint="请输入找回邮箱或手机号"
+                    android:hint="请输入找回邮箱"
                     android:paddingLeft="10dp"
                     android:textSize="14sp" />
 
