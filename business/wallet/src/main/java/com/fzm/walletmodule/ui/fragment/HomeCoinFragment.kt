@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.fzm.wallet.sdk.base.MyWallet
+import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.net.walletQualifier
@@ -84,7 +85,8 @@ class HomeCoinFragment : BaseFragment() {
                         coin.status = Coin.STATUS_ENABLE
                         holder.setImageResource(R.id.iv_add_remove_coin, R.mipmap.icon_removecoin)
                     }
-                    updateCoin(holder, coin)
+                    coin.update(coin.id)
+                    //updateCoin(holder, coin)
                 }
             }
         }
