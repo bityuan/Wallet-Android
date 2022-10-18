@@ -1,8 +1,12 @@
 package com.fzm.walletdemo.ui.activity
 
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.Menu
+import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -11,6 +15,7 @@ import com.fzm.wallet.sdk.RouterPath
 import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.ActivityWebTestBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
+import com.fzm.walletmodule.utils.ClipboardUtils
 import com.fzm.walletmodule.utils.PreferencesUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -80,5 +85,21 @@ class WebTestActivity : BaseActivity() {
             mUrlList.addAll(stringList)
             mCommonAdapter.notifyDataSetChanged()
         }
+    }
+
+
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val menuItem = menu.add(0, 1, 0, "邮箱验证")
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            1 -> {
+                ARouter.getInstance().build(RouterPath.WALLET_CHECKEMAIL).navigation()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

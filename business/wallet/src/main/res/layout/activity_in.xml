@@ -57,6 +57,7 @@
 
         <TextView
             android:id="@+id/tv_wallet_name"
+            android:gravity="center"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"

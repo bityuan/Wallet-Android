@@ -118,6 +118,7 @@ ext {
 
     navigationUi = "androidx.navigation:navigation-ui-ktx:2.3.5"
     navigationFragment = "androidx.navigation:navigation-fragment-ktx:2.3.5"
+    broccoli = "me.samlss:broccoli:1.0.0"
 
 
 }

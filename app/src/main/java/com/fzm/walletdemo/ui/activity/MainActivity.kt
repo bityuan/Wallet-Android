@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
+import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.net.walletQualifier
@@ -50,6 +51,7 @@ class MainActivity : BaseActivity() {
         Constants.setCoins(DEFAULT_COINS)
         gotoUpdate()
     }
+
 
     private fun gotoUpdate() {
         walletViewModel.getUpdate.observe(this, Observer {
@@ -123,6 +125,7 @@ class MainActivity : BaseActivity() {
             setTabSelection(2)
         }
     }
+
 
 
     var currentTab: ViewGroup? = null
@@ -263,5 +266,27 @@ class MainActivity : BaseActivity() {
         } else {
             finish()
         }
+    }
+
+
+    //app崩溃导致fragment重叠问题处理
+
+    private var position = 0 //记录Fragment的位置
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        logDebug("onSaveInstanceState")
+        // 保存用户自定义的状态
+        outState.putInt("position", position);
+        //调用父类交给系统处理，这样系统能保存视图层次结构状态
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        logDebug("onRestoreInstanceState")
+        // 总是调用超类，以便它可以恢复视图层次超级
+        super.onRestoreInstanceState(savedInstanceState);
+        //从已保存的实例中恢复状态成员
+        position = savedInstanceState.getInt("position");
+        setTabSelection(position);
     }
 }

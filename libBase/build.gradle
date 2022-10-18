@@ -52,6 +52,7 @@ dependencies {
     api cfg.materialDialogs
     api cfg.navigationUi
     api cfg.navigationFragment
+    api cfg.broccoli
     debugApi  cfg.glance
 }
 
