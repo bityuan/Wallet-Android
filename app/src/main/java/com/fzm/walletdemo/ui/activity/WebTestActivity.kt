@@ -7,11 +7,14 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
+import com.fzm.wallet.sdk.base.PRE_X_RECOVER
 import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.ActivityWebTestBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
@@ -19,6 +22,7 @@ import com.fzm.walletmodule.utils.ClipboardUtils
 import com.fzm.walletmodule.utils.PreferencesUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.jeremyliao.liveeventbus.LiveEventBus
 import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
 import java.util.ArrayList
@@ -85,12 +89,18 @@ class WebTestActivity : BaseActivity() {
             mUrlList.addAll(stringList)
             mCommonAdapter.notifyDataSetChanged()
         }
-    }
 
+        LiveEventBus.get<String>(LIVE_KEY_SCAN).observe(this, Observer { scan ->
+            ARouter.getInstance().build(RouterPath.APP_SCAN_RESULT)
+                .withString(RouterPath.PARAM_SCAN, scan).navigation()
+
+        })
+    }
 
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val menuItem = menu.add(0, 1, 0, "邮箱验证")
+        val menuItem2 = menu.add(0, 2, 0, "扫一扫")
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -98,6 +108,10 @@ class WebTestActivity : BaseActivity() {
         when (item.itemId) {
             1 -> {
                 ARouter.getInstance().build(RouterPath.WALLET_CHECKEMAIL).navigation()
+            }
+            2 -> {
+                ARouter.getInstance().build(RouterPath.WALLET_CAPTURE).navigation()
+
             }
         }
         return super.onOptionsItemSelected(item)

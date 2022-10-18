@@ -203,7 +203,7 @@ class NewRecoverAddressActivity : BaseActivity() {
                 return@setOnClickListener
             }
             if (balance.toDouble() < 1.0) {
-                toast("请先往您的地址充值1个主网保证找回账户成功创建")
+                toast("请先往您的地址充值1个主网${chooseCoin}保证找回账户成功创建")
                 return@setOnClickListener
             }
             val defaultPub = if (backState) OFFICIAL_PUB else ""

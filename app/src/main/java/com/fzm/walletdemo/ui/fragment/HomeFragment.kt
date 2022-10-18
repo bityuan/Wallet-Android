@@ -124,11 +124,7 @@ class HomeFragment : Fragment() {
                 val toAddress = scans[3]
                 val amount = scans[4]
                 showPwdDialog(chooseCoin, xAddress, toAddress, amount)
-            } else {
-                ARouter.getInstance().build(RouterPath.APP_SCAN_RESULT)
-                    .withString(RouterPath.PARAM_SCAN, scan).navigation()
             }
-
 
         })
         binding.header.ivScan.setOnClickListener {
@@ -339,7 +335,7 @@ class HomeFragment : Fragment() {
         val sendRawTransaction2 = GoWallet.sendTran(chooseCoin, signtx2, "")
         val sendJson = JSONObject(sendRawTransaction2)
         val result = sendJson.getString("result")
-        withContext(Dispatchers.Main){
+        withContext(Dispatchers.Main) {
             loading?.dismiss()
             showBackTip(result)
         }
