@@ -53,6 +53,7 @@ dependencies {
     api cfg.navigationUi
     api cfg.navigationFragment
     api cfg.broccoli
+    api cfg.swipeRecyclerview
     debugApi  cfg.glance
 }
 

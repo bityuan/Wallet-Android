@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.fzm.wallet.sdk.base.MyWallet
-import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.net.walletQualifier
@@ -25,6 +24,7 @@ import com.fzm.walletmodule.databinding.FragmentHomeCoinBinding
 import com.fzm.walletmodule.event.AddCoinEvent
 import com.fzm.walletmodule.ui.base.BaseFragment
 import com.fzm.walletmodule.vm.WalletViewModel
+import com.yanzhenjie.recyclerview.*
 import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
 import org.greenrobot.eventbus.EventBus
@@ -35,6 +35,10 @@ import org.litepal.LitePal.where
 import org.litepal.extension.find
 import java.lang.String
 import java.util.*
+import kotlin.Boolean
+import kotlin.Int
+import kotlin.getValue
+import kotlin.run
 
 
 class HomeCoinFragment : BaseFragment() {
@@ -90,6 +94,53 @@ class HomeCoinFragment : BaseFragment() {
                 }
             }
         }
+        // 创建菜单：
+
+        // 创建菜单：
+        val mSwipeMenuCreator: SwipeMenuCreator = object : SwipeMenuCreator {
+            override fun onCreateMenu(leftMenu: SwipeMenu?, rightMenu: SwipeMenu, position: Int) {
+                val width = resources.getDimensionPixelSize(R.dimen.dp_70)
+
+                // 1. MATCH_PARENT 自适应高度，保持和Item一样高;
+                // 2. 指定具体的高，比如80;
+                // 3. WRAP_CONTENT，自身高度，不推荐;
+                val height = ViewGroup.LayoutParams.MATCH_PARENT
+                // 添加右侧的，如果不添加，则右侧不会出现菜单。
+                run {
+                    val deleteItem: SwipeMenuItem =
+                        SwipeMenuItem(activity).setBackground(R.drawable.selector_red)
+                            .setText("删除")
+                            .setTextColor(Color.WHITE)
+                            .setWidth(width)
+                            .setHeight(height)
+                    rightMenu.addMenuItem(deleteItem) // 添加菜单到右侧。
+                }
+            }
+        }
+
+        val mItemMenuClickListener = OnItemMenuClickListener { menuBridge, position -> // 任何操作必须先关闭菜单，否则可能出现Item菜单打开状态错乱。
+                menuBridge.closeMenu()
+                // 左侧还是右侧菜单：
+                val direction: Int = menuBridge.getDirection()
+                // 菜单在Item中的Position：
+                if (direction == SwipeRecyclerView.RIGHT_DIRECTION) {
+                    val coin = data[position]
+                    coin.delete()
+                    val list = where("pwallet_id = ? ", String.valueOf(mPWallet?.id)).find(
+                        Coin::class.java, true
+                    )
+                    data.clear()
+                    data.addAll(list)
+                    mCommonAdapter?.notifyDataSetChanged()
+                }
+            }
+
+
+
+        binding.swipeTarget.setSwipeMenuCreator(mSwipeMenuCreator)
+        binding.swipeTarget.setOnItemMenuClickListener(mItemMenuClickListener)
+
+
         binding.swipeTarget.adapter = mCommonAdapter
         //拖曳排序
         helper.attachToRecyclerView(binding.swipeTarget)
