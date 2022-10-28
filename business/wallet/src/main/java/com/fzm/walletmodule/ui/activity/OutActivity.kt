@@ -54,7 +54,8 @@ import walletapi.WalletRecover
 import walletapi.Walletapi
 import java.math.RoundingMode
 import java.text.DecimalFormat
-
+//原BTY,BTC和ETH格式的BTY，查余额，账单，构造签名发送都是 "BTY",BNB的BTY是"BNB"
+//原YCC查余额，账单，构造签名发送都是"ETH",BTC和ETH格式的YCC，查余额，账单，构造签名发送都是 "YCC",BNB的YCC是"BNB"
 @Route(path = RouterPath.WALLET_OUT)
 class OutActivity : BaseActivity() {
 
@@ -86,6 +87,11 @@ class OutActivity : BaseActivity() {
 
     override fun initView() {
         coin?.let {
+            val coinToken = it.newChain
+            //危险操作，此页面不可对coin进行数据库修改，不然chain和name也会被修改
+            it.chain = coinToken.cointype
+            it.name = coinToken.tokenSymbol
+
             binding.tvCoinName.text = it.uiName + getString(R.string.home_transfer)
             binding.tvWalletName.text = it.getpWallet().name
             binding.tvBalance.text = "${it.balance} ${it.uiName}"

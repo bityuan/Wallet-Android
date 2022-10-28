@@ -15,7 +15,7 @@ import walletapi.Walletapi;
  * Created by ZX on 2018/5/30.
  */
 
-public class Coin extends BaseBean implements Comparable<Coin>{
+public class Coin extends BaseBean implements Comparable<Coin> {
 
     public static final String COIN_ID = "coin_id";
     public static final int STATUS_ENABLE = 1;
@@ -185,7 +185,8 @@ public class Coin extends BaseBean implements Comparable<Coin>{
     }
 
     public String getPrivkey(String coinType, String mnem) {
-        HDWallet hdWallet = GoWallet.getHDWallet(coinType, mnem);
+        String chain = "ETHW".equals(coinType) ? "ETH" : coinType;
+        HDWallet hdWallet = GoWallet.getHDWallet(chain, mnem);
         try {
             byte[] bPrivkey = hdWallet.newKeyPriv(0);
             return Walletapi.byteTohex(bPrivkey);
@@ -262,6 +263,11 @@ public class Coin extends BaseBean implements Comparable<Coin>{
 
     public String getChain() {
         return chain;
+    }
+
+    public GoWallet.Companion.CoinToken getNewChain() {
+        GoWallet.Companion.CoinToken coinToken = GoWallet.Companion.newCoinType(chain, name, Integer.parseInt(netId));
+        return coinToken;
     }
 
     public void setChain(String chain) {

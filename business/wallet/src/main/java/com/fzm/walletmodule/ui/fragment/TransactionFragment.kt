@@ -175,10 +175,11 @@ class TransactionFragment : BaseFragment() {
             if (index == 0L && !NetWorkUtils.isConnected(context)) {
                 datas = MMkvUtil.decodeString(getKey(tokensymbol))
             } else {
+                val coinToken = coin.newChain
                 datas = GoWallet.getTranList(
                     coin.address,
-                    coin.chain,
-                    tokensymbol,
+                    coinToken.cointype,
+                    coinToken.tokenSymbol,
                     mType.toLong(),
                     index,
                     Constants.PAGE_LIMIT

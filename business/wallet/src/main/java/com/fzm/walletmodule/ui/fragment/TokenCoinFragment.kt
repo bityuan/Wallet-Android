@@ -117,8 +117,10 @@ class TokenCoinFragment : BaseFragment() {
         coin.status = if (visible) Coin.STATUS_ENABLE else Coin.STATUS_DISABLE
         mStatusMap[coin.netId] = coin.status
         mCoinsMap[coin.netId] = coin
+        val chain = if ("ETHW" == coin.chain) "ETH" else coin.chain
+
         for (homeCoin in homeData) {
-            if (TextUtils.equals(coin.chain, homeCoin.chain)) {
+            if (TextUtils.equals(chain, homeCoin.chain)) {
                 coin.address = homeCoin.address
                 coin.pubkey = homeCoin.pubkey
                 coin.setPrivkey(homeCoin.encPrivkey)
@@ -149,7 +151,7 @@ class TokenCoinFragment : BaseFragment() {
         ).findFirst(
             Coin::class.java
         )
-        if (chainCoin == null) {
+        if (chainCoin == null && "ETHW" != coin.chain) {
             showPwdDialog(coin)
         } else {
             updateCoin(coin, true, true)

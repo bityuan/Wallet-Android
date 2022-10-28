@@ -53,7 +53,7 @@ class TransactionDetailsActivity : BaseActivity() {
         super.initData()
         binding.tvOutAddress.text = transaction.from
         binding.tvInAddress.text = transaction.to
-        binding.tvMiner.text = "${transaction.fee} ${coin.chain}"
+        binding.tvMiner.text = "${transaction.fee} ${coin.newChain.cointype}"
         binding.tvBlock.text = transaction.height.toString()
 
         binding.tvHash.text = transaction.txid

@@ -69,8 +69,6 @@ class WalletFragment : Fragment() {
         adapter.setOnItemClickListener { position ->
             oldList?.let {
                 val coin = it[position]
-                val coinToken = GoWallet.newCoinType(coin.chain, coin.name, coin.netId.toInt())
-                coin.chain = coinToken.cointype
                 ARouter.getInstance().build(RouterPath.WALLET_TRANSACTIONS)
                     .withSerializable(RouterPath.PARAM_COIN, coin).navigation()
             }

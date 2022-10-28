@@ -141,19 +141,17 @@ class GoWallet {
          * @param goNoderUrl String    服务器节点
          * 服务器挂掉{"id":1,"result":null,"error":"cointype EEE no support"}
          */
-        fun getbalance(
+        private fun getbalance(
             addresss: String,
             chain: String,
             tokenSymbol: String,
-            netId: String
         ): String? {
             try {
                 checkSessionID()
                 val balance = WalletBalance()
-                val coinToken = newCoinType(chain, tokenSymbol, netId.toInt())
-                balance.cointype = coinToken.cointype
+                balance.cointype = chain
                 balance.address = addresss
-                balance.tokenSymbol = coinToken.tokenSymbol
+                balance.tokenSymbol = tokenSymbol
                 balance.util = getUtil()
                 val getbalance = Walletapi.getbalance(balance)
                 return Walletapi.byteTostring(getbalance)
@@ -168,8 +166,8 @@ class GoWallet {
          * @return String?  余额
          */
         fun handleBalance(lCoin: Coin): String {
-            val tokensymbol = if (lCoin.name == lCoin.chain) "" else lCoin.name
-            val balanceStr = getbalance(lCoin.address, lCoin.chain, tokensymbol, lCoin.netId)
+            val coinToken = lCoin.newChain
+            val balanceStr = getbalance(lCoin.address, coinToken.cointype, coinToken.tokenSymbol)
             log(balanceStr)
             if (!TextUtils.isEmpty(balanceStr)) {
                 val balanceResponse = gson.fromJson(balanceStr, BalanceResponse::class.java)
@@ -253,7 +251,7 @@ class GoWallet {
          * @param goNoderUrl String   服务器节点
          * @return String?
          */
-        fun getTranByTxid(
+        private fun getTranByTxid(
             chain: String,
             tokenSymbol: String,
             txid: String,
