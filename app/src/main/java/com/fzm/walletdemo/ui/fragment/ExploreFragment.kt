@@ -43,6 +43,9 @@ class ExploreFragment : Fragment() {
             getExploreAll()
         }
         getExploreAll()
+        binding.llSearch.setOnClickListener {
+            ARouter.getInstance().build(RouterPath.APP_SEARCH_DAPP).navigation()
+        }
     }
 
 

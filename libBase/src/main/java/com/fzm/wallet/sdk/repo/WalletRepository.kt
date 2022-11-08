@@ -1,14 +1,13 @@
 package com.fzm.wallet.sdk.repo
 
 import com.fzm.wallet.sdk.api.Apis
-import com.fzm.wallet.sdk.bean.AppVersion
-import com.fzm.wallet.sdk.bean.ExploreBean
-import com.fzm.wallet.sdk.bean.toRequestBody
+import com.fzm.wallet.sdk.bean.*
 import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.HttpResult
 import com.fzm.wallet.sdk.net.apiCall
 import com.fzm.wallet.sdk.net.dnsCall
+import retrofit2.http.Query
 
 class WalletRepository constructor(private val apis: Apis) {
     suspend fun getCoinList(names: List<String>): HttpResult<List<Coin>> {
@@ -46,6 +45,14 @@ class WalletRepository constructor(private val apis: Apis) {
 
     suspend fun getSupportedChain(): HttpResult<List<Coin>> {
         return apiCall { apis.getSupportedChain() }
+    }
+
+    suspend fun getNoticeList(page: Int, limit: Int, type: Int): HttpResult<Notices> {
+        return apiCall { apis.getNoticeList(page, limit, type) }
+    }
+
+    suspend fun getNoticeDetail(id: Int): HttpResult<Notice> {
+        return apiCall { apis.getNoticeDetail(id) }
     }
 
     suspend fun getDNSResolve(type: Int, key: String, kind: Int): HttpResult<List<String>> {

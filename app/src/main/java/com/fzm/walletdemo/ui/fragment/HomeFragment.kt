@@ -29,6 +29,7 @@ import com.fzm.wallet.sdk.bean.StringResult
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.db.entity.PWallet.*
+import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.FragmentHomeBinding
@@ -37,6 +38,7 @@ import com.fzm.walletmodule.ui.activity.AddCoinActivity
 import com.fzm.walletmodule.ui.activity.MyWalletsActivity
 import com.fzm.walletmodule.ui.fragment.WalletFragment
 import com.fzm.walletmodule.utils.ClickUtils
+import com.fzm.walletmodule.vm.WalletViewModel
 import com.jeremyliao.liveeventbus.LiveEventBus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -46,6 +48,7 @@ import org.jetbrains.anko.backgroundResource
 import org.jetbrains.anko.support.v4.startActivity
 import org.jetbrains.anko.support.v4.toast
 import org.json.JSONObject
+import org.koin.android.ext.android.inject
 import org.litepal.LitePal
 import org.litepal.extension.find
 import walletapi.NoneDelayTxParam
@@ -56,6 +59,8 @@ class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
     private var cWalletId: Long = -1
+
+    private val walletViewModel: WalletViewModel by inject(walletQualifier)
 
     private val loading by lazy {
         activity?.let {
@@ -153,6 +158,7 @@ class HomeFragment : Fragment() {
             startActivity<AddCoinActivity>()
         }
 
+        initMsg()
     }
 
 
@@ -374,4 +380,24 @@ class HomeFragment : Fragment() {
 
     }
 
+    //type=1 首页跑马灯数据
+    //type = 2 强制弹框数据
+    //type = 0 全部数据
+    private fun initMsg() {
+        walletViewModel.getNoticeList.observe(viewLifecycleOwner, Observer {
+            if (it.isSucceed()) {
+                it.data()?.let {
+                    binding.marqvMsg.startWithList(it.list)
+                    binding.llMsg.setOnClickListener(View.OnClickListener {
+                        ARouter.getInstance().build(RouterPath.APP_MESSAGES).navigation()
+                    })
+                    binding.marqvMsg.setOnItemClickListener { position, textView ->
+                        ARouter.getInstance().build(RouterPath.APP_MESSAGES).navigation()
+                    }
+                }
+            }
+        })
+
+        walletViewModel.getNoticeList(1, 3, 1)
+    }
 }

@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.bean.AppVersion
+import com.fzm.wallet.sdk.bean.Notice
+import com.fzm.wallet.sdk.bean.Notices
 import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.HttpResult
@@ -37,6 +39,14 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
     val getSupportedChain: LiveData<HttpResult<List<Coin>>>
         get() = _getSupportedChain
 
+    private val _getNoticeList = MutableLiveData<HttpResult<Notices>>()
+    val getNoticeList: LiveData<HttpResult<Notices>>
+        get() = _getNoticeList
+
+    private val _getNoticeDetail = MutableLiveData<HttpResult<Notice>>()
+    val getNoticeDetail: LiveData<HttpResult<Notice>>
+        get() = _getNoticeDetail
+
     private val _getDNSResolve = MutableLiveData<HttpResult<List<String>>>()
     val getDNSResolve: LiveData<HttpResult<List<String>>>
         get() = _getDNSResolve
@@ -46,8 +56,9 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
         get() = _getUpdate
 
 
-    fun getCoins(id:Long): Flow<List<Coin>> = flow {
-        val coinsLocal = LitePal.where("pwallet_id = ? and status = 1", id.toString()).find<Coin>(true)
+    fun getCoins(id: Long): Flow<List<Coin>> = flow {
+        val coinsLocal =
+            LitePal.where("pwallet_id = ? and status = 1", id.toString()).find<Coin>(true)
         //第一次返回：数据库数据
         logDebug("一：钱包id====$id")
         emit(coinsLocal)
@@ -113,6 +124,18 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
     fun getSupportedChain() {
         viewModelScope.launch {
             _getSupportedChain.value = walletRepository.getSupportedChain()
+        }
+    }
+
+    fun getNoticeList(page: Int, limit: Int, type: Int) {
+        viewModelScope.launch {
+            _getNoticeList.value = walletRepository.getNoticeList(page, limit, type)
+        }
+    }
+
+    fun getNoticeDetail(id: Int) {
+        viewModelScope.launch {
+            _getNoticeDetail.value = walletRepository.getNoticeDetail(id)
         }
     }
 

@@ -36,6 +36,24 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.activity.SearchDappActivity"
+            android:label="浏览器"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.MessagesActivity"
+            android:label="消息中心"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.MsgDetailsActivity"
+            android:label="系统消息"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.activity.ScanResultActivity"
             android:exported="false"
             android:label="扫码结果"

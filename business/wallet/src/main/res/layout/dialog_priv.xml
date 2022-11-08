@@ -68,6 +68,19 @@
             android:layout_gravity="center_horizontal"
             android:layout_width="150dp"
             android:layout_height="150dp"/>
+
+
+        <TextView
+            android:id="@+id/tv_wif"
+            android:visibility="gone"
+            android:layout_marginTop="10dp"
+            android:textSize="16sp"
+            android:layout_gravity="center"
+            android:textColor="@color/color_333649"
+            android:drawableRight="@mipmap/icon_right_wallet"
+            android:text="转为wif 压缩公钥"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
         <Button
             android:id="@+id/btn_copy"
             android:layout_width="160dp"

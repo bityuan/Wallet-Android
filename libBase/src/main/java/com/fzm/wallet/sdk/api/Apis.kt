@@ -5,9 +5,9 @@ import com.fzm.wallet.sdk.bean.*
 import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.DNSResponse
-import com.fzm.wallet.sdk.net.GoResponse
 import com.fzm.wallet.sdk.net.HttpResponse
 import okhttp3.RequestBody
+import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -47,6 +47,21 @@ interface Apis {
 
     @GET("interface/supported-chain")
     suspend fun getSupportedChain(): HttpResponse<List<Coin>>
+
+
+    //获取公告
+    @GET("interface/notice/list")
+    suspend fun getNoticeList(
+        @Query("page") page: Int,
+        @Query("limit") limit: Int,
+        @Query("type") type: Int
+    ): HttpResponse<Notices>
+
+    //获取公告详情
+    @GET("interface/notice/detail")
+    suspend fun getNoticeDetail(
+        @Query("id") id: Int
+    ): HttpResponse<Notice>
 
     /**
      * DNS域名查询

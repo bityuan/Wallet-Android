@@ -9,11 +9,37 @@
         android:id="@+id/header"
         layout="@layout/layout_header" />
 
+    <LinearLayout
+        android:id="@+id/ll_msg"
+        android:layout_width="match_parent"
+        android:layout_height="28dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/shape_msg"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_msg" />
+
+        <com.fzm.wallet.sdk.widget.MarqueeView
+            android:id="@+id/marqv_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            app:mvSingleLine="true"
+            app:mvTextColor="@android:color/white" />
+    </LinearLayout>
+
     <com.google.android.material.tabs.TabLayout
-        android:visibility="gone"
         android:id="@+id/tab_home"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         app:tabIndicatorAnimationMode="elastic"
         app:tabIndicatorFullWidth="false"
         app:tabMode="auto"

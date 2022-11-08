@@ -20,6 +20,7 @@ import com.fzm.walletmodule.utils.ClipboardUtils
 import com.fzm.walletmodule.utils.GlideUtils
 import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
+import walletapi.Walletapi
 
 class WalletManager {
     //选择主链
@@ -41,20 +42,24 @@ class WalletManager {
         val rvList: RecyclerViewFinal = view.findViewById(R.id.rv_list)
         tvClose.setOnClickListener { alertDialog.dismiss() }
         rvList.layoutManager = LinearLayoutManager(activity)
-        rvList.adapter = object : CommonAdapter<Coin>(activity, R.layout.listitem_choose_chain, data) {
-            override fun convert(holder: ViewHolder, coin: Coin, position: Int) {
-                holder.setText(R.id.tv_chain, coin.uiName)
-                holder.setText(R.id.nickName, if (TextUtils.isEmpty(coin.nickname)) "" else "·" + coin.nickname)
-                holder.setText(R.id.address, coin.address)
-                val ivCoin: ImageView = holder.getView(R.id.icon)
-                if (TextUtils.isEmpty(coin.icon)){
-                    Glide.with(mContext).load(coin.icon).into(ivCoin)
-                }else{
-                    Glide.with(mContext).load(coin.icon).into(ivCoin)
-                }
+        rvList.adapter =
+            object : CommonAdapter<Coin>(activity, R.layout.listitem_choose_chain, data) {
+                override fun convert(holder: ViewHolder, coin: Coin, position: Int) {
+                    holder.setText(R.id.tv_chain, coin.uiName)
+                    holder.setText(
+                        R.id.nickName,
+                        if (TextUtils.isEmpty(coin.nickname)) "" else "·" + coin.nickname
+                    )
+                    holder.setText(R.id.address, coin.address)
+                    val ivCoin: ImageView = holder.getView(R.id.icon)
+                    if (TextUtils.isEmpty(coin.icon)) {
+                        Glide.with(mContext).load(coin.icon).into(ivCoin)
+                    } else {
+                        Glide.with(mContext).load(coin.icon).into(ivCoin)
+                    }
 
+                }
             }
-        }
         rvList.setOnItemClickListener { holder, position ->
             if (null != mOnItemClickListener) {
                 mOnItemClickListener?.onItemClick(position)
@@ -74,7 +79,7 @@ class WalletManager {
 
 
     //导出私钥和公钥
-    fun exportContent(activity: AppCompatActivity?, content: String, title: String) {
+    fun exportContent(activity: AppCompatActivity?, privateKey: String, name: String) {
         val builder = AlertDialog.Builder(activity)
         val view: View =
             LayoutInflater.from(activity).inflate(R.layout.dialog_priv, null)
@@ -82,16 +87,31 @@ class WalletManager {
         val alertDialog = builder.create()
         alertDialog.window!!.setBackgroundDrawableResource(R.color.transparent)
         alertDialog.show()
+        val tvWif = view.findViewById<TextView>(R.id.tv_wif)
+        tvWif.text = "查看wif 压缩$name"
+        tvWif.visibility = if (name == "BTC公钥" || name == "BTC私钥") View.VISIBLE else View.GONE
         val ivClose = view.findViewById<ImageView>(R.id.iv_close)
         val ivQRcode = view.findViewById<ImageView>(R.id.iv_pri_qrcode)
-        GlideUtils.intoQRBitmap(ivQRcode, content)
+        GlideUtils.intoQRBitmap(ivQRcode, privateKey)
         val tvMnem = view.findViewById<TextView>(R.id.tv_mnem)
         val titleView = view.findViewById<TextView>(R.id.title)
         val btnCopy = view.findViewById<Button>(R.id.btn_copy)
-        titleView.text = title
-        tvMnem.text = content
+        titleView.text = name
+        tvMnem.text = privateKey
+
+        var wifKey = ""
+        tvWif.setOnClickListener {
+            wifKey = Walletapi.hexKeyToWIF(privateKey, true)
+            tvMnem.text = wifKey
+            GlideUtils.intoQRBitmap(ivQRcode, wifKey)
+        }
         ivClose.setOnClickListener { alertDialog.dismiss() }
-        btnCopy.setOnClickListener { ClipboardUtils.clip(activity, content) }
+        btnCopy.setOnClickListener {
+            ClipboardUtils.clip(
+                activity,
+                wifKey.ifEmpty { privateKey }
+            )
+        }
     }
 
     //导出助记词
@@ -109,7 +129,8 @@ class WalletManager {
         val tvTitle = view.findViewById<TextView>(R.id.tv_title)
         tvTitle.text = "导出助记词"
         val btnCopy = view.findViewById<Button>(R.id.btn_copy)
-        tvMnem.text = if (pWallet.mnemType == PWallet.TYPE_CHINESE) configSpace(mnem, false) else mnem
+        tvMnem.text =
+            if (pWallet.mnemType == PWallet.TYPE_CHINESE) configSpace(mnem, false) else mnem
         ivClose.setOnClickListener { alertDialog.dismiss() }
         btnCopy.setOnClickListener {
             ClipboardUtils.clip(activity, mnem)
