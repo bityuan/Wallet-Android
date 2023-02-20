@@ -26,7 +26,21 @@ class IApplication : Application() {
         super.onCreate()
         //开源环境
         //BWallet.get().setUrls(BASE_URL,GO_URL)
-        BWallet.get().setUrls(IPConfig.BASE_URL, IPConfig.GO_URL)
+        val baseUrl = when (W.appType) {
+            IPConfig.APP_MY_DAO -> IPConfig.BASE_URL
+            IPConfig.APP_YBC -> IPConfig.BASE_URL_YBC
+            IPConfig.APP_YBS -> IPConfig.BASE_URL_YBS
+            IPConfig.APP_YJM -> IPConfig.BASE_URL_YJM
+            else -> IPConfig.BASE_URL
+        }
+        val goUrl = when (W.appType) {
+            IPConfig.APP_MY_DAO -> IPConfig.GO_URL
+            IPConfig.APP_YBC -> IPConfig.GO_URL_YBC
+            IPConfig.APP_YBS -> IPConfig.GO_URL_YBS
+            IPConfig.APP_YJM -> IPConfig.GO_URL_YJM
+            else -> IPConfig.GO_URL
+        }
+        BWallet.get().setUrls(baseUrl, goUrl)
         WalletModuleApp.init(this)
         startKoin {
             androidContext(this@IApplication)

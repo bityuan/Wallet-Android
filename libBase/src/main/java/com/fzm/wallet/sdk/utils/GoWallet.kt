@@ -422,7 +422,8 @@ class GoWallet {
         fun sendTran(
             chain: String,
             signData: String,
-            tokenSymbol: String
+            tokenSymbol: String,
+            util: Util = getUtil()
         ): String? {
             try {
                 checkSessionID()
@@ -430,7 +431,7 @@ class GoWallet {
                 sendTx.cointype = chain
                 sendTx.signedTx = signData
                 sendTx.tokenSymbol = tokenSymbol
-                sendTx.util = getUtil()
+                sendTx.util = util
                 val sendRawTransaction =
                     Walletapi.byteTostring(Walletapi.sendRawTransaction(sendTx))
                 Log.v("tag", "发送交易: $sendRawTransaction")
@@ -573,7 +574,7 @@ class GoWallet {
                 "pwallet_id=? and chain = ?",
                 "${MyWallet.getId()}",
                 chain
-            ).find<Coin>()
+            ).find<Coin>(true)
             if (chains.isNullOrEmpty()) {
                 return null
             }
@@ -585,7 +586,7 @@ class GoWallet {
             val coinToken = CoinToken()
             coinToken.cointype = cointype
             coinToken.tokenSymbol = if (cointype == name) "" else name
-            if (cointype == "BTC" || cointype == "ETH") {
+            if (cointype == "BTC" || cointype == "ETH" || cointype == "BTY") {
                 if (name == "YCC" && netId != 729) {
                     coinToken.cointype = "YCC"
                     coinToken.tokenSymbol = ""

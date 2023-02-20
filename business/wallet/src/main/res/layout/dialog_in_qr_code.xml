@@ -89,7 +89,6 @@
                     android:background="@drawable/bg_share_content"
                     android:drawableRight="@mipmap/icon_copy_default"
                     android:gravity="center"
-                    android:maxLines="2"
                     android:paddingLeft="30dp"
                     android:paddingTop="8dp"
                     android:paddingRight="30dp"

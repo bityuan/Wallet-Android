@@ -19,6 +19,56 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@android:color/white">
+        <LinearLayout
+            android:id="@+id/ly_tian"
+            android:visibility="gone"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/selector_tian"
+                android:focusable="false" />
+
+            <TextView
+                android:id="@+id/tv_tian"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="提案"
+                android:textColor="@color/selector_bottom_tab_text"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ly_tp"
+            android:visibility="gone"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/selector_toupiao"
+                android:focusable="false" />
+
+            <TextView
+                android:id="@+id/tv_tp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="投票"
+                android:textColor="@color/selector_bottom_tab_text"
+                android:textSize="12sp" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/ly_home"

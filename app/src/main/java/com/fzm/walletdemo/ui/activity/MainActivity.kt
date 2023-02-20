@@ -2,10 +2,12 @@ package com.fzm.walletdemo.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.fzm.wallet.sdk.IPConfig
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
 import com.fzm.wallet.sdk.base.logDebug
@@ -13,10 +15,13 @@ import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.walletdemo.R
+import com.fzm.walletdemo.W
 import com.fzm.walletdemo.databinding.ActivityMainBinding
+import com.fzm.walletdemo.ui.WalletHelper
 import com.fzm.walletdemo.ui.fragment.ExploreFragment
 import com.fzm.walletdemo.ui.fragment.HomeFragment
 import com.fzm.walletdemo.ui.fragment.MyFragment
+import com.fzm.walletdemo.ui.fragment.WebFragment
 import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.event.MainCloseEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
@@ -29,10 +34,13 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
+import org.litepal.LitePal
 import org.litepal.LitePal.count
 
 @Route(path = RouterPath.APP_MAIN)
 class MainActivity : BaseActivity() {
+    private var tianFragment: WebFragment? = null
+    private var tpFragment: WebFragment? = null
     private var exploreFragment: ExploreFragment? = null
     private var mWalletIndexFragment: WalletIndexFragment? = null
     private var mHomeFragment: HomeFragment? = null
@@ -48,8 +56,23 @@ class MainActivity : BaseActivity() {
         EventBus.getDefault().register(this)
         initView()
         initObserver()
-        Constants.setCoins(DEFAULT_COINS)
+        if (WalletHelper.isSQ()) {
+            Constants.setCoins(DEFAULT_COINS_SQ)
+        } else {
+            Constants.setCoins(DEFAULT_COINS)
+        }
         gotoUpdate()
+        configWallets()
+    }
+
+    override fun configWallets() {
+        super.configWallets()
+        if (WalletHelper.isSQ()) {
+            binding.lyTian.visibility = View.VISIBLE
+            binding.lyTp.visibility = View.VISIBLE
+            binding.lyExplore.visibility = View.GONE
+            binding.tvHome.text = "资产"
+        }
     }
 
 
@@ -112,6 +135,15 @@ class MainActivity : BaseActivity() {
         },
 
         )
+    private val DEFAULT_COINS_SQ = listOf(
+        Coin().apply {
+            name = "BTY"
+            chain = "BTY"
+            platform = "bty"
+            netId = "154"
+        }
+
+    )
 
     override fun initView() {
         setTabSelection(0)
@@ -124,8 +156,23 @@ class MainActivity : BaseActivity() {
         binding.lyMy.setOnClickListener {
             setTabSelection(2)
         }
+        binding.lyTian.setOnClickListener {
+            val walletCount = LitePal.count(PWallet::class.java)
+            if (walletCount == 0) {
+                toast("请先在资产中创建账户")
+                return@setOnClickListener
+            }
+            setTabSelection(3)
+        }
+        binding.lyTp.setOnClickListener {
+            val walletCount = LitePal.count(PWallet::class.java)
+            if (walletCount == 0) {
+                toast("请先在资产中创建账户")
+                return@setOnClickListener
+            }
+            setTabSelection(4)
+        }
     }
-
 
 
     var currentTab: ViewGroup? = null
@@ -158,6 +205,18 @@ class MainActivity : BaseActivity() {
                 showMyFragment(fragmentTransaction)
                 currentTab = binding.lyMy
             }
+            3 -> {
+                currentTab?.isSelected = false
+                binding.lyTian.isSelected = true
+                showTiAnFragment(fragmentTransaction)
+                currentTab = binding.lyTian
+            }
+            4 -> {
+                currentTab?.isSelected = false
+                binding.lyTp.isSelected = true
+                showTPFragment(fragmentTransaction)
+                currentTab = binding.lyTp
+            }
         }
 
     }
@@ -176,6 +235,8 @@ class MainActivity : BaseActivity() {
         mHomeFragment?.let { transaction.hide(it) }
         exploreFragment?.let { transaction.hide(it) }
         myFragment?.let { transaction.hide(it) }
+        tianFragment?.let { transaction.hide(it) }
+        tpFragment?.let { transaction.hide(it) }
     }
 
 
@@ -233,6 +294,36 @@ class MainActivity : BaseActivity() {
                 R.id.fl_tabcontent,
                 myFragment!!,
                 "showMyFragment"
+            )
+
+        }
+        fragmentTransaction.commitAllowingStateLoss()
+    }
+
+    private fun showTiAnFragment(fragmentTransaction: FragmentTransaction) {
+        if (tianFragment != null) {
+            fragmentTransaction.show(tianFragment!!)
+        } else {
+            tianFragment = WebFragment()
+            fragmentTransaction.add(
+                R.id.fl_tabcontent,
+                tianFragment!!,
+                WebFragment.TAG_TIAN
+            )
+
+        }
+        fragmentTransaction.commitAllowingStateLoss()
+    }
+
+    private fun showTPFragment(fragmentTransaction: FragmentTransaction) {
+        if (tpFragment != null) {
+            fragmentTransaction.show(tpFragment!!)
+        } else {
+            tpFragment = WebFragment()
+            fragmentTransaction.add(
+                R.id.fl_tabcontent,
+                tpFragment!!,
+                WebFragment.TAG_TP
             )
 
         }

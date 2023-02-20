@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
+import com.fzm.wallet.sdk.BuildConfig
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
 import com.fzm.wallet.sdk.base.PRE_X_RECOVER
@@ -77,6 +78,11 @@ class WebTestActivity : BaseActivity() {
                 .show();
             false
         }
+
+        binding.btnFromPara.setOnClickListener {
+            val intent = Intent(this, GcTestActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun initData() {
@@ -101,6 +107,9 @@ class WebTestActivity : BaseActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val menuItem = menu.add(0, 1, 0, "邮箱验证")
         val menuItem2 = menu.add(0, 2, 0, "扫一扫")
+        if(BuildConfig.DEBUG){
+            val menuItem3 = menu.add(0, 3, 0, "测试")
+        }
         return super.onCreateOptionsMenu(menu)
     }
 

@@ -752,7 +752,7 @@ public class ToolUtils {
             e.printStackTrace();
         }
 
-        return deviceId;
+        return TextUtils.isEmpty(deviceId) ? "Android_ID" : deviceId;
     }
 
 }

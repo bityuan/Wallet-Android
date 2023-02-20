@@ -54,6 +54,7 @@ import walletapi.WalletRecover
 import walletapi.Walletapi
 import java.math.RoundingMode
 import java.text.DecimalFormat
+
 //原BTY,BTC和ETH格式的BTY，查余额，账单，构造签名发送都是 "BTY",BNB的BTY是"BNB"
 //原YCC查余额，账单，构造签名发送都是"ETH",BTC和ETH格式的YCC，查余额，账单，构造签名发送都是 "YCC",BNB的YCC是"BNB"
 @Route(path = RouterPath.WALLET_OUT)
@@ -320,40 +321,16 @@ class OutActivity : BaseActivity() {
                             PWallet.TYPE_NOMAL -> {
                                 val bPassword = GoWallet.encPasswd(password)!!
                                 val mnem: String = GoWallet.decMenm(bPassword, it.getpWallet().mnem)
-                                if ("YCC" == it.chain || "BTY" == it.chain) {
-                                    if ("ethereum" == it.platform) {
-                                        addressId = 2
-                                        privkey = it.getPrivkey("ETH", mnem)
-                                    } else if ("btc" == it.platform) {
-                                        privkey = it.getPrivkey("BTC", mnem)
-                                        addressId = 0
-                                    } else {
-                                        privkey = it.getPrivkey(it.chain, mnem)
-                                    }
-                                } else {
-                                    privkey = it.getPrivkey(it.chain, mnem)
-                                }
+                                configNomalWallet(it, mnem)
                                 handleTransactions(toAddress, money)
                             }
                             PWallet.TYPE_PRI_KEY -> {
-                                if ("YCC" == it.chain || "BTY" == it.chain) {
-                                    if ("ethereum" == it.platform) {
-                                        addressId = 2
-                                    } else if ("btc" == it.platform) {
-                                        addressId = 0
-                                    }
-                                }
+                                configPrikeyWallet(it)
                                 privkey = it.getPrivkey(password)
                                 handleTransactions(toAddress, money)
                             }
                             PWallet.TYPE_RECOVER -> {
-                                if ("YCC" == it.chain || "BTY" == it.chain) {
-                                    if ("ethereum" == it.platform) {
-                                        addressId = 2
-                                    } else if ("btc" == it.platform) {
-                                        addressId = 0
-                                    }
-                                }
+                                configPrikeyWallet(it)
                                 privkey = it.getPrivkey(password)
                                 //找回钱包发送交易
                                 doRecover(toAddress, money)
@@ -369,10 +346,42 @@ class OutActivity : BaseActivity() {
         }
     }
 
+    private fun configNomalWallet(coin: Coin, mnem: String) {
+        if ("YCC" == coin.chain || "BTY" == coin.chain) {
+            if ("ethereum" == coin.platform) {
+                addressId = 2
+                privkey = coin.getPrivkey("ETH", mnem)
+            } else if ("btc" == coin.platform) {
+                privkey = coin.getPrivkey("BTC", mnem)
+                addressId = 0
+            } else if ("bty" == coin.platform) {
+                privkey = coin.getPrivkey("BTY", mnem)
+                addressId = 0
+            } else {
+                privkey = coin.getPrivkey(coin.chain, mnem)
+            }
+        } else {
+            privkey = coin.getPrivkey(coin.chain, mnem)
+        }
+
+    }
+
+    private fun configPrikeyWallet(coin: Coin) {
+        if ("YCC" == coin.chain || "BTY" == coin.chain) {
+            if ("ethereum" == coin.platform) {
+                addressId = 2
+            } else if ("btc" == coin.platform) {
+                addressId = 0
+            } else if ("bty" == coin.platform) {
+                addressId = 0
+            }
+        }
+    }
+
     private suspend fun doRecover(toAddress: String, money: String) {
         coin?.let {
             val tokenSymbol = if (it.name == it.chain) "" else it.name
-            val walletRecoverParam = GoWallet.queryRecover(it.address,it.chain)
+            val walletRecoverParam = GoWallet.queryRecover(it.address, it.chain)
             val walletRecover = WalletRecover()
             walletRecover.param = walletRecoverParam
             val createRaw = GoWallet.createTran(

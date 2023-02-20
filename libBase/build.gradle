@@ -54,7 +54,7 @@ dependencies {
     api cfg.navigationFragment
     api cfg.broccoli
     api cfg.swipeRecyclerview
-    debugApi  cfg.glance
+    //debugApi  cfg.glance
 }
 
 //注意放置位置，复制此段代码稍加修改即可
