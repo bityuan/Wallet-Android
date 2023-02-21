@@ -60,6 +60,18 @@ android {
             dimension 'app'
             applicationId 'com.i.mydao'
         }
+        ybc {
+            dimension 'app'
+            applicationId 'com.i.ybc'
+        }
+        ybs {
+            dimension 'app'
+            applicationId 'com.i.ybs'
+        }
+        yjm {
+            dimension 'app'
+            applicationId 'com.i.yjm'
+        }
 
     }
 }

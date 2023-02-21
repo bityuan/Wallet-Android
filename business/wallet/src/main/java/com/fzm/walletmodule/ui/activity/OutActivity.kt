@@ -357,6 +357,9 @@ class OutActivity : BaseActivity() {
             } else if ("bty" == coin.platform) {
                 privkey = coin.getPrivkey("BTY", mnem)
                 addressId = 0
+            } else if ("btymain" == coin.platform) {
+                privkey = coin.getPrivkey("BNB", mnem)
+                addressId = 2
             } else {
                 privkey = coin.getPrivkey(coin.chain, mnem)
             }
@@ -374,6 +377,9 @@ class OutActivity : BaseActivity() {
                 addressId = 0
             } else if ("bty" == coin.platform) {
                 addressId = 0
+            } else if ("btymain" == coin.platform) {
+                privkey = coin.getPrivkey("BNB")
+                addressId = 2
             }
         }
     }
@@ -432,7 +438,6 @@ class OutActivity : BaseActivity() {
     private fun handleTransactions(toAddress: String, money: String) {
         coin?.let {
             try {
-
                 val tokensymbol = if (it.name == it.chain) "" else it.name
                 //构造交易
                 val createRaw = GoWallet.createTran(
@@ -460,7 +465,7 @@ class OutActivity : BaseActivity() {
                     return
                 }
                 //发送交易
-                val sendRawTransaction = GoWallet.sendTran(it.chain, signtx!!, tokensymbol)
+                val sendRawTransaction = GoWallet.sendTran(it.chain, signtx, tokensymbol)
                 runOnUiThread {
                     loading.dismiss()
                     if (sendRawTransaction.isNullOrEmpty()) {

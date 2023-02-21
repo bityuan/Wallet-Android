@@ -582,17 +582,23 @@ class GoWallet {
 
         }
 
-        fun newCoinType(cointype: String, name: String, netId: Int): CoinToken {
+        fun newCoinType(cointype: String, name: String, platform: String): CoinToken {
             val coinToken = CoinToken()
             coinToken.cointype = cointype
             coinToken.tokenSymbol = if (cointype == name) "" else name
-            if (cointype == "BTC" || cointype == "ETH" || cointype == "BTY") {
-                if (name == "YCC" && netId != 729) {
-                    coinToken.cointype = "YCC"
-                    coinToken.tokenSymbol = ""
-                } else if (name == "BTY") {
-                    coinToken.cointype = "BTY"
-                    coinToken.tokenSymbol = ""
+
+            when (name) {
+                Walletapi.TypeBtyString -> {
+                    if (platform != "bnb") {
+                        coinToken.cointype = Walletapi.TypeBtyString
+                        coinToken.tokenSymbol = ""
+                    }
+                }
+                Walletapi.TypeYccString -> {
+                    if (platform == "btc" || platform == "bty" || platform == "ethereum") {
+                        coinToken.cointype = Walletapi.TypeYccString
+                        coinToken.tokenSymbol = ""
+                    }
                 }
             }
             return coinToken
@@ -611,7 +617,7 @@ class GoWallet {
             recoverTime: Long,
             addressId: Int,
             chainId: Int,
-            dThirdPartyPubKey:String
+            dThirdPartyPubKey: String
         ): WalletRecoverParam {
             val param = WalletRecoverParam().apply {
                 ctrPubKey = dctrPubKey
@@ -626,7 +632,7 @@ class GoWallet {
         }
 
 
-        fun queryRecover(xAddress: String,coinType:String): WalletRecoverParam {
+        fun queryRecover(xAddress: String, coinType: String): WalletRecoverParam {
             val r = WalletRecover()
             val walletRecoverParam = r.transportQueryRecoverInfo(QueryRecoverParam().apply {
                 cointype = coinType
