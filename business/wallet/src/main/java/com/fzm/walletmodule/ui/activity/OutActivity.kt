@@ -152,7 +152,8 @@ class OutActivity : BaseActivity() {
                 ToastUtils.show(this, it.error())
             }
         })
-        outViewModel.getMiner(coin?.chain!!)
+        val minerChain = if(coin?.chain == "ETH" && coin?.name !="ETH") "ETHTOKEN" else coin?.chain
+        outViewModel.getMiner(minerChain!!)
         binding.seekbarFee.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 val value: Double = progress.plus(min).div(100000000.0000)

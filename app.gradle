@@ -14,7 +14,7 @@ android {
         targetSdkVersion cfg.android.targetSdkVersion
         versionCode cfg.android.versionCode
         versionName cfg.android.versionName
-
+        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
 

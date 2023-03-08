@@ -87,7 +87,9 @@ class MainActivity : BaseActivity() {
             }
 
         })
-        walletViewModel.getUpdate()
+        if(!WalletHelper.isSQ()){
+            walletViewModel.getUpdate()
+        }
     }
 
     private val DEFAULT_COINS = listOf(

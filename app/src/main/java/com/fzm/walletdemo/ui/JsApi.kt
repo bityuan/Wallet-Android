@@ -159,7 +159,7 @@ class JsApi(private val webView: WebView, private val activity: FragmentActivity
     @JavascriptInterface
     fun sign(msg: Any?, handler: CompletionHandler<String?>?) {
         val jsSign = Gson().fromJson(msg.toString(), JsSign::class.java)
-        cointype = jsSign.cointype
+        cointype = jsSign.cointype?:"BTY"
         createHash = jsSign.createHash
         exer = jsSign.exer
         withhold = jsSign.withhold
@@ -172,7 +172,7 @@ class JsApi(private val webView: WebView, private val activity: FragmentActivity
     }
 
     inner class JsSign {
-        var cointype = ""
+        var cointype:String? = ""
         var createHash = ""
         var exer = ""
         var withhold = -1
@@ -181,7 +181,7 @@ class JsApi(private val webView: WebView, private val activity: FragmentActivity
     @JavascriptInterface
     fun signTxGroup(msg: Any?, handler: CompletionHandler<String?>?) {
         val jsSign = Gson().fromJson(msg.toString(), JsSign::class.java)
-        cointype = jsSign.cointype
+        cointype = jsSign.cointype?:"BTY"
         createHash = jsSign.createHash
         exer = jsSign.exer
         withhold = jsSign.withhold
