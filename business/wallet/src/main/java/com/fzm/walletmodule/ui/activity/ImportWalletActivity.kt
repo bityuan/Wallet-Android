@@ -15,12 +15,10 @@ import androidx.viewpager.widget.ViewPager
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bumptech.glide.Glide
 import com.fzm.wallet.sdk.BWallet
+import com.fzm.wallet.sdk.IPConfig
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.WalletConfiguration
-import com.fzm.wallet.sdk.base.LIVE_KEY_CHOOSE_CHAIN
-import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
-import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
-import com.fzm.wallet.sdk.base.MyWallet
+import com.fzm.wallet.sdk.base.*
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.exception.ImportWalletException
@@ -59,7 +57,8 @@ class ImportWalletActivity : BaseActivity() {
     private val mnemBinding by lazy { ViewImport0Binding.inflate(layoutInflater) }
     private val privateKeyBinding by lazy { ViewImport1Binding.inflate(layoutInflater) }
     private val recoverBinding by lazy { ViewImport2Binding.inflate(layoutInflater) }
-    private val titleList = listOf("导入助记词", "导入私钥", "导入找回钱包")
+
+    private var titleList = listOf<String>()
     private var importType: Int = 0//0导入助记次 1导入私钥 2导入找回钱包
     private var scanFrom: Int = -1//1控制私钥2找回地址
     private var chooseChain: Coin? = null
@@ -67,10 +66,25 @@ class ImportWalletActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        configWallets()
         initView()
         initData()
         initListener()
         initObserver()
+    }
+
+    override fun configWallets() {
+        super.configWallets()
+        val navigation =
+            ARouter.getInstance().build(ROUTE_APP_TYPE).navigation() as IAppTypeProvider
+        titleList = when (navigation.getAppType()) {
+            IPConfig.APP_MY_DAO -> {
+                listOf("导入助记词", "导入私钥", "导入找回钱包")
+            }
+            else -> {
+                listOf("导入助记词", "导入私钥")
+            }
+        }
     }
 
     override fun initView() {

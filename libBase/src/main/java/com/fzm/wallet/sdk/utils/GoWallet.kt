@@ -582,11 +582,13 @@ class GoWallet {
 
         }
 
-        fun newCoinType(cointype: String, name: String, platform: String): CoinToken {
+        fun newCoinType(cointype: String, name: String, platform: String?): CoinToken {
             val coinToken = CoinToken()
             coinToken.cointype = cointype
             coinToken.tokenSymbol = if (cointype == name) "" else name
-
+            if(platform == null){
+                return coinToken
+            }
             when (name) {
                 Walletapi.TypeBtyString -> {
                     if (platform != "bnb") {

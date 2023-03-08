@@ -2,6 +2,7 @@ package com.fzm.walletmodule.ui.activity
 
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
@@ -9,10 +10,13 @@ import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.BWallet
+import com.fzm.wallet.sdk.IPConfig
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.WalletConfiguration
+import com.fzm.wallet.sdk.base.IAppTypeProvider
 import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
 import com.fzm.wallet.sdk.base.MyWallet
+import com.fzm.wallet.sdk.base.ROUTE_APP_TYPE
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.exception.ImportWalletException
 import com.fzm.walletmodule.BuildConfig
@@ -63,6 +67,7 @@ class BackUpWalletActivity : BaseActivity() {
         mStatusColor = Color.TRANSPARENT
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        configWallets()
         ARouter.getInstance().inject(this)
         setToolBar(R.id.toolbar, R.id.tv_title)
         initIntent()
@@ -70,6 +75,20 @@ class BackUpWalletActivity : BaseActivity() {
         initMnem()
         initMnemResult()
         initListener()
+    }
+
+    override fun configWallets() {
+        super.configWallets()
+        val navigation =
+            ARouter.getInstance().build(ROUTE_APP_TYPE).navigation() as IAppTypeProvider
+        when (navigation.getAppType()) {
+            IPConfig.APP_MY_DAO -> {
+                binding.btnRecover.visibility = View.VISIBLE
+            }
+            else -> {
+                binding.btnRecover.visibility = View.GONE
+            }
+        }
     }
 
     override fun initData() {
@@ -251,8 +270,8 @@ class BackUpWalletActivity : BaseActivity() {
                         MyWallet.setId(id)
                         LiveEventBus.get<Long>(LIVE_KEY_WALLET).post(id)
                     }
-                }catch (e:ImportWalletException){
-                    withContext(Dispatchers.Main){
+                } catch (e: ImportWalletException) {
+                    withContext(Dispatchers.Main) {
                         dismiss()
                         e.message?.let {
                             toast(it)
