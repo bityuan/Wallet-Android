@@ -582,11 +582,18 @@ class GoWallet {
 
         }
 
-        fun newCoinType(cointype: String, name: String, platform: String?): CoinToken {
+        //1、token
+        //2、coins
+        fun newCoinType(
+            cointype: String,
+            name: String,
+            platform: String?,
+            treaty: String
+        ): CoinToken {
             val coinToken = CoinToken()
             coinToken.cointype = cointype
             coinToken.tokenSymbol = if (cointype == name) "" else name
-            if(platform == null){
+            if (platform == null) {
                 return coinToken
             }
             when (name) {
@@ -603,6 +610,17 @@ class GoWallet {
                     }
                 }
             }
+
+            if (cointype == "ETH" && platform != "ethereum") {
+                if (treaty == "1") {
+                    coinToken.cointype = Walletapi.TypeBtyString
+                    coinToken.tokenSymbol = "$platform.$name"
+                } else if (treaty == "2") {
+                    coinToken.cointype = Walletapi.TypeBtyString
+                    coinToken.tokenSymbol = "$platform.coins"
+                }
+            }
+
             return coinToken
         }
 

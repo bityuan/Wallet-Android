@@ -266,7 +266,7 @@ public class Coin extends BaseBean implements Comparable<Coin> {
     }
 
     public GoWallet.Companion.CoinToken getNewChain() {
-        GoWallet.Companion.CoinToken coinToken = GoWallet.Companion.newCoinType(chain, name, platform);
+        GoWallet.Companion.CoinToken coinToken = GoWallet.Companion.newCoinType(chain, name, platform,treaty);
         return coinToken;
     }
 

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
     <!--Android 7 以上谷歌更严格的安全机制-->
+    <!--禁止掉明文流量请求的检查-->
     <base-config cleartextTrafficPermitted="true">
         <trust-anchors>
             <certificates src="system" overridePins="true" />
             <certificates src="user" overridePins="true" />
-
         </trust-anchors>
     </base-config>
   <!--  <debug-overrides>

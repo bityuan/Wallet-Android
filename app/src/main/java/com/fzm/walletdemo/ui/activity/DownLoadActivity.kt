@@ -34,7 +34,7 @@ class DownLoadActivity : BaseActivity() {
             IPConfig.APP_YBC->IPConfig.DOWNLOAD_TP_YBC
             IPConfig.APP_YBS->IPConfig.DOWNLOAD_TP_YBSQ
             IPConfig.APP_YJM->IPConfig.DOWNLOAD_TP_YJ
-            else -> ""
+            else -> IPConfig.DOWNLOAD_MYDAO
         }
     }
 }

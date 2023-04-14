@@ -278,7 +278,7 @@ class OutActivity : BaseActivity() {
 
     }
 
-    private var addressId = -1
+    private var addressId = 0
     private fun showPwdDialog() {
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_pwd, null)
         val dialog = AlertDialog.Builder(this).setView(view).create().apply {
@@ -349,7 +349,7 @@ class OutActivity : BaseActivity() {
 
     private fun configNomalWallet(coin: Coin, mnem: String) {
         if ("YCC" == coin.chain || "BTY" == coin.chain) {
-            if ("ethereum" == coin.platform) {
+            if ("ethereum" == coin.platform || "findspin" == coin.platform) {
                 addressId = 2
                 privkey = coin.getPrivkey("ETH", mnem)
             } else if ("btc" == coin.platform) {
@@ -372,7 +372,7 @@ class OutActivity : BaseActivity() {
 
     private fun configPrikeyWallet(coin: Coin) {
         if ("YCC" == coin.chain || "BTY" == coin.chain) {
-            if ("ethereum" == coin.platform) {
+            if ("ethereum" == coin.platform || "findspin" == coin.platform) {
                 addressId = 2
             } else if ("btc" == coin.platform) {
                 addressId = 0
