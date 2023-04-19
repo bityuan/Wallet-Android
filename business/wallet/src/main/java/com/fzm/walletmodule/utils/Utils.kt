@@ -26,7 +26,7 @@ private var lastTime: Long = 0
 fun isFastClick(): Boolean {
     var flag = true
     val curClickTime = System.currentTimeMillis()
-    if (curClickTime - lastTime > 1000) {
+    if (curClickTime - lastTime > 500) {
         flag = false
     }
     lastTime = curClickTime

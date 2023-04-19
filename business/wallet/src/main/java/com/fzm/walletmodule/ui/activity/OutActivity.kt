@@ -88,14 +88,14 @@ class OutActivity : BaseActivity() {
 
     override fun initView() {
         coin?.let {
+            binding.tvCoinName.text = it.uiName + getString(R.string.home_transfer)
+            binding.tvBalance.text = "${it.balance} ${it.uiName}"
             val coinToken = it.newChain
             //危险操作，此页面不可对coin进行数据库修改，不然chain和name也会被修改
             it.chain = coinToken.cointype
             it.name = coinToken.tokenSymbol
 
-            binding.tvCoinName.text = it.uiName + getString(R.string.home_transfer)
             binding.tvWalletName.text = it.getpWallet().name
-            binding.tvBalance.text = "${it.balance} ${it.uiName}"
             if ("TRX" == it.chain) {
                 binding.llOutMiner.visibility = View.GONE
             }
