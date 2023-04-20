@@ -3,7 +3,6 @@ package com.fzm.walletmodule.ui.activity
 
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.SeekBar
@@ -18,7 +17,6 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.alibaba.fastjson.JSON
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
-import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.bean.StringResult
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
@@ -27,6 +25,7 @@ import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.utils.AddressCheckUtils
 import com.fzm.wallet.sdk.utils.GoWallet
+import com.fzm.wallet.sdk.utils.ListUtils
 import com.fzm.wallet.sdk.utils.RegularUtils
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.databinding.ActivityOutBinding
@@ -48,8 +47,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.litepal.LitePal.where
+import org.litepal.extension.find
 import walletapi.WalletRecover
 import walletapi.Walletapi
 import java.math.RoundingMode
@@ -76,6 +76,10 @@ class OutActivity : BaseActivity() {
     @Autowired
     var coin: Coin? = null
 
+    //主链余额
+    var chainBalance: Double = 0.0
+    var coinToken:GoWallet.Companion.CoinToken?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -88,12 +92,24 @@ class OutActivity : BaseActivity() {
 
     override fun initView() {
         coin?.let {
+
             binding.tvCoinName.text = it.uiName + getString(R.string.home_transfer)
             binding.tvBalance.text = "${it.balance} ${it.uiName}"
-            val coinToken = it.newChain
+            coinToken = it.newChain
             //危险操作，此页面不可对coin进行数据库修改，不然chain和name也会被修改
-            it.chain = coinToken.cointype
-            it.name = coinToken.tokenSymbol
+            it.chain = coinToken?.cointype
+            //替换好主链后再去查询主链余额，此操作只为判断矿工费使用,加个地址以判断不同主链,再测试下其他币种
+            lifecycleScope.launch(Dispatchers.IO) {
+                val chainBeans = where(
+                    "name = ? and pwallet_id = ? and address = ?", it.chain,
+                    java.lang.String.valueOf(it.getpWallet().id),it.address
+                ).find<Coin>()
+                withContext(Dispatchers.Main) {
+                    if (!ListUtils.isEmpty(chainBeans)) {
+                        chainBalance = chainBeans[0].balance.toDouble()
+                    }
+                }
+            }
 
             binding.tvWalletName.text = it.getpWallet().name
             if ("TRX" == it.chain) {
@@ -152,7 +168,8 @@ class OutActivity : BaseActivity() {
                 ToastUtils.show(this, it.error())
             }
         })
-        val minerChain = if(coin?.chain == "ETH" && coin?.name !="ETH") "ETHTOKEN" else coin?.chain
+        val minerChain =
+            if (coin?.chain == "ETH" && coin?.name != "ETH") "ETHTOKEN" else coin?.chain
         outViewModel.getMiner(minerChain!!)
         binding.seekbarFee.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -253,6 +270,10 @@ class OutActivity : BaseActivity() {
             if (!checkAddressAndMoney(toAddress, money)) {
                 return@setOnClickListener
             }
+            if (!checkFee(money)) {
+                return@setOnClickListener
+            }
+
             if (RegularUtils.isAddress(toAddress)) {
                 showPwdDialog()
             } else {
@@ -276,6 +297,30 @@ class OutActivity : BaseActivity() {
 
         }
 
+    }
+
+    private fun checkFee(money: String): Boolean {
+        coin?.let {
+            val inputMoney = money.toDouble()
+            val dBalance = it.balance.toDouble()
+
+            if (it.chain == it.name) {
+                if (inputMoney + fee > dBalance) {
+                    toast("余额不足!")
+                    return false
+                }
+            } else {
+                if (inputMoney > dBalance) {
+                    toast("余额不足!")
+                    return false
+                } else if (fee > chainBalance) {
+                    toast("矿工费不足!")
+                    return false
+                }
+            }
+        }
+
+        return true
     }
 
     private var addressId = 0
@@ -387,7 +432,7 @@ class OutActivity : BaseActivity() {
 
     private suspend fun doRecover(toAddress: String, money: String) {
         coin?.let {
-            val tokenSymbol = if (it.name == it.chain) "" else it.name
+            val tokenSymbol = coinToken!!.tokenSymbol
             val walletRecoverParam = GoWallet.queryRecover(it.address, it.chain)
             val walletRecover = WalletRecover()
             walletRecover.param = walletRecoverParam
@@ -430,6 +475,7 @@ class OutActivity : BaseActivity() {
                     finish()
                 }
             }
+
         }
 
 
@@ -439,7 +485,7 @@ class OutActivity : BaseActivity() {
     private fun handleTransactions(toAddress: String, money: String) {
         coin?.let {
             try {
-                val tokensymbol = if (it.name == it.chain) "" else it.name
+                val tokensymbol = coinToken!!.tokenSymbol
                 //构造交易
                 val createRaw = GoWallet.createTran(
                     it.chain,

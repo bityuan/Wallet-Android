@@ -4,7 +4,7 @@ import android.util.Log;
 
 public class ClickUtils {
     private static long lastClickTime = 0;
-    private static long DIFF = 1000;
+    private static long DIFF = 500;
     private static int lastButtonId = -1;
 
     /**
