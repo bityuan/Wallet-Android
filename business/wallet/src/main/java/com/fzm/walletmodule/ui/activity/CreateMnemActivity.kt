@@ -3,6 +3,7 @@ package com.fzm.walletmodule.ui.activity
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -32,6 +33,8 @@ class CreateMnemActivity : BaseActivity() {
         mCustomToobar = true
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        //禁止当前页面截屏
+        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         ARouter.getInstance().inject(this)
         setToolBar(R.id.toolbar, R.id.tv_title)
         title = ""
