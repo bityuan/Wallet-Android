@@ -106,7 +106,11 @@ class WalletFragment : Fragment() {
                             withContext(Dispatchers.Main) {
                                 nomalRefreshData(list)
                                 //refreshData(list)
-                                logDebug("====刷新UI")
+
+                                for (cc in list){
+                                    logDebug("====刷新UI${cc.name} ${cc.balance}")
+                                }
+
                             }
                         }
                     }

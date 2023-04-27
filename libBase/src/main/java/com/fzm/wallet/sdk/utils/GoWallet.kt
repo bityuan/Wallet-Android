@@ -3,7 +3,6 @@ package com.fzm.wallet.sdk.utils
 import android.text.TextUtils
 import android.util.Log
 import com.fzm.wallet.sdk.base.MyWallet
-import com.fzm.wallet.sdk.bean.log
 import com.fzm.wallet.sdk.bean.response.BalanceResponse
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.UrlConfig
@@ -168,7 +167,6 @@ class GoWallet {
         fun handleBalance(lCoin: Coin): String {
             val coinToken = lCoin.newChain
             val balanceStr = getbalance(lCoin.address, coinToken.cointype, coinToken.tokenSymbol)
-            log(balanceStr)
             if (!TextUtils.isEmpty(balanceStr)) {
                 val balanceResponse = gson.fromJson(balanceStr, BalanceResponse::class.java)
                 if (balanceResponse != null) {
@@ -588,7 +586,7 @@ class GoWallet {
             cointype: String,
             name: String,
             platform: String?,
-            treaty: String
+            treaty: String?
         ): CoinToken {
             val coinToken = CoinToken()
             coinToken.cointype = cointype

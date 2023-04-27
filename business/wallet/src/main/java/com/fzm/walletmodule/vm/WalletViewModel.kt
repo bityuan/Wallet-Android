@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.bean.AppVersion
 import com.fzm.wallet.sdk.bean.Notice
@@ -14,11 +13,10 @@ import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.HttpResult
 import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.utils.GoWallet
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
 import org.litepal.LitePal
 import org.litepal.extension.find
 
@@ -57,47 +55,57 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
 
 
     fun getCoins(id: Long): Flow<List<Coin>> = flow {
-        val coinsLocal =
-            LitePal.where("pwallet_id = ? and status = 1", id.toString()).find<Coin>(true)
-        //第一次返回：数据库数据
-        logDebug("一：钱包id====$id")
-        emit(coinsLocal)
-        val names = coinsLocal.map { "${it.name},${it.platform}" }
-        val result = walletRepository.getCoinList(names)
-        if (result.isSucceed()) {
-            val coinsNet = result.data()
-            coinsNet?.let {
-                for (net in it) {
-                    for (local in coinsLocal) {
-                        if (local.netId == net.netId) {
-                            local.rmb = net.rmb
-                            local.icon = net.icon
-                            local.nickname = net.nickname
-                            local.platform = net.platform
-                            local.treaty = net.treaty
-                            local.optionalName = net.optionalName
-                            local.update(local.id)
+        supervisorScope {
+            val coinsLocal =
+                LitePal.where("pwallet_id = ? and status = 1", id.toString()).find<Coin>(true)
+            //第一次返回：数据库数据
+            logDebug("一：钱包id====$id")
+            emit(coinsLocal)
+            val names = coinsLocal.map { "${it.name},${it.platform}" }
+            val result = walletRepository.getCoinList(names)
+            if (result.isSucceed()) {
+                val coinsNet = result.data()
+                coinsNet?.let {
+                    for (net in it) {
+                        for (local in coinsLocal) {
+                            if (local.netId == net.netId) {
+                                local.rmb = net.rmb
+                                local.icon = net.icon
+                                local.nickname = net.nickname
+                                local.platform = net.platform
+                                local.treaty = net.treaty
+                                local.optionalName = net.optionalName
+                                local.update(local.id)
+                            }
                         }
                     }
+                    //第二次返回：图标行情
+                    logDebug("二：钱包id====$id")
+                    emit(coinsLocal)
+
+                    val jobs = mutableListOf<Job>()
+                    for (coin in coinsLocal) {
+                        val job = viewModelScope.launch(Dispatchers.IO) {
+                            coin.balance = GoWallet.handleBalance(coin)
+                            coin.update(coin.id)
+                            logDebug("当前余额===${coin.name}  ${coin.balance}")
+                        }
+                        jobs.add(job)
+                    }
+                    jobs.joinAll()
+                    logDebug("。。。。查询余额完成。。。。。")
+
+
+                    logDebug("三：钱包id====$id")
+                    emit(coinsLocal)
+
                 }
-                //第二次返回：图标行情
-                logDebug("二：钱包id====$id")
-                emit(coinsLocal)
-
-                for (coin in coinsLocal) {
-                    coin.balance = GoWallet.handleBalance(coin)
-                    //有数据库的情况下，这里不需要这么频繁发射
-                    //emit(coinsLocal)
-                    coin.update(coin.id)
-
-                }
-                logDebug("三：钱包id====$id")
-                emit(coinsLocal)
-
             }
+
         }
 
     }.flowOn(Dispatchers.IO)
+
 
     fun getCoinList(names: List<String>) {
         viewModelScope.launch {

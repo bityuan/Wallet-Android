@@ -48,11 +48,6 @@ fun toJSONParam(method: String, vararg params: Pair<String, Any?>): JSONObject {
     return param
 }
 
-fun log(string: String?) {
-    if (BuildConfig.DEBUG) {
-        string?.let { Log.v("wa", it) }
-    }
-}
 
 data class Notices(
     val list: List<Notice>
