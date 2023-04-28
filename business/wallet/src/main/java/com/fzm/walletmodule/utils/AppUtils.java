@@ -73,10 +73,13 @@ public class AppUtils {
         return appVersion;
     }
 
-    public static String getClient(Context ctx) {
-        String client = "supercode," + getAppVersion(ctx) + ",android";
+    public static String getClient(Context ctx,String headerTag) {
+        String appName = ctx.getString(R.string.app_name);
+        String client = headerTag+",Android,"+appName+"," + getAppVersion(ctx);
+        Log.v("client","appversion ===  "+client);
         return client;
     }
+
 
     public static String getToken(Context ctx) {
         // return PreferencesUtils.getString(ctx, GetLoginRespons.TOKEN);

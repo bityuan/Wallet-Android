@@ -23,7 +23,6 @@ import com.fzm.walletdemo.ui.fragment.HomeFragment
 import com.fzm.walletdemo.ui.fragment.MyFragment
 import com.fzm.walletdemo.ui.fragment.WebFragment
 import com.fzm.walletmodule.base.Constants
-import com.fzm.walletmodule.event.MainCloseEvent
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.fragment.WalletIndexFragment
 import com.fzm.walletmodule.update.UpdateUtils
@@ -53,7 +52,6 @@ class MainActivity : BaseActivity() {
         setStatusColor(android.R.color.transparent)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        EventBus.getDefault().register(this)
         initView()
         initObserver()
         if (WalletHelper.isSQ()) {
@@ -337,11 +335,6 @@ class MainActivity : BaseActivity() {
         setTabSelection(0)
     }
 
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onMessageEvent(event: MainCloseEvent) {
-        setTabSelection(0)
-    }
 
 
     override fun onDestroy() {
