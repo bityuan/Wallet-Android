@@ -180,7 +180,7 @@ class GoWallet {
         }
 
         fun isPara(coin: Coin): Boolean {
-            return (coin.chain == "BTY" && coin.platform != "bty")
+            return (coin.chain == "ETH" && coin.platform != "ethereum")
         }
 
         //通过平行获取Tokensymbol
@@ -591,6 +591,8 @@ class GoWallet {
             val coinToken = CoinToken()
             coinToken.cointype = cointype
             coinToken.tokenSymbol = if (cointype == name) "" else name
+            //默认都是不代扣的
+            coinToken.proxy = false
             if (platform == null) {
                 return coinToken
             }
@@ -608,14 +610,17 @@ class GoWallet {
                     }
                 }
             }
-
             if (cointype == "ETH" && platform != "ethereum") {
+                val platform = "yhchain"
+                coinToken.proxy = true
                 if (treaty == "1") {
                     coinToken.cointype = Walletapi.TypeBtyString
                     coinToken.tokenSymbol = "$platform.$name"
+                    coinToken.exer = "user.p.$platform.token"
                 } else if (treaty == "2") {
                     coinToken.cointype = Walletapi.TypeBtyString
                     coinToken.tokenSymbol = "$platform.coins"
+                    coinToken.exer = "user.p.$platform.coins"
                 }
             }
 
@@ -625,6 +630,9 @@ class GoWallet {
         class CoinToken {
             var cointype: String = ""
             var tokenSymbol: String = ""
+            //是否要代扣,默认不代扣
+            var proxy:Boolean = false
+            var exer:String = ""
         }
 
 

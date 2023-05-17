@@ -15,6 +15,10 @@ import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.alibaba.fastjson.JSON
+import com.fzm.wallet.sdk.IPConfig.Companion.BTY_FEE
+import com.fzm.wallet.sdk.IPConfig.Companion.YBF_BTY_PR
+import com.fzm.wallet.sdk.IPConfig.Companion.YBF_FEE_ADDR
+import com.fzm.wallet.sdk.IPConfig.Companion.YBF_TOKEN_FEE
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
 import com.fzm.wallet.sdk.bean.Miner
@@ -50,6 +54,7 @@ import org.jetbrains.anko.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.litepal.LitePal.where
 import org.litepal.extension.find
+import walletapi.GsendTx
 import walletapi.WalletRecover
 import walletapi.Walletapi
 import java.math.RoundingMode
@@ -78,7 +83,8 @@ class OutActivity : BaseActivity() {
 
     //主链余额
     var chainBalance: Double = 0.0
-    var coinToken:GoWallet.Companion.CoinToken?=null
+    private var oldName = ""
+    private lateinit var coinToken: GoWallet.Companion.CoinToken
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,12 +98,13 @@ class OutActivity : BaseActivity() {
 
     override fun initView() {
         coin?.let {
-
+            oldName = it.name
             binding.tvCoinName.text = it.uiName + getString(R.string.home_transfer)
             binding.tvBalance.text = "${it.balance} ${it.uiName}"
             coinToken = it.newChain
             //危险操作，此页面不可对coin进行数据库修改，不然chain和name也会被修改
-            it.chain = coinToken?.cointype
+            it.chain = coinToken.cointype
+            it.name = coinToken.tokenSymbol
             //替换好主链后再去查询主链余额，此操作只为判断矿工费使用,加个地址以判断不同主链,再测试下其他币种
             lifecycleScope.launch(Dispatchers.IO) {
                 val chainBeans = where(
@@ -170,7 +177,13 @@ class OutActivity : BaseActivity() {
         })
         val minerChain =
             if (coin?.chain == "ETH" && coin?.name != "ETH") "ETHTOKEN" else coin?.chain
-        outViewModel.getMiner(minerChain!!)
+        if (coinToken.proxy) {
+            binding.seekbarFee.visibility = View.GONE
+            binding.llVMiner.visibility = View.GONE
+            binding.tvFee.text = "0.5 $oldName"
+        } else {
+            outViewModel.getMiner(minerChain!!)
+        }
         binding.seekbarFee.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 val value: Double = progress.plus(min).div(100000000.0000)
@@ -368,7 +381,47 @@ class OutActivity : BaseActivity() {
                                 val bPassword = GoWallet.encPasswd(password)!!
                                 val mnem: String = GoWallet.decMenm(bPassword, it.getpWallet().mnem)
                                 configNomalWallet(it, mnem)
-                                handleTransactions(toAddress, money)
+
+                                //如果需要代扣
+                                if (coinToken.proxy) {
+                                    val gsendTx = GsendTx().apply {
+                                        feepriv = YBF_BTY_PR
+                                        to = toAddress
+                                        tokenSymbol = it.name
+                                        execer = coinToken.exer
+                                        amount = money.toDouble()
+                                        txpriv = privkey
+                                        //消耗的BTY
+                                        fee = BTY_FEE
+                                        //扣的手续费接收地址
+                                        tokenFeeAddr = YBF_FEE_ADDR
+                                        //扣多少手续费
+                                        tokenFee = YBF_TOKEN_FEE
+                                        if (it.treaty == "1") {
+                                            coinsForFee = false
+                                            tokenFeeSymbol = oldName
+                                        } else if (it.treaty == "2") {
+                                            coinsForFee = true
+                                        }
+                                        //feeAddressID是收比特元的手续费地址格式，txAddressID是当前用户地址格式
+                                        feeAddressID = 2
+                                        txAddressID = 2
+                                    }
+                                    val gsendTxResp = Walletapi.coinsTxGroup(gsendTx)
+                                    GoWallet.sendTran(it.chain, gsendTxResp.signedTx, it.name)
+                                    val sendTx = gsendTxResp.txId
+                                    runOnUiThread {
+                                        loading.dismiss()
+                                        ToastUtils.show(
+                                            this@OutActivity,
+                                            R.string.home_transfer_currency_success
+                                        )
+                                        finish()
+                                    }
+
+                                } else {
+                                    handleTransactions(toAddress, money)
+                                }
                             }
                             PWallet.TYPE_PRI_KEY -> {
                                 configPrikeyWallet(it)
@@ -394,7 +447,7 @@ class OutActivity : BaseActivity() {
 
     private fun configNomalWallet(coin: Coin, mnem: String) {
         if ("YCC" == coin.chain || "BTY" == coin.chain) {
-            if ("ethereum" == coin.platform || "findspin" == coin.platform) {
+            if ("ethereum" == coin.platform || "yhchain" == coin.platform) {
                 addressId = 2
                 privkey = coin.getPrivkey("ETH", mnem)
             } else if ("btc" == coin.platform) {
@@ -417,7 +470,7 @@ class OutActivity : BaseActivity() {
 
     private fun configPrikeyWallet(coin: Coin) {
         if ("YCC" == coin.chain || "BTY" == coin.chain) {
-            if ("ethereum" == coin.platform || "findspin" == coin.platform) {
+            if ("ethereum" == coin.platform || "yhchain" == coin.platform) {
                 addressId = 2
             } else if ("btc" == coin.platform) {
                 addressId = 0

@@ -2,10 +2,12 @@ package com.fzm.walletmodule.ui.activity
 
 import android.os.Bundle
 import android.text.TextUtils
+import com.fzm.wallet.sdk.IPConfig.Companion.YBF_TOKEN_FEE
 import com.fzm.walletmodule.R
 
 import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.databinding.ActivityTransactionDetailsBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.*
@@ -53,7 +55,15 @@ class TransactionDetailsActivity : BaseActivity() {
         super.initData()
         binding.tvOutAddress.text = transaction.from
         binding.tvInAddress.text = transaction.to
-        binding.tvMiner.text = "${transaction.fee} ${coin.newChain.cointype}"
+        if(GoWallet.isPara(coin)) {
+            if(transaction.note!!.contains("para")) {
+                binding.tvMiner.text = "0 ${coin.uiName}"
+            }else {
+                binding.tvMiner.text = "$YBF_TOKEN_FEE ${coin.uiName}"
+            }
+        }else {
+            binding.tvMiner.text = "${transaction.fee} ${coin.newChain.cointype}"
+        }
         binding.tvBlock.text = transaction.height.toString()
 
         binding.tvHash.text = transaction.txid
