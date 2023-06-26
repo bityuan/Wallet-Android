@@ -6,11 +6,17 @@
     <string name="main_my">我的</string>
     <string name="my_about">关于我们</string>
     <string name="my_download">应用下载</string>
+    <string name="my_w_connect">WalletConnect</string>
 
     <string name="my_share_copy_address">复制下载地址</string>
     <string name="app_content">MyDao是一款移动端账户App，旨在为用户提供安全，好用，功能强大数字资产管理工具。</string>
     <string name="tab_home">首页</string>
     <string name="tab_explore">探索</string>
     <string name="tab_my">我的</string>
+
+    <string name="dialog_reject">拒绝</string>
+    <string name="dialog_approve">同意</string>
+    <string name="message_reject_request">遭到用户拒绝</string>
+    <string name="tab_wallet">钱包</string>
 
 </resources>

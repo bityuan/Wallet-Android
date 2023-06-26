@@ -107,9 +107,9 @@ class WalletFragment : Fragment() {
                                 nomalRefreshData(list)
                                 //refreshData(list)
 
-                                for (cc in list){
+                                /*for (cc in list){
                                     logDebug("====刷新UI${cc.name} ${cc.balance}")
-                                }
+                                }*/
 
                             }
                         }

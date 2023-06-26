@@ -59,7 +59,7 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
             val coinsLocal =
                 LitePal.where("pwallet_id = ? and status = 1", id.toString()).find<Coin>(true)
             //第一次返回：数据库数据
-            logDebug("一：钱包id====$id")
+            //logDebug("一：钱包id====$id")
             emit(coinsLocal)
             val names = coinsLocal.map { "${it.name},${it.platform}" }
             val result = walletRepository.getCoinList(names)
@@ -80,7 +80,7 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
                         }
                     }
                     //第二次返回：图标行情
-                    logDebug("二：钱包id====$id")
+                    //logDebug("二：钱包id====$id")
                     emit(coinsLocal)
 
                     val jobs = mutableListOf<Job>()
@@ -88,15 +88,15 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
                         val job = viewModelScope.launch(Dispatchers.IO) {
                             coin.balance = GoWallet.handleBalance(coin)
                             coin.update(coin.id)
-                            logDebug("当前余额===${coin.name}  ${coin.balance}")
+                            //logDebug("当前余额===${coin.name}  ${coin.balance}")
                         }
                         jobs.add(job)
                     }
                     jobs.joinAll()
-                    logDebug("。。。。查询余额完成。。。。。")
+                    //logDebug("。。。。查询余额完成。。。。。")
 
 
-                    logDebug("三：钱包id====$id")
+                    //logDebug("三：钱包id====$id")
                     emit(coinsLocal)
 
                 }

@@ -54,6 +54,8 @@ dependencies {
     api cfg.navigationFragment
     api cfg.broccoli
     api cfg.swipeRecyclerview
+    api cfg.web3j
+    api cfg.kotson
     //debugApi  cfg.glance
 }
 

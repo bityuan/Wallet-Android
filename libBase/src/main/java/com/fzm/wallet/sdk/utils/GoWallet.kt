@@ -381,7 +381,7 @@ class GoWallet {
         }
 
         fun signTxGroup(
-            execer: String,
+            execer: String?,
             createTx: String,
             txPriv: String,
             feePriv: String,

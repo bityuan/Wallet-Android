@@ -42,12 +42,13 @@ fun Module.walletNetModule() {
                 .readTimeout(30, TimeUnit.SECONDS)
                 .addInterceptor(get(walletQualifier))
                 .addNetworkInterceptor(
-                    HttpLoggingInterceptor().apply {
+                    /*HttpLoggingInterceptor().apply {
                         level = when (BuildConfig.DEBUG) {
                             true -> HttpLoggingInterceptor.Level.BODY
                             false -> HttpLoggingInterceptor.Level.NONE
                         }
-                    }
+                    }*/
+                    MyHttpLoggingInterceptor()
                 )
                 .sslSocketFactory(
                     SSLSocketClient.getSSLSocketFactory(),

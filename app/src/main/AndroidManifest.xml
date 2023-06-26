@@ -37,20 +37,20 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.SearchDappActivity"
-            android:label="浏览器"
             android:exported="false"
+            android:label="浏览器"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.MessagesActivity"
-            android:label="消息中心"
             android:exported="false"
+            android:label="消息中心"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.MsgDetailsActivity"
-            android:label="系统消息"
             android:exported="false"
+            android:label="系统消息"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
@@ -76,10 +76,20 @@
             android:label="@string/my_download"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".wconnect.WConnectActivity"
+            android:exported="false"
+            android:label="@string/my_w_connect"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.activity.GcTestActivity"
             android:screenOrientation="portrait" />
+        <service
+            android:name=".wconnect.WalletConnectService"
+            android:enabled="true" />
+
 
         <provider
             android:name="androidx.core.content.FileProvider"

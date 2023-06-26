@@ -34,6 +34,7 @@ import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.FragmentHomeBinding
 import com.fzm.walletdemo.ui.activity.MainActivity
+import com.fzm.walletdemo.wconnect.WConnectActivity
 import com.fzm.walletmodule.ui.activity.AddCoinActivity
 import com.fzm.walletmodule.ui.activity.MyWalletsActivity
 import com.fzm.walletmodule.ui.fragment.WalletFragment
@@ -129,6 +130,8 @@ class HomeFragment : Fragment() {
                 val toAddress = scans[3]
                 val amount = scans[4]
                 showPwdDialog(chooseCoin, xAddress, toAddress, amount)
+            }else if(scan.contains("wc:")) {
+                handleWalletConnect(context, scan)
             }
 
         })
@@ -159,6 +162,13 @@ class HomeFragment : Fragment() {
         }
 
         initMsg()
+    }
+
+
+    private fun handleWalletConnect(context: Context?, url: String?) {
+        val intent = Intent(context, WConnectActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+        context?.startActivity(intent)
     }
 
 

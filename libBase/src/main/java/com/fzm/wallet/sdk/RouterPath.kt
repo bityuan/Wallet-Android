@@ -36,6 +36,7 @@ object RouterPath {
     const val APP_SCAN_RESULT = "/app/ScanResultActivity"
     const val APP_DOWNLOAD = "/app/DownLoadActivity"
     const val APP_WEBTEST = "/app/WebTestActivity"
+    const val APP_WCONNECT = "/app/WConnectActivity"
 
     //param
     const val PARAM_COIN = "coin"
