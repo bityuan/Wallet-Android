@@ -13,7 +13,7 @@ const val PRE_X_RECOVER = "X_RECOVER"
 
 fun logDebug(log: String) {
     if (BuildConfig.DEBUG) {
-        Log.v("wlike", log)
+        Log.v("dao", log)
     }
 }
 

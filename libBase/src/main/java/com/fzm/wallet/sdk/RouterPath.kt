@@ -46,4 +46,5 @@ object RouterPath {
     const val PARAM_APPS_ID = "apps_id"
     const val PARAM_WALLET = "wallet"
     const val PARAM_VISIBLE_MNEM = "visible_mnem"
+    const val PARAM_WC_URL = "wc_url"
 }

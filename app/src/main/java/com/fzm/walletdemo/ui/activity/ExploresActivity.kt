@@ -1,18 +1,26 @@
 package com.fzm.walletdemo.ui.activity
 
 import android.os.Bundle
+import android.widget.CheckBox
+import android.widget.CompoundButton
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.afollestad.materialdialogs.DialogAction
+import com.afollestad.materialdialogs.MaterialDialog
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.bean.ExploreBean
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.utils.MMkvUtil
+import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.ActivityExploresBinding
 import com.fzm.walletdemo.ui.adapter.ExploresAdapter
 import com.fzm.walletmodule.ui.base.BaseActivity
+import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -38,6 +46,7 @@ class ExploresActivity : BaseActivity() {
         initView()
     }
 
+
     override fun initView() {
         super.initView()
         lifecycleScope.launch(Dispatchers.IO) {
@@ -50,23 +59,55 @@ class ExploresActivity : BaseActivity() {
                 title = app.name
                 val exAdapter = ExploresAdapter(this@ExploresActivity, apps)
                 exAdapter.setOnItemClickListener {
-                    apps[it].let { appBean ->
-                        if (appBean.type == 1) {
-                            val count = LitePal.count<PWallet>()
-                            if (count == 0) {
-                                toast("请先创建钱包")
-                                return@let
-                            }
+                    try {
+                        val appId = "${app.apps[it].id}"
+                        if (MMkvUtil.decodeBoolean(appId)) {
+                            gotoDapp(it)
+                        } else {
+                            MaterialDialog.Builder(this@ExploresActivity)
+                                .negativeText("取消")
+                                .positiveText("确认")
+                                .title(getString(R.string.explore_title))
+                                .content(getString(R.string.explore_disclaimer))
+                                .checkBoxPrompt(
+                                    "不再提醒",
+                                    false
+                                ) { buttonView, isChecked ->
+                                    MMkvUtil.encode(appId, isChecked)
+                                }
+                                .onNegative { dialog, which ->
+                                    dismiss()
+                                }
+                                .onPositive { dialog, which ->
+
+                                    gotoDapp(it)
+                                }.build().show()
                         }
-                        ARouter.getInstance().build(RouterPath.APP_DAPP)
-                            .withString("name", appBean.name)
-                            .withString("url", appBean.app_url).navigation()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
+
+
                 }
                 binding.rvList.adapter = exAdapter
             }
 
         }
 
+    }
+
+    private fun gotoDapp(index: Int) {
+        apps[index].let { appBean ->
+            if (appBean.type == 1) {
+                val count = LitePal.count<PWallet>()
+                if (count == 0) {
+                    toast("请先创建钱包")
+                    return@let
+                }
+            }
+            ARouter.getInstance().build(RouterPath.APP_DAPP)
+                .withString("name", appBean.name)
+                .withString("url", appBean.app_url).navigation()
+        }
     }
 }
