@@ -7,6 +7,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.ActivitySearchDappBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
@@ -40,9 +41,40 @@ class SearchDappActivity : BaseActivity() {
                 PreferencesUtils.putString(this, HISTORY_URL_KEY, urls)
                 mCommonAdapter.notifyDataSetChanged()
             }
-            ARouter.getInstance().build(RouterPath.APP_DAPP).withString("name", "浏览器")
-                .withString("url", url).navigation()
+
+            try {
+                if (MMkvUtil.decodeBoolean(url)) {
+                    gotoDapp(url)
+                } else {
+                    MaterialDialog.Builder(this@SearchDappActivity)
+                        .negativeText("取消")
+                        .positiveText("确认")
+                        .title(getString(R.string.explore_title))
+                        .content(getString(R.string.explore_disclaimer))
+                        .checkBoxPrompt(
+                            "不再提醒",
+                            false
+                        ) { buttonView, isChecked ->
+                            MMkvUtil.encode(url, isChecked)
+                        }
+                        .onNegative { dialog, which ->
+                            dismiss()
+                        }
+                        .onPositive { dialog, which ->
+                            gotoDapp(url)
+                        }.build().show()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+
         }
+    }
+
+    private fun gotoDapp(url: String) {
+        ARouter.getInstance().build(RouterPath.APP_DAPP).withString("name", "浏览器")
+            .withString("url", url).navigation()
     }
 
     override fun initView() {
