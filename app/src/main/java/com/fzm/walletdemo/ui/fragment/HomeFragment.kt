@@ -131,7 +131,7 @@ class HomeFragment : Fragment() {
                 val amount = scans[4]
                 showPwdDialog(chooseCoin, xAddress, toAddress, amount)
             }else if(scan.contains("wc:")) {
-                handleWalletConnect(context, scan)
+                //handleWalletConnect(context, scan)
             }
 
         })
