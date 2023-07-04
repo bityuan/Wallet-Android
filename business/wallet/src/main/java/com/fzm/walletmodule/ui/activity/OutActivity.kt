@@ -15,10 +15,6 @@ import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.alibaba.fastjson.JSON
-import com.fzm.wallet.sdk.IPConfig.Companion.BTY_FEE
-import com.fzm.wallet.sdk.IPConfig.Companion.YBF_BTY_PR
-import com.fzm.wallet.sdk.IPConfig.Companion.YBF_FEE_ADDR
-import com.fzm.wallet.sdk.IPConfig.Companion.YBF_TOKEN_FEE
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
 import com.fzm.wallet.sdk.bean.Miner
@@ -45,7 +41,6 @@ import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.MultiItemTypeAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
 import kotlinx.android.synthetic.main.activity_out.*
-import kotlinx.android.synthetic.main.item_text.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -54,7 +49,6 @@ import org.jetbrains.anko.toast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.litepal.LitePal.where
 import org.litepal.extension.find
-import walletapi.GsendTx
 import walletapi.WalletRecover
 import walletapi.Walletapi
 import java.math.RoundingMode
@@ -109,7 +103,7 @@ class OutActivity : BaseActivity() {
             lifecycleScope.launch(Dispatchers.IO) {
                 val chainBeans = where(
                     "name = ? and pwallet_id = ? and address = ?", it.chain,
-                    java.lang.String.valueOf(it.getpWallet().id),it.address
+                    java.lang.String.valueOf(it.getpWallet().id), it.address
                 ).find<Coin>()
                 withContext(Dispatchers.Main) {
                     if (!ListUtils.isEmpty(chainBeans)) {
@@ -381,47 +375,7 @@ class OutActivity : BaseActivity() {
                                 val bPassword = GoWallet.encPasswd(password)!!
                                 val mnem: String = GoWallet.decMenm(bPassword, it.getpWallet().mnem)
                                 configNomalWallet(it, mnem)
-
-                                //如果需要代扣
-                                if (coinToken.proxy) {
-                                    val gsendTx = GsendTx().apply {
-                                        feepriv = YBF_BTY_PR
-                                        to = toAddress
-                                        tokenSymbol = it.name
-                                        execer = coinToken.exer
-                                        amount = money.toDouble()
-                                        txpriv = privkey
-                                        //消耗的BTY
-                                        fee = BTY_FEE
-                                        //扣的手续费接收地址
-                                        tokenFeeAddr = YBF_FEE_ADDR
-                                        //扣多少手续费
-                                        tokenFee = YBF_TOKEN_FEE
-                                        if (it.treaty == "1") {
-                                            coinsForFee = false
-                                            tokenFeeSymbol = oldName
-                                        } else if (it.treaty == "2") {
-                                            coinsForFee = true
-                                        }
-                                        //feeAddressID是收比特元的手续费地址格式，txAddressID是当前用户地址格式
-                                        feeAddressID = 2
-                                        txAddressID = 2
-                                    }
-                                    val gsendTxResp = Walletapi.coinsTxGroup(gsendTx)
-                                    GoWallet.sendTran(it.chain, gsendTxResp.signedTx, it.name)
-                                    val sendTx = gsendTxResp.txId
-                                    runOnUiThread {
-                                        loading.dismiss()
-                                        ToastUtils.show(
-                                            this@OutActivity,
-                                            R.string.home_transfer_currency_success
-                                        )
-                                        finish()
-                                    }
-
-                                } else {
-                                    handleTransactions(toAddress, money)
-                                }
+                                handleTransactions(toAddress, money)
                             }
                             PWallet.TYPE_PRI_KEY -> {
                                 configPrikeyWallet(it)

@@ -192,7 +192,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="mydao官方备份公钥"
+                    android:text="官方备份公钥"
                     android:textColor="@color/color_7190FF"
                     android:textSize="15sp"
                     android:textStyle="bold" />

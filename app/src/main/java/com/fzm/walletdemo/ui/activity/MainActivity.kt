@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import com.alibaba.android.arouter.facade.annotation.Route
-import com.fzm.wallet.sdk.IPConfig
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
 import com.fzm.wallet.sdk.base.logDebug
@@ -15,13 +14,10 @@ import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.walletdemo.R
-import com.fzm.walletdemo.W
 import com.fzm.walletdemo.databinding.ActivityMainBinding
-import com.fzm.walletdemo.ui.WalletHelper
 import com.fzm.walletdemo.ui.fragment.ExploreFragment
 import com.fzm.walletdemo.ui.fragment.HomeFragment
 import com.fzm.walletdemo.ui.fragment.MyFragment
-import com.fzm.walletdemo.ui.fragment.WebFragment
 import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.fragment.WalletIndexFragment
@@ -29,8 +25,6 @@ import com.fzm.walletmodule.update.UpdateUtils
 import com.fzm.walletmodule.vm.WalletViewModel
 import com.jeremyliao.liveeventbus.LiveEventBus
 import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
 import org.litepal.LitePal
@@ -38,8 +32,6 @@ import org.litepal.LitePal.count
 
 @Route(path = RouterPath.APP_MAIN)
 class MainActivity : BaseActivity() {
-    private var tianFragment: WebFragment? = null
-    private var tpFragment: WebFragment? = null
     private var exploreFragment: ExploreFragment? = null
     private var mWalletIndexFragment: WalletIndexFragment? = null
     private var mHomeFragment: HomeFragment? = null
@@ -54,23 +46,8 @@ class MainActivity : BaseActivity() {
         setContentView(binding.root)
         initView()
         initObserver()
-        if (WalletHelper.isSQ()) {
-            Constants.setCoins(DEFAULT_COINS_SQ)
-        } else {
-            Constants.setCoins(DEFAULT_COINS)
-        }
+        Constants.setCoins(DEFAULT_COINS)
         gotoUpdate()
-        configWallets()
-    }
-
-    override fun configWallets() {
-        super.configWallets()
-        if (WalletHelper.isSQ()) {
-            binding.lyTian.visibility = View.VISIBLE
-            binding.lyTp.visibility = View.VISIBLE
-            binding.lyExplore.visibility = View.GONE
-            binding.tvHome.text = "资产"
-        }
     }
 
 
@@ -85,9 +62,7 @@ class MainActivity : BaseActivity() {
             }
 
         })
-        if(!WalletHelper.isSQ()){
-            walletViewModel.getUpdate()
-        }
+        walletViewModel.getUpdate()
     }
 
     private val DEFAULT_COINS = listOf(
@@ -104,45 +79,11 @@ class MainActivity : BaseActivity() {
             netId = "90"
         },
         Coin().apply {
-            name = "TRX"
-            chain = "TRX"
-            platform = "trx"
-            netId = "1"
-        },
-        Coin().apply {
-            name = "BNB"
-            chain = "BNB"
-            platform = "bnb"
-            netId = "641"
-        },
-        Coin().apply {
             name = "USDT"
             chain = "ETH"
             platform = "ethereum"
             netId = "288"
         },
-        Coin().apply {
-            name = "USDT"
-            chain = "TRX"
-            platform = "trx"
-            netId = "600"
-        },
-        Coin().apply {
-            name = "USDT"
-            chain = "BNB"
-            platform = "bnb"
-            netId = "694"
-        },
-
-        )
-    private val DEFAULT_COINS_SQ = listOf(
-        Coin().apply {
-            name = "BTY"
-            chain = "BTY"
-            platform = "bty"
-            netId = "154"
-        }
-
     )
 
     override fun initView() {
@@ -205,18 +146,6 @@ class MainActivity : BaseActivity() {
                 showMyFragment(fragmentTransaction)
                 currentTab = binding.lyMy
             }
-            3 -> {
-                currentTab?.isSelected = false
-                binding.lyTian.isSelected = true
-                showTiAnFragment(fragmentTransaction)
-                currentTab = binding.lyTian
-            }
-            4 -> {
-                currentTab?.isSelected = false
-                binding.lyTp.isSelected = true
-                showTPFragment(fragmentTransaction)
-                currentTab = binding.lyTp
-            }
         }
 
     }
@@ -235,8 +164,6 @@ class MainActivity : BaseActivity() {
         mHomeFragment?.let { transaction.hide(it) }
         exploreFragment?.let { transaction.hide(it) }
         myFragment?.let { transaction.hide(it) }
-        tianFragment?.let { transaction.hide(it) }
-        tpFragment?.let { transaction.hide(it) }
     }
 
 
@@ -300,41 +227,10 @@ class MainActivity : BaseActivity() {
         fragmentTransaction.commitAllowingStateLoss()
     }
 
-    private fun showTiAnFragment(fragmentTransaction: FragmentTransaction) {
-        if (tianFragment != null) {
-            fragmentTransaction.show(tianFragment!!)
-        } else {
-            tianFragment = WebFragment()
-            fragmentTransaction.add(
-                R.id.fl_tabcontent,
-                tianFragment!!,
-                WebFragment.TAG_TIAN
-            )
-
-        }
-        fragmentTransaction.commitAllowingStateLoss()
-    }
-
-    private fun showTPFragment(fragmentTransaction: FragmentTransaction) {
-        if (tpFragment != null) {
-            fragmentTransaction.show(tpFragment!!)
-        } else {
-            tpFragment = WebFragment()
-            fragmentTransaction.add(
-                R.id.fl_tabcontent,
-                tpFragment!!,
-                WebFragment.TAG_TP
-            )
-
-        }
-        fragmentTransaction.commitAllowingStateLoss()
-    }
-
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         setTabSelection(0)
     }
-
 
 
     override fun onDestroy() {

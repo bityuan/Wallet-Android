@@ -27,7 +27,7 @@ import okio.GzipSource;
 
 public class MyHttpLoggingInterceptor implements Interceptor {
     private static final Charset UTF8 = Charset.forName("UTF-8");
-    private static final String TAG = "mydao";
+    private static final String TAG = "mylog";
 
 
     private int noticeCount = 0;

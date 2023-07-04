@@ -15,10 +15,12 @@ import androidx.viewpager.widget.ViewPager
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bumptech.glide.Glide
 import com.fzm.wallet.sdk.BWallet
-import com.fzm.wallet.sdk.IPConfig
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.WalletConfiguration
-import com.fzm.wallet.sdk.base.*
+import com.fzm.wallet.sdk.base.LIVE_KEY_CHOOSE_CHAIN
+import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
+import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
+import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.exception.ImportWalletException
@@ -75,16 +77,7 @@ class ImportWalletActivity : BaseActivity() {
 
     override fun configWallets() {
         super.configWallets()
-        val navigation =
-            ARouter.getInstance().build(ROUTE_APP_TYPE).navigation() as IAppTypeProvider
-        titleList = when (navigation.getAppType()) {
-            IPConfig.APP_MY_DAO -> {
-                listOf("导入助记词", "导入私钥", "导入找回钱包")
-            }
-            else -> {
-                listOf("导入助记词", "导入私钥")
-            }
-        }
+        titleList =  listOf("导入助记词", "导入私钥")
     }
 
     override fun initView() {

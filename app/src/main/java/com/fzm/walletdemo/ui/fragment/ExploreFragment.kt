@@ -59,12 +59,7 @@ class ExploreFragment : Fragment() {
                 for (ex in list) {
                     val exploreBinding = ViewExploreBinding.inflate(layoutInflater)
                     exploreBinding.tvTitle.text = ex.name
-                    val bg = when (ex.id) {
-                        1 -> R.mipmap.bg_explore_eth
-                        2 -> R.mipmap.bg_explore_bty
-                        3 -> R.mipmap.bg_explore_ycc
-                        else -> R.mipmap.bg_explore_eth
-                    }
+                    val bg = R.mipmap.bg_explore_eth
                     exploreBinding.ivBg.backgroundResource = bg
                     exploreBinding.ivBg.setOnClickListener {
                         ARouter.getInstance().build(RouterPath.APP_EXPLORES)

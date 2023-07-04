@@ -292,7 +292,7 @@ public class AppUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             Uri contentUri = FileProvider.getUriForFile(context,
-                      "com.i.mydao.fileProvider", apkFile);
+                      "com.i.ass.fileProvider", apkFile);
             intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);//添加这一句表示对目标应用临时授权该Uri所代表的文件（不然会出现华为mate10，8.0上面出现解析软件包失败）

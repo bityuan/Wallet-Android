@@ -16,8 +16,6 @@ interface BWallet {
         context: Context,
         module: Module?,
         platformId: String,
-        appSymbol: String,
-        appId: String,
         appKey: String,
         device: String
     )

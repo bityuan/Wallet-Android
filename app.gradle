@@ -56,21 +56,9 @@ android {
 
     flavorDimensions 'app'
     productFlavors {
-        mydao {
+        ass {
             dimension 'app'
-            applicationId 'com.i.mydao'
-        }
-        ybc {
-            dimension 'app'
-            applicationId 'com.i.ybc'
-        }
-        ybs {
-            dimension 'app'
-            applicationId 'com.i.ybs'
-        }
-        yjm {
-            dimension 'app'
-            applicationId 'com.i.yjm'
+            applicationId 'com.i.ass'
         }
 
     }

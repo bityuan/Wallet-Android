@@ -10,7 +10,6 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.walletdemo.databinding.FragmentMyBinding
-import com.fzm.walletdemo.ui.WalletHelper
 import com.fzm.walletmodule.update.UpdateUtils
 import com.fzm.walletmodule.utils.AppUtils
 import com.fzm.walletmodule.vm.WalletViewModel
@@ -36,17 +35,13 @@ class MyFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initObserver()
-        if(WalletHelper.isSQ()){
-            binding.tvRecover.visibility = View.GONE
-        }
+        binding.tvRecover.visibility = View.GONE
         binding.tvCheckUpdate.text = "v" + AppUtils.getAppVersion(context)
         binding.tvShare.setOnClickListener {
             ARouter.getInstance().build(RouterPath.APP_DOWNLOAD).navigation()
         }
         binding.llCheckUpdate.setOnClickListener {
-            if(!WalletHelper.isSQ()){
-                walletViewModel.getUpdate()
-            }
+            walletViewModel.getUpdate()
         }
         binding.tvAbout.setOnClickListener {
             ARouter.getInstance().build(RouterPath.APP_ABOUT).navigation()

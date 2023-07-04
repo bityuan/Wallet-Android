@@ -10,13 +10,10 @@ import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.BWallet
-import com.fzm.wallet.sdk.IPConfig
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.WalletConfiguration
-import com.fzm.wallet.sdk.base.IAppTypeProvider
 import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
 import com.fzm.wallet.sdk.base.MyWallet
-import com.fzm.wallet.sdk.base.ROUTE_APP_TYPE
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.exception.ImportWalletException
 import com.fzm.walletmodule.BuildConfig
@@ -31,7 +28,6 @@ import com.fzm.walletmodule.ui.widget.FlowTagLayout
 import com.fzm.walletmodule.ui.widget.TestDividerItemDecoration
 import com.fzm.walletmodule.utils.ListUtils
 import com.fzm.walletmodule.utils.ScreenUtils
-import com.fzm.walletmodule.utils.ToastUtils
 import com.fzm.walletmodule.utils.isFastClick
 import com.jeremyliao.liveeventbus.LiveEventBus
 import com.zhy.adapter.abslistview.CommonAdapter
@@ -40,8 +36,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
-import org.litepal.LitePal
-import org.litepal.extension.find
 
 @Route(path = RouterPath.WALLET_BACKUP_WALLET)
 class BackUpWalletActivity : BaseActivity() {
@@ -79,16 +73,7 @@ class BackUpWalletActivity : BaseActivity() {
 
     override fun configWallets() {
         super.configWallets()
-        val navigation =
-            ARouter.getInstance().build(ROUTE_APP_TYPE).navigation() as IAppTypeProvider
-        when (navigation.getAppType()) {
-            IPConfig.APP_MY_DAO -> {
-                binding.btnRecover.visibility = View.VISIBLE
-            }
-            else -> {
-                binding.btnRecover.visibility = View.GONE
-            }
-        }
+        binding.btnRecover.visibility = View.GONE
     }
 
     override fun initData() {

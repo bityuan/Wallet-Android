@@ -1,13 +1,12 @@
 package com.fzm.wallet.sdk.api
 
-import com.fzm.wallet.sdk.IPConfig
+import com.fzm.wallet.sdk.ProConfig
 import com.fzm.wallet.sdk.bean.*
 import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.DNSResponse
 import com.fzm.wallet.sdk.net.HttpResponse
 import okhttp3.RequestBody
-import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -69,13 +68,32 @@ interface Apis {
      * @param key 解析关键字，正向为域名，反向为地址或取值
      * @param kind 正向(0)/反向(1)解析，默认正向:域名查询地址
      */
-    @GET(IPConfig.DNS)
+    @GET("https://dns.bityuan.com/dns/dns/resolve")
     suspend fun getDNSResolve(
         @Query("type") type: Int,
         @Query("key") key: String,
         @Query("kind") kind: Int
     ): DNSResponse<List<String>>
 
-    @GET(IPConfig.UPDATE_JSON)
+
+    @GET(UPDATE_JSON)
     suspend fun getUpdate(): HttpResponse<AppVersion>
+
+    companion object {
+        /* update.json文件 示例
+   //status:   4代表强制更新，1代表普通更新
+   {
+       "code": 0,
+       "data": {
+       "status": 1,
+       "version": "1.2.2",
+       "version_code": 12200,
+       "download_url": "https://app-release.apk",
+       "log": "1.优化使用体验\n2.已知BUG修复",
+   }
+   }
+
+   */
+        const val UPDATE_JSON = "https://.../update.json"
+    }
 }
