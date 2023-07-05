@@ -610,8 +610,7 @@ class GoWallet {
                     }
                 }
             }
-            if (cointype == "ETH" && platform != "ethereum") {
-                val platform = "yhchain"
+            if (cointype == "ETH" && platform != "ethereum" && platform != "ycceth") {
                 coinToken.proxy = true
                 if (treaty == "1") {
                     coinToken.cointype = Walletapi.TypeBtyString
