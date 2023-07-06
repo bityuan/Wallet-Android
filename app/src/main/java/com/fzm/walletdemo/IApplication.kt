@@ -28,7 +28,7 @@ class IApplication : Application() {
                 BWallet.get().init(
                     this@IApplication,
                     this,
-                    "1",
+                    "1003",
                     "",
                     "${Build.MANUFACTURER} ${Build.MODEL}"
                 )

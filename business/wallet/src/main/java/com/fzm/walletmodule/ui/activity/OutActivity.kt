@@ -400,40 +400,16 @@ class OutActivity : BaseActivity() {
     }
 
     private fun configNomalWallet(coin: Coin, mnem: String) {
-        if ("YCC" == coin.chain || "BTY" == coin.chain) {
-            if ("ethereum" == coin.platform || "yhchain" == coin.platform) {
-                addressId = 2
-                privkey = coin.getPrivkey("ETH", mnem)
-            } else if ("btc" == coin.platform) {
-                privkey = coin.getPrivkey("BTC", mnem)
-                addressId = 0
-            } else if ("bty" == coin.platform) {
-                privkey = coin.getPrivkey("BTY", mnem)
-                addressId = 0
-            } else if ("btymain" == coin.platform) {
-                privkey = coin.getPrivkey("BNB", mnem)
-                addressId = 2
-            } else {
-                privkey = coin.getPrivkey(coin.chain, mnem)
-            }
-        } else {
-            privkey = coin.getPrivkey(coin.chain, mnem)
+        if (coin.chain == "AS") {
+            addressId = 2
         }
+        privkey = coin.getPrivkey(coin.chain, mnem)
 
     }
 
     private fun configPrikeyWallet(coin: Coin) {
-        if ("YCC" == coin.chain || "BTY" == coin.chain) {
-            if ("ethereum" == coin.platform || "yhchain" == coin.platform) {
-                addressId = 2
-            } else if ("btc" == coin.platform) {
-                addressId = 0
-            } else if ("bty" == coin.platform) {
-                addressId = 0
-            } else if ("btymain" == coin.platform) {
-                privkey = coin.getPrivkey("BNB")
-                addressId = 2
-            }
+        if (coin.chain == "AS") {
+            addressId = 2
         }
     }
 
