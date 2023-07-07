@@ -58,7 +58,7 @@ class MainActivity : BaseActivity() {
                     UpdateUtils(this).update(it, supportFragmentManager, this, true)
                 }
             } else {
-                toast(it.error())
+                //toast(it.error())
             }
 
         })

@@ -179,17 +179,14 @@ class HomeFragment : Fragment() {
                 val chain = pWallet.coinList[0].chain
                 binding.header.rlWalletBg.backgroundResource = getWalletBg(chain)
                 binding.header.tvWalletName.text = "私钥账户"
-                binding.header.ivAddCoin.visibility = View.VISIBLE
             }
             TYPE_RECOVER -> {
                 binding.header.tvWalletName.text = "找回账户"
                 binding.header.rlWalletBg.backgroundResource = R.mipmap.header_wallet_recover_wallet
-                binding.header.ivAddCoin.visibility = View.GONE
             }
             TYPE_NOMAL -> {
                 binding.header.tvWalletName.text = "助记词账户"
                 binding.header.rlWalletBg.backgroundResource = R.mipmap.header_wallet_hd_wallet
-                binding.header.ivAddCoin.visibility = View.VISIBLE
             }
         }
     }
