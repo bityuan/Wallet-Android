@@ -35,7 +35,6 @@ class MyFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initObserver()
-        binding.tvRecover.visibility = View.GONE
         binding.tvCheckUpdate.text = "v" + AppUtils.getAppVersion(context)
         binding.tvShare.setOnClickListener {
             ARouter.getInstance().build(RouterPath.APP_DOWNLOAD).navigation()

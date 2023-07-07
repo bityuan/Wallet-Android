@@ -64,9 +64,15 @@
 
 
             <include layout="@layout/layout_line" />
-
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/radio_check"
+                android:paddingStart="10dp"
+                android:text="AS" />
 
             <RadioGroup
+                android:visibility="gone"
                 android:id="@+id/rg_choose_coin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -120,7 +126,7 @@
                     android:singleLine="true"
                     android:textColor="@android:color/black"
                     android:textSize="14sp"
-                    tools:text="1YCC" />
+                   />
 
                 <ImageView
                     android:id="@+id/iv_refresh"

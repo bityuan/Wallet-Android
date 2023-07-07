@@ -61,10 +61,6 @@ class RecoverActivity : BaseActivity() {
 
     override fun initView() {
         super.initView()
-        if (BuildConfig.DEBUG) {
-            binding.etToAddress.setText("0x882Ae07ABf2ec055B24e027A0351dB5539EEDF03")
-            binding.etAmount.setText("0.02")
-        }
         binding.rgCoin.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.rb_bty -> {
@@ -77,8 +73,9 @@ class RecoverActivity : BaseActivity() {
             }
         }
         binding.btnRecover.setOnClickListener {
+            toast("敬请期待")
             //showPwdDialog(2)
-            createCode()
+            //createCode()
         }
 
         binding.ivScanInAddr.setOnClickListener {

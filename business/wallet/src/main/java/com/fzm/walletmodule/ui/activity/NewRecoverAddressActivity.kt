@@ -65,7 +65,7 @@ class NewRecoverAddressActivity : BaseActivity() {
     var visibleMnem: String? = null
 
     private var recoverTime: Long = 30//单位为秒
-    private var chooseCoin: String = "YCC"
+    private var chooseCoin: String = "AS"
     private var scanFrom = -1
     private val wallet: BWallet get() = BWallet.get()
 
@@ -116,7 +116,7 @@ class NewRecoverAddressActivity : BaseActivity() {
                 val coins = LitePal.where(
                     "pwallet_id = ? and name = ?",
                     walletid.toString(),
-                    Walletapi.TypeETHString
+                    Walletapi.TypeASString
                 ).find<Coin>()
                 if (coins.isNotEmpty()) {
                     val eth = coins[0]
@@ -193,7 +193,10 @@ class NewRecoverAddressActivity : BaseActivity() {
         }
 
         binding.btnOk.setOnClickListener {
-            val emailPhone = binding.etEmailPhone.text.toString()
+            toast("敬请期待")
+            return@setOnClickListener
+
+ /*           val emailPhone = binding.etEmailPhone.text.toString()
             if (emailPhone.isEmpty()) {
                 toast("请输入找回邮箱")
                 return@setOnClickListener
@@ -202,6 +205,7 @@ class NewRecoverAddressActivity : BaseActivity() {
                 toast("邮箱格式不正确")
                 return@setOnClickListener
             }
+
             if (balance.toDouble() < 1.0) {
                 toast("请先往您的地址充值1个主网${chooseCoin}保证找回账户成功创建")
                 return@setOnClickListener
@@ -223,7 +227,7 @@ class NewRecoverAddressActivity : BaseActivity() {
                     }
                 }
 
-            }
+            }*/
 
 
         }
