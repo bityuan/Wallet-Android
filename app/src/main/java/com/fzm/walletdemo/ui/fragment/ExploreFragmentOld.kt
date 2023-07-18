@@ -14,13 +14,16 @@ import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.bean.ExploreBean
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.walletdemo.databinding.FragmentExploreBinding
 import com.fzm.walletdemo.ui.adapter.ExploreAdapter
 import com.fzm.walletdemo.ui.adapter.ExploreDiffCallBack
+import com.fzm.walletmodule.vm.WalletViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.support.v4.toast
+import org.koin.android.ext.android.inject
 import org.litepal.LitePal
 import org.litepal.extension.count
 
@@ -29,6 +32,7 @@ class ExploreFragmentOld : Fragment() {
     private var oldList: MutableList<ExploreBean.AppsBean>? = null
     private var newList: MutableList<ExploreBean.AppsBean>? = null
     private lateinit var adapter: ExploreAdapter
+    private val walletViewModel: WalletViewModel by inject(walletQualifier)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,7 +74,7 @@ class ExploreFragmentOld : Fragment() {
 
     private fun getExploreAll() {
         lifecycleScope.launch {
-            val list = BWallet.get().getExploreList()
+            val list = walletViewModel.getExploreList()
             withContext(Dispatchers.Main) {
                 binding.swipeExplore.isRefreshing = false
                 newList = null

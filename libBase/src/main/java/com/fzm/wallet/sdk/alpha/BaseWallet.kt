@@ -2,10 +2,6 @@ package com.fzm.wallet.sdk.alpha
 
 import com.fzm.wallet.sdk.WalletBean
 import com.fzm.wallet.sdk.db.entity.PWallet
-import com.fzm.wallet.sdk.net.rootScope
-import com.fzm.wallet.sdk.net.walletQualifier
-import com.fzm.wallet.sdk.repo.OutRepository
-import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.toWalletBean
 import com.google.gson.Gson
 
@@ -17,8 +13,6 @@ import com.google.gson.Gson
 abstract class BaseWallet(protected val wallet: PWallet) {
 
     protected val gson by lazy { Gson() }
-    protected val walletRepository by lazy { rootScope.get<WalletRepository>(walletQualifier) }
-    protected val outRepository by lazy { rootScope.get<OutRepository>(walletQualifier) }
 
 
      val walletInfo: WalletBean

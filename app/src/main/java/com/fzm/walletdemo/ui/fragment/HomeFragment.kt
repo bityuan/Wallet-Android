@@ -34,7 +34,7 @@ import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.FragmentHomeBinding
 import com.fzm.walletdemo.ui.activity.MainActivity
-import com.fzm.walletdemo.wconnect.WConnectActivity
+import com.fzm.walletdemo.wcv2.WConnectActivity
 import com.fzm.walletmodule.ui.activity.AddCoinActivity
 import com.fzm.walletmodule.ui.activity.MyWalletsActivity
 import com.fzm.walletmodule.ui.fragment.WalletFragment

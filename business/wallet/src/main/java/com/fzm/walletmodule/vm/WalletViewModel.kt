@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.bean.AppVersion
+import com.fzm.wallet.sdk.bean.ExploreBean
 import com.fzm.wallet.sdk.bean.Notice
 import com.fzm.wallet.sdk.bean.Notices
 import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
@@ -159,6 +160,16 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
         viewModelScope.launch {
             _getUpdate.value = walletRepository.getUpdate()
         }
+    }
+
+
+
+     suspend fun getExploreList(): List<ExploreBean> {
+        return walletRepository.getExploreList().dataOrNull() ?: emptyList()
+    }
+
+     suspend fun getExploreCategory(id: Int): List<ExploreBean> {
+        return walletRepository.getExploreCategory(id).dataOrNull() ?: emptyList()
     }
 
 

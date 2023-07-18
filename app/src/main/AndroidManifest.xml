@@ -83,7 +83,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".wconnect.WConnectActivity"
+            android:name=".wcv2.WConnectActivity"
             android:exported="false"
             android:label="@string/my_w_connect"
             android:launchMode="singleTask"
@@ -93,7 +93,7 @@
             android:name=".ui.activity.GcTestActivity"
             android:screenOrientation="portrait" />
         <service
-            android:name=".wconnect.WalletConnectService"
+            android:name=".wcv2.WalletConnectService"
             android:enabled="true" />
 
 

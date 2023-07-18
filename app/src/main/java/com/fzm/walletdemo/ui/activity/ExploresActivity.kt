@@ -15,17 +15,20 @@ import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.bean.ExploreBean
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.ActivityExploresBinding
 import com.fzm.walletdemo.ui.adapter.ExploresAdapter
 import com.fzm.walletmodule.ui.base.BaseActivity
+import com.fzm.walletmodule.vm.WalletViewModel
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.support.v4.toast
 import org.jetbrains.anko.toast
+import org.koin.android.ext.android.inject
 import org.litepal.LitePal
 import org.litepal.extension.count
 
@@ -39,6 +42,8 @@ class ExploresActivity : BaseActivity() {
     private val apps = mutableListOf<ExploreBean.AppsBean>()
 
     private val binding by lazy { ActivityExploresBinding.inflate(layoutInflater) }
+    private val walletViewModel: WalletViewModel by inject(walletQualifier)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -50,7 +55,7 @@ class ExploresActivity : BaseActivity() {
     override fun initView() {
         super.initView()
         lifecycleScope.launch(Dispatchers.IO) {
-            val list = BWallet.get().getExploreCategory(appsId)
+            val list = walletViewModel.getExploreCategory(appsId)
             withContext(Dispatchers.Main) {
                 binding.rvList.layoutManager = LinearLayoutManager(this@ExploresActivity)
                 val app = list[0]

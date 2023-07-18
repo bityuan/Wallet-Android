@@ -1,7 +1,6 @@
 package com.fzm.wallet.sdk.net
 
 import com.fzm.wallet.sdk.BWalletImpl
-import com.fzm.wallet.sdk.BuildConfig
 import com.fzm.wallet.sdk.api.Apis
 import com.fzm.wallet.sdk.base.FZM_PLATFORM_ID
 import com.fzm.wallet.sdk.base.Q_BWallet
@@ -12,19 +11,13 @@ import com.fzm.wallet.sdk.utils.ToolUtils
 import me.jessyan.retrofiturlmanager.RetrofitUrlManager
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import org.koin.core.context.KoinContextHandler
 import org.koin.core.module.Module
 import org.koin.core.qualifier._q
-import org.koin.core.scope.Scope
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-
-val rootScope: Scope
-    get() = KoinContextHandler.get()._scopeRegistry.rootScope
 
 val walletQualifier = _q(Q_BWallet)
 
@@ -40,7 +33,28 @@ fun Module.walletNetModule() {
             OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
-                .addInterceptor(get(walletQualifier))
+                .addInterceptor { chain ->
+                    val platformId = FZM_PLATFORM_ID
+                    val originalRequest = chain.request()
+                    val newBuilder = originalRequest.newBuilder()
+                    newBuilder
+                        .header("AppType", "TPOS")
+                        .header("Content-Type", "application/json")
+                        .header("Accept", "application/json")
+                        .header("Fzm-Request-Source", "wallet")
+                        .header("FZM-REQUEST-OS", "android")
+                        .header("FZM-PLATFORM-ID", platformId)
+                        .header(
+                            "version",
+                            "${ToolUtils.getVersionName(get())},${ToolUtils.getVersionCode(get())}"
+                        )
+                        .header(
+                            "device",
+                            "${android.os.Build.BRAND},${android.os.Build.MODEL},${android.os.Build.VERSION.RELEASE}"
+                        )
+                        .method(originalRequest.method, originalRequest.body)
+                    chain.proceed(newBuilder.build())
+                }
                 .addNetworkInterceptor(
                     /*HttpLoggingInterceptor().apply {
                         level = when (BuildConfig.DEBUG) {
@@ -61,31 +75,6 @@ fun Module.walletNetModule() {
             .build()
     }
 
-    // Http头部基础数据
-    single(walletQualifier) {
-        val platformId = FZM_PLATFORM_ID
-        Interceptor { chain ->
-            val originalRequest = chain.request()
-            val newBuilder = originalRequest.newBuilder()
-            newBuilder
-                .header("AppType", "TPOS")
-                .header("Content-Type", "application/json")
-                .header("Accept", "application/json")
-                .header("Fzm-Request-Source", "wallet")
-                .header("FZM-REQUEST-OS", "android")
-                .header("FZM-PLATFORM-ID", platformId)
-                .header(
-                    "version",
-                    "${ToolUtils.getVersionName(get())},${ToolUtils.getVersionCode(get())}"
-                )
-                .header(
-                    "device",
-                    "${android.os.Build.BRAND},${android.os.Build.MODEL},${android.os.Build.VERSION.RELEASE}"
-                )
-                .method(originalRequest.method(), originalRequest.body())
-            chain.proceed(newBuilder.build())
-        }
-    }
 
     single<Retrofit>(walletQualifier) {
         Retrofit.Builder()

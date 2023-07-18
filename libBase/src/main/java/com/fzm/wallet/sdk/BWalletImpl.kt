@@ -5,13 +5,8 @@ import com.fzm.wallet.sdk.alpha.NormalWallet
 import com.fzm.wallet.sdk.alpha.PrivateKeyWallet
 import com.fzm.wallet.sdk.alpha.RecoverWallet
 import com.fzm.wallet.sdk.base.FZM_PLATFORM_ID
-import com.fzm.wallet.sdk.bean.ExploreBean
 import com.fzm.wallet.sdk.db.entity.PWallet
-import com.fzm.wallet.sdk.net.rootScope
 import com.fzm.wallet.sdk.net.walletNetModule
-import com.fzm.wallet.sdk.net.walletQualifier
-import com.fzm.wallet.sdk.repo.OutRepository
-import com.fzm.wallet.sdk.repo.WalletRepository
 import org.koin.core.module.Module
 
 internal class BWalletImpl : BWallet {
@@ -23,9 +18,6 @@ internal class BWalletImpl : BWallet {
 
     private var btyPrivkey: String = ""
 
-    private val walletRepository by lazy { rootScope.get<WalletRepository>(walletQualifier) }
-
-    private val outRepository by lazy { rootScope.get<OutRepository>(walletQualifier) }
 
     override fun init(
         context: Context,
@@ -61,14 +53,6 @@ internal class BWalletImpl : BWallet {
                 NormalWallet(PWallet()).init(configuration)
             }
         }
-    }
-
-    override suspend fun getExploreList(): List<ExploreBean> {
-        return walletRepository.getExploreList().dataOrNull() ?: emptyList()
-    }
-
-    override suspend fun getExploreCategory(id: Int): List<ExploreBean> {
-        return walletRepository.getExploreCategory(id).dataOrNull() ?: emptyList()
     }
 
     fun setBtyPrivkey(value: String) {

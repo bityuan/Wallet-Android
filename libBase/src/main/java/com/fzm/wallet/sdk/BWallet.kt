@@ -25,8 +25,6 @@ interface BWallet {
     fun setUrls(baseUrl: String, goUrl: String)
 
     suspend fun importWallet(configuration: WalletConfiguration): Long
-    suspend fun getExploreList(): List<ExploreBean>
-    suspend fun getExploreCategory(id: Int): List<ExploreBean>
 
     fun getBtyPrikey(): String?
 

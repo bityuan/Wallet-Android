@@ -19,10 +19,10 @@ dependencies {
     api cfg.anko
     api cfg.okhttp
     api cfg.retrofit
-    api cfg.koinScope
-    api cfg.koinViewmodel
-    api cfg.koinFragment
-    api cfg.koinExt
+    //api cfg.koinScope
+    //api cfg.koinViewmodel
+    //api cfg.koinFragment
+    //api cfg.koinExt
     api cfg.converterGson
     api cfg.logging
     api cfg.fastjson
@@ -57,6 +57,13 @@ dependencies {
     api cfg.web3j
     api cfg.kotson
     //debugApi  cfg.glance
+
+    // WalletConnect V2
+    def wallet_connect_version = "1.4.1"
+    api(platform("com.walletconnect:android-bom:$wallet_connect_version"))
+    api("com.walletconnect:android-core")
+    api("com.walletconnect:sign")
+    api("com.walletconnect:web3wallet")
 }
 
 //注意放置位置，复制此段代码稍加修改即可

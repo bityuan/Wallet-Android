@@ -4,6 +4,7 @@ import android.util.Log
 import com.fzm.wallet.sdk.BuildConfig
 import com.fzm.wallet.sdk.widget.IMarqueeItem
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import org.json.JSONArray
 import org.json.JSONObject
@@ -11,12 +12,15 @@ import java.io.Serializable
 
 
 fun toRequestBody(vararg params: Pair<String, Any?>): RequestBody {
-    return RequestBody.create(MediaType.parse("application/json"), toJSONObject(*params).toString())
+    return RequestBody.create(
+        "application/json".toMediaTypeOrNull(),
+        toJSONObject(*params).toString()
+    )
 }
 
 fun toRequestBody(method: String, vararg params: Pair<String, Any?>): RequestBody {
     return RequestBody.create(
-        MediaType.parse("application/json"),
+        "application/json".toMediaTypeOrNull(),
         toJSONParam(method, *params).toString()
     )
 }

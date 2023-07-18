@@ -73,4 +73,8 @@ class IApplication : Application() {
         UMConfigure.setLogEnabled(BuildConfig.DEBUG);
         UMConfigure.init(this, IPConfig.UMENG_APP_KEY, "test", UMConfigure.DEVICE_TYPE_PHONE, "");
     }
+
+    private fun initWCV2(){
+
+    }
 }

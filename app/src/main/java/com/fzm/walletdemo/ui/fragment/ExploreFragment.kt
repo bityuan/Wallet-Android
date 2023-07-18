@@ -14,19 +14,22 @@ import androidx.lifecycle.lifecycleScope
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.FragmentExploreNewBinding
 import com.fzm.walletdemo.databinding.ViewExploreBinding
+import com.fzm.walletmodule.vm.WalletViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.backgroundResource
 import org.jetbrains.anko.support.v4.px2dip
 import org.jetbrains.anko.textColor
+import org.koin.android.ext.android.inject
 
 class ExploreFragment : Fragment() {
     private lateinit var binding: FragmentExploreNewBinding
-
+    private val walletViewModel: WalletViewModel by inject(walletQualifier)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -51,7 +54,7 @@ class ExploreFragment : Fragment() {
 
     private fun getExploreAll() {
         lifecycleScope.launch {
-            val list = BWallet.get().getExploreList()
+            val list = walletViewModel.getExploreList()
             withContext(Dispatchers.Main) {
                 binding.swipeExplore.isRefreshing = false
                 binding.llExplore.removeAllViews()
