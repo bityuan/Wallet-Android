@@ -35,6 +35,7 @@ object RouterPath {
     const val APP_ABOUT = "/app/AboutActivity"
     const val APP_SCAN_RESULT = "/app/ScanResultActivity"
     const val APP_DOWNLOAD = "/app/DownLoadActivity"
+    const val APP_LANGUAGE = "/app/LanguageActivity"
     const val APP_WEBTEST = "/app/WebTestActivity"
     const val APP_WCONNECT = "/app/WConnectActivity"
 

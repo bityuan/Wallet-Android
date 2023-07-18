@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<resources>
+  <string name="app_name">MyDao</string>
+  <string name="main_home">home page</string>
+  <string name="main_market">market</string>
+  <string name="main_explore">explore</string>
+  <string name="main_my">My</string>
+  <string name="my_about">About us</string>
+  <string name="my_download">Application download</string>
+  <string name="my_lang">language</string>
+  <string name="my_w_connect">WalletConnect</string>
+  <string name="my_share_copy_address">Copy download address</string>
+  <string name="app_content">MyDao is a mobile account app designed to provide users with secure, user-friendly, and powerful digital asset management tools.</string>
+  <string name="tab_home">home page</string>
+  <string name="tab_explore">explore</string>
+  <string name="tab_my">My</string>
+  <string name="dialog_reject">refuse</string>
+  <string name="dialog_approve">agree</string>
+  <string name="message_reject_request">Rejected by user</string>
+  <string name="tab_wallet">wallet</string>
+  <string name="explore_title">Statement of Responsibility</string>
+  <string name="explore_disclaimer">You are about to use a third-party link. By confirming, you agree to the third-partys Privacy Policy and User Agreement. All actions and usage in this link are the responsibility of the supplier of the link.</string>
+  <string name="home_top_name">Mnemonic account</string>
+  <string name="wallet_name">Wallet name</string>
+  <string name="my_update">Detect updates</string>
+  <string name="my_recover">Retrieve my assets</string>
+</resources>

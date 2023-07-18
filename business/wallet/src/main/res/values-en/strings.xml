@@ -1,0 +1,864 @@
+<resources>
+    <string name="app_name">Bwallet</string>
+    <string name="app_content">Bwallet is a mobile money wallet app designed to provide users with secure, easy-to-use, powerful digital asset management tools.</string>
+    <!--common-->
+    <string name="ok">Confirm</string>
+    <string name="ok_d">Confirm</string>
+    <string name="ok_r">Confirm</string>
+    <string name="copy">Copy</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="common_null">--</string>
+    <string name="cny">¥</string>
+    <string name="usd">$</string>
+    <string name="equal">≈</string>
+    <string name="downloading">Loading…</string>
+
+
+    <string name="update_password">Change password</string>
+    <string name="set_password">Set password</string>
+
+    <string name="agree_read">Accept</string>
+    <string name="user_agreement">《%1$s privacy Service Agreement》</string>
+
+    <!-- Main -->
+    <string name="main_home">Home</string>
+    <string name="main_explore">Explore</string>
+    <string name="main_my">Me</string>
+    <string name="main_out">Press again to exit the program</string>
+    <string name="main_permission_tip">Tips</string>
+    <string name="main_permission_notification">It is detected that you have not opened the notification permission, whether to open</string>
+    <string name="main_delete_tip">Delete the coin？</string>
+    <string name="deposit_wallet">Escrow account</string>
+
+    <!-- 托管账户-登录注册 -->
+    <string name="label_update_pay_password">Change password</string>
+
+    <string name="explore">Explore</string>
+
+
+    <string name="red_packet_ycc_red_packet">YCC red packet</string>
+
+    <string name="red_packet_xml_contact_customer_service">Contact us</string>
+    <!-- 红包模块 end -->
+
+    <!-- 石头剪刀布游戏模块 start -->
+    <!-- 主页面模块 start -->
+    <!-- activity -->
+    <!-- dialog -->
+    <string name="rsp_dialog_input_password">请输入账户密码</string>
+    <string name="rsp_dialog_enter">确定</string>
+    <string name="rsp_dialog_set_nick_name">设置昵称</string>
+    <string name="rsp_dialog_input_nick_name">请输入昵称</string>
+    <!-- toast -->
+    <string name="rsp_toast_input_password">请输入账户密码</string>
+    <string name="rsp_toast_password_error">密码输入错误</string>
+
+
+    <string name="rsp_pay_password_sure">确认密码</string>
+
+
+    <!--应用详情-->
+
+
+    <!--===============================首页==============================-->
+
+
+    <string name="home_is_backup">Do you back up the mnemonic word？</string>
+    <string name="home_backup_tip">Go to back up your mnemonic word</string>
+    <string name="home_safe_tip">Safety Tips</string>
+    <string name="home_delay_backup">Back up latter</string>
+    <string name="home_go_backup">Back up</string>
+    <string name="home_go_wallet">Switch wallet</string>
+    <string name="home_choose_chain">Choose token</string>
+    <string name="home_deposit_wallet">Escrow accounts</string>
+
+    <string name="home_input_password">Enter Password</string>
+    <string name="home_input_note">Modify local Comment</string>
+    <string name="home_input_note_hint">Please enter new Comment</string>
+    <string name="home_input_fail">Incorrect Password</string>
+
+    <string name="added_contacts">Contact has been added</string>
+
+    <string name="search_coin_name">Please enter name</string>
+    <string name="search_coin_none">No record</string>
+    <string name="search_coin_hint">Search</string>
+
+    <!--BePay页-->
+    <string name="home_transaction_record">Transaction History</string>
+    <string name="home_transfer">Transfer</string>
+    <string name="home_transfer2">Transfer</string>
+    <string name="home_receipt">Receive</string>
+    <string name="home_transaction_fails">Failed Transaction</string>
+    <string name="home_packing">Transaction packing</string>
+    <string name="home_confirming">Transaction confirming</string>
+    <string name="home_transaction_success">Successful transaction</string>
+    <string name="home_introduction">Introduction</string>
+
+    <!--交易详情页-->
+    <string name="home_miner_fee">Miner fee\u3000</string>
+    <string name="home_transfer_address">Pay Address</string>
+    <string name="home_receipt_address">Receive Address</string>
+    <string name="home_block_info">Block Information</string>
+    <string name="home_transaction_hash">Trade Hash</string>
+    <string name="home_remarks_with_space">Comment\u3000\u3000</string>
+    <string name="home_no">None</string>
+    <string name="home_add_contact">Add Contact</string>
+
+    <!--币介绍详情页-->
+    <string name="home_bty">BTY</string>
+    <string name="home_basic_info">Introduction</string>
+    <string name="home_currency_introduction">Introduction</string>
+    <string name="home_full_name">Full Name</string>
+    <string name="home_simple_name">Short Name</string>
+    <string name="home_publish_time">Issue Time</string>
+    <string name="home_publish_total_amount">Total Amount</string>
+    <string name="home_circulation_total_amount">Circulation</string>
+    <string name="home_crowd_funding_price">Token Price</string>
+    <string name="home_official_website">Official Website</string>
+    <string name="home_white_paper">White Paper</string>
+    <string name="home_block_chain_browser">Block inquire</string>
+    <string name="home_community">Community</string>
+    <string name="home_sheld_exchange">Listed in exchange</string>
+
+    <string name="home_no_currency_introduction">No Information</string>
+
+    <!--转出页面-->
+    <string name="home_btc_transfer">BTC transfer</string>
+    <string name="home_balance">Balance:%1$s%2$s</string>
+    <string name="home_confirm_transfer_currency">Confirm</string>
+    <string name="home_recharge">Deposit</string>
+    <string name="home_confirm_recharge">Confirm</string>
+    <string name="home_balance_insufficient">Insufficient Balance...</string>
+    <string name="home_balance_error">he transfer amount must be greater than the miner’s fee</string>
+    <string name="home_input_greater_than_zero_amount">Please enter an amount greater than 0</string>
+    <string name="home_confirm">Confirm</string>
+    <string name="home_pwd_input_error">Incorrect Password</string>
+    <string name="home_please_input_receipt_address">To</string>
+    <string name="home_please_input_amount">Amount</string>
+    <string name="home_receipt_send_address_is_same">Same address</string>
+    <string name="home_receipt_address_is_illegal">The currency address is illegal！</string>
+    <string name="home_transfer_currency_success">Transferred Successfully！</string>
+    <string name="home_transfer_currency_fails">Failed to transfer！</string>
+    <string name="home_collection_code">Collect code</string>
+    <string name="home_parsing_qr_fails">Failed to resolve the QR code</string>
+    <string name="home_hint_please_input_count">Please input amount</string>
+    <string name="home_remarks">Comment</string>
+    <string name="home_chain_remarks">Comment on the chain</string>
+    <string name="home_optional">（optional）</string>
+    <string name="home_receipt_currency_address">Receive</string>
+    <string name="home_send_currency_address">To</string>
+    <string name="home_slow">Slow</string>
+    <string name="home_optimum">Optional</string>
+    <string name="home_normal">Normal</string>
+    <string name="home_fast">Fast</string>
+
+    <!--转入页面-->
+    <string name="home_latest_transaction">Latest transaction</string>
+    <string name="home_receipt_currency">Receive</string>
+    <string name="home_hosting_address">address</string>
+    <string name="home_copy_success">Copied</string>
+    <string name="home_msg_permission_share_address">For your normal use, the wallet needs to get some basic permissions.</string>
+    <string name="home_scan_toast">For your normal use sweep the function, you need to get the camera and file storage rights</string>
+
+    <string name="home_share_fails">Share failed</string>
+    <string name="home_cancel_share">Share canceled</string>
+    <string name="home_label_balance">Balance:</string>
+    <string name="home_click_qr_code_copy_address">Click QR code to copy the address</string>
+    <string name="home_hint_recharge_other_wallet">Scan the QR code,If you need to use other wallets to recharge</string>
+    <string name="home_share_address">Share address</string>
+    <string name="home_send_number">Amount</string>
+    <string name="home_local_remarks">Local remarks</string>
+    <string name="transaction_time">Trading time</string>
+    <string name="chain_remarks_tips">On chain remark:information on the chain, you can query on the chain</string>
+    <string name="local_remarks_tips">Local remark:Information is not chained and saved locally</string>
+    <string name="text_tips">I know</string>
+
+
+    <!--===============================我的==============================-->
+
+
+    <!-- myFragment -->
+    <string name="my_version">Version</string>
+    <string name="my_me">Me</string>
+    <string name="my_lock">Frozen assets</string>
+    <string name="my_message">Message center</string>
+    <string name="my_message_tittle">Tittle</string>
+    <string name="my_message_author">Author</string>
+    <string name="my_introduce">This project is supported by the technical research team of the B wallet development team.</string>
+    <string name="my_introduce_new">Copyright ©.All Rights Reserved.杭州本链科技 All Rights Reserved</string>
+    <string name="my_latest_version">It is the latest version</string>
+    <string name="my_create_wallet">Create wallet</string>
+    <string name="my_import_wallet">Import wallet</string>
+    <string name="small_wallet">Quick wallet</string>
+    <string name="my_copy">Copy</string>
+    <string name="my_search">Search</string>
+
+    <string name="my_check_version">Check for updates</string>
+    <string name="my_version_toast_title">Update hint</string>
+    <string name="my_version_toast">A new version has been detected, do you want to update?</string>
+    <!--托管账户-->
+    <string name="my_trusteeship">Escrow account</string>
+    <string name="my_trusteeship_assets">Escrow assets</string>
+    <string name="my_trusteeship_use">Available</string>
+    <string name="my_trusteeship_value">Value</string>
+    <string name="my_trusteeship_exit">Log out</string>
+    <string name="my_trusteeship_exit_sure">Confirm</string>
+
+    <!--分享下载-->
+    <string name="my_share">Share to download</string>
+    <string name="my_share_permission_toast">For your normal use, the wallet needs permission to get storage space!</string>
+    <string name="my_share_failure">Share fail</string>
+    <string name="my_share_cancel">Share Cancel</string>
+    <string name="my_share_copy_address">Copy link</string>
+    <string name="my_share_share_address">Share download link</string>
+    <!--联系人部分-->
+    <string name="upload_contact">upload completed</string>
+    <string name="my_contact">Contacts</string>
+    <string name="my_contact_add">Add Contacts</string>
+    <string name="my_contact_toast">Can not find the contact</string>
+    <string name="my_contact_nickname">Nickname</string>
+    <string name="my_contact_phone">phone number</string>
+    <string name="my_contact_address">address</string>
+    <string name="my_contact_go">Transfer</string>
+    <string name="my_contact_scan">Scan QR code or enter address</string>
+    <string name="my_contact_scan_invalid">Invalid address!</string>
+    <string name="my_contact_detail_edit">Edit</string>
+    <string name="my_contact_detail_choose_address">Please select an address</string>
+    <string name="my_contact_detail_no">You do not have</string>
+    <string name="my_contact_detail_wrong_coin">Currency error, please choose</string>
+    <string name="my_contact_none">You have not added a contact yet</string>
+    <string name="my_add_less_16">Nickname needs to be less than 16 characters</string>
+    <string name="my_add_11">Please enter phone number</string>
+    <string name="my_add_none">Nickname can not be blank</string>
+    <string name="my_add_name">Please enter Nickname</string>
+    <string name="my_finish">Done</string>
+    <string name="my_add_add_address">Please add an address</string>
+    <string name="my_add_address_footer">Add address</string>
+    <string name="my_add_add">Add</string>
+    <string name="my_add_address">Address</string>
+    <string name="my_add_address_illegal">The address is not legal</string>
+    <string name="my_scan">Scan</string>
+    <string name="my_scan_image">Album</string>
+    <string name="my_scan_toast">Please aim the lens at the QR code for scanning.</string>
+    <string name="my_delete_success">Delete Success</string>
+    <!--账户部分-->
+    <string name="my_wallet">manage</string>
+    <string name="my_wallet_detail_name">Please enter the name of the wallet</string>
+    <string name="my_wallet_detail_name_exist">Wallet name already exists</string>
+    <string name="my_wallet_detail_password">Please enter your wallet password</string>
+    <string name="my_wallet_detail_mnem">View mnemonic words</string>
+    <string name="my_wallet_detail_change_password">Change password</string>
+    <string name="my_wallet_detail_wrong_password">Wrong password</string>
+    <string name="my_wallet_detail_modify_name">Change name</string>
+    <string name="my_wallet_detail_safe">Safety warning</string>
+    <string name="my_wallet_detail_delete_message">Deleting a wallet can only via seeds and private keys, are you sure to delete?</string>
+    <string name="my_wallet_detail_delete">Delete</string>
+    <string name="my_wallet_detail_export">Export private key</string>
+    <string name="my_wallet_detail_open_finger_pay">Enable touch pay</string>
+    <string name="my_wallet_detail_backup">Back up seeds</string>
+    <string name="my_wallet_detail_choose_chain">Select the main chain</string>
+    <string name="my_wallet_set_password">Input password</string>
+    <string name="my_wallet_forget_password">Forget password</string>
+    <string name="my_wallet_search_coin">Enter the Token name or contract addressEnter the Token name or contract address</string>
+    <string name="my_wallet_modified_success">Successfully modified</string>
+
+    <string name="my_set_password">Success！</string>
+    <string name="my_set_password_toast">Please enter 8–16 digits, letter combination</string>
+    <string name="my_set_password_different">Two passwords are </string>
+    <string name="my_set_password_number_letter">Please enter a combination of numbers and letters</string>
+    <string name="my_change_password_old">Please enter old password</string>
+    <string name="my_change_password_new">Please enter new password</string>
+    <string name="my_change_password_again">Please reenter new password</string>
+    <string name="my_change_password_wrong">Old password error</string>
+    <string name="my_change_password_same">Same as the old password</string>
+    <string name="my_change_password_success">Success</string>
+
+    <string name="my_about_us">About us</string>
+    <string name="my_tran">Privacy transaction</string>
+    <string name="my_language">Language</string>
+    <string name="my_about_us_use">Use Agreement</string>
+    <string name="my_about_us_feedback">Feedback</string>
+
+
+    <string name="my_create_name">Set the wallet name</string>
+    <string name="my_create_letter">Please enter 8–16 characters</string>
+    <string name="my_import_backup_none">Seeds does not exist</string>
+    <string name="my_import_backup_null">Seeds can not be empty</string>
+    <string name="my_import_start">Start</string>
+    <string name="my_import_hint">Please enter seeds, separated by spaces between English words</string>
+    <string name="my_import_chinese_hint">Please enter Chinese seeds in groups of 3 words</string>
+    <string name="my_import_success">Imported successfully</string>
+
+    <!--助记词相关-->
+    <string name="create_mnemonic">Chinese</string>
+    <string name="create_mnemonic_hint">Be sure to save the mnemonic properly, and verify it after confirming it.</string>
+    <string name="create_mnemonic_change">Change seeds</string>
+    <string name="create_mnemonic_toast">Tip: Do not save screenshots directly! If someone gets your mnemonic words, they will directly get assets!\n\nCorrect approach:\n\nMethod 1: Use another offline device and take photos to save.\nMethod 2: Copy mnemonic words correctly and store them in a safe place.\n\nAfter clicking [Start Backup], you need to verify the mnemonic words you remember.</string>
+    <string name="mnemonic_wrong">Wrong seeds</string>
+    <string name="backup_success">Success</string>
+    <string name="backup_mnemonic">Back up the seeds</string>
+    <string name="backup_order">Please select the seeds in order</string>
+    <string name="backup_next">Next</string>
+    <string name="backup_input">请please input</string>
+    <string name="mnemonic">seeds</string>
+    <string name="backup_safe_prompt">Safety Tips</string>
+    <string name="backup_later">Back up latter</string>
+    <string name="backup_now">Back up</string>
+    <string name="validate_mnemonic">Verify your seeds</string>
+    <string name="contacts_save">Save</string>
+    <string name="share_er_code">Share QR code</string>
+    <string name="my_wallet_password_tips">Please enter your password</string>
+    <string name="my_wallet_confirm_password_tips">Please re-enter your password</string>
+    <string name="set_wallet_password">Set password</string>
+    <string name="confirm_wallet_password">Confirm password</string>
+    <string name="share_share_to">Share to</string>
+    <string name="share_friends_circle">Moments</string>
+    <string name="share_wechat_friends">Wechat Friends</string>
+    <string name="share_qq">QQ</string>
+    <string name="share_cancel">Cancel</string>
+    <string name="title_add_coin">Add</string>
+    <string name="title_introduction">@string/home_introduction</string>
+    <string name="title_ycc_red_packet">@string/red_packet_ycc_red_packet</string>
+    <string name="title_escrow_account">Escrow accounts</string>
+    <string name="title_contact_customer_service">@string/red_packet_xml_contact_customer_service</string>
+    <string name="title_set_pwd">Set password</string>
+    <string name="title_agreement">Service Privacy Provisions</string>
+    <string name="title_about_us">About us</string>
+    <string name="title_update_pwd">@string/update_password</string>
+    <string name="title_contacts_details">Contact details</string>
+    <string name="title_transaction_details">Transaction details</string>
+    <string name="title_wallet_details">Wallet details</string>
+    <string name="title_my_wallet">My wallet</string>
+    <string name="title_edit_contacts">Edit contact</string>
+    <string name="title_add_contacts">@string/home_add_contact</string>
+    <string name="title_contacts">Contact</string>
+    <string name="title_bluetooth">批量转出</string>
+    <string name="title_devicelist">选择蓝牙设备</string>
+    <string name="title_address_moneys">余额从大到小排序</string>
+    <string name="tip">Tips</string>
+    <string name="tipde">This feature is not yet open</string>
+    <string name="tip_ok">Confirm</string>
+    <string name="my_msg_fail">Failed to get personal information</string>
+    <string name="suocang">Frozen assets</string>
+    <string name="rank_do">peopel are using</string>
+    <string name="pw_old_update">Original password modification</string>
+    <string name="for_pw">Forget password</string>
+    <string name="input_old_pw">Please enter 6 original passwords</string>
+    <string name="p_input">Please enter</string>
+    <string name="p_code">Verification code received</string>
+    <string name="img_check_success">Graphic verification succeeded</string>
+    <string name="code_send_success">Sent!</string>
+    <string name="code_send_fail">Verification code failed to send!</string>
+    <string name="get_code">Get verification code</string>
+    <string name="checking">Switching...</string>
+    <string name="c_delete">Delete</string>
+    <string name="o_delete">Confirm</string>
+    <string name="using_count">peopel are using</string>
+    <string name="p_input_redcount">Please enter the number of red packets</string>
+    <string name="p_input_phone">Please enter phone number</string>
+    <string name="p_input_pw">Please enter the payment password</string>
+    <string name="checked">Safety verification</string>
+    <string name="click_login">Login</string>
+    <string name="home_share">Share</string>
+    <string name="my_header">Avatar</string>
+    <string name="my_phone">phone number</string>
+    <string name="my_input_pw">Payment password</string>
+    <string name="my_logout">Log out</string>
+    <string name="set_up_pw">Set payment password</string>
+    <string name="update_pw">Change payment password</string>
+    <string name="home_total_assets">Total asset</string>
+    <string name="home_backup">Back up</string>
+    <string name="home_backuped">Backed up</string>
+    <string name="input_wallet_name">Input wallet name</string>
+    <string name="current_wallet">(Current wallet)</string>
+    <string name="feedback">Feedback</string>
+    <string name="tip_notfound_coin">Sorry, could not find the relevant currency</string>
+    <string name="tip_search_coin">Please enter the Token name or contract address. If you do not find the currency you want to add, please submit feedback to us.</string>
+    <string name="input_phone_code">Enter code</string>
+    <string name="s_login">Log in</string>
+    <string name="tip_phone_ok">Please enter a valid phone number</string>
+    <string name="register_ok">Registration success</string>
+    <string name="login_ok">Login successful</string>
+    <string name="tip_add_chain">Please add the main chain currency first.</string>
+    <string name="copy_success">copied</string>
+    <string name="start_back_up">Start update</string>
+    <string name="update_ok">Update</string>
+    <string name="update_cancel">No</string>
+
+    <!--实名认证-->
+    <string name="real_name_edge_angle_integrity">Corners complete</string>
+    <string name="real_name_clear_font">Clear font</string>
+    <string name="real_name_luminance_uniformity">Uniform brightness</string>
+    <string name="real_name_idcard_tip1">请上传身份证人像面</string>
+    <string name="real_name_idcard_tip2">大陆公民持有的本人有效二代身份证</string>
+    <string name="real_name_certificates_notice">证件拍摄须知</string>
+    <string name="real_name_valid_certificates_font">有效证件正面照</string>
+    <string name="real_name_picture_with_certificates">手持证件照</string>
+
+    <string name="real_name_real_name">真实姓名</string>
+    <string name="real_name_real_name_type_tip">请输入真实姓名</string>
+    <string name="real_name_belong_to_country">所属国家</string>
+    <string name="real_name_belong_to_country_choose_tip">请选择国籍</string>
+    <string name="real_name_certificates_type">证件类型</string>
+    <string name="real_name_certificates_type_choose_tip">请选择证件类型</string>
+    <string name="real_name_certificates_number">证件号码</string>
+    <string name="real_name_certificates_number_type_tip">请输入有效证件号码</string>
+
+
+    <string name="basic_permission_rationale">This feature is not available without opening permissions</string>
+    <string name="basic_permission_denied_title">Permission has been rejected</string>
+    <string name="basic_permission_denied_rationale">This feature cannot be used without opening the permission. Go to the system settings to open the permission.</string>
+
+    <string name="basic_wheel_picker_choose_trade_type">Transaction Type</string>
+    <string name="basic_wheel_picker_cancel">Cancel</string>
+    <string name="basic_wheel_picker_ok">Done</string>
+    <string name="real_verify">verify</string>
+    <string name="wallet_name">Wallet name</string>
+    <string name="mnem_tip">Please keep your mnemonic in a safe place so that you can retrieve it if you lose it.</string>
+    <string name="i_know">I know</string>
+    <string name="address_error">Wrong password</string>
+    <string name="copy_str_success">copied</string>
+    <string name="per_upload">Permission application</string>
+
+
+    <string name="config_code">Please zoom in on the QR code and try again</string>
+
+
+    <!--  BluetoothChat -->
+    <string name="send">Send</string>
+    <string name="not_connected">您未连接到设备</string>
+    <string name="bt_not_enabled_leaving">蓝牙未启用</string>
+    <string name="title_connecting">正在连接...</string>
+    <string name="title_connected_to">已连接</string>
+    <string name="title_not_connected">未连接</string>
+
+    <!--  DeviceListActivity -->
+    <string name="scanning">正在扫描设备…</string>
+    <string name="select_device">选择要连接的设备</string>
+    <string name="none_paired">未配对任何设备</string>
+    <string name="none_found">找不到设备</string>
+    <string name="title_paired_devices">配对设备</string>
+    <string name="title_other_devices">其他可用设备</string>
+    <string name="button_scan">扫描设备</string>
+
+    <!-- Options Menu -->
+    <string name="secure_connect">连接设备 - 安全</string>
+    <string name="insecure_connect">连接设备 - 不安全</string>
+    <string name="discoverable">使设备可发现</string>
+    <string name="toin">enter</string>
+    <string name="sms_send">sent(</string>
+
+    <string name="camera_and_location_rationale">Need to get targeting permissions</string>
+
+
+    <string name="deposit_pw_verifycode_tip1">The verification code has been sent to your phone</string>
+    <string name="deposit_pw_verifycode_tip3">The verification code has been sent to your mailbox</string>
+    <string name="deposit_pw_verifycode_tip2">You can use the set password to confirm the operation of the %1$s account.</string>
+    <string name="deposit_go_certification">Go to verify</string>
+    <string name="deposit_no_certification">Not pass</string>
+    <string name="deposit_wait_certification">wait for Review</string>
+    <string name="deposit_already_certification">Verified</string>
+    <string name="deposit_for_this_account">Account%1$s</string>
+    <string name="deposit_no_paypw">You have not set a payment password</string>
+    <string name="deposit_set_paypw">Setting</string>
+    <string name="deposit_other_address">Multiple address</string>
+    <string name="pay_pw_sure_again">Please enter your password again</string>
+    <string name="pay_pw_not_match">Two passwords are inconsistent</string>
+    <string name="pay_pw_set_success">The payment password is set successfully!</string>
+    <string name="pay_pw_update_success">The payment password has been modified successfully!</string>
+    <string name="smallwallet">Quick wallet</string>
+    <string name="not_support_deposit">Escrow accounts are not supported</string>
+    <string name="redpacket">Red packet</string>
+
+    <string name="pay_pw_set">Set a 6-digit payment password</string>
+    <string name="pay_pw_sure">Confirm payment password</string>
+    <string name="pay_pw_verify_code">6 digit verification code</string>
+
+
+    <string name="invite_title">Invite friends to receive rewards</string>
+    <string name="invite_rule">Rule</string>
+    <string name="invite_tip1">Send an invitation to your friend</string>
+    <string name="invite_tip2">Friend registration to complete the corresponding task</string>
+    <string name="invite_tip3">Earn rewards</string>
+    <string name="invite_my_income">Income</string>
+    <string name="invite_invitelist_tip">Invitation list</string>
+    <string name="invite_total_coins"><Data><![CDATA[<big><big><font color="#CC3969">%1$s</font></big></big> %2$s]]> </Data></string>
+    <string name="invite_total_num"><Data>%1$s people have been invited， great!</Data></string>
+
+    <string name="invite_rule_tip">Invitation tips</string>
+    <string name="invite_rules">1. Invite your family/friends/classmates and other acquaintances with the highest success rate. \n2. Sharing to WeChat group/qq group can increase the chance of successful invitation. \n3. Pay more attention to the announcement, there may be new reward activities. \n4. Keep sharing every day, you will get more than others~</string>
+    <string name="invite_share_pic">Generate invitation poster</string>
+    <string name="invite_share_url">Generate invitation link</string>
+    <string name="invite_share_qr">Face-to-face invitation</string>
+    <string name="invite_list_title">Invitation list</string>
+    <string name="invite_mylist_tip">My invitation</string>
+    <string name="invite_mylist_select">Filter</string>
+    <string name="invite_mylist_num">Invite（person）</string>
+    <string name="invite_mylist_coins">Income(%1$s)</string>
+    <string name="invite_mylist_coins_empty">Income</string>
+
+    <string name="invite_choose_level_tip">Recommend level</string>
+    <string name="invite_choose_level_1">First level</string>
+    <string name="invite_choose_level_2">Second level</string>
+    <string name="invite_choose_time_tip">Filter by month</string>
+    <string name="invite_choose_reset">Reset</string>
+    <string name="invite_choose_all">All</string>
+    <string name="invite_reg">Registered</string>
+    <string name="invite_isreal">Verified</string>
+    <string name="invite_notreal">Unverified</string>
+
+    <string name="invite_detail_tip">Reward details</string>
+    <string name="invite_detail_type_tip">Task</string>
+    <string name="invite_detail_coins_tip">Reward (%1$s)</string>
+    <string name="invite_detail_time_tip">Release time</string>
+    <string name="invite_detail_empty_tip">Real-name certification is rewarded</string>
+
+    <string name="invite_share_qr_tip1">%1$s Safe and easy wallet</string>
+    <string name="invite_share_qr_tip2">Support massive currency storage</string>
+
+
+    <string name="invite_share_tip">Share to</string>
+    <string name="invite_share_new_tv">Sharing password</string>
+    <string name="invite_share_new_savepic">Save picture</string>
+    <string name="invite_share_tv">Success</string>
+    <string name="invite_share_pic_tip">Choose a poster</string>
+    <string name="invite_share_pic_reg_tip1">Welcome to %1$s</string>
+    <string name="invite_share_pic_reg_tip2">Long press to identify the QR code</string>
+    <string name="invite_share_url_title">You are invited to register，log in to enjoy gift!</string>
+    <string name="invite_share_url_content">B wallet and Shopping To Chain giving away crazy STO reward, can be exchanged Yangcheng Lake hairy crabs, first come first served!</string>
+    <string name="invite_share_pic_error">Poster download failed, please try again</string>
+
+    <string name="invite_share_mixpic_error">Poster data generation failed, please try again</string>
+    <string name="my_invite_reward_tip">Invitation courtesy</string>
+    <string name="my_invite_choose_year">Year</string>
+    <string name="my_invite_choose_month">Month</string>
+    <string name="my_sign_in">Sign in</string>
+    <!--<string name="my_space_tip">Personal center</string>-->
+    <string name="invite_total_num_empty"><Data>Invited %1$s people,Continue to cheer</Data></string>
+    <string name="my_sign_in_tip"><Data>Sign in courtesy</Data></string>
+
+
+
+
+
+
+
+
+    <!--加载提示-->
+    <string name="up_pull_load">Pull up loading</string>
+    <string name="release_load">Loosen Loading</string>
+    <string name="no_more">No more</string>
+    <string name="complete_load">Loading completed</string>
+    <string name="down_pull_refresh">Pull to refresh</string>
+    <string name="release_refresh">Release to update</string>
+    <string name="complete_refresh">Refresh completed</string>
+    <string name="refreshing">Refreshing….</string>
+
+    <string name="basicres_loading">Loading...</string>
+    <!--登录相关-->
+    <string name="rule_text">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
+    <string name="login_phone_login">phone number login</string>
+    <string name="login_email_login">Mailbox login</string>
+    <string name="login_password_login">Password login</string>
+    <string name="login_verify_code_login">Verification code login</string>
+    <string name="login_phone_login_info">New user login will be automatically registered</string>
+    <string name="login_phone_input">Please enter phone number</string>
+    <string name="login_email_input">Please enter mailbox</string>
+    <string name="login_phone_verify_code_input">Enter code</string>
+    <string name="login_phone_verify_code_get">send</string>
+    <string name="login_phone_password_input">Please enter your password</string>
+    <string name="login_phone_password_too_long">The maximum password length is 20 digits.</string>
+    <string name="login_login">@string/s_login</string>
+    <string name="login_password_forget">Forget password?</string>
+    <string name="login_verify_code_not_received">Can not receive the verification code?</string>
+    <string name="login_verify_code_wait_time">sent(%1$s)s</string>
+    <string name="login_verify_code_info">We will inform you of the verification code by phone, please pay attention!</string>
+    <string name="login_login_password">login password</string>
+    <string name="login_login_password_re_set">Set new password</string>
+    <string name="login_login_password_re_set_by_phone">Reset with phone number</string>
+    <string name="login_login_password_re_set_by_email">Reset with mailbox</string>
+    <string name="login_login_password_re_set_long">Set a new password (6 - 20 digits)</string>
+    <string name="login_login_phone_binding">Bind phone</string>
+    <string name="login_login_email_binding">Bind mailbox</string>
+    <string name="login_binding_success">Success</string>
+
+
+    <string name="login_phone_error_toast">Please fill in the correct phone number</string>
+    <string name="login_email_error_toast">Please fill in the full mailbox</string>
+    <string name="login_phone_null">Phone number is not bound</string>
+    <string name="login_email_null">Mailbox is not bound</string>
+    <string name="login_un_register">Unregistered</string>
+    <string name="login_password_too_short">Password too short</string>
+    <string name="login_go_login">Please login first！</string>
+
+    <!-- 用户信息-->
+    <string name="user_email">Mailbox</string>
+    <string name="user_set">Setting</string>
+    <string name="user_re_set_password">Change</string>
+    <string name="user_binding">Bind</string>
+
+    <!--
+        <string name="monday">Monday</string>
+        <string name="tuesday">Tuesday</string>
+        <string name="wednesday">Wednesday</string>
+        <string name="thursday">Thursday</string>
+        <string name="friday">Friday</string>
+        <string name="saturday">Saturday</string>
+        <string name="sunday">Sunday</string>
+
+    -->
+
+
+    <string name="web_copy_link">Copy link</string>
+    <string name="web_open_outside">Open the browser</string>
+    <string name="change_language">Language</string>
+    <string name="rmb_name">CNY</string>
+    <string name="rmb_name_with_sign">CNY (¥)</string>
+    <string name="usd_name">Dollar</string>
+    <string name="usd_name_with_sign">Dollar ($)</string>
+    <string name="show_money">Denomination currency</string>
+
+    <!--market-->
+    <string name="main_market">Market</string>
+    <string name="hot_coins">Hot Coins</string>
+    <string name="coin_range">%1$s%%</string>
+    <string name="coin_price_r">¥%1$s</string>
+    <string name="coin_price_u">$%1$s</string>
+    <string name="coin_price_u_tip">≈$ %1$s</string>
+    <string name="coins_name_tip">Name</string>
+    <string name="coins_price_tip">Market Price</string>
+    <string name="coins_range_tip">Change/24H</string>
+    <string name="coins_high">High/24H</string>
+    <string name="coins_low">Low/24H</string>
+    <string name="coins_vol">Amount/24H</string>
+    <string name="coin_trade_type"><Data><![CDATA[<b><font color="#333649">%1$s</font></b><small>/%2$s</small>]]></Data></string>
+    <string name="coins_market_range_tip">%1$s在%2$s的成交额占比</string>
+    <string name="coins_market_range">%1$s%%</string>
+    <string name="coins_search_history_tip">History</string>
+    <string name="coins_search_hot_tip">Hot</string>
+    <string name="coins_clear_history">Clean</string>
+    <string name="coins_search_hotcoins_bty">BTY</string>
+    <string name="coins_search_hotcoins_ycc">YCC</string>
+    <string name="coins_name_namech">%1$s，%2$s</string>
+    <string name="add_optional_coin_tip">Add to favorites……</string>
+    <string name="remove_optional_coin_tip">Delete……</string>
+    <string name="add_optional_coin_success">Added to favorites</string>
+    <string name="remove_optional_coin_success">Deleted</string>
+
+    <string name="market_favorites">Favorites</string>
+    <string name="market_BitNasdaq">BitNasdaq</string>
+    <string name="market_zhaobi">zhaobi</string>
+    <string name="market_binance">binance</string>
+    <string name="market_huobipro">huobi pro</string>
+    <string name="market_favorite_empty_tip">You have not added your favorite coin\n go to the left and add it</string>
+
+
+    <!--discover-->
+    <string name="main_discover">Discover</string>
+    <string name="discover_news">News</string>
+    <string name="news_newsflash">Newsletter</string>
+    <string name="news_notice">Bulletin</string>
+    <string name="news_article">Article</string>
+    <string name="news_unfold">Details</string>
+    <string name="news_fold">Pack up</string>
+    <string name="news_info">Details</string>
+    <string name="notice_info">Details</string>
+
+    <string name="news_share">Share</string>
+    <string name="news_share_tip">Scan code download「%1$s」APP</string>
+    <string name="news_share_error">Failed,Please try again</string>
+
+    <string name="today">Today  </string>
+    <string name="yestoday">Yestoday  </string>
+
+    <string name="monday">Mon</string>
+    <string name="tuesday">Tue</string>
+    <string name="wednesday">Wed</string>
+    <string name="thursday">Thu</string>
+    <string name="friday">Fri</string>
+    <string name="saturday">Sat</string>
+    <string name="sunday">Sun</string>
+    <string name="news_source">From：%1$s</string>
+
+
+    <!--网络请求-->
+    <string name="network_data_empty">Empty data</string>
+    <string name="network_loading"></string>
+    <string name="network_net_connected">Network connected</string>
+    <string name="network_net_error">Network error</string>
+    <string name="network_server_error">Server error</string>
+    <string name="network_no_more">No more</string>
+
+    <string name="not_open">Not yet open</string>
+
+    <string name="explore_go_deposit_login">Did not detect the escrow account, go to login?</string>
+    <string name="explore_go_deposit_change">Have you detected the escrow account and went to switch?</string>
+    <string name="explore_go_wallet_creat">Did not detect the decentralized wallet and go to create?</string>
+    <string name="explore_go_wallet_change">Have you detected the decentralized wallet and went to switch?</string>
+
+
+    <string name="explore_dapp_disclaimer_title">Statement of liability</string>
+    <string name="explore_dapp_disclaimer">You are about to use a third-party DApp, confirm that you agree to the third-party user agreement and privacy policy, and all your actions and usage in this DApp are the responsibility of the DApp vendor.</string>
+    <string name="explore_dg_create">Create now</string>
+    <string name="explore_dg_change">Switch now</string>
+    <string name="explore_dg_login">log in</string>
+    <string name="explore_dg_cancel">Later</string>
+    <string name="explore_dg_experience">Start</string>
+    <string name="explore_dg_experience_title">DAppExplore the Dapp</string>
+    <string name="explore_dg_experience_content">What is DApp? DApp is an application on the blockchain. Come and experience it.</string>
+
+    <string name="explore_lastapp">Recently Used</string>
+
+
+    <string name="explore_show_all">All</string>
+    <string name="explore_all_dapp">application</string>
+
+    <!--导入助记次-->
+    <string name="import_wallet_hint0">Please enter mnemonics, separated by spaces</string>
+    <string name="import_wallet_hint1">Please enter the private key or enter the QR code generated by scanning the private key</string>
+    <string name="import_wallet_hint2">Please enter the address or enter the QR code generated by scanning the private key</string>
+    <string name="import_wallet_tips">Wallet supports importing all mnemonic words generated following the BIP standard</string>
+    <string name="import_wallet_chain_name">Main chain:</string>
+    <string name="import_wallet_type0">Import mnemonics</string>
+    <string name="import_wallet_type1">Import private key</string>
+    <string name="import_wallet_type2">Import address</string>
+    <string name="import_wallet_pri_key_error">Incorrect private key</string>
+    <string name="import_wallet_mnem_repeat">Mnemonic words repeated!</string>
+    <string name="import_wallet_wallet_name">Wallet</string>
+
+    <string name="wallet_no_bty">Not supported</string>
+
+    <string name="main_host_chose">Switch line</string>
+    <string name="main_host_chose_china">China</string>
+    <string name="main_host_chose_japan">Japan</string>
+
+    <string name="my_wallets_chose1">Create/Import</string>
+    <string name="my_wallets_chose2">Observe wallet</string>
+    <string name="my_wallets_current_wallet">Current wallet</string>
+    <string name="my_wallets_login">Register/Login</string>
+    <string name="my_wallets_mnem_walllet">Mnemonic wallet</string>
+    <string name="my_wallet_detail_update_name">Modify wallet name</string>
+    <string name="my_wallet_detail_out_mnem">Export mnemonic</string>
+    <string name="my_wallet_read_toast">Please check the agreement first</string>
+    <string name="my_wallet_login">Login/Register</string>
+    <string name="my_wallet_fast_in">Quick create</string>
+    <string name="my_wallet_pri_key">Private key wallet</string>
+
+    <string name="go_backup_first">Please backup first</string>
+    <string name="go_backup_now">Backup now</string>
+    <string name="backup_wallet">Backup wallet</string>
+    <string name="block_chain_wallet">Blockchain wallet</string>
+    <string name="backup_content">After a successful backup, the one-click small wallet will be automatically upgraded to a more safety blockchain wallet.</string>
+    <string name="backup_content_force">Your wallet funds are equivalent to more than 1,000 yuan! For the safety of your funds, please complete the mnemonic backup. After a successful backup, the one-click small wallet will be automatically upgraded to a blockchain wallet.</string>
+    <string name="backup_title">Tips</string>
+
+    <!--海外认证-->
+    <string name="manual_take_picture">Take a photo</string>
+    <string name="manual_choose_picture">Choose from album</string>
+    <string name="manual_country">Country</string>
+    <string name="manual_verify">Manual certification</string>
+    <string name="manual_id_type">Type of certificate</string>
+    <string name="manual_photo_demo">1. The face is clear and unobstructed \n 2. All documents are clear and unobstructed \n 3. Fully expose both hands</string>
+    <string name="manual_sub_result">Your application has been submitted, please wait for customer service review. If there is still no result within 3 working days. \n weixin：bityuankefu</string>
+    <string name="manual_name">real name</string>
+    <string name="manual_real_name">real name</string>
+    <string name="manual_country_choose">nationality</string>
+    <string name="manual_id_type_hint">Please select the type of certificate</string>
+    <string name="manual_id_code">ID number</string>
+    <string name="manual_id_code_hint">Please enter a valid ID number</string>
+    <string name="manual_photo_de">Photo example</string>
+    <string name="manual_id_hint">Please upload a photo of hand-held ID card(positive)</string>
+    <string name="manual_id_hint_no">Please upload my hand-held ID card(Negative)</string>
+    <string name="manual_sub">Submit</string>
+    <string name="manual_verify_no">Sorry, you have not passed the review</string>
+    <string name="manual_sub_re">Resubmit</string>
+    <string name="verify_china">Face recognition</string>
+    <string name="verify_china_prc">P.R.C</string>
+    <string name="verify_no_china">Manual authentication</string>
+    <string name="verify_no_china_prc">Non P.R.C</string>
+    <string name="verify_ja">Japan and international</string>
+
+    <string name="msg_transaction">Transaction message</string>
+    <string name="msg_system">System information</string>
+    <string name="game_sign">game sign</string>
+
+    <string name="hd_wallet">HDwallet</string>
+
+    <string name="capture_error_address">Please scan the exclusive address</string>
+    <string name="capture_no_coin">Please add the corresponding currency</string>
+    <string name="in_set_money">Specify amount</string>
+    <string name="in_universal">Universal</string>
+    <string name="in_exclusive">Exclusive</string>
+    <string name="in_common_tip">Applicable to all wallet</string>
+    <string name="in_bi_tip">Only applicable to %1$s</string>
+    <string name="in_p_in">Please transfer</string>
+    <string name="in_p_amount">Please input amount</string>
+    <string name="in_r_money">Modify amount</string>
+
+    <string name="home_empty">No assets, add it now</string>
+
+    <string name="fee_not_enough">矿工费余额不足</string>
+
+    <!--inactivity-->
+    <string name="in_share_name">Please transfer%1$s</string>
+    <string name="in_share_address_tip">Wallet address</string>
+    <string name="in_share_app_tip">APPScan code download APP</string>
+    <string name="in_common_tip1">Universal QR code applicable to all wallets</string>
+    <string name="in_bi_tip1">The exclusive QR code is only applicable to the %1$s</string>
+
+    <!--myfragment-->
+    <string name="my_space_tip">Account management</string>
+    <string name="my_space_setting">Setting</string>
+    <string name="my_space_download">Download</string>
+    <string name="my_setting_language">Language</string>
+    <string name="my_contact_us">Contact us</string>
+    <string name="my_contact_us_wx">Service</string>
+    <string name="my_contact_us_copid">Copied</string>
+    <string name="main_msg">Chat</string>
+
+    <string name="chat_tips_share_title">Bwallet</string>
+    <string name="chat_tips_share_content">Come and create a blockchain wallet, private key management, massive currency support, and various smart contracts</string>
+    <string name="chat_tip_packet_share_title">A friend sent you a big red envelope%1$scome and collect it!</string>
+    <string name="chat_tip_packet_share_content">Send and receive digital assets at high speed, let you experience a different red envelope experience</string>
+    <string name="application_name">@string/app_name</string>
+
+    <string name="out_amount">transfer amount</string>
+
+    <string name="finger_pay">Touch pay</string>
+    <string name="finger_pay_password_pay">Use password</string>
+    <string name="finger_pay_tips">Place your finger</string>
+    <string name="finger_pay_warn">Fingerprint verification failed</string>
+    <string name="finger_pay_close_warn">Really disable Touch pay?</string>
+    <string name="finger_pay_system_no_finger">Go settings to enable touch pay</string>
+    <string name="finger_pay_re_open">The password has been changed.Touch ID pay will be enabled once password validated</string>
+    <string name="finger_pay_which_finger">Please use the finger verified</string>
+    <string name="my_cold_wallet">Cold Wallet</string>
+    <string name="trans_all">total</string>
+    <string name="bind_phone">· Bind phone</string>
+    <string name="bind_mailbox">· Bind mailbox</string>
+    <string name="name_success">· Verify success</string>
+    <string name="exp_tips">The app needs to meet conditions to enter：</string>
+    <string name="go_user">Go to the Personal Center</string>
+    <string name="small_wallet_update_title">Wallet upgrade</string>
+    <string name="small_wallet_go_update">upgrade</string>
+    <string name="small_wallet_update_warning1">For the safety of users assets, all one-click wallets need to be upgraded to mnemonic wallets. Please ensure that the mnemonic is properly stored.</string>
+    <string name="small_wallet_update_warning2">In case of any problems, please do not uninstall the wallet and contact customer service in time.</string>
+    <string name="small_wallet_set_password">Please set a password first</string>
+    <string name="state_reloading">Reload</string>
+    <string name="str_maintenance">Maintenance...</string>
+    <string name="str_introduce">Token Introduction</string>
+
+    <string name="name_si_success">· Driver certification is successful</string>
+    <string name="tab_fleet">Fleet</string>
+    <string name="main_yun">miner</string>
+    <string name="string_check_mnem">开始校验</string>
+    <string name="tab_wallet">Wallet</string>
+    <string name="main_shop">Mall</string>
+    <string name="change_password">修改密码</string>
+    <string name="wallet_mnem">助记词账户</string>
+    <string name="wallet_priv">私钥账户</string>
+    <string name="wallet_recover">找回账户</string>
+    <string name="export_pub">导出公钥</string>
+    <string name="bind_recover">绑定找回钱包</string>
+</resources>

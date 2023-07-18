@@ -54,6 +54,10 @@ class MyFragment : Fragment() {
         binding.tvRecover.setOnClickListener {
             ARouter.getInstance().build(RouterPath.WALLET_RECOVER).navigation()
         }
+
+        binding.tvLang.setOnClickListener {
+            ARouter.getInstance().build(RouterPath.APP_LANGUAGE).navigation()
+        }
     }
 
     private fun initObserver() {

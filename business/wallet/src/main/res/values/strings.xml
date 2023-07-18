@@ -161,4 +161,8 @@
     <string name="label_exchange">闪兑</string>
     <string name="update_cancel">暂不更新</string>
     <string name="update_ok">更新</string>
+    <string name="wallet_mnem">助记词账户</string>
+    <string name="wallet_priv">私钥账户</string>
+    <string name="wallet_recover">找回账户</string>
+    <string name="bind_recover">绑定找回钱包</string>
 </resources>

@@ -77,6 +77,12 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.activity.LanguageActivity"
+            android:exported="false"
+            android:label="@string/my_lang"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".wconnect.WConnectActivity"
             android:exported="false"
             android:label="@string/my_w_connect"

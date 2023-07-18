@@ -1,0 +1,782 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">貨幣の財布</string>
+    <string name="app_content">ウォレットは安全で使いやすく、強力なデジタル資産管理ツールをユーザーに提供できるように設計された、仮想通貨ウォレットアプリです。</string>
+    <string name="ok">完了</string>
+    <string name="ok_d">削除</string>
+    <string name="ok_r">完了</string>
+    <string name="copy">コピー</string>
+    <string name="delete">削除</string>
+    <string name="cancel">取消し</string>
+
+    <string name="common_null">--</string>
+    <string name="cny">¥</string>
+    <string name="usd">$</string>
+    <string name="equal">≈</string>
+    <string name="downloading">読み込み中..</string>
+    <string name="update_password">パスワード変更</string>
+    <string name="set_password">パスワードの設定</string>
+    <string name="agree_read">同意して読みました。</string>
+    <string name="user_agreement">《%1$s隐私服务协议》</string>
+    <string name="main_home">ホーム</string>
+    <string name="main_market">引用</string>
+    <string name="main_explore">発見</string>
+    <string name="main_my">本人</string>
+    <string name="main_out">もう一度押すとアプリを閉じます</string>
+    <string name="main_permission_tip">ご注意</string>
+    <string name="main_permission_notification">通知権限を設定していない、今すぐ設定しますか？</string>
+    <string name="deposit_wallet">預託口座</string>
+    <string name="label_update_pay_password">支払いパスワードの変更</string>
+    <string name="explore">探索する</string>
+    <string name="red_packet_ycc_red_packet">YCCパッケージ</string>
+    <string name="red_packet_xml_contact_customer_service">カスタマー・サービスに連絡する</string>
+    <string name="rsp_dialog_input_password">パスワードをご入力ください</string>
+    <string name="rsp_dialog_enter">確定</string>
+    <string name="rsp_dialog_set_nick_name">ニックネームを設定</string>
+    <string name="rsp_dialog_input_nick_name">ニックネームを入力してください</string>
+    <string name="rsp_toast_input_password">パスワードをご入力ください</string>
+    <string name="rsp_toast_password_error">パスワード入力エラー</string>
+
+
+    <string name="rsp_pay_password_sure">パスワードを確認する</string>
+    <string name="home_is_backup">ニーモニックをバックアップしましたか？</string>
+    <string name="home_backup_tip">あなたの資金安全のために、バックアップニーモニックに行ってください.</string>
+    <string name="home_safe_tip">セキュリティメッセージ</string>
+    <string name="home_delay_backup">後でバックアップします</string>
+    <string name="home_go_backup">バックアップを取る</string>
+    <string name="home_go_wallet">ウォレット切替え</string>
+    <string name="home_choose_chain">コインの種類を選んでください</string>
+    <string name="home_deposit_wallet">預託口座</string>
+    <string name="home_input_password">パスワードをご入力ください</string>
+    <string name="home_input_note">ローカルコメントを変更</string>
+    <string name="home_input_note_hint">新しいコメントを入力してください</string>
+    <string name="home_input_fail">パスワード入力エラー</string>
+    <string name="added_contacts">この連絡先を追加しました。</string>
+    <string name="search_coin_name">通貨名を入力してください。</string>
+    <string name="search_coin_none">この貨幣の種類が見つからないですよ。</string>
+    <string name="search_coin_hint">コインを検索</string>
+
+    <string name="home_transaction_record">取引記録</string>
+    <string name="home_transfer">送付</string>
+    <string name="home_transfer2">送付</string>
+    <string name="home_receipt">受取</string>
+    <string name="home_transaction_fails">取引に失敗しました</string>
+    <string name="home_packing">正在打包</string>
+    <string name="home_confirming">確認中</string>
+    <string name="home_transaction_success">取引が成功しました</string>
+    <string name="home_introduction">コイン紹介</string>
+    <string name="home_miner_fee">マイナーフィー\u3000</string>
+    <string name="home_transfer_address">転送アドレス</string>
+    <string name="home_receipt_address">受取アドレス</string>
+    <string name="home_block_info">ブロック情報</string>
+    <string name="home_transaction_hash">取引ハッシュ</string>
+    <string name="home_remarks_with_space">備考\u3000\u3000</string>
+    <string name="home_no">なし</string>
+    <string name="home_add_contact">連絡先を追加</string>
+    <string name="home_bty">ビット</string>
+    <string name="home_basic_info">基本情報</string>
+    <string name="home_currency_introduction">コイン紹介</string>
+    <string name="home_full_name">フルネーム</string>
+    <string name="home_simple_name">略称</string>
+    <string name="home_publish_time">発行時間</string>
+    <string name="home_publish_total_amount">発行総数</string>
+    <string name="home_circulation_total_amount">流通総数</string>
+    <string name="home_crowd_funding_price">募集価格</string>
+    <string name="home_official_website">オフィシャルサイト</string>
+    <string name="home_white_paper">白書</string>
+    <string name="home_block_chain_browser">ブロックを照会する</string>
+    <string name="home_community">コミュニティ群</string>
+    <string name="home_sheld_exchange">取引所に上場する</string>
+    <string name="home_no_currency_introduction">貨幣の紹介がまだない</string>
+    <string name="home_btc_transfer">BTC振替</string>
+    <string name="home_balance">残高:%1$s%2$s</string>
+    <string name="home_confirm_transfer_currency">確定</string>
+    <string name="home_recharge">チャージ</string>
+    <string name="home_confirm_recharge">チャージの確認</string>
+    <string name="home_balance_insufficient">残高不足</string>
+    <string name="home_balance_error">振替金額は鉱夫費より大きいです。</string>
+    <string name="home_input_greater_than_zero_amount">0より大きい金額を入力してください。</string>
+    <string name="home_confirm">完了</string>
+    <string name="home_pwd_input_error">パスワード入力エラー</string>
+    <string name="home_please_input_receipt_address">コインの住所を入力してください。</string>
+    <string name="home_please_input_amount">金額を入力してください</string>
+    <string name="home_receipt_send_address_is_same">お札の住所とお札の住所は同じです。</string>
+    <string name="home_receipt_address_is_illegal">お金を受け取る住所は合法的ではありません！</string>
+    <string name="home_transfer_currency_success">送付成功！</string>
+    <string name="home_transfer_currency_fails">両替失敗！</string>
+    <string name="home_collection_code">入金コード</string>
+    <string name="home_parsing_qr_fails">二次元コードの解析に失敗しました。</string>
+    <string name="home_hint_please_input_count">金額を入力してください</string>
+    <string name="home_remarks">コメント</string>
+    <string name="home_chain_remarks">チェーンにアップする備考</string>
+    <string name="home_optional">(オプション)</string>
+    <string name="home_receipt_currency_address">宛先</string>
+    <string name="home_send_currency_address">コインの住所</string>
+    <string name="home_slow">遅い</string>
+    <string name="home_optimum">最適</string>
+    <string name="home_normal">正常</string>
+    <string name="home_fast">速い</string>
+    <string name="home_latest_transaction">最近の取引</string>
+    <string name="home_receipt_currency">受取</string>
+    <string name="home_hosting_address">委託管理住所</string>
+    <string name="home_copy_success">コピーできました</string>
+    <string name="home_msg_permission_share_address">あなたの正常な使用のために、財布には基本的な権限が必要です。</string>
+    <string name="home_scan_toast">スキャン機能を使用するには、カメラとファイル保存の権限が必要です</string>
+    <string name="home_share_fails">共有失敗</string>
+    <string name="home_cancel_share">共有キャンセル</string>
+    <string name="home_label_balance">残高:</string>
+    <string name="home_click_qr_code_copy_address">QRコードをクリックしてアドレスコピー</string>
+    <string name="home_hint_recharge_other_wallet">他の財布を使ってチャージする場合は、二次元コードをスキャンして貨幣を回転してください。</string>
+    <string name="home_share_address">アドレスをシェア</string>
+    <string name="home_send_number">送付数</string>
+    <string name="home_local_remarks">ローカル備考</string>
+    <string name="transaction_time">取引時間</string>
+    <string name="chain_remarks_tips">上のチェーン備考：情報上のチェーンは、チェーン上で照会することができます。</string>
+    <string name="local_remarks_tips">ローカルメモ：情報はチェーンに接続されていません。ローカルに保存されます。</string>
+    <string name="text_tips">分かりました</string>
+    <string name="my_version">バージョン</string>
+    <string name="my_me">私</string>
+    <string name="my_lock">倉庫にかぎをかける</string>
+    <string name="my_message">メッセージ</string>
+    <string name="my_message_tittle">タイトル</string>
+    <string name="my_message_author">作者</string>
+    <string name="my_introduce">本プロジェクトはウォレット開発技術チームが技術サポートを提供します。</string>
+    <string name="my_introduce_new">Copyright.All Rights Reerved.杭州本鎖科技著作権所有</string>
+    <string name="my_latest_version">既に最新バージョンです</string>
+    <string name="my_create_wallet">ウォレット作成</string>
+    <string name="my_import_wallet">ウォレットをインポート</string>
+    <string name="small_wallet">ワンタッチの小さい財布</string>
+    <string name="my_copy">コピー</string>
+    <string name="my_search">検索する</string>
+    <string name="my_check_version">アップデートを検出する</string>
+    <string name="my_version_toast_title">ヒントを更新</string>
+    <string name="my_version_toast">新しいバージョンを検出しました。更新しますか？</string>
+    <string name="my_trusteeship">口座を預ける</string>
+    <string name="my_trusteeship_assets">資産を信託管理する</string>
+    <string name="my_trusteeship_use">利用可能(個)</string>
+    <string name="my_trusteeship_value">価値（元）</string>
+    <string name="my_trusteeship_exit">終了</string>
+    <string name="my_trusteeship_exit_sure">終了の確認</string>
+    <string name="my_share">ダウンロードをシェアする</string>
+    <string name="my_share_permission_toast">正常に使用するには、ストレージの権限が必要です</string>
+    <string name="my_share_failure">共有失敗</string>
+    <string name="my_share_cancel">共有キャンセル</string>
+    <string name="my_share_copy_address">リンクをコピー</string>
+    <string name="my_share_share_address">ダウンロードの住所を共有します</string>
+    <string name="my_contact">連絡帳</string>
+    <string name="my_contact_add">連絡先を追加</string>
+    <string name="my_contact_toast">この連絡先が見つかりません。</string>
+    <string name="my_contact_nickname">ニックネーム</string>
+    <string name="my_contact_phone">携帯番号</string>
+    <string name="my_contact_address">アドレス</string>
+    <string name="my_contact_go">送金に行く</string>
+    <string name="my_contact_scan">二次元コードまたは入力アドレスをスキャンします。</string>
+    <string name="my_contact_scan_invalid">無効なアドレスです</string>
+    <string name="my_contact_detail_edit">編集</string>
+    <string name="my_contact_detail_choose_address">住所を選んでください</string>
+    <string name="my_contact_detail_no">あなたはいません</string>
+    <string name="my_contact_detail_wrong_coin">通貨が間違っています。選択してください。</string>
+    <string name="my_contact_none">まだ連絡先を追加していません。</string>
+    <string name="my_add_less_16">16文字以下</string>
+    <string name="my_add_11">11桁の携帯番号</string>
+    <string name="my_add_none">ニックネームは空ではありません</string>
+    <string name="my_add_name">ニックネームを入力してください</string>
+    <string name="my_finish">完了</string>
+    <string name="my_add_add_address">アドレスを追加してください</string>
+    <string name="my_add_address_footer">受取るアドレスを追加</string>
+    <string name="my_add_add">追加してください</string>
+    <string name="my_add_address">の住所</string>
+    <string name="my_add_address_illegal">住所が不正です</string>
+    <string name="my_scan">スキャン</string>
+    <string name="my_scan_image">アルバム</string>
+    <string name="my_scan_toast">QRコードをスキャンしてください</string>
+    <string name="my_delete_success">削除に成功しました</string>
+    <string name="my_wallet">ウォレット管理</string>
+    <string name="my_wallet_detail_name">ウォレット名を入力してください</string>
+    <string name="my_wallet_detail_name_exist">ウォレット名は既に存在します。</string>
+    <string name="my_wallet_detail_password">パスワードをご入力ください</string>
+    <string name="my_wallet_detail_mnem">ニーモニックを表示する</string>
+    <string name="my_wallet_detail_change_password">パスワード変更</string>
+    <string name="my_wallet_detail_wrong_password">パスワード入力エラー</string>
+    <string name="my_wallet_detail_modify_name">名前を変更</string>
+    <string name="my_wallet_detail_safe">セキュリティ警告</string>
+    <string name="my_wallet_detail_delete_message">ウォレットを削除すると、ニーモニックと秘密鍵がなければ、絶対に取り戻せません。本当に削除しますか？</string>
+    <string name="my_wallet_detail_delete">ウォレットを削除</string>
+    <string name="my_wallet_detail_export">秘密鍵をエクスポート</string>
+    <string name="my_wallet_detail_open_finger_pay">指紋認証オンにする</string>
+    <string name="my_wallet_detail_backup">ニーモニックをバックアップ</string>
+    <string name="my_wallet_detail_choose_chain">メインチェーンを選択</string>
+    <string name="my_wallet_set_password">パスワードを入力してください</string>
+    <string name="my_wallet_forget_password">パスワードを忘れます</string>
+    <string name="my_wallet_search_coin">Tokenかコントラクトアドレスで検索</string>
+    <string name="my_set_password">パスワードの設定に成功しました</string>
+    <string name="my_set_password_toast">ウォレットのパスワードを、8〜16桁の数字と文字の組合せで入力し設定してください</string>
+    <string name="my_set_password_different">二回のパスワードが違います</string>
+    <string name="my_set_password_number_letter">数字とアルファベットの組み合わせを入力してください。</string>
+    <string name="my_change_password_old">古いパスワードを入力</string>
+    <string name="my_change_password_new">新しいパスワードを入力</string>
+    <string name="my_change_password_again">新しいパスワードを再度入力</string>
+    <string name="my_change_password_wrong">古いパスワードが間違っています</string>
+    <string name="my_change_password_same">古いパスワードと同じです</string>
+    <string name="my_change_password_success">パスワードの変更に成功しました</string>
+    <string name="my_about_us">会社概要</string>
+    <string name="my_tran">プライバシー取引</string>
+    <string name="my_language">言語</string>
+    <string name="my_about_us_use">使用プロトコル</string>
+    <string name="my_about_us_feedback">フィードバック</string>
+    <string name="my_create_name">ウォレット名を設定</string>
+    <string name="my_create_letter">8–16ビットの文字を入力してください。</string>
+    <string name="my_import_backup_none">ニーモニックは存在しません。</string>
+    <string name="my_import_backup_null">ニーモニックは空ではいけません。</string>
+    <string name="my_import_start">スタート</string>
+    <string name="my_import_hint">間にスペースを置き、英語のニーモニックを入力してください。</string>
+    <string name="my_import_chinese_hint">中国語のニーモニックを入力してください。3文字を一セットにしてください。</string>
+    <string name="create_mnemonic">中国語</string>
+    <string name="create_mnemonic_hint">ニーモニックを必ず保存し、確定後に検証を始めます。</string>
+    <string name="create_mnemonic_change">チェンジ</string>
+    <string name="create_mnemonic_toast">ヒント：スクリーンショットで保存しないでください。ニーモニックが他人に知られると、暗号資産を紛失してしまう可能性があります。\n\n正確な方法：\n\n方法一：他の設備や携帯(インターネット接続なし)で写真を撮って保存すること。\n方法二：紙などにニーモニックを書き写して、安全な場所に保存すること。\n\nバックアップ開始をクリックすると、あなたがニーモニックをきちんと保存したかを検証します</string>
+    <string name="mnemonic_wrong">間違っています</string>
+    <string name="backup_success">バックアップできました</string>
+    <string name="backup_mnemonic">バックアップ</string>
+    <string name="backup_order">正しい順番で各単語をクリックしてください</string>
+    <string name="backup_next">次のステップ</string>
+    <string name="backup_input">入力してください</string>
+    <string name="mnemonic">ニーモニック</string>
+    <string name="backup_safe_prompt">セキュリティメッセージ</string>
+    <string name="backup_later">後でバックアップします</string>
+    <string name="backup_now">バックアップを取る</string>
+    <string name="validate_mnemonic">バックアップを検証します</string>
+    <string name="contacts_save">保存</string>
+    <string name="share_er_code">QRコードを共有する</string>
+    <string name="my_wallet_password_tips">パスワードを入力してください</string>
+    <string name="my_wallet_confirm_password_tips">もう一度パスワードを入力してください</string>
+    <string name="set_wallet_password">ウォレットのパスワードを設定します</string>
+    <string name="confirm_wallet_password">ウォレットパスワードを確認します</string>
+    <string name="share_share_to">シェア</string>
+    <string name="share_friends_circle">モーメンツ</string>
+    <string name="share_wechat_friends">Wechat友達</string>
+    <string name="share_qq">QQ</string>
+    <string name="share_cancel">キャンセル</string>
+    <string name="title_add_coin">コインを追加</string>
+    <string name="title_introduction">@string/home_introduction</string>
+    <string name="title_ycc_red_packet">@string/red_packet_ycc_red_packet</string>
+    <string name="title_escrow_account">エスクローアドレス </string>
+    <string name="title_contact_customer_service">@string/red_packet_xml_contact_customer_service</string>
+    <string name="title_set_pwd">パスワードの設定</string>
+    <string name="title_agreement">サービスプライバシー条項</string>
+    <string name="title_about_us">会社概要</string>
+    <string name="title_update_pwd">@string/update_password</string>
+    <string name="title_contacts_details">連絡先の詳細</string>
+    <string name="title_transaction_details">取引の詳細</string>
+    <string name="title_wallet_details">ウォレット詳細</string>
+    <string name="title_my_wallet">マイウォレット</string>
+    <string name="title_edit_contacts">連絡先を編集</string>
+    <string name="title_add_contacts">@string/home_add_contact</string>
+    <string name="title_contacts">連絡帳</string>
+    <string name="title_bluetooth">批量转出</string>
+    <string name="title_devicelist">选择蓝牙设备</string>
+    <string name="title_address_moneys">余额从大到小排序</string>
+    <string name="tip">ご注意</string>
+    <string name="tipde">この機能はまだ開放されていません。</string>
+    <string name="tip_ok">完了</string>
+    <string name="my_msg_fail">個人情報の取得に失敗しました。</string>
+    <string name="suocang">倉庫にかぎをかける</string>
+    <string name="rank_do">人が使っています</string>
+    <string name="pw_old_update">元のパスワードの変更</string>
+    <string name="for_pw">パスワードを忘れます</string>
+    <string name="input_old_pw">6桁の元のパスワードを入力してください。</string>
+    <string name="p_input">入力してください</string>
+    <string name="p_code">受信した認証コード</string>
+    <string name="img_check_success">グラフィック認証に成功しました</string>
+    <string name="code_send_success">認証コードの送信に成功しました。</string>
+    <string name="code_send_fail">認証コードの送信に失敗しました。</string>
+    <string name="get_code">認証コード</string>
+    <string name="checking">切り替え中..</string>
+    <string name="c_delete">削除</string>
+    <string name="o_delete">削除の確認</string>
+    <string name="using_count">人が使っています</string>
+    <string name="p_input_redcount">おひねりの数を入力してください。</string>
+    <string name="p_input_phone">11桁の携帯番号を入力ください</string>
+    <string name="p_input_pw">支払いパスワードを入力してください。</string>
+    <string name="checked">セキュリティ検証</string>
+    <string name="click_login">預託口座へログイン</string>
+    <string name="home_share">シェア</string>
+    <string name="my_header">プロフィ画像</string>
+    <string name="my_phone">携帯番号</string>
+    <string name="my_input_pw">パスワードを支払う</string>
+    <string name="my_logout">ログアウト</string>
+    <string name="set_up_pw">支払パスワードの設定</string>
+    <string name="update_pw">支払いパスワードの変更</string>
+    <string name="home_total_assets">総資産</string>
+    <string name="home_backup">今すぐバックアップ</string>
+    <string name="home_backuped">バックアップ済み</string>
+    <string name="input_wallet_name">ウォレット名を変更</string>
+    <string name="current_wallet">(使用中)</string>
+    <string name="feedback">フィードバック</string>
+    <string name="tip_notfound_coin">該当する通貨が見つかりませんでした</string>
+    <string name="tip_search_coin">通貨名かコントラクトのアドレスを入力してください。見つからない場合、私達にフィードバックを提出してください</string>
+    <string name="input_phone_code"> 認証コードを入力</string>
+    <string name="s_login">ログイン</string>
+    <string name="tip_phone_ok">正しい携帯番号を入力してください</string>
+    <string name="register_ok">ログインできました</string>
+    <string name="login_ok">ログインできました</string>
+    <string name="tip_add_chain">まず、メインチェーン通貨を追加してください。</string>
+    <string name="copy_success">コピーできました</string>
+    <string name="start_back_up">スタート</string>
+    <string name="update_ok">更新</string>
+    <string name="update_cancel">暂不更新</string>
+    <string name="my_import_success">正常にインポートされました</string>
+    <!--实名认证-->
+    <string name="real_name_edge_angle_integrity">縁がはっきり見える</string>
+    <string name="real_name_clear_font">字体が良く見える</string>
+    <string name="real_name_luminance_uniformity">明るさが適切</string>
+    <string name="real_name_idcard_tip1">身分証明書の表面をアップロード</string>
+    <string name="real_name_idcard_tip2">中国大陸住民に発行される有効身分証明書</string>
+    <string name="real_name_certificates_notice">撮影時のご注意点</string>
+    <string name="real_name_valid_certificates_font">有効証明書の正面写真</string>
+    <string name="real_name_picture_with_certificates">所持証明書の写真</string>
+    <string name="real_name_real_name">実名</string>
+    <string name="real_name_real_name_type_tip">実名を入力してください。</string>
+    <string name="real_name_belong_to_country">所属国</string>
+    <string name="real_name_belong_to_country_choose_tip">国籍を選んでください</string>
+    <string name="real_name_certificates_type">証明書の種類</string>
+    <string name="real_name_certificates_type_choose_tip">証明書の種類を選んでください。</string>
+    <string name="real_name_certificates_number">証明書番号</string>
+    <string name="real_name_certificates_number_type_tip">有効な証明書の番号を入力してください。</string>
+
+    <string name="basic_permission_rationale">権限を許可しない場合はこの機能が利用できません</string>
+    <string name="basic_permission_denied_title">権限が断られました</string>
+    <string name="basic_permission_denied_rationale">権限を許可しない場合はこの機能が利用できない、システム設定で権限を許可します</string>
+    <string name="basic_wheel_picker_choose_trade_type">取引の種類を選択</string>
+    <string name="basic_wheel_picker_cancel">キャンセル</string>
+    <string name="basic_wheel_picker_ok">完了</string>
+    <string name="real_verify">本人確認</string>
+    <string name="wallet_name">ウォレット名</string>
+    <string name="mnem_tip">紛失された場合に取り戻せるために、ニーモニックを安全な場所に保管してください。</string>
+    <string name="i_know">了解した</string>
+    <string name="address_error">アドレスが間違いました</string>
+    <string name="copy_str_success">アドレスがコピーできました</string>
+    <string name="per_upload">ご注意</string>
+
+
+    <string name="config_code">二次元コードを拡大してやり直してください。</string>
+
+
+    <!--  BluetoothChat -->
+    <string name="send">Send</string>
+    <string name="not_connected">You are not connected to a device</string>
+    <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving Bluetooth Chat.</string>
+    <string name="title_connecting">connecting...</string>
+    <string name="title_connected_to">connected to </string>
+    <string name="title_not_connected">not connected</string>
+
+    <!--  DeviceListActivity -->
+    <string name="scanning">scanning for devices...</string>
+    <string name="select_device">select a device to connect</string>
+    <string name="none_paired">No devices have been paired</string>
+    <string name="none_found">No devices found</string>
+    <string name="title_paired_devices">Paired Devices</string>
+    <string name="title_other_devices">Other Available Devices</string>
+    <string name="button_scan">Scan for devices</string>
+
+    <!-- Options Menu -->
+    <string name="secure_connect">连接设备 - 安全</string>
+    <string name="insecure_connect">连接设备 - 不安全</string>
+    <string name="discoverable">使设备可发现</string>
+    <string name="toin">開く</string>
+    <string name="sms_send">送信済み(</string>
+    <string name="camera_and_location_rationale">需要获取定位权限</string>
+
+
+    <string name="deposit_pw_verifycode_tip1">認証コードを送信しました</string>
+    <string name="deposit_pw_verifycode_tip3">認証コードをメールしました</string>
+    <string name="deposit_pw_verifycode_tip2">設定済みのパスワードでアカウント%1$sの操作確認ができます</string>
+    <string name="deposit_go_certification">認証してください</string>
+    <string name="deposit_no_certification">未承認</string>
+    <string name="deposit_wait_certification">審査待ち</string>
+    <string name="deposit_already_certification">認証済み</string>
+    <string name="deposit_for_this_account">アカウント%1$sのために</string>
+    <string name="deposit_no_paypw">支払いパスワードが設定されていません</string>
+    <string name="deposit_set_paypw">今すぐ設定</string>
+    <string name="deposit_other_address">マルチアドレス</string>
+    <string name="pay_pw_sure_again">再度パスワードを入力してください</string>
+    <string name="pay_pw_not_match">二回のパスワード入力が一致しません</string>
+    <string name="pay_pw_set_success">支払いパスワードが設定できました</string>
+    <string name="pay_pw_update_success">支払いパスワードが変更できました</string>
+    <string name="smallwallet">スモールウォレット</string>
+    <string name="not_support_deposit">預託口座が利用されません</string>
+    <string name="redpacket">お年玉</string>
+    <string name="pay_pw_set">の支払いパスワード6桁を設定してください</string>
+    <string name="pay_pw_sure">支払いパスワードを確認</string>
+    <string name="pay_pw_verify_code">数字6桁の認証コード</string>
+
+    <!--登录相关-->
+    <string name="rule_text">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
+    <string name="login_phone_login">携帯でログイン</string>
+    <string name="login_email_login">メールアドレスでログイン</string>
+    <string name="login_password_login">パスワードでログイン</string>
+    <string name="login_verify_code_login">認証コードを受信して登録</string>
+    <string name="login_phone_login_info">新規の場合は自動登録される</string>
+    <string name="login_phone_input">携帯番号を入力</string>
+    <string name="login_email_input">メールアドレスを入力</string>
+    <string name="login_phone_verify_code_input">認証コードを入力</string>
+    <string name="login_phone_verify_code_get">認証コードを受信</string>
+    <string name="login_phone_password_input">パスワードを入力</string>
+    <string name="login_phone_password_too_long">パスワードは20桁まで</string>
+    <string name="login_login">@string/s_login</string>
+    <string name="login_password_forget">パスワード忘れた?</string>
+    <string name="login_verify_code_not_received">認証コードが受信できない?</string>
+    <string name="login_verify_code_wait_time">送信した(%1$s)s</string>
+    <string name="login_verify_code_info">こちらからお電話して認証コードを知らせますので、着信にご注意ください!</string>
+    <string name="login_login_password">ログインパスワード</string>
+    <string name="login_login_password_re_set">新しいパスワードを設定</string>
+    <string name="login_login_password_re_set_by_phone">携帯番号でリセット</string>
+    <string name="login_login_password_re_set_by_email">メールアドレスでリセット</string>
+    <string name="login_login_password_re_set_long">新しいパスワードを設定</string>
+    <string name="login_login_phone_binding">携帯番号認証</string>
+    <string name="login_login_email_binding">メールアドレス認証</string>
+    <string name="login_binding_success">認証できました</string>
+
+    <string name="login_phone_error_toast">正しい携帯番号を入力</string>
+    <string name="login_email_error_toast">完全なメールアドレスを入力</string>
+    <string name="login_phone_null">携帯番号は認証待ちです</string>
+    <string name="login_email_null">メールアドレスは認証待ちです</string>
+    <string name="login_un_register">まだ登録されていません</string>
+
+    <string name="login_password_too_short">パスワード桁数が足りません</string>
+
+    <!-- 用户信息-->
+    <string name="user_email">メールアドレス</string>
+    <string name="user_set">今すぐ設定</string>
+    <string name="user_re_set_password">変更へ</string>
+    <string name="user_binding">認証へ</string>
+
+
+    <string name="invite_title">お友達を誘って報酬ゲット</string>
+    <string name="invite_rule">規則</string>
+    <string name="invite_tip1">お友達を誘う</string>
+    <string name="invite_tip2">お友達が登録完了</string>
+    <string name="invite_tip3">お互いに報酬ゲット</string>
+    <string name="invite_my_income">私の収益</string>
+    <string name="invite_invitelist_tip">お誘いリスト</string>
+    <string name="invite_total_coins"><Data><![CDATA[<big><big><font color="#CC3969">%1$s</font></big></big> %2$s]]> </Data></string>
+    <string name="invite_total_num"><Data>%1$s人を誘えました！ナイス！</Data></string>
+    <string name="invite_rule_tip">ヒント</string>
+    <string name="invite_rules">1.ご家族/友人/同級生/同僚などよく知っている人なら成功率が一番高い！\n2.Lineなどのソーシャルメディアにシェアすれば、成功率を高められる！\n3.お知らせに注意を払い、更に多くの報酬をゲットできる新しいイベントもある。\n4.シェアとお誘いを毎日頑張り続ければ、他人よりもっと報酬がもらえる！</string>
+    <string name="invite_share_pic">お誘いポスター生成</string>
+    <string name="invite_share_url">お誘いリンク生成</string>
+    <string name="invite_share_qr">対面でお誘い</string>
+    <string name="invite_list_title">お誘いリスト</string>
+    <string name="invite_mylist_tip">私のお誘い</string>
+    <string name="invite_mylist_select">フィルタ</string>
+    <string name="invite_mylist_num">お誘い人数(名)</string>
+    <string name="invite_mylist_coins">収益(%1$s)</string>
+    <string name="invite_mylist_coins_empty">収益</string>
+    <string name="invite_choose_level_tip">お誘いレベル</string>
+    <string name="invite_choose_level_1">一級</string>
+    <string name="invite_choose_level_2">二級</string>
+    <string name="invite_choose_time_tip">月間フィルタ</string>
+    <string name="invite_choose_reset">リセット</string>
+    <string name="invite_choose_all">すべて</string>
+    <string name="invite_reg">登録済み</string>
+    <string name="invite_isreal">実名確認済み</string>
+    <string name="invite_notreal">実名確認待ち</string>
+
+    <string name="invite_detail_tip">報酬明細</string>
+    <string name="invite_detail_type_tip">タスク</string>
+    <string name="invite_detail_coins_tip">報酬(%1$s)</string>
+    <string name="invite_detail_time_tip">取得時間</string>
+    <string name="invite_detail_empty_tip">実名確認してから報酬ゲットだよ</string>
+
+
+    <string name="invite_share_qr_tip1">%1$s 便利で安全なクロスチェーンウォレット</string>
+    <string name="invite_share_qr_tip2">多様多種なコイン管理機能</string>
+
+    <string name="invite_share_tip">へシェアする</string>
+    <string name="invite_share_new_tv">リンクシェア</string>
+    <string name="invite_share_new_savepic">画像保存</string>
+    <string name="invite_share_tv">シェアリンクがコピーできました</string>
+    <string name="invite_share_pic_tip">ポスターを選択</string>
+    <string name="invite_share_pic_reg_tip1">%1$sへようこそ</string>
+    <string name="invite_share_pic_reg_tip2">押して放さずQRコードを読み取ってください</string>
+    <string name="invite_share_url_title">お友達から登録リクエスト、ログインして報酬獲得！</string>
+    <string name="invite_share_url_content">コインウォレットとアップチェーンモールが提携し、百万個のSTO贈呈！上海蟹と交換でき、早い者勝ち！</string>
+    <string name="invite_share_pic_error">ポスターがダウンロード失敗、もう一度お試しください</string>
+    <string name="invite_share_mixpic_error">ポスターのデータ生成失敗、もう一度お試しください</string>
+    <string name="my_invite_reward_tip">お誘いして報酬獲得</string>
+    <string name="my_invite_choose_year">年</string>
+    <string name="my_invite_choose_month">月</string>
+    <string name="my_sign_in">サインイン</string>
+  <!--  <string name="my_space_tip">マイページ</string>-->
+    <string name="invite_total_num_empty"><Data>%1$s人をお誘いした！引き続き頑張ってね</Data></string>
+    <string name="my_sign_in_tip"><Data>サインイン</Data></string>
+
+
+    <!--加载提示-->
+    <string name="up_pull_load">上へスクロールしてロードします</string>
+    <string name="release_load">放してロードします</string>
+    <string name="no_more">これ以上ありません</string>
+    <string name="complete_load">ロード完了しました</string>
+    <string name="down_pull_refresh">下へスクロールして更新します</string>
+    <string name="release_refresh">放して更新します</string>
+    <string name="complete_refresh">更新完了しました</string>
+    <string name="refreshing">更新中...</string>
+
+    <string name="basicres_loading">読込み中...</string>
+
+
+    <string name="web_copy_link">リンクをコピー</string>
+    <string name="web_open_outside">エクスプローラーで開く</string>
+    <string name="change_language">言語設定</string>
+    <string name="rmb_name">人民元</string>
+    <string name="rmb_name_with_sign">人民元 (¥)</string>
+    <string name="usd_name">米ドル</string>
+    <string name="usd_name_with_sign">米ドル ($)</string>
+    <string name="show_money">通貨建て</string>
+    <string name="login_go_login">ログインしてください</string>
+
+    <!--网络请求-->
+    <string name="network_data_empty">データがありません</string>
+    <string name="network_loading"></string>
+    <string name="network_net_connected">ネットが繋がりました</string>
+    <string name="network_net_error">通信環境が悪く、もう一度お試しください</string>
+    <string name="network_server_error">サーバーエラー</string>
+    <string name="network_no_more">これ以上のデータはありません</string>
+
+    <string name="not_open">まだ開通されていません</string>
+
+    <string name="explore_go_deposit_login">預託口座が見つかりません、今すぐ登録しますか？</string>
+    <string name="explore_go_deposit_change">預託口座が検出されました、今すぐ切り替えますか？</string>
+    <string name="explore_go_wallet_creat">ブロックチェーン分散型アドレスが見つかりません、今すぐ作成しますか？</string>
+    <string name="explore_go_wallet_change">ブロックチェーン分散型アドレスが検出されました、今すぐ切り替えますか？</string>
+
+    <string name="explore_dapp_disclaimer_title">免責条項</string>
+    <string name="explore_dapp_disclaimer">これから第三者より提供されるDAppを使用する予定で、第三者の利用規約とプライバシーポリシーに同意するとみなし、このDAppでのすべてのアクションと使用状況は該当DAppの責任となります。</string>
+    <string name="explore_dg_create">今すぐ登録</string>
+    <string name="explore_dg_change">今すぐ切替え</string>
+    <string name="explore_dg_login">ログイン</string>
+    <string name="explore_dg_cancel">キャンセル</string>
+    <string name="explore_dg_experience">体験を始める</string>
+    <string name="explore_dg_experience_title">DAppを楽しもう</string>
+    <string name="explore_dg_experience_content">DAppとは？ブロックチェーン上のアプリケーションで、今すぐ体験しましょう</string>
+
+    <string name="explore_lastapp">最近の使用履歴</string>
+
+
+    <string name="explore_show_all">すべて</string>
+    <string name="explore_all_dapp">分散型アプリ</string>
+    <!--导入助记次-->
+    <string name="import_wallet_hint0">ニーモニックを入力し、スペースで単語を区切ってください</string>
+    <string name="import_wallet_hint1">秘密鍵を入力か、生成されたQRコードをスキャンしてください</string>
+    <string name="import_wallet_hint2">アドレスを入力か、生成されたQRコードをスキャンしてください</string>
+    <string name="import_wallet_tips">ウォレットは、BIPに準じて生成された全てのニーモニックをサポートします</string>
+    <string name="import_wallet_chain_name">メインチェーン:</string>
+    <string name="import_wallet_type0">ニーモニックをインポート</string>
+    <string name="import_wallet_type1">秘密鍵をインポート</string>
+    <string name="import_wallet_type2">アドレスをインポート</string>
+    <string name="import_wallet_pri_key_error">秘密鍵エラー</string>
+    <string name="import_wallet_mnem_repeat">ニーモニックが重複する</string>
+    <string name="import_wallet_wallet_name">ウォレット</string>
+
+    <string name="wallet_no_bty">使用中のウォレットがこの機能をサポートしていません</string>
+
+    <!--market-->
+    <string name="hot_coins">主流コイン</string>
+    <string name="coin_range">%1$s%%</string>
+    <string name="coin_price_r">¥%1$s</string>
+    <string name="coin_price_u">$%1$s</string>
+    <string name="coin_price_u_tip">≈$ %1$s</string>
+    <string name="coins_name_tip">コイン名</string>
+    <string name="coins_price_tip">最新価格</string>
+    <string name="coins_range_tip">24H価格変更</string>
+    <string name="coins_high">24H最高</string>
+    <string name="coins_low">24H最低</string>
+    <string name="coins_vol">24Hボリューム</string>
+    <string name="coin_trade_type"><Data><![CDATA[<b><font color="#333649">%1$s</font></b><small>/%2$s</small>]]></Data></string>
+    <string name="coins_market_range_tip">%1$s在%2$s的成交额占比</string>
+    <string name="coins_market_range">%1$s%%</string>
+    <string name="coins_search_history_tip">検索履歴</string>
+    <string name="coins_search_hot_tip">人気な検索</string>
+    <string name="coins_clear_history">すべて削除する</string>
+    <string name="coins_search_hotcoins_bty">BTY</string>
+    <string name="coins_search_hotcoins_ycc">YCC</string>
+    <string name="coins_name_namech">%1$s，%2$s</string>
+    <string name="add_optional_coin_tip">お気に入り追加中</string>
+    <string name="remove_optional_coin_tip">お気に入りから取消し中</string>
+    <string name="add_optional_coin_success">お気に入りに追加できました</string>
+    <string name="remove_optional_coin_success">お気に入りから取消しました</string>
+
+    <string name="market_favorites">お気に入り</string>
+    <string name="market_BitNasdaq">BitNasdaq</string>
+    <string name="market_zhaobi">ZhaoBi</string>
+    <string name="market_binance">Binance</string>
+    <string name="market_huobipro">HuoBi Global</string>
+    <string name="market_favorite_empty_tip">まだお気に入りがなく、追加を忘れないでね</string>
+
+
+    <!--discover-->
+    <string name="main_discover">発見</string>
+    <string name="discover_news">業界情報</string>
+    <string name="news_newsflash">ニュース</string>
+    <string name="news_notice">お知らせ</string>
+    <string name="news_article">記事</string>
+    <string name="news_unfold">詳細確認</string>
+    <string name="news_fold">折りたたむ</string>
+    <string name="news_info">情報詳細</string>
+    <string name="notice_info">お知らせの詳細</string>
+
+    <string name="news_share">シェア</string>
+    <string name="news_share_tip">コードスキャンでAPP「%1$s」をダウンロード</string>
+    <string name="news_share_error">シェアエラー、リトライしてください</string>
+
+    <string name="today">今日  </string>
+    <string name="yestoday">昨日  </string>
+
+    <string name="monday">月曜</string>
+    <string name="tuesday">火曜</string>
+    <string name="wednesday">水曜</string>
+    <string name="thursday">木曜</string>
+    <string name="friday">金曜</string>
+    <string name="saturday">土曜</string>
+    <string name="sunday">日曜</string>
+
+    <string name="news_source">ソース：%1$s</string>
+
+    <string name="main_host_chose">回線の切替え</string>
+    <string name="main_host_chose_china">中国</string>
+    <string name="main_host_chose_japan">日本</string>
+
+    <string name="my_wallets_chose1">作成/インポート</string>
+    <string name="my_wallets_chose2">観察ウォレット</string>
+    <string name="my_wallets_current_wallet">使用中</string>
+    <string name="my_wallets_login">登録/ログイン</string>
+    <string name="my_wallets_mnem_walllet">分散型ウォレット</string>
+    <string name="my_wallet_detail_update_name">ウォレット名を変更</string>
+    <string name="my_wallet_detail_out_mnem">ニーモニックをエクスポート</string>
+    <string name="my_wallet_read_toast">規約を読み、チェックしてください</string>
+    <string name="my_wallet_login">ログイン/登録</string>
+    <string name="my_wallet_fast_in">クイック作成</string>
+    <string name="my_wallet_pri_key">秘密鍵ウォレット</string>
+    <string name="my_wallet_modified_success">正常に変更されました</string>
+
+
+    <!--b账户才有的小账户，所以没给翻译-->
+    <string name="go_backup_first">请先去首页备份</string>
+    <string name="go_backup_now">今すぐバックアップ</string>
+    <string name="backup_wallet">ウォレットバックアップ</string>
+    <string name="block_chain_wallet">分散型ウォレット</string>
+    <!--b账户才有的小账户，所以没给翻译-->
+    <string name="backup_content">备份成功后您的一键小账户将会自动升级成区块链账户！备份成功后账户将会更加安全！</string>
+    <!--b账户才有的小账户，所以没给翻译-->
+    <string name="backup_content_force">您的账户资金折合人民币已超过1000元！为了您的资金安全，请完成助记词备份。备份成功后一键小账户将自动升级为区块链账户。</string>
+    <string name="backup_title">ヒント</string>
+
+    <!--海外认证-->
+    <string name="manual_take_picture">撮影</string>
+    <string name="manual_choose_picture">アルバムから選ぶ</string>
+    <string name="manual_country">所属国</string>
+    <string name="manual_verify">海外认证</string>
+    <string name="manual_id_type">本人確認書類タイプ</string>
+    <string name="manual_photo_demo">1．顔がはっきり見える \n 2．書類上の情報がはっきり見る  \n 3.両手を完全に露出する</string>
+    <string name="manual_sub_result">送信されました。審査結果をお待ちください。\n 営業日経ってもまだ結果が出ない場合、カスタマーセンターにお問合せください。 \n  weixin：bityuankefu</string>
+    <string name="manual_name">実名</string>
+    <string name="manual_real_name">実名</string>
+    <string name="manual_country_choose">国籍を選んでください</string>
+    <string name="manual_id_type_hint">書類タイプをご選択ください</string>
+    <string name="manual_id_code">書類番号</string>
+    <string name="manual_id_code_hint">有効な書類番号をご入力ください</string>
+    <string name="manual_photo_de">撮影サンプル</string>
+    <string name="manual_id_hint">ご本人が書類の表を両手で持って撮影した写真をアップロードしてください</string>
+    <string name="manual_id_hint_no">ご本人が書類の裏を両手で持って撮影した写真をアップロードしてください</string>
+    <string name="manual_sub">申請提出</string>
+    <string name="manual_verify_no">恐れ入りますが、審査結果として承認されませんでした</string>
+    <string name="manual_sub_re">もう一度資料を提出します</string>
+    <string name="verify_china">顔認識</string>
+    <string name="verify_china_prc">P.R.C</string>
+    <string name="verify_no_china">手動認証</string>
+    <string name="verify_no_china_prc">Non P.R.C</string>
+    <string name="verify_ja">日本及びその他のユーザー</string>
+
+    <!--消息中心-->
+    <string name="msg_transaction">入出金メッセージ</string>
+    <string name="msg_system">システムお知らせ</string>
+    <string name="game_sign">游戏签名</string>
+
+    <string name="hd_wallet">HDウォレット</string>
+
+    <string name="capture_error_address">専用アドレスをスキャン</string>
+    <string name="capture_no_coin">コイン名を追加してください</string>
+    <string name="in_set_money">指定金額</string>
+    <string name="in_universal">一般</string>
+    <string name="in_exclusive">専用</string>
+    <string name="in_common_tip">すべてのウォレット受取可能</string>
+    <string name="in_bi_tip">%1$sのみ受取可能</string>
+    <string name="in_p_in">送付してください</string>
+    <string name="in_p_amount">送付数量を入力</string>
+    <string name="in_r_money">金額訂正</string>
+
+    <string name="home_empty">まだ資産がありません、追加しましょう</string>
+
+    <!--inactivity-->
+    <string name="in_share_name">送付してください%1$s</string>
+    <string name="in_share_address_tip">ウォレットアドレス</string>
+    <string name="in_share_app_tip">コードリーダーでAPPダウンロード</string>
+    <string name="in_common_tip1">汎用QRコードはすべてのウォレットに受取可能</string>
+    <string name="in_bi_tip1">専用QRコードは%1$s受取可能</string>
+
+    <!--myfragment-->
+    <string name="my_space_tip">アカウント管理</string>
+    <string name="my_space_setting">設定</string>
+    <string name="my_space_download">APPダウンロード</string>
+    <string name="my_setting_language">言語切替え</string>
+    <string name="my_contact_us">お問い合わせ</string>
+    <string name="my_contact_us_wx">カスタマセンター</string>
+    <string name="my_contact_us_mail">カスタムセンター連絡メール</string>
+    <string name="my_contact_us_copid">のIDをコピーしました</string>
+    <string name="my_contact_us_copied">コピーできました</string>
+
+
+    <string name="fee_not_enough">矿工费余额不足</string>
+    <string name="block_chain_browser">区块链浏览器</string>
+    <string name="main_msg">チャット</string>
+
+    <string name="chat_tips_share_title">Bwallet</string>
+    <string name="chat_tips_share_content">ブロックチェーンウォレット、秘密鍵管理、大規模な通貨サポート、さまざまなスマートコントラクトを作成してください</string>
+    <string name="chat_tip_packet_share_title">友人から大きな赤い封筒%1$sが送られてきて、来て集めてください！</string>
+    <string name="chat_tip_packet_share_content">高速でデジタル資産を送受信し、別の赤い封筒体験を体験させてください</string>
+    <string name="application_name">@string/app_name</string>
+    <string name="out_amount">送付金</string>
+    <string name="finger_pay">指紋認証支払い</string>
+    <string name="finger_pay_password_pay">パスワード認証</string>
+    <string name="finger_pay_tips">指紋で認証してください</string>
+    <string name="finger_pay_warn">指紋認証エラー</string>
+    <string name="finger_pay_close_warn">指紋認証オフにする?</string>
+    <string name="finger_pay_system_no_finger">システム設定で指紋をオンにしてください</string>
+    <string name="finger_pay_re_open">パスワード変更後、指紋認証オンにするには新しい認証が必要</string>
+    <string name="finger_pay_which_finger">認証時に設定した指を使ってください</string>
+    <string name="trans_all">すべて</string>
+    <string name="bind_phone">· 携帯番号と紐づける</string>
+    <string name="bind_mailbox">· メールアドレスと紐づける</string>
+    <string name="name_success">· 本人確認完了</string>
+    <string name="exp_tips">該当アプリは条件に満たしてから利用可能：</string>
+    <string name="go_user">マイページへ</string>
+    <string name="small_wallet_update_title">アップグレード</string>
+    <string name="small_wallet_go_update">アップグレード</string>
+    <string name="small_wallet_update_warning1">ユーザーの資産を安全にするために、すべてのワンクリックウォレットをニーモニックウォレットにアップグレードする必要があります。 ニーモニックが適切に保存されていることを確認してください。</string>
+    <string name="small_wallet_update_warning2">問題が発生した場合は、ウォレットをアンインストールせず、時間内にカスタマーサービスに連絡してください。</string>
+    <string name="small_wallet_set_password">パスワードを最初に設定してください</string>
+    <string name="add_coin_tab_one">トップのコイン</string>
+    <string name="state_reloading">リロード</string>
+    <string name="str_introduce">通证介绍</string>
+    <string name="name_si_success">· ドライバー認定が成功</string>
+    <string name="tab_fleet"> 自動車隊</string>
+    <string name="main_yun">鉱夫</string>
+    <string name="string_check_mnem">开始校验</string>
+    <string name="change_password">修改密码</string>
+    <string name="wallet_mnem">助记词账户</string>
+    <string name="wallet_priv">私钥账户</string>
+    <string name="wallet_recover">找回账户</string>
+    <string name="export_pub">导出公钥</string>
+    <string name="bind_recover">绑定找回钱包</string>
+</resources>

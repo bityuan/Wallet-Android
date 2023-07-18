@@ -1,0 +1,816 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Bwallet</string>
+    <string name="app_content">동전 지갑은 사용자들에게 안전하고, 사용하기 쉽고, 강력한 기능의 디지털 자산 관리 도구를 제공하기 위해 이동단 화폐 지갑 App이다.</string>
+    <!--common-->
+    <string name="ok">확정</string>
+    <string name="ok_d">확정</string>
+    <string name="ok_r">확정</string>
+    <string name="copy">복제</string>
+    <string name="delete">삭제</string>
+    <string name="cancel">취소</string>
+
+    <string name="common_null">--</string>
+    <string name="cny">¥</string>
+    <string name="usd" tools:keep="@string/usd">$</string>
+    <string name="equal">≈</string>
+    <string name="downloading">로딩 중…</string>
+    <string name="update_password">암호수정</string>
+    <string name="set_password">비밀번호 설정</string>
+    <string name="agree_read">나는 이미 동의하고 읽었다.</string>
+    <string name="user_agreement">《%1$s사용자서비스동의서》</string>
+
+
+    <!-- Main -->
+    <string name="main_home">메인화면</string>
+    <string name="main_explore">탐색</string>
+    <string name="main_my">나의것</string>
+    <string name="main_out">로그오프 절차를 한 번 더 누름</string>
+    <string name="main_permission_tip">친절한 도움말</string>
+    <string name="main_permission_notification">통지 권한을 열지 않고, 가서 열지를 검사했다.</string>
+
+    <string name="deposit_wallet">위탁관리된 지갑</string>
+
+    <!-- 托管账户-登录注册 -->
+    <string name="label_update_pay_password">지급비밀번호 수정</string>
+
+    <string name="explore" tools:keep="@string/explore">탐색</string>
+
+    <string name="red_packet_ycc_red_packet" tools:keep="@string/red_packet_ycc_red_packet">YCC붉은가방</string>
+    <!-- xml -->
+    <string name="red_packet_xml_contact_customer_service" tools:keep="@string/red_packet_xml_contact_customer_service">고객센터연락</string>
+
+    <!-- dialog -->
+    <string name="rsp_dialog_input_password">지갑암호를 입력하십시오</string>
+    <string name="rsp_dialog_enter">확정</string>
+    <string name="rsp_dialog_set_nick_name" tools:keep="@string/rsp_dialog_set_nick_name">별명 설정</string>
+    <string name="rsp_dialog_input_nick_name" tools:keep="@string/rsp_dialog_input_nick_name">별명 입력</string>
+    <!-- toast -->
+    <string name="rsp_toast_input_password">비밀번호 입력</string>
+    <string name="rsp_toast_password_error">비밀번호 에러</string>
+
+    <!--确认支付弹窗-->
+    <string name="rsp_pay_password_sure">비밀번호 확인</string>
+
+    <!--应用详情-->
+
+    <!--===============================首页==============================-->
+
+    <string name="home_is_backup" tools:keep="@string/home_is_backup">도움말을 이미 백업하고 있습니까?</string>
+    <string name="home_backup_tip" tools:keep="@string/home_backup_tip">당신의 자금 안전을 위하여,백업 도움말로 이동하십시오</string>
+    <string name="home_safe_tip" tools:keep="@string/home_safe_tip">보안알림</string>
+    <string name="home_delay_backup" tools:keep="@string/home_delay_backup">잠시 후 백업</string>
+    <string name="home_go_backup">백업하다</string>
+    <string name="home_go_wallet" tools:keep="@string/home_go_wallet">지갑을 교환하다</string>
+    <string name="home_choose_chain">화폐 종류를 선택하다</string>
+    <string name="home_deposit_wallet">위탁계정</string>
+
+    <string name="home_input_password">지갑암호를 입력하십시오</string>
+    <string name="home_input_note">비고 수정</string>
+    <string name="home_input_note_hint">새로운 내용을 입력하십시오</string>
+    <string name="home_input_fail">암호 입력 오류</string>
+
+    <string name="added_contacts">이미 이 연락인을 추가했습니다</string>
+
+    <string name="search_coin_name" tools:keep="@string/search_coin_name">화폐 종류의 명칭을 입력하십시오</string>
+    <string name="search_coin_none" tools:keep="@string/search_coin_none">이 화폐의 종류를 찾을 수 없습니다</string>
+    <string name="search_coin_hint">화폐의 종류를 찾습니다.</string>
+
+    <!--BePay页-->
+    <string name="home_transaction_record">거래기록</string>
+    <string name="home_transfer">이체하다</string>
+    <string name="home_transfer2">이체하다</string>
+    <string name="home_receipt">돈을 받다</string>
+    <string name="home_transaction_fails">거래실패</string>
+    <string name="home_packing" tools:keep="@string/home_packing">正在打包</string>
+    <string name="home_confirming">확인중</string>
+    <string name="home_transaction_success">거래성공</string>
+    <string name="home_introduction">소개</string>
+
+    <!--交易详情页-->
+    <string name="home_miner_fee">광부비\u3000</string>
+    <string name="home_transfer_address">이체 주소</string>
+    <string name="home_receipt_address">수납 주소</string>
+    <string name="home_block_info">블록 정보</string>
+    <string name="home_transaction_hash">거래HASH</string>
+    <string name="home_remarks_with_space" tools:keep="@string/home_remarks_with_space">비고\u3000\u3000</string>
+    <string name="home_no">없음</string>
+    <string name="home_add_contact">연락인을 추가하다</string>
+
+    <!--币介绍详情页-->
+    <string name="home_bty">비트원</string>
+    <string name="home_basic_info">기본자료</string>
+    <string name="home_currency_introduction">화폐 소개</string>
+    <string name="home_full_name">정식 명칭</string>
+    <string name="home_simple_name">약칭</string>
+    <string name="home_publish_time">발행시간</string>
+    <string name="home_publish_total_amount">발행총량</string>
+    <string name="home_circulation_total_amount">유통총량</string>
+    <string name="home_crowd_funding_price">크라우드펀딩</string>
+    <string name="home_official_website">관리웹사이트</string>
+    <string name="home_white_paper">백서</string>
+    <string name="home_block_chain_browser">블록 조회</string>
+    <string name="home_community">공동체</string>
+    <string name="home_sheld_exchange">거래소에 오르다</string>
+
+    <string name="home_no_currency_introduction">당분간 화폐 소개는 없습니다</string>
+
+    <!--转出页面-->
+    <string name="home_btc_transfer">BTC계정</string>
+    <string name="home_balance">잔고:%1$s%2$s</string>
+    <string name="home_confirm_transfer_currency">통화전환확인</string>
+    <string name="home_recharge" tools:keep="@string/home_recharge">충전</string>
+    <string name="home_confirm_recharge">충전 확인</string>
+    <string name="home_balance_insufficient">잔고 부족...</string>
+    <string name="home_balance_error" tools:keep="@string/home_balance_error">계좌이체 금액은 광부비 요금보다 커야 합니다</string>
+    <string name="home_input_greater_than_zero_amount">0보다 큰 금액을 입력하십시오</string>
+    <string name="home_confirm">확정</string>
+    <string name="home_pwd_input_error">암호 입력 오류</string>
+    <string name="home_please_input_receipt_address">화폐수취주소를 입력하십시오</string>
+    <string name="home_please_input_amount">금액을 입력해 주십시오</string>
+    <string name="home_receipt_send_address_is_same">화폐를 받을 주소와 보낼 주소는 같습니다.</string>
+    <string name="home_receipt_address_is_illegal">받을 화폐 주소는 합법적이지 않습니다!</string>
+    <string name="home_transfer_currency_success">환전 성공!</string>
+    <string name="home_transfer_currency_fails">환전 실패!</string>
+    <string name="home_collection_code" tools:keep="@string/home_collection_code">수취 번호</string>
+    <string name="home_parsing_qr_fails">이차원 코드 해석 실패</string>
+    <string name="home_hint_please_input_count">수량을 입력하십시오</string>
+    <string name="home_remarks" tools:keep="@string/home_remarks">설명</string>
+    <string name="home_chain_remarks">체인비고</string>
+    <string name="home_optional">（선택하여 기입）</string>
+    <string name="home_receipt_currency_address">수취 화폐 주소</string>
+    <string name="home_send_currency_address" tools:keep="@string/home_send_currency_address">발권 주소</string>
+    <string name="home_slow">느리다</string>
+    <string name="home_optimum">최고</string>
+    <string name="home_normal" tools:keep="@string/home_normal">정상</string>
+    <string name="home_fast">빨리</string>
+
+    <!--转入页面-->
+    <string name="home_latest_transaction">최신 거래</string>
+    <string name="home_receipt_currency">화폐를 받다</string>
+    <string name="home_hosting_address" tools:keep="@string/home_hosting_address">위탁 주소</string>
+    <string name="home_copy_success">복제 성공</string>
+    <string name="home_msg_permission_share_address">당신의 정상적인 사용을 위해 지갑은 약간의 기본적인 권한을 얻어야 합니다!</string>
+    <string name="home_scan_toast">청소 기능을 제대로 사용할 수 있도록 카메라와 파일 저장 권한을 획득해야 합니다!</string>
+
+    <string name="home_share_fails">공유실패</string>
+    <string name="home_cancel_share">공유 취소</string>
+    <string name="home_label_balance">잔고:</string>
+    <string name="home_click_qr_code_copy_address">2차원 코드를 클릭하여 주소를 복사합니다</string>
+    <string name="home_hint_recharge_other_wallet">다른 지갑을 사용하여 액세스해야 할 경우, 2차원 코드 트랜스포트를 스캔하십시오</string>
+    <string name="home_share_address">주소 공유</string>
+    <string name="home_send_number">발송수량</string>
+    <string name="home_local_remarks">로컬 비고</string>
+    <string name="transaction_time">거래시간</string>
+    <string name="chain_remarks_tips">상부 체인 비고: 정보상 체인, 체인에서 조회 가능</string>
+    <string name="local_remarks_tips">로컬 비고: 메시지가 체인에 맞지 않고 로컬에 저장됨</string>
+    <string name="text_tips">알았다</string>
+
+
+    <!--===============================我的==============================-->
+
+
+    <!-- myFragment -->
+    <string name="my_version" tools:keep="@string/my_version">버전</string>
+    <string name="my_me" tools:keep="@string/my_me">나</string>
+    <string name="my_lock" tools:keep="@string/my_lock">창고를 잠그다</string>
+    <string name="my_message">정보 센터</string>
+    <string name="my_message_tittle">제목</string>
+    <string name="my_message_author">저자</string>
+    <string name="my_introduce" tools:keep="@string/my_introduce">본 프로그램은 동전 지갑 개발 기술 팀에서 기술 지원을 제공합니다</string>
+    <string name="my_introduce_new" tools:keep="@string/my_introduce_new">Copyright ©.All Rights Reserved.항저우 본 체인 테크놀로지 저작권 소유</string>
+    <string name="my_latest_version">현재 이미 최신 버전임</string>
+    <string name="my_create_wallet">지갑을 만들다</string>
+    <string name="my_import_wallet">지갑을 가져오다</string>
+    <string name="small_wallet">작은 지갑 한 개</string>
+    <string name="my_copy">복제</string>
+    <string name="my_search">검색</string>
+
+    <string name="my_check_version">검사 업데이트</string>
+    <string name="my_version_toast_title">업데이트 알림</string>
+    <string name="my_version_toast">새 버전이 감지되었으며 업데이트되었는지 여부</string>
+    <!--托管账户-->
+    <string name="my_trusteeship" tools:keep="@string/my_trusteeship">신탁계정</string>
+    <string name="my_trusteeship_assets" tools:keep="@string/my_trusteeship_assets">신탁관리자산</string>
+    <string name="my_trusteeship_use" tools:keep="@string/my_trusteeship_use">사용 가능(개)</string>
+    <string name="my_trusteeship_value" tools:keep="@string/my_trusteeship_value">가치(원)</string>
+    <string name="my_trusteeship_exit" tools:keep="@string/my_trusteeship_exit">탈퇴하다</string>
+    <string name="my_trusteeship_exit_sure" tools:keep="@string/my_trusteeship_exit_sure">런아웃 확인</string>
+
+    <!--分享下载-->
+    <string name="my_share">공유 다운로드</string>
+    <string name="my_share_permission_toast">당신의 정상적인 사용을 위해 지갑은 저장 공간의 권한을 얻어야 합니다!</string>
+    <string name="my_share_failure">공유 실패</string>
+    <string name="my_share_cancel">공유 취소</string>
+    <string name="my_share_copy_address">다운로드 주소 복사</string>
+    <string name="my_share_share_address">공유 다운로드 주소</string>
+    <!--联系人部分-->
+    <string name="my_contact">연락인을 추가하다</string>
+    <string name="my_contact_add">연락인을 추가하다</string>
+    <string name="my_contact_toast" tools:keep="@string/my_contact_toast">연락할 사람을 찾을 수 없어요</string>
+    <string name="my_contact_nickname">닉네임</string>
+    <string name="my_contact_phone">전화번호</string>
+    <string name="my_contact_address">주소</string>
+    <string name="my_contact_go">이체하러 가다</string>
+    <string name="my_contact_scan">2차원 코드를 스캔하거나 주소를 입력합니다</string>
+    <string name="my_contact_scan_invalid">유효하지 않은 주소입니다!</string>
+    <string name="my_contact_detail_edit">편집하다</string>
+    <string name="my_contact_detail_choose_address">주소를 선택하세요</string>
+    <string name="my_contact_detail_no">당신은 없습니다</string>
+    <string name="my_contact_detail_wrong_coin">화폐 종류가 잘못되었으니, 선택하십시오</string>
+    <string name="my_contact_none">당신은 아직 연락인을 추가하지 않았습니다</string>
+    <string name="my_add_less_16">닉네임은 16문자보다 작아야 합니다</string>
+    <string name="my_add_11">핸드폰 번호 11자리 입력</string>
+    <string name="my_add_none">닉네임은 비워 둘 수 없음</string>
+    <string name="my_add_name">닉네임을 입력해 주세요.</string>
+    <string name="my_finish">완성</string>
+    <string name="my_add_add_address">주소를 첨사하십시오</string>
+    <string name="my_add_address_footer">주소 첨가</string>
+    <string name="my_add_add">첨가하십시오</string>
+    <string name="my_add_address">의 주소</string>
+    <string name="my_add_address_illegal">주소는 비합법적이다</string>
+    <string name="my_scan">쓸어 버리다</string>
+    <string name="my_scan_image">사진첩</string>
+    <string name="my_scan_toast">렌즈를 2차원 코드에 맞춰 스캔하십시오</string>
+    <string name="my_delete_success">삭제 성공</string>
+    <!--账户部分-->
+    <string name="my_wallet">지갑 관리</string>
+    <string name="my_wallet_detail_name">지갑 이름을 입력해주세요</string>
+    <string name="my_wallet_detail_name_exist">지갑 이름이 이미 존재합니다</string>
+    <string name="my_wallet_detail_password">지갑 비밀번호 입력</string>
+    <string name="my_wallet_detail_mnem">도움말 보기</string>
+    <string name="my_wallet_detail_change_password">암호 수정</string>
+    <string name="my_wallet_detail_wrong_password">암호 입력 오류</string>
+    <string name="my_wallet_detail_modify_name">이름을 수정하다</string>
+    <string name="my_wallet_detail_safe">안전 경고</string>
+    <string name="my_wallet_detail_delete_message">지갑 삭제는 도움말과 개인 키를 통해서만 찾을 수 있으며, 해당 지갑 삭제가 확정적인지 여부</string>
+    <string name="my_wallet_detail_delete">지갑 삭제</string>
+    <string name="my_wallet_detail_export">개인의 키를 도출하다.</string>
+    <string name="my_wallet_detail_backup" tools:keep="@string/my_wallet_detail_backup">백업 도움말</string>
+    <string name="my_wallet_detail_choose_chain">주 체인 선택</string>
+    <string name="my_wallet_set_password">비밀번호를 입력해 주세요.</string>
+    <string name="my_wallet_forget_password">비밀 번호 분실</string>
+    <string name="my_wallet_search_coin">Token 이름 또는 계약 주소 입력</string>
+    <string name="my_wallet_modified_success">성공적으로 수정 됨</string>
+
+    <string name="my_set_password">비밀번호가 성공적으로 설정되었습니다!</string>
+    <string name="my_set_password_toast">8-16자리 숫자, 알파벳 조합 입력</string>
+    <string name="my_set_password_different">두 차례 암호가 동일하지 않습니다!</string>
+    <string name="my_set_password_number_letter">숫자와 알파벳 조합을 입력하십시오</string>
+    <string name="my_change_password_old">구 암호를 입력하십시오</string>
+    <string name="my_change_password_new">새 암호 입력</string>
+    <string name="my_change_password_again">새 암호를 다시 입력하십시오</string>
+    <string name="my_change_password_wrong">오래된 암호 오류</string>
+    <string name="my_change_password_same">오래된 비밀번호와 같음</string>
+    <string name="my_change_password_success">비밀번호 수정 성공!</string>
+
+    <string name="my_about_us">우리에 대해서</string>
+    <string name="my_tran" tools:keep="@string/my_tran">프라이버시</string>
+    <string name="my_language">언어</string>
+    <string name="my_about_us_use">프로토콜 사용</string>
+    <string name="my_about_us_feedback">피드백 제안</string>
+
+
+    <string name="my_create_name">지갑 이름 설정</string>
+    <string name="my_create_letter">8-16 비트 문자열 입력</string>
+    <string name="my_import_backup_none">도움말 없음!</string>
+    <string name="my_import_backup_null">도움말은 비워 둘 수 없음</string>
+    <string name="my_import_start">가져오기 시작</string>
+    <string name="my_import_hint" tools:keep="@string/my_import_hint">도움말을 입력하여 영문 단어 사이를 빈칸으로 분리합니다</string>
+    <string name="my_import_chinese_hint" tools:keep="@string/my_import_chinese_hint">중국어 도움말을 입력하여 3자를 한 조로 설정합니다</string>
+    <!--助记词相关-->
+    <string name="create_mnemonic" tools:keep="@string/create_mnemonic">중국어</string>
+    <string name="create_mnemonic_hint">니모닉을 올바르게 저장하고 확인한 후 확인하십시오.</string>
+    <string name="create_mnemonic_change">도움말 바꾸기</string>
+    <string name="create_mnemonic_toast">팁 : 스크린 샷을 직접 저장하지 마십시오! 누군가가 니모닉 단어를 얻으면 자산을 직접 얻습니다!\n\n올바른 접근법 :\n\n방법 1 : 다른 오프라인 장치를 사용하고 사진을 찍어 저장합니다.\n방법 2 : 니모닉 단어를 올바르게 복사하여 안전한 곳에 보관하십시오.\n\n[백업 시작]을 클릭 한 후 기억하는 니모닉 단어를 확인해야합니다.</string>
+    <string name="mnemonic_wrong">도움말이 올바르지 않음</string>
+    <string name="backup_success">도움말 백업 성공</string>
+    <string name="backup_mnemonic">백업 도움말</string>
+    <string name="backup_order">각각의 단어를 올바른 순서대로 클릭하세요</string>
+    <string name="backup_next">다음</string>
+    <string name="backup_input" tools:keep="@string/backup_input">입력해 주세요</string>
+    <string name="mnemonic" tools:keep="@string/mnemonic">도움말</string>
+    <string name="backup_safe_prompt">보안 알림</string>
+    <string name="backup_later">잠시 후 백업</string>
+    <string name="backup_now">백업하러 가다</string>
+    <string name="validate_mnemonic">귀하의 백업을 검증하기 위한 도움말</string>
+    <string name="contacts_save">보존</string>
+    <string name="share_er_code">2차원 부호를 나누다</string>
+    <string name="my_wallet_password_tips">비밀번호를 입력해 주세요</string>
+    <string name="my_wallet_confirm_password_tips">비밀번호를 다시 입력해 주세요</string>
+    <string name="set_wallet_password">지갑 암호를 설정하세요</string>
+    <string name="confirm_wallet_password">지갑 비밀번호 확인</string>
+    <string name="share_share_to">나눔이 극에 달하다</string>
+    <string name="share_friends_circle">친구망</string>
+    <string name="share_wechat_friends">웨이신 친구</string>
+    <string name="share_qq" tools:keep="@string/share_qq">QQ</string>
+    <string name="share_cancel">취소</string>
+    <string name="title_add_coin">화폐 종류를 첨가하다</string>
+    <string name="title_introduction">@string/home_introduction</string>
+    <string name="title_ycc_red_packet" tools:keep="@string/title_ycc_red_packet">@string/red_packet_ycc_red_packet</string>
+    <string name="title_escrow_account" tools:keep="@string/title_escrow_account">신탁계정</string>
+    <string name="title_contact_customer_service" tools:keep="@string/title_contact_customer_service">@string/red_packet_xml_contact_customer_service</string>
+    <string name="title_set_pwd">비밀번호 설정</string>
+    <string name="title_agreement">서비스 프라이버시 조항</string>
+    <string name="title_about_us">우리에 대해서</string>
+    <string name="title_update_pwd">@string/update_password</string>
+    <string name="title_contacts_details">상세한 연락인</string>
+    <string name="title_transaction_details">상세한 거래내역</string>
+    <string name="title_wallet_details">지갑 설정</string>
+    <string name="title_my_wallet" tools:keep="@string/title_my_wallet">나의 지갑</string>
+    <string name="title_edit_contacts">편집연락자</string>
+    <string name="title_add_contacts" tools:keep="@string/title_add_contacts">@string/home_add_contact</string>
+    <string name="title_contacts">연락 담당자</string>
+    <string name="title_bluetooth">대량 전출</string>
+    <string name="title_devicelist">블루투스장치 선택</string>
+    <string name="title_address_moneys">잔고가 큰 것에서 작은 것 순서로 정렬됨</string>
+    <string name="tip" tools:keep="@string/tip">사랑스러운 도움말</string>
+    <string name="tipde" tools:keep="@string/tipde">이 기능은 잠시 개방되지 않았습니다</string>
+    <string name="tip_ok" tools:keep="@string/tip_ok">확정</string>
+    <string name="my_msg_fail">개인 정보 가져오기 실패</string>
+    <string name="suocang">창고를 잠그다</string>
+    <string name="rank_do" tools:keep="@string/rank_do">사람이 사용하고 있다</string>
+    <string name="pw_old_update">원본 암호 수정</string>
+    <string name="for_pw">비밀 번호 분실</string>
+    <string name="input_old_pw">6자리 원본 암호 입력</string>
+    <string name="p_input">입력해 주세요</string>
+    <string name="p_code">받은 인증번호</string>
+    <string name="img_check_success">그래픽 검증 성공</string>
+    <string name="code_send_success">인증번호 전송 성공!</string>
+    <string name="code_send_fail">인증번호 전송 실패!</string>
+    <string name="get_code">인증번호를 얻다</string>
+    <string name="checking" tools:keep="@string/checking">절환 중...</string>
+    <string name="c_delete">삭제</string>
+    <string name="o_delete">삭제 확인</string>
+    <string name="using_count" tools:keep="@string/using_count">사람이 사용하고 있다</string>
+    <string name="p_input_redcount" tools:keep="@string/p_input_redcount">붉은지갑 수량 입력</string>
+    <string name="p_input_phone">핸드폰 번호를 입력해주세요</string>
+    <string name="p_input_pw">지불 비밀번호 입력</string>
+    <string name="checked">보안 검증</string>
+    <string name="click_login">로그인 클릭</string>
+    <string name="home_share">나누다</string>
+    <string name="my_header">두상</string>
+    <string name="my_phone">핸드폰번호</string>
+    <string name="my_input_pw">결제 비밀번호</string>
+    <string name="my_logout">로그아웃</string>
+    <string name="set_up_pw">결제 비밀번호 설정</string>
+    <string name="update_pw">지급 비밀번호 수정</string>
+    <string name="home_total_assets" tools:keep="@string/home_total_assets">총자산</string>
+    <string name="home_backup" tools:keep="@string/home_backup">백업하러 가다</string>
+    <string name="home_backuped" tools:keep="@string/home_backuped">이미 백업됨</string>
+    <string name="input_wallet_name" tools:keep="@string/input_wallet_name">지갑 닉네임을 입력해주세요</string>
+    <string name="current_wallet" tools:keep="@string/current_wallet">(현재 지갑)</string>
+    <string name="feedback" tools:keep="@string/feedback">피드백 제안</string>
+    <string name="tip_notfound_coin">관련 화폐 종류를 찾지 못해 죄송합니다</string>
+    <string name="tip_search_coin">Token 이름이나 계약 주소를 입력하고, 당신이 추가할 화폐 종류를 찾지 않았다면, 우리에게 피드백을 제출해 주십시오.</string>
+    <string name="input_phone_code">인증번호를 입력하세요</string>
+    <string name="s_login">등록</string>
+    <string name="tip_phone_ok" tools:keep="@string/tip_phone_ok">정확한 전화번호를 입력하세요</string>
+    <string name="register_ok" tools:keep="@string/register_ok">등록 성공</string>
+    <string name="login_ok">로그인 성공</string>
+    <string name="tip_add_chain" tools:keep="@string/tip_add_chain">먼저 주 체인 화폐종류를 추가하세요</string>
+    <string name="copy_success">복제 성공</string>
+    <string name="start_back_up">백업 시작</string>
+    <string name="update_ok">갱신</string>
+    <string name="update_cancel">당분간 갱신하지 않음</string>
+    <string name="my_import_success">성공적으로 가져 왔습니다.</string>
+    <!--实名认证-->
+    <string name="real_name_edge_angle_integrity">모서리가 온전하다</string>
+    <string name="real_name_clear_font">글씨가 또렷하다</string>
+    <string name="real_name_luminance_uniformity">밝기가 고르다</string>
+    <string name="real_name_idcard_tip1">신분증 얼굴면을 올려주세요</string>
+    <string name="real_name_idcard_tip2">대륙 국민이 보유한 본인의 유효한 2대 신분증</string>
+    <string name="real_name_certificates_notice">증명촬영필지</string>
+    <string name="real_name_valid_certificates_font" tools:keep="@string/real_name_valid_certificates_font">증명내용 정면 촬영</string>
+    <string name="real_name_picture_with_certificates" tools:keep="@string/real_name_picture_with_certificates">신분증 들고 촬영</string>
+
+    <string name="real_name_real_name" tools:keep="@string/real_name_real_name">실명</string>
+    <string name="real_name_real_name_type_tip" tools:keep="@string/real_name_real_name_type_tip">실명을 입력해 주세요</string>
+    <string name="real_name_belong_to_country" tools:keep="@string/real_name_belong_to_country">소속국가</string>
+    <string name="real_name_belong_to_country_choose_tip" tools:keep="@string/real_name_belong_to_country_choose_tip">국적을 선택하세요</string>
+    <string name="real_name_certificates_type" tools:keep="@string/real_name_certificates_type">증명서 유형</string>
+    <string name="real_name_certificates_type_choose_tip" tools:keep="@string/real_name_certificates_type_choose_tip">증명서 유형을 선택하세요</string>
+    <string name="real_name_certificates_number" tools:keep="@string/real_name_certificates_number">증명서 번호</string>
+    <string name="real_name_certificates_number_type_tip" tools:keep="@string/real_name_certificates_number_type_tip">유효한 증명서 번호를 입력하세요</string>
+
+    <string name="basic_permission_rationale">권한을 열지 않으면 이 기능을 사용할 수 없습니다</string>
+    <string name="basic_permission_denied_title">권한은 이미 거절당했습니다</string>
+    <string name="basic_permission_denied_rationale">권한을 열지 않으면 이 기능을 사용할 수 없으며, 시스템 설정으로 이동하여 권한을 열 수 있습니다.</string>
+
+    <string name="basic_wheel_picker_choose_trade_type" tools:keep="@string/basic_wheel_picker_choose_trade_type">거래 유형 선택</string>
+    <string name="basic_wheel_picker_cancel" tools:keep="@string/basic_wheel_picker_cancel">취소</string>
+    <string name="basic_wheel_picker_ok" tools:keep="@string/basic_wheel_picker_ok">완성</string>
+    <string name="real_verify">실명 인증</string>
+    <string name="wallet_name">지갑 이름</string>
+    <string name="mnem_tip">분실 후 되찾을 수 있도록 당신의 조사서를 잘 보관해 주십시오.</string>
+    <string name="i_know">나는 알고 있습니다</string>
+    <string name="address_error">주소가 잘못되었습니다</string>
+    <string name="copy_str_success">주소 복사 성공</string>
+    <string name="per_upload">권한 신청</string>
+
+
+    <string name="config_code">2차원 코드를 확대한 후에 다시 시험해 보십시오.</string>
+
+
+    <!--  BluetoothChat -->
+    <string name="send" tools:keep="@string/send">Send</string>
+    <string name="not_connected">장비에 연결하지 않으셨습니다</string>
+    <string name="bt_not_enabled_leaving">블루투스 미시작</string>
+    <string name="title_connecting">접속 중...</string>
+    <string name="title_connected_to">이미 연결됨</string>
+    <string name="title_not_connected">연결되지 않음</string>
+
+    <!--  DeviceListActivity -->
+    <string name="scanning">장치를 스캔하는 중…</string>
+    <string name="select_device">연결할 디바이스 선택</string>
+    <string name="none_paired">어떠한 설비도 맞추지 못하다.</string>
+    <string name="none_found">장치를 찾을 수 없음</string>
+    <string name="title_paired_devices">설비를 맞추다</string>
+    <string name="title_other_devices">기타 가용 장비</string>
+    <string name="button_scan">스캔 장비</string>
+
+    <!-- Options Menu -->
+    <string name="secure_connect" tools:keep="@string/secure_connect">장비 연결 - 안전</string>
+    <string name="insecure_connect" tools:keep="@string/insecure_connect">장치 연결 - 안전하지 않음</string>
+    <string name="discoverable" tools:keep="@string/discoverable">설비를 발견하게 하다</string>
+    <string name="toin" tools:keep="@string/toin">진입</string>
+    <string name="sms_send">이미 발송(</string>
+
+    <string name="camera_and_location_rationale">포지셔닝 권한 획득 필요</string>
+
+
+    <string name="deposit_pw_verifycode_tip1">인증번호가 귀하의 휴대폰으로 전송되었습니다</string>
+    <string name="deposit_pw_verifycode_tip3">인증번호가 귀하의 이메일로 전송되었습니다</string>
+    <string name="deposit_pw_verifycode_tip2">당신은 %1$s 계정의 조작을 확인하기 위해 설정된 비밀번호를 사용할 수 있습니다.</string>
+    <string name="deposit_go_certification">인증하러 가다</string>
+    <string name="deposit_no_certification">미통과</string>
+    <string name="deposit_wait_certification">심사중</string>
+    <string name="deposit_already_certification">인증됨</string>
+    <string name="deposit_for_this_account">계좌번호로 해주세요%1$s</string>
+    <string name="deposit_no_paypw">지불 비밀번호가 설정되어 있지 않습니다</string>
+    <string name="deposit_set_paypw">설치하러 가다</string>
+    <string name="deposit_other_address">다중 주소</string>
+    <string name="pay_pw_sure_again">암호를 다시 입력하십시오</string>
+    <string name="pay_pw_not_match">두 번 암호 입력 불일치</string>
+    <string name="pay_pw_set_success">지불 비밀번호 설정 성공!</string>
+    <string name="pay_pw_update_success">지급 비밀번호 수정 성공!</string>
+    <string name="smallwallet" tools:keep="@string/smallwallet">작은 지갑</string>
+    <string name="not_support_deposit" tools:keep="@string/not_support_deposit">계정이 지원되지 않음</string>
+    <string name="redpacket">붉은지갑</string>
+
+    <string name="pay_pw_set">6자리 숫자 지불 비밀번호 설정</string>
+    <string name="pay_pw_sure">지불 비밀번호 확인</string>
+    <string name="pay_pw_verify_code">6자리 숫자 검증 코드</string>
+
+
+    <string name="invite_title">친한 친구를 초대하여 포상을 받다</string>
+    <string name="invite_rule">규칙</string>
+    <string name="invite_tip1">당신의 친한 친구에게 초대를 보냅니다</string>
+    <string name="invite_tip2">친구 등록으로 해당 임무 완료</string>
+    <string name="invite_tip3">포상을 받다</string>
+    <string name="invite_my_income">나의 수익</string>
+    <string name="invite_invitelist_tip">초대 목록</string>
+    <string name="invite_total_coins"><Data><![CDATA[<big><big><font color="#CC3969">%1$s</font></big></big> %2$s]]> </Data></string>
+    <string name="invite_total_num"><Data>%1$s인 초대되었습니다. 너무 좋습니다!</Data></string>
+
+    <string name="invite_rule_tip">작은 기교를 초청하다</string>
+    <string name="invite_rules">1.당신의 가족/친구/동료 등 지인을 초대할 때 성공률이 가장 높다.\n2.웨이신군/qq군에 나눔으로써 성공적인 초대 확률을 높일 수 있습니다.\n3.공고에 관심이 많으니 새로운 인센티브가 있을 수 있습니다. \n4.매일 꾸준히 나눠먹기</string>
+    <string name="invite_share_pic">초대 포스터 생성</string>
+    <string name="invite_share_url">초대 링크 생성</string>
+    <string name="invite_share_qr">대면 초대</string>
+    <string name="invite_list_title">초대 목록</string>
+    <string name="invite_mylist_tip">나의 초대</string>
+    <string name="invite_mylist_select">선별</string>
+    <string name="invite_mylist_num">초대인원(사람)</string>
+    <string name="invite_mylist_coins">수익(%1$s)</string>
+    <string name="invite_mylist_coins_empty">수익</string>
+
+    <string name="invite_choose_level_tip">추천 등급</string>
+    <string name="invite_choose_level_1">1급</string>
+    <string name="invite_choose_level_2">2급</string>
+    <string name="invite_choose_time_tip">월별 선별</string>
+    <string name="invite_choose_reset" tools:keep="@string/invite_choose_reset">재설정</string>
+    <string name="invite_choose_all">전부</string>
+    <string name="invite_reg">기등록</string>
+    <string name="invite_isreal">기실명</string>
+    <string name="invite_notreal">미실명</string>
+
+    <string name="invite_detail_tip">인센티브 내역</string>
+    <string name="invite_detail_type_tip">임무</string>
+    <string name="invite_detail_coins_tip">장려(%1$s)</string>
+    <string name="invite_detail_time_tip">배포 시간</string>
+    <string name="invite_detail_empty_tip">실명이라야 인센티브가 있어요</string>
+
+    <string name="invite_share_qr_tip1">%1$s 안전하게 다중 연결된 지갑</string>
+    <string name="invite_share_qr_tip2">많은 량의 화폐류 저장 지원</string>
+
+
+    <string name="invite_share_tip">나눔</string>
+    <string name="invite_share_new_tv">암호공유</string>
+    <string name="invite_share_new_savepic">이미지 저장</string>
+    <string name="invite_share_tv">암호 복제 성공</string>
+    <string name="invite_share_pic_tip">포스터 선택</string>
+    <string name="invite_share_pic_reg_tip1">사용을 환영합니다 %1$s</string>
+    <string name="invite_share_pic_reg_tip2">길게 눌러서 2차원 코드를 식별</string>
+    <string name="invite_share_url_title">귀하의 친한 친구가 당신을 동전지갑에 등록하고 로그인하는 즉시 좋은 선물을 누리도록 초대합니다!</string>
+    <string name="invite_share_url_content">동전 지갑 연합상 체인 구매광이 백만 STO 인센티브를 뿌리면, 양청호 대갑게를 교환할 수 있으니, 선착순!</string>
+
+    <string name="invite_share_pic_error">포스터 다운로드 실패, 재시도하십시오</string>
+
+    <string name="invite_share_mixpic_error">포스터 데이터 생성 실패, 재시도</string>
+    <string name="my_invite_reward_tip">초대에 선물이 있다</string>
+    <string name="my_invite_choose_year">년</string>
+    <string name="my_invite_choose_month">월</string>
+    <string name="my_sign_in">서명</string>
+    <!--<string name="my_space_tip">개인 센터</string>-->
+    <string name="invite_total_num_empty"><Data>%1$s인 초대했는데 힘내세요</Data></string>
+    <string name="my_sign_in_tip"><Data>서명</Data></string>
+
+
+    <!--加载提示-->
+    <string name="up_pull_load">상부에 적재하다</string>
+    <string name="release_load">적재량을 늦추다</string>
+    <string name="no_more">더는 없어요</string>
+    <string name="complete_load">추가 적재 완료</string>
+    <string name="down_pull_refresh">아래로 당겨서 새 것으로 만들다</string>
+    <string name="release_refresh">석방 쇄신</string>
+    <string name="complete_refresh">쇄신을 완수하다</string>
+    <string name="refreshing">쇄신 중...</string>
+
+    <string name="basicres_loading">로딩 중...</string>
+    <!--登录相关-->
+    <string name="rule_text">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
+    <string name="login_phone_login">전화번호 등록</string>
+    <string name="login_email_login">이메일등록</string>
+    <string name="login_password_login">암호등록</string>
+    <string name="login_verify_code_login">인증번호 등록</string>
+    <string name="login_phone_login_info">새로운 사용자 로그인 자동 등록</string>
+    <string name="login_phone_input">전화번호를 입력하십시오</string>
+    <string name="login_email_input">이메일을 입력하십시오</string>
+    <string name="login_phone_verify_code_input">인증번호를 입력하십시오</string>
+    <string name="login_phone_verify_code_get">인증번호를 받았습니다</string>
+    <string name="login_phone_password_input">암호를 입력하십시오</string>
+    <string name="login_phone_password_too_long">비밀번호는 최대 20자리입니다</string>
+    <string name="login_login">@string/s_login</string>
+    <string name="login_password_forget">암호를 잊으셨습니까?</string>
+    <string name="login_verify_code_not_received">인증번호를 받지 못하였습니까?</string>
+    <string name="login_verify_code_wait_time" tools:keep="@string/login_verify_code_wait_time">발송되었습니다(%1$s)s</string>
+    <string name="login_verify_code_info">인증번호는 전화로 알려드릴테니 주의해서 받아주세요!</string>
+    <string name="login_login_password">암호 등록</string>
+    <string name="login_login_password_re_set">새 암호 설정</string>
+    <string name="login_login_password_re_set_by_phone">핸드폰번호로 재설정하기</string>
+    <string name="login_login_password_re_set_by_email">이메일로 재설정하기</string>
+    <string name="login_login_password_re_set_long">새 암호 설정(6~20자리)</string>
+    <string name="login_login_phone_binding">전화번호 연결</string>
+    <string name="login_login_email_binding">이메일 연결</string>
+    <string name="login_binding_success">로그인 성공</string>
+
+
+    <string name="login_phone_error_toast">올바른 휴대폰 번호를 입력하십시오</string>
+    <string name="login_email_error_toast">우편함을 완벽하게 작성하십시오</string>
+    <string name="login_phone_null">아직 휴대폰은 연결하지 않았습니다</string>
+    <string name="login_email_null">이메일을 아직 연결하지 않으셨습니다</string>
+    <string name="login_un_register">아직 등록하지 않으셨습니다</string>
+    <string name="login_password_too_short">입력한 암호가 너무 짧습니다</string>
+
+    <!-- 用户信息-->
+    <string name="user_email">이메일</string>
+    <string name="user_set">설치하기</string>
+    <string name="user_re_set_password">수정하기</string>
+    <string name="user_binding">연결하기</string>
+
+
+    <!--market-->
+    <string name="main_market">시장가격</string>
+    <string name="hot_coins">메인코인</string>
+    <string name="coin_range">%1$s%%</string>
+    <string name="coin_price_r">¥%1$s</string>
+    <string name="coin_price_u">$%1$s</string>
+    <string name="coin_price_u_tip">≈$ %1$s</string>
+    <string name="coins_name_tip">코인명</string>
+    <string name="coins_price_tip">코인가격</string>
+    <string name="coins_range_tip">24시간변동</string>
+    <string name="coins_high">24시 고</string>
+    <string name="coins_low">24시 저</string>
+    <string name="coins_vol">24시 거래량</string>
+    <string name="coin_trade_type"><Data><![CDATA[<b><font color="#333649">%1$s</font></b><small>/%2$s</small>]]></Data></string>
+    <string name="coins_market_range_tip" tools:keep="@string/coins_market_range_tip">%1$s%2$s코인마켓변동팁</string>
+    <string name="coins_market_range" tools:keep="@string/coins_market_range">%1$s%%</string>
+    <string name="coins_search_history_tip">코인검색결과팁</string>
+    <string name="coins_search_hot_tip">주요코인검색팁</string>
+    <string name="coins_clear_history">코인검색정리</string>
+    <string name="coins_search_hotcoins_bty">BTY</string>
+    <string name="coins_search_hotcoins_ycc">YCC</string>
+    <string name="coins_name_namech">%1$s，%2$s</string>
+    <string name="add_optional_coin_tip" tools:keep="@string/add_optional_coin_tip">코인선택을 추가중</string>
+    <string name="remove_optional_coin_tip" tools:keep="@string/remove_optional_coin_tip">코인선택을 제거중</string>
+    <string name="add_optional_coin_success">코인추가선택 성공</string>
+    <string name="remove_optional_coin_success">코인선택제거 성공</string>
+
+    <string name="market_favorites">즐겨찾기</string>
+    <string name="market_BitNasdaq">BitNasdaq</string>
+    <string name="market_zhaobi">코인찾기</string>
+    <string name="market_binance" tools:keep="@string/market_binance">바이낸스</string>
+    <string name="market_huobipro">호우비pro</string>
+    <string name="market_favorite_empty_tip">즐겨찾기 비우기</string>
+
+
+    <!--discover-->
+    <string name="main_discover" tools:keep="@string/main_discover">주요발견</string>
+    <string name="discover_news">뉴스발견</string>
+    <string name="news_newsflash">속보</string>
+    <string name="news_notice">알림</string>
+    <string name="news_article">뉴스주제</string>
+    <string name="news_unfold">방출</string>
+    <string name="news_fold">중단</string>
+    <string name="news_info">상세정보</string>
+    <string name="notice_info">상세공고</string>
+
+    <string name="news_share">공유</string>
+    <string name="news_share_tip">QR받기「%1$s」APP</string>
+    <string name="news_share_error">공유에러</string>
+
+    <string name="today">오늘  </string>
+    <string name="yestoday">어제  </string>
+
+    <string name="monday">월요일</string>
+    <string name="tuesday">화요일</string>
+    <string name="wednesday">수요일</string>
+    <string name="thursday">목요일</string>
+    <string name="friday">금요일</string>
+    <string name="saturday">토요일</string>
+    <string name="sunday">일요일</string>
+
+    <string name="news_source">출처：%1$s</string>
+
+
+    <string name="web_copy_link">링크복제</string>
+    <string name="web_open_outside">브라운저에서 열기</string>
+    <string name="change_language">언어교환</string>
+    <string name="rmb_name">인민폐</string>
+    <string name="rmb_name_with_sign">인민폐 (¥)</string>
+    <string name="usd_name" tools:keep="@string/usd_name">미달러</string>
+    <string name="usd_name_with_sign" tools:keep="@string/usd_name_with_sign">미달러 ($)</string>
+    <string name="show_money">표시통화</string>
+    <string name="login_go_login">로그인하십시오！</string>
+
+    <!--网络请求-->
+    <string name="network_data_empty">잠시 데이터가 없습니다</string>
+    <string name="network_loading"></string>
+    <string name="network_net_connected">네트워크가 이미 연결되어 있음</string>
+    <string name="network_net_error">네트워크가 힘을 주지 않으면, 잠시 후에 다시 시도하십시오.</string>
+    <string name="network_server_error">서버 이상</string>
+    <string name="network_no_more">더는 없습니다</string>
+
+    <string name="not_open">아직 개방하지 않습니다</string>
+
+    <string name="explore_go_deposit_login">위임계정 승인 대기 로그인?</string>
+    <string name="explore_go_deposit_change" tools:keep="@string/explore_go_deposit_change">위임계정 승인 화면이동?</string>
+    <string name="explore_go_wallet_creat">계갑승인 생성?</string>
+    <string name="explore_go_wallet_change">지갑승인 화면이동?</string>
+
+    <!--    //待翻译-->
+    <string name="explore_dapp_disclaimer_title">책임성명</string>
+    <string name="explore_dapp_disclaimer">당신은 곧 제3자을 사용할것입니다DApp,확인은 제3자의 사용자 프로토콜과 프리이버시 정책에 즉시 동의합니다,귀하가 DAPP에서 사용하는 모든 행위와 사용상황은 DAPP의 공급업체가 담당합니다.</string>
+    <string name="explore_dg_create">바로설립</string>
+    <string name="explore_dg_change">바로전환</string>
+    <string name="explore_dg_login">바로로그인</string>
+    <string name="explore_dg_cancel">고려하기</string>
+    <string name="explore_dg_experience">체험하기</string>
+    <string name="explore_dg_experience_title">체험탐색DApp</string>
+    <string name="explore_dg_experience_content">DAPP란? DAPP는 바로 블록체인의 응용입니다, 체험을 시작해 보세요.</string>
+
+    <string name="explore_lastapp">최근사용</string>
+
+
+    <string name="explore_show_all">전체보기</string>
+    <string name="explore_all_dapp">적용하기</string>
+
+    <!--导入助记次-->
+    <string name="import_wallet_hint0">도움말을 문자구분하여입력</string>
+    <string name="import_wallet_hint1">도움말을 문자구분하여입력</string>
+    <string name="import_wallet_hint2">도움말을 문자구분하여입력</string>
+    <string name="import_wallet_tips">코인지갑은 BIP표준에 따라 생성 도움말을 지원합니다.</string>
+    <string name="import_wallet_chain_name">코인지갑명:</string>
+    <string name="import_wallet_type0">도움말 가져오기</string>
+    <string name="import_wallet_type1">개인키 입력</string>
+    <string name="import_wallet_type2">주소입력</string>
+    <string name="import_wallet_pri_key_error">개인키 오류</string>
+    <string name="import_wallet_mnem_repeat">도움말 중복!</string>
+    <string name="import_wallet_wallet_name">지갑</string>
+
+    <string name="wallet_no_bty">지원하지 않습니다</string>
+
+    <string name="main_host_chose">메인환경 선택</string>
+    <string name="main_host_chose_china">메인환경 중국</string>
+    <string name="main_host_chose_japan">메인환경 일본</string>
+
+    <string name="my_wallets_chose1">지갑선택1</string>
+    <string name="my_wallets_chose2">지갑선택2</string>
+    <string name="my_wallets_current_wallet">보유지갑</string>
+    <string name="my_wallets_login">지갑 로그인</string>
+    <string name="my_wallets_mnem_walllet">도움말</string>
+    <string name="my_wallet_detail_update_name">지갑 명 등록</string>
+    <string name="my_wallet_detail_out_mnem">도움말보기</string>
+    <string name="my_wallet_read_toast">선택사항</string>
+    <string name="my_wallet_login">등록/가입</string>
+    <string name="my_wallet_fast_in">빠른등록</string>
+
+    <string name="go_backup_first" tools:keep="@string/go_backup_first">초기화면으로 이동 백업</string>
+    <string name="go_backup_now">즉시백업</string>
+    <string name="backup_wallet">지갑백업</string>
+    <string name="block_chain_wallet">블록체인지갑</string>
+    <string name="backup_content">백업이 성공하면 귀하의 소형지갑이 자동으로 블록체인지갑으로 업데이트됩니다! 백업하면 지갑이 더욱 안전해질것입니다.</string>
+    <string name="backup_content_force">귀하의 지갑 자금이 인민폐로 환산하여 이미 1000위엔을 넘었습니다. 자금보안을 위해 도움말 백업을 완료하십시오, 백업완료 후 자동으로 승격됩니다.</string>
+    <string name="backup_title">힌트</string>
+
+    <!--海外认证-->
+    <string name="manual_take_picture">사진찰영</string>
+    <string name="manual_choose_picture">사진앨범선택</string>
+    <string name="manual_country">나라선택</string>
+    <string name="manual_verify" tools:keep="@string/manual_verify">해외인증</string>
+    <string name="manual_id_type">신분증선택</string>
+    <string name="manual_photo_demo">1.얼굴이 선명하게 나와야됩니다 \n 2.글씨가 잘보이도록합니다  \n 3.두손이 모두 보이도록 합니다</string>
+    <string name="manual_sub_result">신청이 완료되어 심사중 입니다.\n 3일 업무일 기준으로 심사가 진행됩니다.\n문의 사항은 고객센터：weixin：bityuankefu</string>
+    <string name="manual_name">실명</string>
+    <string name="manual_real_name">실명입력</string>
+    <string name="manual_country_choose">국가선택</string>
+    <string name="manual_id_type_hint">신분증유형선택</string>
+    <string name="manual_id_code">신분증번호</string>
+    <string name="manual_id_code_hint">유효한 신분증번호 입력</string>
+    <string name="manual_photo_de">샘플사진</string>
+    <string name="manual_id_hint">신분증 앞면을 손에 들고 사진을 찍어주세요</string>
+    <string name="manual_id_hint_no">신분증 뒤면을 들고 사진을 찍어주세요</string>
+    <string name="manual_sub">제출심사</string>
+    <string name="manual_verify_no">죄송합니다. 심사에 통과 하지 못했습니다.</string>
+    <string name="manual_sub_re">다시 자료제출하기</string>
+    <string name="verify_china">얼굴 인식</string>
+    <string name="verify_china_prc">P.R.C</string>
+    <string name="verify_no_china">수동 인증</string>
+    <string name="verify_no_china_prc">Non P.R.C</string>
+    <string name="verify_ja">일본사용자</string>
+
+    <!--消息中心-->
+    <string name="msg_transaction">이체대금알림</string>
+    <string name="msg_system">시스템알림</string>
+    <string name="game_sign">게임서명</string>
+
+    <string name="hd_wallet" tools:keep="@string/hd_wallet">HD지갑</string>
+
+    <string name="capture_error_address" tools:keep="@string/capture_error_address">캡쳐주소에러</string>
+    <string name="capture_no_coin">상대코인추가</string>
+    <string name="in_set_money">금액설정</string>
+    <string name="in_universal">사용가능</string>
+    <string name="in_exclusive">전속</string>
+    <string name="in_common_tip">입급지갑으로 적용하기</string>
+    <string name="in_bi_tip">적용%1$s입금</string>
+    <string name="in_p_in">입력하세요</string>
+    <string name="in_p_amount">거래할 수량을 입력하세요</string>
+    <string name="in_r_money">금액수정</string>
+
+
+    <!--inactivity-->
+    <string name="in_share_name">코인받기%1$s</string>
+    <string name="in_share_address_tip">지갑주소</string>
+    <string name="in_share_app_tip"> APP스캔다운</string>
+    <string name="in_common_tip1">모든지갑의입금을 적용하다</string>
+    <string name="in_bi_tip1">%1$s입금에만 적용</string>
+
+    <!--myfragment-->
+    <string name="my_space_tip">계정관리</string>
+    <string name="my_space_setting">설치하기</string>
+    <string name="my_space_download">다운로드</string>
+    <string name="my_setting_language">언어선택</string>
+    <string name="my_contact_us">고객센터연락</string>
+    <string name="my_contact_us_wx">고객센터위쳇</string>
+    <string name="my_contact_us_copid">고객위쳇동기화</string>
+    <string name="main_msg">잡담</string>
+
+    <string name="chat_tips_share_title" tools:keep="@string/chat_tips_share_title">Bwallet</string>
+    <string name="chat_tips_share_content">블록 체인 지갑, 개인 키 관리, 대규모 통화 지원 및 다양한 스마트 계약 작성</string>
+    <string name="chat_tip_packet_share_title">친구가 당신에게 큰 빨간 봉투%1$s를 보냈습니다</string>
+    <string name="chat_tip_packet_share_content">디지털 자산을 고속으로 송수신하고 다른 빨간 봉투 환경을 경험할 수 있습니다.</string>
+    <string name="application_name">@string/app_name</string>
+    <string name="trans_all">전부</string>
+    <string name="bind_phone">· 핸드폰 번호 바 인 딩</string>
+    <string name="bind_mailbox">· 메 일 박스 바 인 딩</string>
+    <string name="name_success">· 실명 인증 성공</string>
+    <string name="exp_tips">이 애플리케이션은 참가 조건을 충족해야합니다：</string>
+    <string name="go_user">개인 센터로 이동</string>
+    <string name="small_wallet_update_title">지갑 업그레이드</string>
+    <string name="small_wallet_go_update">업그레이드</string>
+    <string name="small_wallet_update_warning1">사용자 자산의 안전을 위해 모든 원 클릭 지갑을 니모닉 지갑으로 업그레이드해야합니다. 니모닉이 올바르게 저장되어 있는지 확인하십시오.</string>
+    <string name="small_wallet_update_warning2">문제가 발생하면 월렛을 제거하지 말고 제 시간에 고객 서비스에 문의하십시오.</string>
+    <string name="small_wallet_set_password">먼저 비밀 번 호 를 설정 하 세 요.</string>
+    <string name="state_reloading">새로 고침</string>
+    <string name="str_introduce">通证介绍</string>
+    <string name="name_si_success">· 드라이버 인증에 성공했습니다.</string>
+    <string name="tab_fleet"> 차량 행렬</string>
+    <string name="main_yun">갱부</string>
+    <string name="string_check_mnem">开始校验</string>
+    <string name="change_password">修改密码</string>
+    <string name="wallet_mnem">助记词账户</string>
+    <string name="wallet_priv">私钥账户</string>
+    <string name="wallet_recover">找回账户</string>
+    <string name="export_pub">导出公钥</string>
+    <string name="bind_recover">绑定找回钱包</string>
+</resources>

@@ -119,19 +119,19 @@ class MyWalletsActivity : BaseActivity() {
                     when (wallet.type) {
                         TYPE_NOMAL -> {
                             ivWalletType.visibility = View.VISIBLE
-                            tvWalletType.text = "助记词账户"
+                            tvWalletType.text = getString(R.string.wallet_mnem)
                             ivWalletType.imageResource = R.mipmap.my_wallet_coins
                             rlWallet.backgroundResource = R.mipmap.my_wallet_bg_black
                         }
                         TYPE_PRI_KEY -> {
                             ivWalletType.visibility = View.VISIBLE
-                            tvWalletType.text = "私钥账户"
+                            tvWalletType.text = getString(R.string.wallet_priv)
                             val chain = wallet.coinList[0].chain
                             ivWalletType.imageResource = getWalletIcon(chain)
                             rlWallet.backgroundResource = getWalletBg(chain)
                         }
                         TYPE_RECOVER -> {
-                            tvWalletType.text = "找回账户"
+                            tvWalletType.text = getString(R.string.wallet_recover)
                             ivWalletType.visibility = View.GONE
                             rlWallet.backgroundResource = R.mipmap.my_wallet_bg_recover
                         }
