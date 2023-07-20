@@ -22,6 +22,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.alibaba.android.arouter.launcher.ARouter
 import com.alibaba.fastjson.JSON
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.RouterPath.PARAM_WC_URL
 import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
 import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.base.PRE_X_RECOVER
@@ -31,6 +32,7 @@ import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.db.entity.PWallet.*
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.utils.GoWallet
+import com.fzm.walletdemo.IApplication
 import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.FragmentHomeBinding
 import com.fzm.walletdemo.ui.activity.MainActivity
@@ -41,6 +43,11 @@ import com.fzm.walletmodule.ui.fragment.WalletFragment
 import com.fzm.walletmodule.utils.ClickUtils
 import com.fzm.walletmodule.vm.WalletViewModel
 import com.jeremyliao.liveeventbus.LiveEventBus
+import com.walletconnect.android.Core
+import com.walletconnect.android.CoreClient
+import com.walletconnect.android.relay.ConnectionType
+import com.walletconnect.web3.wallet.client.Wallet
+import com.walletconnect.web3.wallet.client.Web3Wallet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,6 +59,7 @@ import org.json.JSONObject
 import org.koin.android.ext.android.inject
 import org.litepal.LitePal
 import org.litepal.extension.find
+import timber.log.Timber
 import walletapi.NoneDelayTxParam
 import walletapi.WalletRecover
 import walletapi.Walletapi
@@ -130,8 +138,9 @@ class HomeFragment : Fragment() {
                 val toAddress = scans[3]
                 val amount = scans[4]
                 showPwdDialog(chooseCoin, xAddress, toAddress, amount)
-            }else if(scan.contains("wc:")) {
-                //handleWalletConnect(context, scan)
+            }else if(scan.startsWith("wc:")) {
+                ARouter.getInstance().build(RouterPath.APP_WCONNECT)
+                    .withString(RouterPath.PARAM_WC_URL, scan).navigation()
             }
 
         })
@@ -162,13 +171,6 @@ class HomeFragment : Fragment() {
         }
 
         initMsg()
-    }
-
-
-    private fun handleWalletConnect(context: Context?, url: String?) {
-        val intent = Intent(context, WConnectActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-        context?.startActivity(intent)
     }
 
 
@@ -410,4 +412,5 @@ class HomeFragment : Fragment() {
 
         walletViewModel.getNoticeList(1, 3, 1)
     }
+
 }

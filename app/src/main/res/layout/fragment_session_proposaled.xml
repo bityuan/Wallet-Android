@@ -1,31 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/fl_wc_grant"
-    android:visibility="gone"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F8F8FA">
 
 
     <LinearLayout
+        android:layout_marginTop="100dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/iv_dapp_icon"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="60dp" />
 
         <TextView
-            android:id="@+id/tv_dapp_name"
+            android:id="@+id/tv_wallet_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="12dp"
-            android:text="xx请求连接你的钱包"
+            android:text="--"
             android:textColor="@color/gray_349"
             android:textSize="15sp" />
 
@@ -34,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="13dp"
+            android:layout_marginTop="15dp"
             android:text="http://3784r83987294294"
             android:textColor="@color/gray_8e"
             android:textSize="12sp" />
@@ -42,40 +36,62 @@
 
         <LinearLayout
             android:layout_width="match_parent"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="33dp"
+            android:layout_marginTop="50dp"
             android:layout_marginRight="16dp"
             android:background="@drawable/bg_white_r10"
             android:orientation="vertical">
 
+
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
-                android:drawableLeft="@drawable/dot_normal"
                 android:drawablePadding="5dp"
-                android:gravity="center"
-                android:text="允许获取当前钱包地址"
+                android:text="钱包地址"
                 android:textColor="@color/gray_8e"
+                android:textSize="14sp" />
+            <TextView
+                android:id="@+id/tv_address"
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:drawablePadding="5dp"
+                android:text="--"
+                android:textColor="@color/gray_33"
                 android:textSize="14sp" />
 
             <View
                 android:layout_width="match_parent"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
                 android:layout_height="1px"
-                android:layout_marginLeft="30dp"
+                android:layout_marginStart="30dp"
                 android:background="#DDDDDD" />
-
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
-                android:drawableLeft="@drawable/dot_normal"
+                android:drawablePadding="5dp"
+                android:text="当前网络"
+                android:textColor="@color/gray_8e"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tv_chain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="10dp"
                 android:drawablePadding="5dp"
                 android:gravity="center"
-                android:text="允许向当前钱包请求签名"
-                android:textColor="@color/gray_8e"
+                android:text="--"
+                android:textColor="@color/gray_33"
                 android:textSize="14sp" />
 
         </LinearLayout>
@@ -95,38 +111,21 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:drawableRight="@drawable/ic_right"
+            android:drawablePadding="5dp"
             android:text="该服务由 WalletConnect 协议支持" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp">
-
 
             <Button
-                android:id="@+id/btn_refuse"
-                android:layout_width="0dp"
+                android:id="@+id/btn_dis"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/my_wallets_create"
-                android:text="拒绝"
-                android:textColor="@color/color_7190FF"
-                android:textSize="17sp" />
-
-            <Button
-                android:id="@+id/btn_grant"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_weight="1"
-                android:background="@drawable/my_wallets_import"
+                android:layout_margin="30dp"
+                android:background="@drawable/my_wallets_red"
                 android:gravity="center"
-                android:text="授权"
+                android:text="断开连接"
                 android:textColor="@color/white"
                 android:textSize="17sp" />
 
-        </LinearLayout>
 
     </LinearLayout>
 

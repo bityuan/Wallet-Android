@@ -15,6 +15,11 @@ import java.util.*
 class GoWallet {
     companion object {
 
+        const val WEB3_BNB = "https://bsc.publicnode.com"
+        const val WEB3_ETH = "https://rpc.flashbots.net"
+        const val CHAIN_ID_ETH = "eip155:1"
+        const val CHAIN_ID_BNB = "eip155:56"
+
         private val gson = Gson()
 
         private val util = Util()
@@ -603,6 +608,7 @@ class GoWallet {
                         coinToken.tokenSymbol = ""
                     }
                 }
+
                 Walletapi.TypeYccString -> {
                     if (platform == "btc" || platform == "bty" || platform == "ethereum") {
                         coinToken.cointype = Walletapi.TypeYccString
@@ -629,9 +635,10 @@ class GoWallet {
         class CoinToken {
             var cointype: String = ""
             var tokenSymbol: String = ""
+
             //是否要代扣,默认不代扣
-            var proxy:Boolean = false
-            var exer:String = ""
+            var proxy: Boolean = false
+            var exer: String = ""
         }
 
 
@@ -666,6 +673,33 @@ class GoWallet {
             }, getUtil())
 
             return walletRecoverParam
+        }
+
+        fun getChainName(chainId: String?): String {
+            return when (chainId) {
+                CHAIN_ID_ETH -> {
+                    "ETH"
+                }
+
+                CHAIN_ID_BNB -> {
+                    "BNB"
+                }
+
+                else -> "ETH"
+            }
+        }
+        fun getWeb3Url(chainId: String?): String {
+            return when (chainId) {
+                CHAIN_ID_ETH -> {
+                    WEB3_ETH
+                }
+
+                CHAIN_ID_BNB -> {
+                    WEB3_BNB
+                }
+
+                else -> WEB3_BNB
+            }
         }
     }
 }

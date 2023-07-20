@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_wc"
+    app:startDestination="@id/fragment_main">
+
+
+    <fragment
+        android:id="@+id/fragment_main"
+        android:name="com.fzm.walletdemo.wcv2.WCLoadingFragment" />
+
+
+    <action
+        android:id="@+id/action_to_sessionProposal"
+        app:destination="@id/dialog_session_proposal_fragment" />
+
+    <fragment
+        android:id="@+id/dialog_session_proposal_fragment"
+        android:name="com.fzm.walletdemo.wcv2.SessionProposalFragment" />
+    <action
+        android:id="@+id/action_to_sessionProposaled"
+        app:destination="@id/dialog_session_proposaled_fragment" />
+
+    <fragment
+        android:id="@+id/dialog_session_proposaled_fragment"
+        android:name="com.fzm.walletdemo.wcv2.SessionProposaledFragment" />
+
+
+    <action
+        android:id="@+id/action_to_sessionRequest"
+        app:destination="@id/dialog_session_request_fragment" />
+
+    <dialog
+        android:id="@+id/dialog_session_request_fragment"
+        android:name="com.fzm.walletdemo.wcv2.SessionRequestFragment" />
+
+
+</navigation>

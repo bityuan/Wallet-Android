@@ -9,21 +9,33 @@ import com.fzm.wallet.sdk.IPConfig
 import com.fzm.wallet.sdk.base.WalletModuleApp
 import com.fzm.walletmodule.net.walletModule
 import com.umeng.commonsdk.UMConfigure
+import com.walletconnect.android.Core
+import com.walletconnect.android.CoreClient
+import com.walletconnect.android.relay.ConnectionType
+import com.walletconnect.web3.wallet.client.Wallet
+import com.walletconnect.web3.wallet.client.Web3Wallet
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
+import timber.log.Timber
 
 class IApplication : Application() {
+
 
     companion object {
         const val APP_SYMBOL = "open_wallet"
         const val APP_KEY = "0425823a38b591b104ca0c3fcf1f3d9d"
         const val BASE_URL = "http://8.218.140.119:8082"
         const val GO_URL = "https://8.218.140.119:8083"
+        private lateinit var instance: IApplication
+        fun getInstance(): IApplication {
+            return instance
+        }
     }
 
     override fun onCreate() {
         super.onCreate()
+        instance = this
         //开源环境
         //BWallet.get().setUrls(BASE_URL,GO_URL)
         val baseUrl = when (W.appType) {
@@ -65,7 +77,9 @@ class IApplication : Application() {
             ARouter.openDebug()
         }
         ARouter.init(this)
-        initUmeng()
+        if (!BuildConfig.DEBUG) {
+            initUmeng()
+        }
     }
 
 
@@ -74,7 +88,5 @@ class IApplication : Application() {
         UMConfigure.init(this, IPConfig.UMENG_APP_KEY, "test", UMConfigure.DEVICE_TYPE_PHONE, "");
     }
 
-    private fun initWCV2(){
 
-    }
 }
