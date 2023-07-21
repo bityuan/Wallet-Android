@@ -125,6 +125,7 @@ class SessionRequestFragment : BottomSheetDialogFragment() {
 
 
         binding.tvCancel.setOnClickListener {
+            dismiss()
             val sessionRequestResponse = Wallet.Params.SessionRequestResponse(
                 sessionRequestData.topic,
                 Wallet.Model.JsonRpcResponse.JsonRpcError(
@@ -219,8 +220,13 @@ class SessionRequestFragment : BottomSheetDialogFragment() {
             GoWallet.signTran(chainName, bCreate, privKey, 2)
         logDebug("签名数据： $signed")
 
-        //val  send = web3j.ethSendRawTransaction(signed).send()
-        //val sendHash = send.transactionHash
+     /*   lifecycleScope.launch(Dispatchers.IO) {
+            val  send = web3j.ethSendRawTransaction(signed).send()
+            val sendHash = send.transactionHash
+            logDebug("发送数据： $sendHash")
+        }*/
+
+
         val sendHash = GoWallet.sendTran(chainName, signed!!, "")
         logDebug("发送数据： $sendHash")
         withContext(Dispatchers.Main){

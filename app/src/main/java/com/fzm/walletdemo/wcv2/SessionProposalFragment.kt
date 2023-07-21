@@ -16,6 +16,7 @@ import com.walletconnect.web3.wallet.client.Web3Wallet
 class SessionProposalFragment : BottomSheetDialogFragment() {
     private var address: String? = ""
     private var chooseChain: String = ""
+    private var chain: String? = ""
     private lateinit var binding: FragmentSessionProposalBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -32,7 +33,7 @@ class SessionProposalFragment : BottomSheetDialogFragment() {
             val name = it.getString("name")
             val proposerPublicKey = it.getString("proposerPublicKey")
             val sessionTopic = it.getString("sessionTopic")
-            val chain = it.getString("chain")
+            chain = it.getString("chain")
             //56:bsc
             when (chain) {
                 GoWallet.CHAIN_ID_ETH -> {
@@ -43,8 +44,13 @@ class SessionProposalFragment : BottomSheetDialogFragment() {
                     chooseChain = "BNB"
 
                 }
+
+                GoWallet.CHAIN_ID_BTY -> {
+                    chooseChain = "BTY"
+
+                }
             }
-            address = GoWallet.getChain(chooseChain)?.address
+            address = GoWallet.getChain(if (chooseChain == "BTY") "ETH" else chooseChain)?.address
             val namespaces = configNamespaces()
 
 
@@ -67,13 +73,13 @@ class SessionProposalFragment : BottomSheetDialogFragment() {
                 }
 
 
-                val bundle = Bundle()
-                bundle.putString("url", url)
-                bundle.putString("name", name)
-                bundle.putString("address", address)
-                bundle.putString("chooseChain", chooseChain)
-                bundle.putString("sessionTopic", sessionTopic)
-                findNavController().navigate(R.id.action_to_sessionProposaled, bundle)
+                //val bundle = Bundle()
+                //bundle.putString("url", url)
+                //bundle.putString("name", name)
+                //bundle.putString("address", address)
+                //bundle.putString("chooseChain", chooseChain)
+                //bundle.putString("sessionTopic", sessionTopic)
+                //findNavController().navigate(R.id.action_to_sessionProposaled, bundle)
 
             }
         }
@@ -82,7 +88,7 @@ class SessionProposalFragment : BottomSheetDialogFragment() {
     private fun configNamespaces(): Map<String, Wallet.Model.Namespace.Session> {
         return mapOf(
             "eip155" to Wallet.Model.Namespace.Session(
-                listOf("${GoWallet.CHAIN_ID_ETH}:$address","${GoWallet.CHAIN_ID_BNB}:$address"),
+                listOf("$chain:$address"),
                 listOf("personal_sign", "eth_sendTransaction", "eth_signTransaction"),
                 listOf("chainChanged", "accountsChanged"),
                 null

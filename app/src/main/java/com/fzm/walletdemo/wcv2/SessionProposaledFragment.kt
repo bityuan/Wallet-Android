@@ -29,17 +29,17 @@ class SessionProposaledFragment : BottomSheetDialogFragment() {
             val address = it.getString("address")
             val chooseChain = it.getString("chooseChain")
             val sessionTopic = it.getString("sessionTopic")
+            logDebug("sessionTopic = $sessionTopic")
 
             binding.tvWalletState.text = "$name 已经与下列钱包建立连接"
             binding.tvDappUrl.text = url
             binding.tvAddress.text = address
             binding.tvChain.text = chooseChain
-
             binding.btnDis.setOnClickListener {
                 sessionTopic?.let { topic ->
                     val sessionDisconnect = Wallet.Params.SessionDisconnect(topic)
                     Web3Wallet.disconnectSession(sessionDisconnect) { error ->
-                        logDebug("$error")
+                        logDebug("disconnectSession = $error")
                     }
                 }
             activity?.finish()

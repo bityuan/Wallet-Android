@@ -14,11 +14,11 @@ import java.util.*
 
 class GoWallet {
     companion object {
-
         const val WEB3_BNB = "https://bsc.publicnode.com"
         const val WEB3_ETH = "https://rpc.flashbots.net"
         const val CHAIN_ID_ETH = "eip155:1"
         const val CHAIN_ID_BNB = "eip155:56"
+        const val CHAIN_ID_BTY = "eip155:2999"
 
         private val gson = Gson()
 
@@ -683,6 +683,9 @@ class GoWallet {
 
                 CHAIN_ID_BNB -> {
                     "BNB"
+                }
+                CHAIN_ID_BTY -> {
+                    "BTY"
                 }
 
                 else -> "ETH"

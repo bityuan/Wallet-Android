@@ -121,7 +121,9 @@ ext {
     broccoli = "me.samlss:broccoli:1.0.0"
     swipeRecyclerview = "com.yanzhenjie.recyclerview:x:1.3.2"
     web3j = "org.web3j:core:4.2.1-android"
+    bnbcrypto = "org.web3j:bnbcrypto:1.0.0"
     kotson = "com.github.salomonbrys.kotson:kotson:2.5.0"
+
 
 
 }
