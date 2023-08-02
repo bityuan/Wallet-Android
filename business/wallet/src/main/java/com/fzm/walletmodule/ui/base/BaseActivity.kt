@@ -199,7 +199,7 @@ abstract class BaseActivity : AppCompatActivity() {
             actionBar.setDisplayUseLogoEnabled(false)
             actionBar.setHomeAsUpIndicator(resId)
         }
-        toolbar.setNavigationOnClickListener { onBackPressed(); }
+        toolbar.setNavigationOnClickListener { finish(); }
     }
 
     protected open fun configWallets() {}

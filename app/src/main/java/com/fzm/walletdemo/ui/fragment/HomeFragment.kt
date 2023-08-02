@@ -290,6 +290,7 @@ class HomeFragment : Fragment() {
                         val bPassword = GoWallet.encPasswd(password)!!
                         val mnem: String = GoWallet.decMenm(bPassword, it.mnem)
                         val hdWallet = GoWallet.getHDWallet(Walletapi.TypeETHString, mnem)
+                        val pubkey = Walletapi.byteTohex(hdWallet?.newKeyPub(0))
                         val privkey = Walletapi.byteTohex(hdWallet?.newKeyPriv(0))
                         val address = hdWallet?.newAddress_v2(0)
                         //当前钱包为控制地址，那么prikey就是控制地址的

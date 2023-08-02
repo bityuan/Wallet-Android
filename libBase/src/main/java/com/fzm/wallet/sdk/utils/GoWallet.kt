@@ -20,6 +20,8 @@ class GoWallet {
         const val CHAIN_ID_BNB = "eip155:56"
         const val CHAIN_ID_BTY = "eip155:2999"
 
+        val CHAIN_ID_MAPS = mapOf(CHAIN_ID_ETH to "ETH",CHAIN_ID_BNB to "BNB",CHAIN_ID_BTY to "BTY")
+
         private val gson = Gson()
 
         private val util = Util()
@@ -231,7 +233,7 @@ class GoWallet {
                 queryByPage.count = count
                 queryByPage.direction = 0
                 queryByPage.index = page
-                if (!type.equals(0)) {
+                if (type != 0L) {
                     queryByPage.type = type
                 }
                 walletQueryByAddr.queryByPage = queryByPage
@@ -365,6 +367,7 @@ class GoWallet {
                 return signRawTransaction
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
+                Log.e("error", "$e")
             }
             return null
         }
@@ -684,6 +687,7 @@ class GoWallet {
                 CHAIN_ID_BNB -> {
                     "BNB"
                 }
+
                 CHAIN_ID_BTY -> {
                     "BTY"
                 }
@@ -691,6 +695,7 @@ class GoWallet {
                 else -> "ETH"
             }
         }
+
         fun getWeb3Url(chainId: String?): String {
             return when (chainId) {
                 CHAIN_ID_ETH -> {
@@ -701,7 +706,7 @@ class GoWallet {
                     WEB3_BNB
                 }
 
-                else -> WEB3_BNB
+                else -> WEB3_ETH
             }
         }
     }

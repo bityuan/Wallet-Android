@@ -7,6 +7,12 @@ import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.HttpResult
 import com.fzm.wallet.sdk.net.apiCall
 import com.fzm.wallet.sdk.net.dnsCall
+import com.fzm.wallet.sdk.net.goCall
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONArray
+import org.json.JSONObject
 import retrofit2.http.Query
 
 class WalletRepository constructor(private val apis: Apis) {
@@ -61,6 +67,48 @@ class WalletRepository constructor(private val apis: Apis) {
 
     suspend fun getUpdate(): HttpResult<AppVersion> {
         return apiCall { apis.getUpdate() }
+    }
+
+    suspend fun getTransactionCount(address: String): HttpResult<String> {
+
+        val param = JSONObject()
+        param.put("id", 1)
+        param.put("jsonrpc", "2.0")
+        param.put("method", "eth_getTransactionCount")
+        param.put("params", JSONArray(listOf(address, "latest")))
+
+
+
+
+        val requestBody =
+            param.toString().toRequestBody("application/json".toMediaTypeOrNull())
+
+        return goCall { apis.getTransactionCount(requestBody) }
+    }
+    suspend fun getGasPrice(): HttpResult<String> {
+
+        val param = JSONObject()
+        param.put("id", 1)
+        param.put("jsonrpc", "2.0")
+        param.put("method", "eth_gasPrice")
+
+        val requestBody =
+            param.toString().toRequestBody("application/json".toMediaTypeOrNull())
+
+        return goCall { apis.getGasPrice(requestBody) }
+    }
+
+    suspend fun sendRawTransaction(signHash: String?): HttpResult<String> {
+        val param = JSONObject()
+        param.put("id", 1)
+        param.put("jsonrpc", "2.0")
+        param.put("method", "eth_sendRawTransaction")
+        param.put("params", JSONArray(listOf(signHash)))
+
+        val requestBody =
+            param.toString().toRequestBody("application/json".toMediaTypeOrNull())
+
+        return goCall { apis.sendRawTransaction(requestBody) }
     }
 
 }

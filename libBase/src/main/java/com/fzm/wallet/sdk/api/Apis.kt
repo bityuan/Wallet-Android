@@ -5,6 +5,7 @@ import com.fzm.wallet.sdk.bean.*
 import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.DNSResponse
+import com.fzm.wallet.sdk.net.GoResponse
 import com.fzm.wallet.sdk.net.HttpResponse
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -78,4 +79,12 @@ interface Apis {
 
     @GET(IPConfig.UPDATE_JSON)
     suspend fun getUpdate(): HttpResponse<AppVersion>
+
+
+    @POST(IPConfig.BTY_ETH_NODE)
+    suspend fun getTransactionCount(@Body body: RequestBody): GoResponse<String>
+    @POST(IPConfig.BTY_ETH_NODE)
+    suspend fun getGasPrice(@Body body: RequestBody): GoResponse<String>
+    @POST(IPConfig.BTY_ETH_NODE)
+    suspend fun sendRawTransaction(@Body body: RequestBody): GoResponse<String>
 }

@@ -54,6 +54,19 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
     val getUpdate: LiveData<HttpResult<AppVersion>>
         get() = _getUpdate
 
+    private val _getTransactionCount = MutableLiveData<HttpResult<String>>()
+    val getTransactionCount: LiveData<HttpResult<String>>
+        get() = _getTransactionCount
+
+    private val _getGasPrice = MutableLiveData<HttpResult<String>>()
+    val getGasPrice: LiveData<HttpResult<String>>
+        get() = _getGasPrice
+
+
+    private val _sendRawTransaction = MutableLiveData<HttpResult<String>>()
+    val sendRawTransaction: LiveData<HttpResult<String>>
+        get() = _sendRawTransaction
+
 
     fun getCoins(id: Long): Flow<List<Coin>> = flow {
         supervisorScope {
@@ -159,6 +172,21 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
     fun getUpdate() {
         viewModelScope.launch {
             _getUpdate.value = walletRepository.getUpdate()
+        }
+    }
+    fun getTransactionCount(address: String) {
+        viewModelScope.launch {
+            _getTransactionCount.value = walletRepository.getTransactionCount(address)
+        }
+    }
+    fun getGasPrice() {
+        viewModelScope.launch {
+            _getGasPrice.value = walletRepository.getGasPrice()
+        }
+    }
+    fun sendRawTransaction(signHash: String?) {
+        viewModelScope.launch {
+            _sendRawTransaction.value = walletRepository.sendRawTransaction(signHash)
         }
     }
 

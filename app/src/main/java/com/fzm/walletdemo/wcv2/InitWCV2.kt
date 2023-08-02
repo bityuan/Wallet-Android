@@ -62,39 +62,20 @@ object InitWCV2 {
             }
 
             override fun onSessionDelete(sessionDelete: Wallet.Model.SessionDelete) {
+                //网页主动断开
                 logDebug("返回：onSessionDelete = $sessionDelete")
+                _signModel.postValue(sessionDelete)
 
             }
 
             override fun onSessionProposal(sessionProposal: Wallet.Model.SessionProposal) {
                 logDebug("返回：onSessionProposal = $sessionProposal")
-                //ETH 链
-                //返回：onSessionProposal = SessionProposal(
-                // pairingTopic=180672104c11ab2229f9778f2a91d9d63589510c9e0bb607b687988346426b61,
-                // name=Exchange | PancakeSwap, description=The most popular AMM on BSC by user count! Earn CAKE through yield farming or win it in the Lottery, then stake it in Syrup Pools to earn more tokens! Initial Farm Offerings (new token launch model pioneered by PancakeSwap), NFTs, and more, on a platform you can trust.,
-                // url=https://pancakeswap.finance,
-                // icons=[https://pancakeswap.finance/favicon.ico, https://pancakeswap.finance/logo.png],
-                // requiredNamespaces={
-                // eip155=Proposal(
-                // chains=[eip155:1],
-                // methods=[eth_sendTransaction, personal_sign],
-                // events=[chainChanged, accountsChanged], extensions=null)},
-                // proposerPublicKey=d760c7f51389a01f84fe1bfec02adae66487feec489c637a6fdaf82a3550933b,
-                // relayProtocol=irn,
-                // relayData=null)
-
-                /*lifecycleScope.launch(Dispatchers.Main) {
-                    gotoSessionProposal(sessionProposal)
-                }*/
                 _signModel.postValue(sessionProposal)
 
             }
 
             override fun onSessionRequest(sessionRequest: Wallet.Model.SessionRequest) {
                 logDebug("返回：onSessionRequest = $sessionRequest")
-              /*  lifecycleScope.launch(Dispatchers.Main) {
-                    gotoSessionRequest(sessionRequest)
-                }*/
                 _signModel.postValue(sessionRequest)
 
             }
@@ -102,23 +83,6 @@ object InitWCV2 {
             override fun onSessionSettleResponse(settleSessionResponse: Wallet.Model.SettledSessionResponse) {
                 //连上以后会返回新的sessiontopic ，断开连接要用新的
                 logDebug("返回：onSessionSettleResponse = $settleSessionResponse")
-                //返回：onSessionSettleResponse = Result(
-                // session=Session(
-                // topic=65a62cba6767f00a4bfb3029feb2f53e16fc24990a2373b401c3c7c76a968152,
-                // expiry=1690528386,
-                // namespaces={eip155=Session(accounts=[eip155:1:0x6b7E1e936F2C50B62ffA373EfFCeE1F77706e757, eip155:56:0x6b7E1e936F2C50B62ffA373EfFCeE1F77706e757, eip155:2999:0x6b7E1e936F2C50B62ffA373EfFCeE1F77706e757],
-                // methods=[personal_sign, eth_sendTransaction, eth_signTransaction],
-                // events=[chainChanged, accountsChanged], extensions=null)},
-                // metaData=
-                // AppMetaData(
-                // name=BitYuan,
-                // description=,
-                // url=https://bityuan.com,
-                // icons=[https://bityuan.com/favicon.ico],
-                // redirect=null)))
-              /*  lifecycleScope.launch(Dispatchers.Main) {
-                    gotoSettleResponse(settleSessionResponse)
-                }*/
                 _signModel.postValue(settleSessionResponse)
 
             }

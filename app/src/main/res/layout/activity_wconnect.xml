@@ -4,14 +4,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <include
+        android:id="@+id/inc_loading"
+        layout="@layout/fragment_wc_loading" />
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fcv"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:defaultNavHost="true"
-        app:navGraph="@navigation/nav_wc" />
+    <include
+        android:id="@+id/inc_proposal"
+        layout="@layout/fragment_session_proposal"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/inc_proposaled"
+        layout="@layout/fragment_session_proposaled"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/inc_request"
+        layout="@layout/fragment_session_request"
+        android:visibility="gone" />
 
 
 </RelativeLayout>
