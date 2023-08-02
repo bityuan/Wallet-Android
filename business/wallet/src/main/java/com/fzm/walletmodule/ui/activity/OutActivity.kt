@@ -27,6 +27,7 @@ import com.fzm.wallet.sdk.databinding.DialogPwdBinding
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.net.walletQualifier
+import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.utils.AddressCheckUtils
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.ListUtils
@@ -51,6 +52,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.litepal.LitePal.where
 import org.litepal.extension.find
@@ -69,6 +71,7 @@ class OutActivity : BaseActivity() {
     private lateinit var privkey: String
     private val outViewModel by viewModel<OutViewModel>(walletQualifier)
     private val walletViewModel by viewModel<WalletViewModel>(walletQualifier)
+    private val walletRepository: WalletRepository by inject(walletQualifier)
     private val binding by lazy { ActivityOutBinding.inflate(layoutInflater) }
     private val loading by lazy {
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_loading, null)
@@ -108,8 +111,10 @@ class OutActivity : BaseActivity() {
             //替换好主链后再去查询主链余额，此操作只为判断矿工费使用,加个地址以判断不同主链,再测试下其他币种
             lifecycleScope.launch(Dispatchers.IO) {
                 val chainBeans = where(
-                    "name = ? and pwallet_id = ? and address = ?", it.chain,
-                    java.lang.String.valueOf(it.getpWallet().id),it.address
+                    "name = ? and pwallet_id = ? and address = ?",
+                    it.chain,
+                    java.lang.String.valueOf(it.getpWallet().id),
+                    it.address
                 ).find<Coin>()
                 withContext(Dispatchers.Main) {
                     if (!ListUtils.isEmpty(chainBeans)) {
@@ -127,15 +132,19 @@ class OutActivity : BaseActivity() {
                 if (!hasFocus) {
                     val input = binding.etToAddress.text.toString()
                     if (input.isNotEmpty()) {
-                        if (input.contains(".")) {
-                            getAddressByDns(input)
-                        } else {
-                            getDnsByAddress(input)
-                        }
+                        handleDNS(input)
                     }
 
                 }
             }
+        }
+    }
+
+    private fun handleDNS(input: String) {
+        if (input.contains(".")) {
+            getAddressByDns(input)
+        } else {
+            getDnsByAddress(input)
         }
     }
 
@@ -209,6 +218,7 @@ class OutActivity : BaseActivity() {
 
         //扫一扫
         LiveEventBus.get<String>(LIVE_KEY_SCAN).observe(this, Observer { scan ->
+            handleDNS(scan)
             binding.etToAddress.setText(scan)
         })
     }
@@ -219,25 +229,20 @@ class OutActivity : BaseActivity() {
             if (list.isNotEmpty()) {
                 binding.rvDnsList.visibility = View.VISIBLE
                 binding.rvDnsList.layoutManager = LinearLayoutManager(this)
-                val dnsAdapter =
-                    object : CommonAdapter<String>(this, R.layout.item_text, list) {
-                        override fun convert(
-                            holder: ViewHolder,
-                            t: String,
-                            position: Int
-                        ) {
-                            holder.setText(R.id.tv_text, t)
-
-                        }
+                val dnsAdapter = object : CommonAdapter<String>(this, R.layout.item_text, list) {
+                    override fun convert(
+                        holder: ViewHolder, t: String, position: Int
+                    ) {
+                        holder.setText(R.id.tv_text, t)
 
                     }
+
+                }
                 binding.rvDnsList.adapter = dnsAdapter
                 dnsAdapter.setOnItemClickListener(object :
                     MultiItemTypeAdapter.OnItemClickListener {
                     override fun onItemClick(
-                        view: View,
-                        viewHolder: RecyclerView.ViewHolder,
-                        position: Int
+                        view: View, viewHolder: RecyclerView.ViewHolder, position: Int
                     ) {
                         val item = list[position]
                         binding.etToAddress.setText(item)
@@ -246,9 +251,7 @@ class OutActivity : BaseActivity() {
                     }
 
                     override fun onItemLongClick(
-                        view: View,
-                        viewHolder: RecyclerView.ViewHolder,
-                        position: Int
+                        view: View, viewHolder: RecyclerView.ViewHolder, position: Int
                     ): Boolean {
                         return false
                     }
@@ -290,11 +293,12 @@ class OutActivity : BaseActivity() {
             if (RegularUtils.isAddress(toAddress)) {
                 showPwdDialog()
             } else {
-                lifecycleScope.launch(Dispatchers.Main) {
-                    loading.show()
-                    walletViewModel.getDNSResolve.observe(this@OutActivity, Observer {
-                        if (it.isSucceed()) {
-                            it.data()?.let { list ->
+                loading.show()
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val dnsRep = walletRepository.getDNSResolve(1, toAddress, 0)
+                    withContext(Dispatchers.Main) {
+                        if (dnsRep.isSucceed()) {
+                            dnsRep.data()?.let { list ->
                                 if (list.isNotEmpty()) {
                                     loading.dismiss()
                                     toAddress = list[0]
@@ -302,8 +306,7 @@ class OutActivity : BaseActivity() {
                                 }
                             }
                         }
-                    })
-                    walletViewModel.getDNSResolve(1, toAddress, 0)
+                    }
                 }
             }
 
@@ -423,11 +426,13 @@ class OutActivity : BaseActivity() {
                                     handleTransactions(toAddress, money)
                                 }
                             }
+
                             PWallet.TYPE_PRI_KEY -> {
                                 configPrikeyWallet(it)
                                 privkey = it.getPrivkey(password)
                                 handleTransactions(toAddress, money)
                             }
+
                             PWallet.TYPE_RECOVER -> {
                                 configPrikeyWallet(it)
                                 privkey = it.getPrivkey(password)
@@ -485,25 +490,18 @@ class OutActivity : BaseActivity() {
 
     private suspend fun doRecover(toAddress: String, money: String) {
         coin?.let {
-            val tokenSymbol = coinToken!!.tokenSymbol
+            val tokenSymbol = coinToken.tokenSymbol
             val walletRecoverParam = GoWallet.queryRecover(it.address, it.chain)
             val walletRecover = WalletRecover()
             walletRecover.param = walletRecoverParam
             val createRaw = GoWallet.createTran(
-                it.chain,
-                it.address,
-                toAddress,
-                money.toDouble(),
-                fee,
-                "",
-                tokenSymbol
+                it.chain, it.address, toAddress, money.toDouble(), fee, "", tokenSymbol
             )
             val strResult = JSON.parseObject(createRaw, StringResult::class.java)
             val createRawResult: String? = strResult.result
             if (!createRawResult.isNullOrEmpty()) {
                 val signtx = walletRecover.signRecoverTxWithCtrKey(
-                    Walletapi.stringTobyte(createRawResult),
-                    privkey
+                    Walletapi.stringTobyte(createRawResult), privkey
                 )
                 val sendRawTransaction = GoWallet.sendTran(it.chain, signtx, tokenSymbol)
                 withContext(Dispatchers.Main) {
@@ -538,7 +536,7 @@ class OutActivity : BaseActivity() {
     private fun handleTransactions(toAddress: String, money: String) {
         coin?.let {
             try {
-                val tokensymbol = coinToken!!.tokenSymbol
+                val tokensymbol = coinToken.tokenSymbol
                 //构造交易
                 val createRaw = GoWallet.createTran(
                     it.chain,
@@ -556,10 +554,7 @@ class OutActivity : BaseActivity() {
                 }
                 //签名交易
                 val signtx = GoWallet.signTran(
-                    it.chain,
-                    Walletapi.stringTobyte(createRawResult),
-                    privkey,
-                    addressId
+                    it.chain, Walletapi.stringTobyte(createRawResult), privkey, addressId
                 )
                 if (signtx.isNullOrEmpty()) {
                     return
