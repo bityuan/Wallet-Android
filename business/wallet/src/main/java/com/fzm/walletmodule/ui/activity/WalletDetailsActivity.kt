@@ -69,6 +69,7 @@ class WalletDetailsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         ARouter.getInstance().inject(this)
+        title = getString(R.string.title_wallet_details)
         initView()
         EventBus.getDefault().register(this)
         initListener()

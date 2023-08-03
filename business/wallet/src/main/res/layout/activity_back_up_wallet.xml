@@ -101,7 +101,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/bg_change_word_frame"
-                android:text="创建助记词钱包"
+                android:text="@string/backup_mnem_str"
                 android:textColor="@android:color/white" />
 
             <Button
@@ -111,7 +111,7 @@
                 android:layout_marginLeft="40dp"
                 android:layout_weight="1"
                 android:background="@drawable/bg_change_word_frame"
-                android:text="创建找回钱包"
+                android:text="@string/backup_recover_str"
                 android:textColor="@android:color/white" />
 
         </LinearLayout>

@@ -36,6 +36,7 @@ import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.StatusBarUtil
 import com.fzm.wallet.sdk.utils.ToolUtils
 import com.fzm.walletdemo.BuildConfig
+import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.ActivityDappBinding
 import com.fzm.walletdemo.ui.JsApi
 import com.fzm.walletmodule.utils.ClipboardUtils
@@ -72,6 +73,7 @@ class DappActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        title = getString(R.string.exp_str)
         ARouter.getInstance().inject(this)
         doBar()
         binding.xbar.tvToolbar.text = name

@@ -53,7 +53,7 @@ class ChangePasswordActivity : BaseActivity() {
             viewHeight = btn_sure.height
             true
         }
-        tvTitle.text = getString(R.string.change_password)
+        title = getString(R.string.change_password)
         initKeyBoardListener()
         initIntent()
         initView()

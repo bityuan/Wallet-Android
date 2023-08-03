@@ -41,7 +41,7 @@ class CheckMnemActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         ARouter.getInstance().inject(this)
-        tvTitle.text = "校验助记词"
+        title = getString(R.string.check_mnem)
         binding.viewMnem.etMnem.setRegex(LimitEditText.REGEX_CHINESE_ENGLISH)
         binding.viewMnem.etMnem.doOnTextChanged { text, start, count, after ->
             val lastString = text.toString()

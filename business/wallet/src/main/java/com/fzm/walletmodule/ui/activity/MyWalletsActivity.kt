@@ -41,6 +41,7 @@ class MyWalletsActivity : BaseActivity() {
         mStatusColor = Color.WHITE
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        title = getString(R.string.my_wallets_chose1)
         initData()
         refresh()
         initListener()

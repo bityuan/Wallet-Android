@@ -17,7 +17,7 @@
     <application>
         <activity
             android:name=".ui.activity.ChooseChainActivity"
-            android:label="选择主链"
+            android:label=""
             android:exported="false" />
         <activity
             android:name=".ui.activity.AddCoinActivity"
@@ -62,7 +62,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.CheckMnemActivity"
-            android:label="校验助记词"
+            android:label=""
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.WalletDetailsActivity"

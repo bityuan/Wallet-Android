@@ -21,7 +21,7 @@
             android:background="@drawable/shape_edit"
             android:drawableStart="@mipmap/ic_search"
             android:drawablePadding="5dp"
-            android:hint="请输入网址"
+            android:hint="@string/input_www"
             android:padding="8dp"
             android:textColor="@color/color_333649"
             android:textColorHint="@color/color_8E92A3"
@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="搜索"
+            android:text="@string/search_btn"
             android:textSize="16sp" />
 
 
@@ -42,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_height="wrap_content"
-        android:text="搜索历史"
+        android:text="@string/search_his"
         android:textColor="@color/color_333649"
         android:textSize="16sp" />
 

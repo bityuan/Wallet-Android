@@ -38,7 +38,7 @@
         <activity
             android:name=".ui.activity.SearchDappActivity"
             android:exported="false"
-            android:label="浏览器"
+            android:label=""
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
@@ -92,10 +92,6 @@
         <activity
             android:name=".ui.activity.GcTestActivity"
             android:screenOrientation="portrait" />
-        <service
-            android:name=".wcv2.WalletConnectService"
-            android:enabled="true" />
-
 
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -66,6 +66,7 @@ class ImportWalletActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        title = getString(R.string.my_import_wallet)
         configWallets()
         initView()
         initData()
@@ -79,10 +80,18 @@ class ImportWalletActivity : BaseActivity() {
             ARouter.getInstance().build(ROUTE_APP_TYPE).navigation() as IAppTypeProvider
         titleList = when (navigation.getAppType()) {
             IPConfig.APP_MY_DAO -> {
-                listOf("导入助记词", "导入私钥", "导入找回钱包")
+                listOf(
+                    getString(R.string.imp_mnem_str),
+                    getString(R.string.imp_priv_str),
+                    getString(R.string.imp_recover_str)
+                )
             }
+
             else -> {
-                listOf("导入助记词", "导入私钥")
+                listOf(
+                    getString(R.string.imp_mnem_str),
+                    getString(R.string.imp_priv_str)
+                )
             }
         }
     }
@@ -127,11 +136,13 @@ class ImportWalletActivity : BaseActivity() {
                         binding.etWalletName.setText(name)
                         updateMenu(true)
                     }
+
                     1 -> {
                         val name = "私钥账户" + (count + 1)
                         binding.etWalletName.setText(name)
                         updateMenu(true)
                     }
+
                     2 -> {
                         val name = "找回账户" + (count + 1)
                         binding.etWalletName.setText(name)
@@ -281,10 +292,15 @@ class ImportWalletActivity : BaseActivity() {
 
                     job1.join()
                 }
+
                 1 -> {
                     val privateKey = privateKeyBinding.etInput.text.toString()
                     if (chooseChain == null) {
-                        Toast.makeText(this@ImportWalletActivity, "请先选择主链", Toast.LENGTH_SHORT)
+                        Toast.makeText(
+                            this@ImportWalletActivity,
+                            "请先选择主链",
+                            Toast.LENGTH_SHORT
+                        )
                             .show()
                         return@launch
                     } else if (privateKey.isNullOrEmpty()) {
@@ -315,6 +331,7 @@ class ImportWalletActivity : BaseActivity() {
                     }
 
                 }
+
                 2 -> {
                     val privateKey = recoverBinding.etInputPriv.text.toString()
                     val xAddress = recoverBinding.etInputXaddr.text.toString()

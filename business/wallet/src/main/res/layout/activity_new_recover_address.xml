@@ -24,7 +24,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="控制地址"
+                android:text="@string/rec_addr"
                 android:textColor="@color/color_7190FF"
                 android:textSize="15sp"
                 android:textStyle="bold" />
@@ -106,7 +106,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="余额"
+                    android:text="@string/yue"
                     android:textColor="@color/color_7190FF"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -147,7 +147,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:text="用户备份公钥"
+                android:text="@string/user_back_pub"
                 android:textColor="@color/color_7190FF"
                 android:textSize="15sp"
                 android:textStyle="bold" />
@@ -168,7 +168,7 @@
                     android:layout_weight="1"
                     android:background="@null"
                     android:gravity="center_vertical"
-                    android:hint="请输入备份地址对应的公钥"
+                    android:hint="@string/input_back_pub"
                     android:paddingStart="10dp"
                     android:textSize="12sp" />
 
@@ -192,7 +192,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="mydao官方备份公钥"
+                    android:text="@string/off_pub"
                     android:textColor="@color/color_7190FF"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -235,7 +235,7 @@
                     android:layout_height="45dp"
                     android:background="@drawable/bg_remember_words"
                     android:gravity="center_vertical"
-                    android:hint="请输入找回邮箱"
+                    android:hint="@string/input_re_email"
                     android:paddingLeft="10dp"
                     android:textSize="14sp" />
 
@@ -256,7 +256,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:paddingStart="18dp"
-                android:text="找回时间设置"
+                android:text="@string/recover_time_set"
                 android:textColor="@color/color_7190FF"
                 android:textSize="15sp"
                 android:textStyle="bold" />
@@ -275,7 +275,7 @@
                     android:layout_height="wrap_content"
                     android:button="@drawable/radio_check"
                     android:paddingStart="10dp"
-                    android:text="7天" />
+                    android:text="@string/day7" />
 
                 <RadioButton
                     android:id="@+id/rb_30day"
@@ -285,7 +285,7 @@
                     android:button="@drawable/radio_check"
                     android:checked="true"
                     android:paddingStart="10dp"
-                    android:text="30天" />
+                    android:text="@string/day30" />
 
                 <RadioButton
                     android:id="@+id/rb_90day"
@@ -294,7 +294,7 @@
                     android:layout_marginStart="20dp"
                     android:button="@drawable/radio_check"
                     android:paddingStart="10dp"
-                    android:text="90天" />
+                    android:text="@string/day90" />
 
 
             </RadioGroup>
@@ -310,7 +310,7 @@
             android:layout_marginRight="18dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/bg_shape_button"
-            android:text="创建钱包"
+            android:text="@string/new_create"
             android:textColor="@android:color/white"
             android:textSize="17sp" />
 

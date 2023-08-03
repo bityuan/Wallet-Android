@@ -7,6 +7,7 @@ import com.fzm.wallet.sdk.base.Q_BWallet
 import com.fzm.wallet.sdk.net.security.SSLSocketClient
 import com.fzm.wallet.sdk.repo.OutRepository
 import com.fzm.wallet.sdk.repo.WalletRepository
+import com.fzm.wallet.sdk.utils.LocalManageUtil
 import com.fzm.wallet.sdk.utils.ToolUtils
 import me.jessyan.retrofiturlmanager.RetrofitUrlManager
 import okhttp3.Interceptor
@@ -44,6 +45,7 @@ fun Module.walletNetModule() {
                         .header("Fzm-Request-Source", "wallet")
                         .header("FZM-REQUEST-OS", "android")
                         .header("FZM-PLATFORM-ID", platformId)
+                        .header("lang", LocalManageUtil.getSelectLanguage())
                         .header(
                             "version",
                             "${ToolUtils.getVersionName(get())},${ToolUtils.getVersionCode(get())}"

@@ -54,7 +54,7 @@ class RecoverActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         ARouter.getInstance().inject(this)
-        title = "找回资产"
+        title = getString(R.string.revover_str)
         initView()
         initListener()
     }

@@ -32,7 +32,7 @@ class SearchDappActivity : BaseActivity() {
         binding.tvSearch.setOnClickListener {
             val url = binding.etSearch.text.toString()
             if (url.isEmpty()) {
-                toast("请输入网址")
+                toast(getString(R.string.input_www))
                 return@setOnClickListener
             }
             if (!mUrlList.contains(url)) {

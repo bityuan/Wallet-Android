@@ -27,7 +27,7 @@
                 android:id="@+id/tv_chain"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="选择主链"
+                android:text="@string/choose_chain_str"
                 android:textColor="#ff333649"
                 android:textSize="16sp" />
         </LinearLayout>

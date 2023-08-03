@@ -13,6 +13,7 @@ import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.LIVE_KEY_CHOOSE_CHAIN
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.walletQualifier
+import com.fzm.walletmodule.R
 import com.fzm.walletmodule.databinding.ActivityChooseChainBinding
 import com.fzm.walletmodule.databinding.ItemChooseChainBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
@@ -32,6 +33,7 @@ class ChooseChainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        title = getString(R.string.my_wallet_detail_choose_chain)
         initIntent()
         initView()
         initObserver()

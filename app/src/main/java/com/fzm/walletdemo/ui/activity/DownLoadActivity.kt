@@ -21,6 +21,7 @@ class DownLoadActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        title = getString(R.string.my_download)
         val downloadUrl = getUrl()
         val bitmap = CodeUtils.createQRCode(downloadUrl, 200)
         binding.ivDownlaod.setImageBitmap(bitmap)

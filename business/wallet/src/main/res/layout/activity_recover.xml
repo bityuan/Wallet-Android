@@ -12,7 +12,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="选择币种"
+        android:text="@string/choose_re"
         android:textColor="@color/color_7190FF"
         android:textSize="15sp"
         android:textStyle="bold" />
@@ -52,7 +52,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="@drawable/bg_remember_words"
-        android:hint="请输入找回的数量"
+        android:hint="@string/input_re_count"
         android:paddingLeft="10dp" />
 
 
@@ -70,7 +70,7 @@
             android:layout_height="60dp"
             android:layout_weight="1"
             android:background="@drawable/bg_remember_words"
-            android:hint="请输入收款地址"
+            android:hint="@string/input_in_addr"
             android:paddingLeft="10dp" />
 
         <ImageView
@@ -95,7 +95,7 @@
             android:layout_height="60dp"
             android:layout_weight="1"
             android:background="@drawable/bg_remember_words"
-            android:hint="请输入找回钱包的地址"
+            android:hint="@string/input_re_addr"
             android:paddingLeft="10dp" />
 
         <ImageView
@@ -113,7 +113,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:background="@drawable/bg_shape_button"
-        android:text="找回我的资产"
+        android:text="@string/re_asset"
         android:textColor="@android:color/white"
         android:textSize="17sp" />
 
@@ -134,7 +134,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="请使用备份钱包扫码签名" />
+            android:text="@string/do_back_sign" />
 
     </LinearLayout>
 

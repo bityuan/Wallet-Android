@@ -25,4 +25,12 @@
   <string name="wallet_name">Wallet name</string>
   <string name="my_update">Detect updates</string>
   <string name="my_recover">Retrieve my assets</string>
+  <string name="recover_account_str">Retrieve account</string>
+  <string name="priv_account_str">Private key account</string>
+  <string name="input_www">Please enter the URL</string>
+  <string name="exp_str">Browser</string>
+  <string name="search_btn">Search</string>
+  <string name="search_his">Search History</string>
+  <string name="need_agree_pers">You need to agree to the following permissions to use normally</string>
+  <string name="refuse_pers">You have denied the following permissions</string>
 </resources>

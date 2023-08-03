@@ -19,13 +19,15 @@ class LanguageActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        title = getString(R.string.my_lang)
         initView()
 
     }
 
 
     private lateinit var mCommonAdapter: CommonAdapter<*>
-    private var list = listOf("简体中文", "English", "日本語", "한국어")
+    //private var list = listOf("简体中文", "English", "日本語", "한국어")
+    private var list = listOf("简体中文", "English")
 
 
     override fun initView() {

@@ -18,9 +18,7 @@ class AboutActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        binding.ivAbout.onClick {
-
-        }
+        title = getString(R.string.my_about)
         binding.ivAbout.setOnClickListener {
             if (doMore6()) {
                 ARouter.getInstance().build(RouterPath.APP_WEBTEST).navigation()

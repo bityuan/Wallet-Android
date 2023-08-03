@@ -101,7 +101,7 @@ class NewRecoverAddressActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         ARouter.getInstance().inject(this)
-        title = "设置找回参数"
+        title = getString(R.string.new_recover_str)
         initView()
         initData()
         initObserver()

@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.utils.LocalManageUtil
 import com.fzm.walletdemo.R
 import com.permissionx.guolindev.PermissionX
 import kotlinx.coroutines.Dispatchers
@@ -33,20 +34,25 @@ class SplashActivity : AppCompatActivity() {
         PermissionX.init(this)
             .permissions(PERMISSIONS)
             .onExplainRequestReason { scope, deniedList ->
-                val message = "需要您同意以下权限才能正常使用"
-                scope.showRequestReasonDialog(deniedList, message, "统一", "拒绝")
+                val message = getString(R.string.need_agree_pers)
+                scope.showRequestReasonDialog(deniedList, message, getString(R.string.dialog_approve), getString(R.string.dialog_reject))
             }
             .request { allGranted, _, deniedList ->
                 if (allGranted) {
                     gotoMain()
                 } else {
-                    Toast.makeText(this, "您拒绝了如下权限：$deniedList", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "${getString(R.string.refuse_pers)}：$deniedList", Toast.LENGTH_SHORT).show()
                 }
             }
 
     }
 
     private fun gotoMain() {
+        //init language
+        val langIndex = LocalManageUtil.getLanguage()
+        if (langIndex != 0) {
+            LocalManageUtil.setApplicationLanguage(this, langIndex)
+        }
         lifecycleScope.launch(Dispatchers.IO) {
             delay(1000)
             ARouter.getInstance().build(RouterPath.APP_MAIN).navigation()

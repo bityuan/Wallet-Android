@@ -25,5 +25,13 @@
     <string name="wallet_name">钱包名称</string>
     <string name="my_update">检测更新</string>
     <string name="my_recover">找回我的资产</string>
+    <string name="recover_account_str">找回账户</string>
+    <string name="priv_account_str">私钥账户</string>
+    <string name="input_www">请输入网址</string>
+    <string name="exp_str">浏览器</string>
+    <string name="search_btn">搜索</string>
+    <string name="search_his">搜索历史</string>
+    <string name="need_agree_pers">需要您同意以下权限才能正常使用</string>
+    <string name="refuse_pers">您拒绝了如下权限</string>
 
 </resources>
