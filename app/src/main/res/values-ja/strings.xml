@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<resources>
+  <string name="app_name">MyDao社</string>
+  <string name="main_home">トップページ</string>
+  <string name="main_market">相場</string>
+  <string name="main_explore">たんさく</string>
+  <string name="main_my">マイ</string>
+  <string name="my_about">私たちについて</string>
+  <string name="my_download">アプリケーションのダウンロード</string>
+  <string name="my_lang">言語</string>
+  <string name="my_w_connect">ウォレット接続</string>
+  <string name="my_share_copy_address">ダウンロードアドレスのコピー</string>
+  <string name="app_content">MyDaoは、ユーザーに安全で使いやすく、強力なデジタル資産管理ツールを提供することを目的としたモバイルアカウントAppです。</string>
+  <string name="tab_home">トップページ</string>
+  <string name="tab_explore">たんさく</string>
+  <string name="tab_my">マイ</string>
+  <string name="dialog_reject">拒否</string>
+  <string name="dialog_approve">に同意</string>
+  <string name="message_reject_request">ユーザーに拒否されました</string>
+  <string name="tab_wallet">財布</string>
+  <string name="explore_title">責任声明</string>
+  <string name="explore_disclaimer">サードパーティリンクを使用して、サードパーティのプライバシーポリシーとユーザープロトコルに同意することを確認します。このリンクのすべての動作と使用状況は、そのリンクのベンダーが責任を負います。</string>
+  <string name="home_top_name">助数詞アカウント</string>
+  <string name="wallet_name">ウォレット名</string>
+  <string name="my_update">更新の検出</string>
+  <string name="my_recover">私の資産を取り戻す</string>
+  <string name="recover_account_str">口座を取り戻す</string>
+  <string name="priv_account_str">秘密鍵アカウント</string>
+  <string name="input_www">URL を入力してください</string>
+  <string name="exp_str">ブラウザ</string>
+  <string name="search_btn">検索</string>
+  <string name="search_his">検索履歴</string>
+  <string name="need_agree_pers">通常に使用するには、次の権限に同意する必要があります</string>
+  <string name="refuse_pers">次の権限が拒否されました</string>
+</resources>
