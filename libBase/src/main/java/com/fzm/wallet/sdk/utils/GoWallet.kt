@@ -20,7 +20,8 @@ class GoWallet {
         const val CHAIN_ID_BNB = "eip155:56"
         const val CHAIN_ID_BTY = "eip155:2999"
 
-        val CHAIN_ID_MAPS = mapOf(CHAIN_ID_ETH to "ETH",CHAIN_ID_BNB to "BNB",CHAIN_ID_BTY to "BTY")
+        val CHAIN_ID_MAPS =
+            mapOf(CHAIN_ID_ETH to "ETH", CHAIN_ID_BNB to "BNB", CHAIN_ID_BTY to "BTY")
 
         private val gson = Gson()
 
@@ -619,7 +620,7 @@ class GoWallet {
                     }
                 }
             }
-            if (cointype == "ETH" && platform != "ethereum" && platform != "ycceth") {
+            if (isETHPara(cointype, platform) || isBTYPara(cointype, platform)) {
                 coinToken.proxy = true
                 if (treaty == "1") {
                     coinToken.cointype = Walletapi.TypeBtyString
@@ -633,6 +634,14 @@ class GoWallet {
             }
 
             return coinToken
+        }
+
+        private fun isETHPara(cointype: String?, platform: String?): Boolean {
+            return cointype == "ETH" && platform != "ethereum" && platform != "ycceth"
+        }
+
+        private fun isBTYPara(cointype: String?, platform: String?): Boolean {
+            return cointype == "BTY" && platform != "bty"
         }
 
         class CoinToken {

@@ -15,7 +15,10 @@ import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.alibaba.fastjson.JSON
+import com.fzm.wallet.sdk.IPConfig
 import com.fzm.wallet.sdk.IPConfig.Companion.BTY_FEE
+import com.fzm.wallet.sdk.IPConfig.Companion.BTY_PR
+import com.fzm.wallet.sdk.IPConfig.Companion.TOKEN_FEE
 import com.fzm.wallet.sdk.IPConfig.Companion.YBF_BTY_PR
 import com.fzm.wallet.sdk.IPConfig.Companion.YBF_FEE_ADDR
 import com.fzm.wallet.sdk.IPConfig.Companion.YBF_TOKEN_FEE
@@ -189,7 +192,7 @@ class OutActivity : BaseActivity() {
         if (coinToken.proxy) {
             binding.seekbarFee.visibility = View.GONE
             binding.llVMiner.visibility = View.GONE
-            binding.tvFee.text = "0.5 $oldName"
+            binding.tvFee.text = "${if(coin?.platform == IPConfig.YBF_CHAIN) YBF_TOKEN_FEE else TOKEN_FEE} $oldName"
         } else {
             outViewModel.getMiner(minerChain!!)
         }
@@ -388,7 +391,7 @@ class OutActivity : BaseActivity() {
                                 //如果需要代扣
                                 if (coinToken.proxy) {
                                     val gsendTx = GsendTx().apply {
-                                        feepriv = YBF_BTY_PR
+                                        feepriv = if(it.platform == IPConfig.YBF_CHAIN) YBF_BTY_PR else BTY_PR
                                         to = toAddress
                                         tokenSymbol = it.name
                                         execer = coinToken.exer
@@ -399,7 +402,7 @@ class OutActivity : BaseActivity() {
                                         //扣的手续费接收地址
                                         tokenFeeAddr = YBF_FEE_ADDR
                                         //扣多少手续费
-                                        tokenFee = YBF_TOKEN_FEE
+                                        tokenFee = if(it.platform == IPConfig.YBF_CHAIN) YBF_TOKEN_FEE else TOKEN_FEE
                                         if (it.treaty == "1") {
                                             coinsForFee = false
                                             tokenFeeSymbol = oldName
@@ -407,8 +410,8 @@ class OutActivity : BaseActivity() {
                                             coinsForFee = true
                                         }
                                         //feeAddressID是收比特元的手续费地址格式，txAddressID是当前用户地址格式
-                                        feeAddressID = 2
-                                        txAddressID = 2
+                                        feeAddressID = if(it.address.startsWith("0x")) 2 else 0
+                                        txAddressID = if(it.address.startsWith("0x")) 2 else 0
                                     }
                                     val gsendTxResp = Walletapi.coinsTxGroup(gsendTx)
                                     GoWallet.sendTran(it.chain, gsendTxResp.signedTx, it.name)
