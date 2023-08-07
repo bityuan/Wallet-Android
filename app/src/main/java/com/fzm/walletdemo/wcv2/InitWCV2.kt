@@ -2,6 +2,7 @@ package com.fzm.walletdemo.wcv2
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.fzm.wallet.sdk.IPConfig.Companion.projectId
 import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.walletdemo.IApplication
 import com.walletconnect.android.Core
@@ -20,7 +21,6 @@ object InitWCV2 {
     init {
         logDebug("===============单例初始化v2================")
         val relayUrl = "relay.walletconnect.com"
-        val projectId = "3a4cf034cbeb5652038e46fc1efca0c7"
         val serverUrl = "wss://$relayUrl?projectId=$projectId"
         val walletIconUrl = "https://avatars.githubusercontent.com/u/6955922?s=280&v=4"
 
