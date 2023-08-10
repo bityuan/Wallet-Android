@@ -138,10 +138,10 @@ class DappActivity : AppCompatActivity() {
 
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val menuItem = menu.add(0, 1, 0, "刷新")
-        val menuItem1 = menu.add(0, 2, 0, "复制链接")
-        val menuItem2 = menu.add(0, 3, 0, "在浏览器中打开")
-        val menuItem3 = menu.add(0, 4, 0, "退出")
+        val menuItem = menu.add(0, 1, 0, getString(R.string.ref_str))
+        val menuItem1 = menu.add(0, 2, 0, getString(R.string.copy_url_str))
+        val menuItem2 = menu.add(0, 3, 0, getString(R.string.ex_open))
+        val menuItem3 = menu.add(0, 4, 0, getString(R.string.exit_str))
         //menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
         return super.onCreateOptionsMenu(menu)
     }

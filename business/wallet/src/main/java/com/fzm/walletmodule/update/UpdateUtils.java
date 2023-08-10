@@ -19,6 +19,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.fzm.wallet.sdk.bean.AppVersion;
+import com.fzm.walletmodule.R;
 import com.fzm.walletmodule.utils.AppUtils;
 import com.fzm.walletmodule.utils.NetWorkUtils;
 import com.fzm.walletmodule.utils.PreferencesUtils;
@@ -53,7 +54,7 @@ public class UpdateUtils {
         }
         if (AppUtils.getVersionCode(mContext) == mData.getVersion_code()) {
             if (!isMain) {
-                Toast.makeText(mContext, "当前已是最新版本", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, mContext.getString(R.string.up_new_str), Toast.LENGTH_SHORT).show();
             }
             return;
         }
@@ -66,7 +67,7 @@ public class UpdateUtils {
     //4代表强制更新，1代表普通更新
     public void updating() {
         final UpdateDialogFragment fragment = new UpdateDialogFragment();
-        fragment.setResult("版本更新" + mData.getVersion())
+        fragment.setResult(mContext.getString(R.string.update_ver_str) + mData.getVersion())
                 .setResultDetails(mData.getLog())
                 .setOnButtonClickListener(new UpdateDialogFragment.OnButtonClickListener() {
                     @Override
@@ -83,7 +84,7 @@ public class UpdateUtils {
             fragment.setCancelable(false);
             fragment.setType(1);
         }
-        fragment.showDialog("检查更新", mFragmentManager);
+        fragment.showDialog("", mFragmentManager);
     }
 
     /**

@@ -33,4 +33,10 @@
   <string name="search_his">Search History</string>
   <string name="need_agree_pers">You need to agree to the following permissions to use normally</string>
   <string name="refuse_pers">You have denied the following permissions</string>
+  <string name="no_dotip">No reminder</string>
+  <string name="ref_str">Refresh</string>
+  <string name="copy_url_str">Copy link</string>
+  <string name="ex_open">Open in browser</string>
+  <string name="exit_str">Exit</string>
+
 </resources>

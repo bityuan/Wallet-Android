@@ -158,13 +158,21 @@ class JsApi(private val webView: WebView, private val activity: FragmentActivity
 
     @JavascriptInterface
     fun sign(msg: Any?, handler: CompletionHandler<String?>?) {
-        val jsSign = Gson().fromJson(msg.toString(), JsSign::class.java)
-        cointype = jsSign.cointype?:"BTY"
-        createHash = jsSign.createHash
-        exer = jsSign.exer
-        withhold = jsSign.withhold
-        addressid = getAddressId()
-        showPwdDialog(1, handler)
+        try {
+            val jsSign = Gson().fromJson(msg.toString(), JsSign::class.java)
+            cointype = jsSign.cointype?:"BTY"
+            createHash = jsSign.createHash
+            exer = jsSign.exer
+            withhold = jsSign.withhold
+            addressid = getAddressId()
+            activity.lifecycleScope.launch(Dispatchers.Main) {
+                showPwdDialog(1, handler)
+            }
+        }catch (e:Exception) {
+            e.printStackTrace()
+        }
+
+
     }
 
     inner class JsTitle {
@@ -180,13 +188,21 @@ class JsApi(private val webView: WebView, private val activity: FragmentActivity
 
     @JavascriptInterface
     fun signTxGroup(msg: Any?, handler: CompletionHandler<String?>?) {
-        val jsSign = Gson().fromJson(msg.toString(), JsSign::class.java)
-        cointype = jsSign.cointype?:"BTY"
-        createHash = jsSign.createHash
-        exer = jsSign.exer
-        withhold = jsSign.withhold
-        addressid = getAddressId()
-        showPwdDialog(2, handler)
+        try {
+            val jsSign = Gson().fromJson(msg.toString(), JsSign::class.java)
+            cointype = jsSign.cointype?:"BTY"
+            createHash = jsSign.createHash
+            exer = jsSign.exer
+            withhold = jsSign.withhold
+            addressid = getAddressId()
+            activity.lifecycleScope.launch(Dispatchers.Main) {
+                showPwdDialog(2, handler)
+            }
+        }catch (e:Exception) {
+            e.printStackTrace()
+        }
+
+
     }
 
     private fun getAddressId(): Int {
@@ -204,7 +220,15 @@ class JsApi(private val webView: WebView, private val activity: FragmentActivity
 
     @JavascriptInterface
     fun importSeed(msg: Any?, handler: CompletionHandler<String?>?) {
-        showPwdDialog(3, handler)
+        try {
+            activity.lifecycleScope.launch(Dispatchers.Main) {
+                showPwdDialog(3, handler)
+            }
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
+
+
     }
 
     @JavascriptInterface

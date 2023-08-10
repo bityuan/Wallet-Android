@@ -193,4 +193,6 @@
     <string name="re_asset">找回我的资产</string>
     <string name="do_back_sign">请使用备份钱包扫码签名</string>
     <string name="check_mnem">校验助记词</string>
+    <string name="update_ver_str">版本更新</string>
+    <string name="up_new_str">当前已是最新版本</string>
 </resources>

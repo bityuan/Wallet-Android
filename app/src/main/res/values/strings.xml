@@ -20,7 +20,7 @@
     <string name="message_reject_request">遭到用户拒绝</string>
     <string name="tab_wallet">钱包</string>
     <string name="explore_title">责任声明</string>
-    <string name="explore_disclaimer">您即将使用第三方链接,确认即同意第三方的《隐私政策》和《用户协议》，您在这一链接中的所有行为和使用情况，均由该链接的供应商负责。</string>
+    <string name="explore_disclaimer">您即将使用第三方链接,确定即同意第三方的《隐私政策》和《用户协议》，您在这一链接中的所有行为和使用情况，均由该链接的供应商负责。</string>
     <string name="home_top_name">助记词账户</string>
     <string name="wallet_name">钱包名称</string>
     <string name="my_update">检测更新</string>
@@ -33,5 +33,10 @@
     <string name="search_his">搜索历史</string>
     <string name="need_agree_pers">需要您同意以下权限才能正常使用</string>
     <string name="refuse_pers">您拒绝了如下权限</string>
+    <string name="no_dotip">不再提醒</string>
+    <string name="ref_str">刷新</string>
+    <string name="copy_url_str">复制链接</string>
+    <string name="ex_open">在浏览器中打开</string>
+    <string name="exit_str">退出</string>
 
 </resources>

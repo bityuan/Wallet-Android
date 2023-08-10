@@ -70,12 +70,12 @@ class ExploresActivity : BaseActivity() {
                             gotoDapp(it)
                         } else {
                             MaterialDialog.Builder(this@ExploresActivity)
-                                .negativeText("取消")
-                                .positiveText("确认")
+                                .negativeText(getString(R.string.cancel))
+                                .positiveText(getString(R.string.ok))
                                 .title(getString(R.string.explore_title))
                                 .content(getString(R.string.explore_disclaimer))
                                 .checkBoxPrompt(
-                                    "不再提醒",
+                                    getString(R.string.no_dotip),
                                     false
                                 ) { buttonView, isChecked ->
                                     MMkvUtil.encode(appId, isChecked)

@@ -33,4 +33,9 @@
   <string name="search_his">検索履歴</string>
   <string name="need_agree_pers">通常に使用するには、次の権限に同意する必要があります</string>
   <string name="refuse_pers">次の権限が拒否されました</string>
+  <string name="no_dotip">リマインダーなし</string>
+  <string name="ref_str">更新</string>
+  <string name="copy_url_str">リンクをコピー</string>
+  <string name="ex_open">ブラウザで開く</string>
+  <string name="exit_str">終了</string>
 </resources>
