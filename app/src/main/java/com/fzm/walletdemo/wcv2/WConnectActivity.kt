@@ -117,7 +117,6 @@ class WConnectActivity : BaseActivity() {
         //projectId 每天都连接限制，到达限制次数后就超时
         wcUrl?.let { wurl ->
             //连接
-            logDebug("开始连接。。。。。")
             pair(wurl)
 
         }
@@ -263,8 +262,7 @@ class WConnectActivity : BaseActivity() {
     ) {
         try {
             showUI(incProposaled = true)
-            binding.incProposaled.tvWalletState.text =
-                "${sessionProposal.name} 已经与下列钱包建立连接"
+            binding.incProposaled.tvWalletState.text = "${sessionProposal.name} ${getString(R.string.wc_coned)}"
             binding.incProposaled.tvDappUrl.text = sessionProposal.url
             binding.incProposaled.tvAddress.text = address
             binding.incProposaled.tvChain.text = chooseChain
@@ -329,7 +327,7 @@ class WConnectActivity : BaseActivity() {
             val pValue = "${value / va18}".toPlainStr(8)
             val chainName = CHAIN_ID_MAPS[sessionRequest.chainId]
             binding.incRequest.tvValue.text = "$pValue $chainName"
-            binding.incRequest.tvPayMsg.text = "$chainName 转账"
+            binding.incRequest.tvPayMsg.text = "$chainName ${getString(R.string.home_transfer)}"
             binding.incRequest.tvOutAddress.text = param.from
             binding.incRequest.tvInAddress.text = param.to
 

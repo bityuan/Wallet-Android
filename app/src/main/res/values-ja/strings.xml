@@ -38,4 +38,17 @@
   <string name="copy_url_str">リンクをコピー</string>
   <string name="ex_open">ブラウザで開く</string>
   <string name="exit_str">終了</string>
+  <string name="wc_get_addr">現在のウォレット アドレスの取得を許可します</string>
+  <string name="wc_sign_str">現在のウォレットからの署名のリクエストを許可します</string>
+  <string name="wc_at">このサービスは WalletConnect プロトコルでサポートされています</string>
+  <string name="wc_w_addr">ウォレット アドレス</string>
+  <string name="wc_cnet">現在のネットワーク</string>
+  <string name="wc_dis">切断</string>
+  <string name="wc_pay_de">支払いの詳細</string>
+  <string name="wc_pay_me">支払い情報</string>
+  <string name="wc_pay_address">支払い住所</string>
+  <string name="wc_fee">マイナー料金</string>
+  <string name="wc_next">次へ</string>
+  <string name="wc_con">WalletConnect がウォレットに接続しています</string>
+  <string name="wc_coned">すでに以下のウォレットに接続されています</string>
 </resources>

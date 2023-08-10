@@ -38,5 +38,18 @@
   <string name="copy_url_str">Copy link</string>
   <string name="ex_open">Open in browser</string>
   <string name="exit_str">Exit</string>
+  <string name="wc_get_addr">Allow to get the current wallet address</string>
+  <string name="wc_sign_str">Allow to request signature from current wallet</string>
+  <string name="wc_at">This service is supported by the WalletConnect protocol</string>
+  <string name="wc_w_addr">Wallet address</string>
+  <string name="wc_cnet">Current network</string>
+  <string name="wc_dis">Disconnect</string>
+  <string name="wc_pay_de">Payment Details</string>
+  <string name="wc_pay_me">payment information</string>
+  <string name="wc_pay_address">payment address</string>
+  <string name="wc_fee">miner fee</string>
+  <string name="wc_next">Next</string>
+  <string name="wc_con">WalletConnect is connecting your wallet</string>
+  <string name="wc_coned">Already connected to the following wallets</string>
 
 </resources>

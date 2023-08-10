@@ -38,4 +38,17 @@
   <string name="copy_url_str">링크 복사</string>
   <string name="ex_open">브라우저에서 열기</string>
   <string name="exit_str">종료</string>
+  <string name="wc_get_addr">현재 지갑 주소 가져오기 허용</string>
+  <string name="wc_sign_str">현재 지갑에서 서명 요청 허용</string>
+  <string name="wc_at">이 서비스는 WalletConnect 프로토콜에서 지원합니다</string>
+  <string name="wc_w_addr">지갑 주소</string>
+  <string name="wc_cnet">현재 네트워크</string>
+  <string name="wc_dis">연결 끊기</string>
+  <string name="wc_pay_de">결제 내역</string>
+  <string name="wc_pay_me">결제 정보</string>
+  <string name="wc_pay_address">수취인 주소</string>
+  <string name="wc_fee">광부 수수료</string>
+  <string name="wc_next">다음</string>
+  <string name="wc_con">WalletConnect가 귀하의 지갑을 연결하고 있습니다</string>
+  <string name="wc_coned">이미 다음 지갑에 연결되어 있습니다.</string>
 </resources>

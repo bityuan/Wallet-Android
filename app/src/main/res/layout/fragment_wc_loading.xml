@@ -53,7 +53,7 @@
         android:layout_height="wrap_content"
         android:textColor="#8E92A3"
         android:layout_marginTop="22dp"
-        android:text="WalletConnect正在连接你的钱包"
+        android:text="@string/wc_con"
         android:textSize="14sp" />
 
 

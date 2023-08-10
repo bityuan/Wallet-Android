@@ -55,7 +55,7 @@
                 android:drawableLeft="@drawable/dot_normal"
                 android:drawablePadding="5dp"
                 android:gravity="center"
-                android:text="允许获取当前钱包地址"
+                android:text="@string/wc_get_addr"
                 android:textColor="@color/gray_8e"
                 android:textSize="14sp" />
 
@@ -73,7 +73,7 @@
                 android:drawableLeft="@drawable/dot_normal"
                 android:drawablePadding="5dp"
                 android:gravity="center"
-                android:text="允许向当前钱包请求签名"
+                android:text="@string/wc_sign_str"
                 android:textColor="@color/gray_8e"
                 android:textSize="14sp" />
 
@@ -94,7 +94,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:drawableRight="@drawable/ic_right"
-            android:text="该服务由 WalletConnect 协议支持" />
+            android:text="@string/wc_at" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -109,7 +109,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/my_wallets_create"
-                android:text="拒绝"
+                android:text="@string/dialog_reject"
                 android:textColor="@color/color_7190FF"
                 android:textSize="17sp" />
 
@@ -121,7 +121,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/my_wallets_import"
                 android:gravity="center"
-                android:text="授权"
+                android:text="@string/dialog_approve"
                 android:textColor="@color/white"
                 android:textSize="17sp" />
 

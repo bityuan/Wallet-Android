@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<resources>
+  <string name="basic_error_unknown">Unknown error, please try again later</string>
+  <string name="basic_error_certificate">Certificate error</string>
+  <string name="basic_error_service_domain">server domain name error</string>
+  <string name="basic_error_service">Server Error</string>
+  <string name="basic_error_service1">Some problems with the server, please try again later! </string>
+  <string name="basic_error_network">The network is interrupted, please check your network and try again</string>
+  <string name="basic_error_network1">Please check your network connection, click Retry</string>
+  <string name="basic_error_response_parse">Data parsing failed</string>
+  <string name="basic_error_request">The network request failed, please try again later</string>
+  <string name="basic_error_connect">The network is not connected, please try again later</string>
+  <string name="basic_error_data_structure">basic return data structure error</string>
+  <string name="my_wallet_detail_password">Please enter the account password</string>
+  <string name="lib_ok">Confirm</string>
+
+</resources>

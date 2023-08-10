@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
                 android:drawablePadding="5dp"
-                android:text="钱包地址"
+                android:text="@string/wc_w_addr"
                 android:textColor="@color/gray_8e"
                 android:textSize="14sp" />
             <TextView
@@ -78,7 +78,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
                 android:drawablePadding="5dp"
-                android:text="当前网络"
+                android:text="@string/wc_cnet"
                 android:textColor="@color/gray_8e"
                 android:textSize="14sp" />
 
@@ -112,7 +112,7 @@
             android:layout_gravity="center_horizontal"
             android:drawableRight="@drawable/ic_right"
             android:drawablePadding="5dp"
-            android:text="该服务由 WalletConnect 协议支持" />
+            android:text="@string/wc_at" />
 
 
             <Button
@@ -122,7 +122,7 @@
                 android:layout_margin="30dp"
                 android:background="@drawable/my_wallets_red"
                 android:gravity="center"
-                android:text="断开连接"
+                android:text="@string/wc_dis"
                 android:textColor="@color/white"
                 android:textSize="17sp" />
 

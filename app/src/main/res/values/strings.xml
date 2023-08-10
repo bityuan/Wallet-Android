@@ -38,5 +38,18 @@
     <string name="copy_url_str">复制链接</string>
     <string name="ex_open">在浏览器中打开</string>
     <string name="exit_str">退出</string>
+    <string name="wc_get_addr">允许获取当前钱包地址</string>
+    <string name="wc_sign_str">允许向当前钱包请求签名</string>
+    <string name="wc_at">该服务由 WalletConnect 协议支持</string>
+    <string name="wc_w_addr">钱包地址</string>
+    <string name="wc_cnet">当前网络</string>
+    <string name="wc_dis">断开连接</string>
+    <string name="wc_pay_de">支付详情</string>
+    <string name="wc_pay_me">支付信息</string>
+    <string name="wc_pay_address">付款地址</string>
+    <string name="wc_fee">矿工费</string>
+    <string name="wc_next">下一步</string>
+    <string name="wc_con">WalletConnect正在连接你的钱包</string>
+    <string name="wc_coned">已经与下列钱包建立连接</string>
 
 </resources>

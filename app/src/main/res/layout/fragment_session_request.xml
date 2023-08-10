@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="16dp"
             android:paddingTop="13dp"
-            android:text="取消"
+            android:text="@string/cancel"
             android:textColor="#8E92A3"
             android:textSize="16sp" />
 
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="13dp"
-            android:text="支付详情"
+            android:text="@string/wc_pay_de"
             android:textColor="@color/color_333649"
             android:textSize="17sp" />
 
@@ -96,7 +96,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="支付信息"
+                    android:text="@string/wc_pay_me"
                     android:textColor="@color/gray_8e"
                     android:textSize="13sp" />
 
@@ -129,7 +129,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="收款地址"
+                    android:text="@string/home_receipt_address"
                     android:textColor="@color/gray_8e"
                     android:textSize="13sp" />
 
@@ -162,7 +162,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="付款地址"
+                    android:text="@string/wc_pay_address"
                     android:textColor="@color/gray_8e"
                     android:textSize="13sp" />
 
@@ -196,7 +196,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="矿工费"
+                    android:text="@string/wc_fee"
                     android:textColor="@color/gray_8e"
                     android:textSize="13sp" />
 
@@ -225,7 +225,7 @@
             android:layout_marginBottom="15dp"
             android:background="@drawable/bg_import_wallet_button_ok"
             android:gravity="center"
-            android:text="下一步"
+            android:text="@string/wc_next"
             android:textColor="@color/white"
             android:textSize="17sp" />
 
