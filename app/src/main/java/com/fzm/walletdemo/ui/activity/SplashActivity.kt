@@ -1,6 +1,7 @@
 package com.fzm.walletdemo.ui.activity
 
 import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -18,8 +19,7 @@ import kotlinx.coroutines.launch
 @Route(path = RouterPath.APP_SPLASH)
 class SplashActivity : AppCompatActivity() {
 
-    private val PERMISSIONS = listOf(
-        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+    private val requestList = mutableListOf(
         Manifest.permission.CAMERA,
         Manifest.permission.READ_PHONE_STATE
     )
@@ -31,8 +31,17 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun requestPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestList.add(Manifest.permission.READ_MEDIA_IMAGES)
+            requestList.add(Manifest.permission.READ_MEDIA_AUDIO)
+            requestList.add(Manifest.permission.READ_MEDIA_VIDEO)
+        }else {
+            requestList.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
+
+
         PermissionX.init(this)
-            .permissions(PERMISSIONS)
+            .permissions(requestList)
             .onExplainRequestReason { scope, deniedList ->
                 val message = getString(R.string.need_agree_pers)
                 scope.showRequestReasonDialog(deniedList, message, getString(R.string.dialog_approve), getString(R.string.dialog_reject))

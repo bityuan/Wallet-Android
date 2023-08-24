@@ -113,7 +113,7 @@ ext {
     fragmentKtx = "androidx.fragment:fragment-ktx:1.4.1"
     dsBridge = "com.github.wendux:DSBridge-Android:3.0.0"
     livedatabus = "io.github.jeremyliao:live-event-bus-x:1.8.0"
-    permissionx = "com.guolindev.permissionx:permissionx:1.6.4"
+    permissionx = "com.guolindev.permissionx:permissionx:1.7.1"
     materialDialogs = "com.afollestad.material-dialogs:core:0.9.6.0"
 
     navigationUi = "androidx.navigation:navigation-ui-ktx:2.3.5"
@@ -123,7 +123,8 @@ ext {
     web3j = "org.web3j:core:4.2.1-android"
     bnbcrypto = "org.web3j:bnbcrypto:1.0.0"
     kotson = "com.github.salomonbrys.kotson:kotson:2.5.0"
-
+    //https://mvnrepository.com/artifact/com.trustwallet/wallet-core
+    trustwallet ="com.trustwallet:wallet-core:2.6.3"
 
 
 }

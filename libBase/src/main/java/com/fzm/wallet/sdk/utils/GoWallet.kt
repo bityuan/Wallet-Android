@@ -14,14 +14,21 @@ import java.util.*
 
 class GoWallet {
     companion object {
-        const val WEB3_BNB = "https://bsc.publicnode.com"
-        const val WEB3_ETH = "https://rpc.flashbots.net"
-        const val CHAIN_ID_ETH = "eip155:1"
-        const val CHAIN_ID_BNB = "eip155:56"
-        const val CHAIN_ID_BTY = "eip155:2999"
+       private const val WEB3_BNB = "https://bsc.publicnode.com"
+       private const val WEB3_ETH = "https://rpc.flashbots.net"
+       private const val CHAIN_ID_ETH = "eip155:1"
+       private const val CHAIN_ID_BNB = "eip155:56"
+       private const val CHAIN_ID_BTY = "eip155:2999"
+
+        private const val CHAIN_ID_ETH_L = 1L
+        private const val CHAIN_ID_BNB_L = 56L
+        private const val CHAIN_ID_BTY_L = 2999L
 
         val CHAIN_ID_MAPS =
             mapOf(CHAIN_ID_ETH to "ETH", CHAIN_ID_BNB to "BNB", CHAIN_ID_BTY to "BTY")
+
+        val CHAIN_ID_MAPS_L =
+            mapOf(CHAIN_ID_ETH_L to "ETH", CHAIN_ID_BNB_L to "BNB", CHAIN_ID_BTY_L to "BTY")
 
         private val gson = Gson()
 
@@ -712,6 +719,19 @@ class GoWallet {
                 }
 
                 CHAIN_ID_BNB -> {
+                    WEB3_BNB
+                }
+
+                else -> WEB3_ETH
+            }
+        }
+        fun getWeb3UrlL(chainId: Long): String {
+            return when (chainId) {
+                CHAIN_ID_ETH_L -> {
+                    WEB3_ETH
+                }
+
+                CHAIN_ID_BNB_L -> {
                     WEB3_BNB
                 }
 

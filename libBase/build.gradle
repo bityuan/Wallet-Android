@@ -12,6 +12,7 @@ dependencies {
     api cfg.arouter
     //api cfg.WalletApiAndroid
     api(name: 'walletapi', ext: 'aar')
+    api files('libs/core-4.8.8-android.jar')
     api cfg.litepal
     api cfg.litepal
     api cfg.gson
@@ -54,9 +55,10 @@ dependencies {
     api cfg.navigationFragment
     api cfg.broccoli
     api cfg.swipeRecyclerview
-    api cfg.web3j
+    //api cfg.web3j
     //api cfg.bnbcrypto
     api cfg.kotson
+    api cfg.trustwallet
     //debugApi  cfg.glance
 
     // WalletConnect V2
