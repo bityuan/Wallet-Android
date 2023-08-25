@@ -16,6 +16,8 @@ class PrivateKeyWallet(wallet: PWallet) : BaseWallet(wallet) {
     suspend fun init(configuration: WalletConfiguration): Long {
         return with(configuration) {
             configuration.coins[0].let { chooseChain ->
+                privateKey =
+                    if (Walletapi.checkWifCompress(privateKey)) Walletapi.wifKeyToHex(privateKey) else privateKey
                 val pubkey = GoWallet.priToPub(chooseChain.chain, privateKey!!)
                     ?: throw ImportWalletException("私钥有误")
                 val address = Walletapi.pubToAddress_v2(chooseChain.chain, pubkey)

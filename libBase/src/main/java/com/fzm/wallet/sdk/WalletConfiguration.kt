@@ -17,7 +17,6 @@ class WalletConfiguration {
     var mnemonic: String? = null
         private set
     var privateKey: String? = null
-        private set
     var address: String? = null
         private set
     var walletName: String? = null

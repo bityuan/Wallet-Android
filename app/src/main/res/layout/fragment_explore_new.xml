@@ -8,6 +8,9 @@
 
     <LinearLayout
         android:id="@+id/ll_search"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:paddingStart="8dp"
         android:layout_width="match_parent"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
@@ -23,11 +26,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableStart="@mipmap/ic_search"
-            android:drawablePadding="5dp"
+            android:drawablePadding="6dp"
             android:hint="@string/input_www"
-            android:textColor="@color/color_333649"
-            android:textColorHint="@color/color_8E92A3"
-            android:textSize="16sp" />
+            android:textColor="@color/color_8E92A3"
+            android:textSize="14sp" />
 
         <ImageView
             android:id="@+id/iv_scan"
