@@ -113,8 +113,7 @@ class ExploreFragmentOld : Fragment() {
                         return@let
                     }
                 }
-                ARouter.getInstance().build(RouterPath.APP_DAPP).withString("name", appBean.name)
-                    .withString("url", appBean.app_url).navigation()
+                //ARouter.getInstance().build(RouterPath.APP_DAPP).withString("name", appBean.name).withString("url", appBean.app_url).navigation()
             }
 
         }

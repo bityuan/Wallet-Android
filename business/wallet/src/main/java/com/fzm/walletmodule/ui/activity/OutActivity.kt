@@ -357,7 +357,7 @@ class OutActivity : BaseActivity() {
             val money = binding.etMoney.text.toString()
             val password = bindingDialog.etInput.text.toString()
             if (password.isEmpty()) {
-                toast("请输入密码")
+                toast(getString(R.string.my_wallet_password_tips))
                 return@setOnClickListener
             }
             CoroutineScope(Dispatchers.IO).launch {
@@ -369,7 +369,7 @@ class OutActivity : BaseActivity() {
                         val check = GoWallet.checkPasswd(password, it.getpWallet().password)
                         if (!check) {
                             withContext(Dispatchers.Main) {
-                                toast("密码错误")
+                                toast(getString(R.string.pwd_fail_str))
                                 loading.dismiss()
                             }
                             return@let

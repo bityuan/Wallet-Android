@@ -51,5 +51,8 @@
     <string name="wc_next">下一步</string>
     <string name="wc_con">WalletConnect正在连接你的钱包</string>
     <string name="wc_coned">已经与下列钱包建立连接</string>
+    <string name="del_str">删除</string>
+    <string name="del_tip_str">是否删除?</string>
+
 
 </resources>

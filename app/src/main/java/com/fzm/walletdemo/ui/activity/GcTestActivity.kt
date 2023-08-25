@@ -89,7 +89,7 @@ class GcTestActivity : BaseActivity() {
                                 } else {
                                     withContext(Dispatchers.Main) {
                                         dismiss()
-                                        toast("密码错误")
+                                        toast(getString(R.string.pwd_fail_str))
                                     }
                                 }
                             }

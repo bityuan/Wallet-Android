@@ -22,6 +22,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
@@ -88,9 +89,14 @@ class DappActivity : AppCompatActivity() {
     @Autowired
     var url: String? = null
 
-    private val address = Address(IPConfig.TEST_ADDR)
-    private val nodeUrl = IPConfig.TEST_NODE_URL
-    private val chainId: Long = IPConfig.TEST_CHAIN_ID
+    @JvmField
+    @Autowired
+    var chainNet:Int = -1
+
+    private var address = Address.EMPTY
+    private var nodeUrl = GoWallet.WEB3_BNB
+    private var chainId: Long = GoWallet.CHAIN_ID_BNB_L
+
     private val walletRepository: WalletRepository by inject(walletQualifier)
     private val loading by lazy {
         val view =
@@ -105,6 +111,7 @@ class DappActivity : AppCompatActivity() {
         setContentView(binding.root)
         title = getString(R.string.exp_str)
         ARouter.getInstance().inject(this)
+        configChainNet()
         doBar()
         binding.xbar.tvToolbar.text = name
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -113,7 +120,35 @@ class DappActivity : AppCompatActivity() {
         url?.let {
             binding.webDapp.loadUrl(it)
         }
+    }
 
+    private fun configChainNet(){
+        when(chainNet){
+            0 -> {
+                val addr = GoWallet.getChain("ETH")?.address
+                addr?.let {
+                    address = Address(it)
+                    nodeUrl = GoWallet.WEB3_BTY
+                    chainId = GoWallet.CHAIN_ID_BTY_L
+                }
+            }
+            1 -> {
+                val addr = GoWallet.getChain("ETH")?.address
+                addr?.let {
+                    address = Address(it)
+                    nodeUrl = GoWallet.WEB3_ETH
+                    chainId = GoWallet.CHAIN_ID_ETH_L
+                }
+            }
+            2 -> {
+                val addr = GoWallet.getChain("BNB")?.address
+                addr?.let {
+                    address = Address(it)
+                    nodeUrl = GoWallet.WEB3_BNB
+                    chainId = GoWallet.CHAIN_ID_BNB_L
+                }
+            }
+        }
     }
 
     private fun doBar() {
@@ -153,27 +188,32 @@ class DappActivity : AppCompatActivity() {
         val userAgentString = binding.webDapp.settings.userAgentString
         val resultAgent = "$userAgentString;wallet;1.0"
         binding.webDapp.settings.userAgentString = resultAgent
+
+        setupWeb3(chainId, nodeUrl, address)
+
+    }
+
+    private fun setupWeb3(chainId: Long, nodeUrl: String, address: Address) {
+        val web3ViewClient = Web3ViewClient(this)
         binding.webDapp.webChromeClient = object : WebChromeClient() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 super.onProgressChanged(view, newProgress)
                 binding.progressWeb.progress = newProgress
             }
         }
-        //判断钱包环境
-        /*    binding.webDapp.webViewClient = object : WebViewClient() {
-                override fun onPageFinished(view: WebView?, url: String?) {
-                    super.onPageFinished(view, url)
-                    binding.progressWeb.visibility = View.GONE
-                }
-            }*/
-        val webViewClient = Web3ViewClient(this)
-        binding.webDapp.webViewClient =
-            WrapWebViewClient(binding.webDapp, webViewClient, binding.webDapp.webViewClient)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            binding.webDapp.webViewClient =
+                WrapWebViewClient(
+                    binding.webDapp,
+                    binding.progressWeb,
+                    web3ViewClient,
+                    binding.webDapp.webViewClient
+                )
+        }
+        web3ViewClient.jsInjectorClient.chainId = chainId
+        web3ViewClient.jsInjectorClient.rpcUrl = nodeUrl
+        web3ViewClient.jsInjectorClient.walletAddress = address
 
-        //初始化web3
-        webViewClient.jsInjectorClient.chainId = chainId
-        webViewClient.jsInjectorClient.rpcUrl = nodeUrl
-        webViewClient.jsInjectorClient.walletAddress = address
     }
 
 
@@ -218,35 +258,33 @@ class DappActivity : AppCompatActivity() {
 
     private class WrapWebViewClient(
         val dWebView: DWebView,
-        internalClient: Web3ViewClient,
-        externalClient: WebViewClient?
+        val progressBar: ProgressBar,
+        val internalClient: Web3ViewClient,
+        val externalClient: WebViewClient?
     ) :
         WebViewClient() {
         private var loadInterface: URLLoadInterface? = null
-
-        private val internalClient: Web3ViewClient
-        private val externalClient: WebViewClient?
         private var loadingError = false
         private var redirect = false
 
-        init {
-            this.internalClient = internalClient
-            this.externalClient = externalClient
-        }
 
         override fun onPageStarted(view: WebView, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
             dWebView.clearCache(true)
             if (!redirect) {
-                view.evaluateJavascript(internalClient.getProviderString(view), null)
-                view.evaluateJavascript(internalClient.getInitString(view), null)
-                internalClient.resetInject()
+                internalClient.let {
+                    view.evaluateJavascript(it.getProviderString(view), null)
+                    view.evaluateJavascript(it.getInitString(view), null)
+                    it.resetInject()
+                }
+
             }
             redirect = false
         }
 
         override fun onPageFinished(view: WebView, url: String?) {
             super.onPageFinished(view, url)
+            progressBar.visibility = View.GONE
             if (!redirect && !loadingError) {
                 if (loadInterface != null) {
                     loadInterface!!.onWebpageLoaded(url, view.title)
@@ -335,7 +373,6 @@ class DappActivity : AppCompatActivity() {
 
         }
 
-
         override fun onSignTransaction(transaction: Web3Transaction?) {
             lifecycleScope.launch(Dispatchers.Main) {
 
@@ -356,14 +393,13 @@ class DappActivity : AppCompatActivity() {
                     val va18 = 10.0.pow(18.0)
                     val pValue = "${tran.value.toLong() / va18}".toPlainStr(8)
                     val chainName = GoWallet.CHAIN_ID_MAPS_L[chainId]
-                    tvDappName.text = "$chainName 网络"
+                    val netName = GoWallet.NET_MAPS[chainId]
+                    tvDappName.text = "$netName"
                     tvDappUrl.text = url
                     tvValue.text = "$pValue $chainName"
                     tvOutAddress.text = address.toString()
                     tvInAddress.text = tran.recipient.toString()
                     tvPayMsg.text = "$chainName ${getString(R.string.home_transfer)}"
-
-
 
                     if (chainName == "BTY") {
                         lifecycleScope.launch(Dispatchers.IO) {
@@ -479,7 +515,7 @@ class DappActivity : AppCompatActivity() {
             bindingDialog.btnOk.setOnClickListener {
                 val password = bindingDialog.etInput.text.toString()
                 if (password.isEmpty()) {
-                    toast("请输入密码")
+                    toast(getString(R.string.my_wallet_password_tips))
                     return@setOnClickListener
                 }
                 loading.show()
@@ -489,7 +525,7 @@ class DappActivity : AppCompatActivity() {
                         val check = GoWallet.checkPasswd(password, w.password)
                         if (!check) {
                             withContext(Dispatchers.Main) {
-                                toast("密码错误")
+                                toast(getString(R.string.pwd_fail_str))
                                 loading.dismiss()
                             }
                         } else {

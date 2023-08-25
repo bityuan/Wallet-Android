@@ -71,10 +71,10 @@ class WebTestActivity : BaseActivity() {
                     val urls = Gson().toJson(mUrlList)
                     PreferencesUtils.putString(this, "testurl", urls)
                 }
-                .title("删除")
-                .content("是否删除")
-                .positiveText("确定")
-                .negativeText("取消")
+                .title(getString(R.string.del_str))
+                .content(getString(R.string.del_tip_str))
+                .positiveText(getString(R.string.ok))
+                .negativeText(getString(R.string.cancel))
                 .show();
             false
         }

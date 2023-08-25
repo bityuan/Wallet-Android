@@ -807,6 +807,8 @@
     <string name="re_asset">アセットを取得する</string>
     <string name="do_back_sign">スキャンと署名にはバックアップ ウォレットを使用してください</string>
     <string name="check_mnem">ニーモニックの検証</string>
-    <string name="update_ver_str">版本更新</string>
-    <string name="up_new_str">当前已是最新版本</string>
+    <string name="update_ver_str">バージョンの更新</string>
+    <string name="up_new_str">現在の最新バージョン</string>
+    <string name="create_wallet_pre">まずウォレットを作成してください</string>
+    <string name="pwd_fail_str">間違ったパスワード</string>
 </resources>

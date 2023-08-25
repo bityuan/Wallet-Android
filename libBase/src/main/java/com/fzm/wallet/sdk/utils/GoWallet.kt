@@ -14,21 +14,30 @@ import java.util.*
 
 class GoWallet {
     companion object {
-       private const val WEB3_BNB = "https://bsc.publicnode.com"
-       private const val WEB3_ETH = "https://rpc.flashbots.net"
+       const val WEB3_BNB = "https://bsc.publicnode.com"
+       const val WEB3_ETH = "https://rpc.flashbots.net"
+       const val WEB3_BTY = "https://mainnet.bityuan.com/eth"
        private const val CHAIN_ID_ETH = "eip155:1"
        private const val CHAIN_ID_BNB = "eip155:56"
        private const val CHAIN_ID_BTY = "eip155:2999"
 
-        private const val CHAIN_ID_ETH_L = 1L
-        private const val CHAIN_ID_BNB_L = 56L
-        private const val CHAIN_ID_BTY_L = 2999L
+        const val CHAIN_ID_ETH_L = 1L
+        const val CHAIN_ID_BNB_L = 56L
+        const val CHAIN_ID_BTY_L = 2999L
+
+        const val NET_ETH = "Ethereum"
+        const val NET_BNB = "BNB Smart Chain"
+        const val NET_BTY = "BitYuan Mainnet"
+
 
         val CHAIN_ID_MAPS =
             mapOf(CHAIN_ID_ETH to "ETH", CHAIN_ID_BNB to "BNB", CHAIN_ID_BTY to "BTY")
 
         val CHAIN_ID_MAPS_L =
             mapOf(CHAIN_ID_ETH_L to "ETH", CHAIN_ID_BNB_L to "BNB", CHAIN_ID_BTY_L to "BTY")
+
+        val NET_MAPS =
+            mapOf(CHAIN_ID_ETH_L to NET_ETH, CHAIN_ID_BNB_L to NET_BNB, CHAIN_ID_BTY_L to NET_BTY)
 
         private val gson = Gson()
 

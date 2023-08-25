@@ -125,6 +125,7 @@ ext {
     kotson = "com.github.salomonbrys.kotson:kotson:2.5.0"
     //https://mvnrepository.com/artifact/com.trustwallet/wallet-core
     trustwallet ="com.trustwallet:wallet-core:2.6.3"
+    dialogX ="com.github.kongzue.DialogX:DialogX:0.0.48"
 
 
 }

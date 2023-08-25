@@ -7,6 +7,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.ActivitySearchDappBinding
@@ -14,6 +15,9 @@ import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.PreferencesUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.kongzue.dialogx.dialogs.PopMenu
+import com.kongzue.dialogx.interfaces.OnIconChangeCallBack
+import com.kongzue.dialogx.interfaces.OnMenuItemClickListener
 import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
 import org.jetbrains.anko.toast
@@ -73,9 +77,28 @@ class SearchDappActivity : BaseActivity() {
     }
 
     private fun gotoDapp(url: String) {
-        ARouter.getInstance().build(RouterPath.APP_DAPP).withString("name", "浏览器")
-            .withString("url", url).navigation()
+        val menu = PopMenu.show(listOf(GoWallet.NET_BTY, GoWallet.NET_ETH, GoWallet.NET_BNB))
+        menu.onMenuItemClickListener =
+            OnMenuItemClickListener { dialog, text, index ->
+                ARouter.getInstance().build(RouterPath.APP_DAPP)
+                    .withString("name", getString(R.string.exp_str))
+                    .withString("url", url).withInt("chainNet", index).navigation()
+
+                false
+            }
+        menu.onIconChangeCallBack = object : OnIconChangeCallBack<PopMenu>() {
+            override fun getIcon(dialog: PopMenu?, index: Int, menuText: String?): Int {
+                return when (index) {
+                    0 -> R.mipmap.my_wallet_bty
+                    1 -> R.mipmap.my_wallet_eth
+                    2 -> R.mipmap.my_wallet_bnb
+                    else -> R.mipmap.my_wallet_eth
+                }
+            }
+        }
+
     }
+
 
     override fun initView() {
         super.initView()
@@ -100,10 +123,10 @@ class SearchDappActivity : BaseActivity() {
                     val urls = Gson().toJson(mUrlList)
                     PreferencesUtils.putString(this, HISTORY_URL_KEY, urls)
                 }
-                .title("删除")
-                .content("是否删除")
-                .positiveText("确定")
-                .negativeText("取消")
+                .title(getString(R.string.del_str))
+                .content(getString(R.string.del_tip_str))
+                .positiveText(getString(R.string.ok))
+                .negativeText(getString(R.string.cancel))
                 .show();
             false
         }

@@ -33,9 +33,6 @@ class JsWCApi(
         gasPrice: String?,
         payload: String?
     ) {
-        Log.v("web3","callbackId = $callbackId,\nrecipient = $recipient,\nvalue = $value,\nnonce = $nonce,\ngasLimit = $gasLimit,\ngasPrice = $gasPrice,\npayload = $payload")
-
-
         val dValue = if (value == null || value == "undefined") {
             "0"
         }else {
@@ -114,12 +111,13 @@ class JsWCApi(
 
     @JavascriptInterface
     fun walletAddEthereumChain(callbackId: Int, msgParams: String?) {
-
+        //切换网络回调
+        Timber.tag("edao").v("======================walletAddEthereumChain")
     }
 
     @JavascriptInterface
     fun walletSwitchEthereumChain(callbackId: Int, msgParams: String?) {
-
+        Timber.tag("edao").v("----------------------------walletSwitchEthereumChain")
     }
 
 

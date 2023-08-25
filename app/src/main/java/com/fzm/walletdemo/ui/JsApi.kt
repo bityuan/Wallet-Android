@@ -22,6 +22,7 @@ import com.fzm.wallet.sdk.ext.jsonToMap
 import com.fzm.wallet.sdk.ext.toJSONStr
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.ToolUtils
+import com.fzm.walletdemo.R
 import com.fzm.walletmodule.utils.NetWorkUtils
 import com.google.gson.Gson
 import com.jeremyliao.liveeventbus.LiveEventBus
@@ -279,12 +280,12 @@ class JsApi(private val webView: WebView, private val activity: FragmentActivity
             }
         bindingDialog.ivClose.setOnClickListener {
             dialog.dismiss()
-            handler?.complete(toJSONStr("error" to "取消"))
+            handler?.complete(toJSONStr("error" to activity.getString(R.string.cancel)))
         }
         bindingDialog.btnOk.setOnClickListener {
             val password = bindingDialog.etInput.text.toString()
             if (password.isEmpty()) {
-                activity.toast("请输入密码")
+                activity.toast(activity.getString(R.string.my_wallet_password_tips))
                 return@setOnClickListener
             }
             activity.lifecycleScope.launch(Dispatchers.IO) {
@@ -296,7 +297,7 @@ class JsApi(private val webView: WebView, private val activity: FragmentActivity
                     val check = GoWallet.checkPasswd(password, it.password)
                     if (!check) {
                         withContext(Dispatchers.Main) {
-                            activity.toast("密码错误")
+                            activity.toast(activity.getString(R.string.pwd_fail_str))
                             loading.dismiss()
                         }
                         return@let

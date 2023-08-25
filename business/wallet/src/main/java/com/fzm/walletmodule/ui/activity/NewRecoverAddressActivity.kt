@@ -285,7 +285,7 @@ class NewRecoverAddressActivity : BaseActivity() {
         bindingDialog.btnOk.setOnClickListener {
             val password = bindingDialog.etInput.text.toString()
             if (password.isEmpty()) {
-                toast("请输入密码")
+                toast(getString(R.string.my_wallet_password_tips))
                 return@setOnClickListener
             }
             lifecycleScope.launch(Dispatchers.IO) {

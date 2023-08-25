@@ -60,6 +60,7 @@ dependencies {
     api cfg.kotson
     api cfg.trustwallet
     //debugApi  cfg.glance
+    api cfg.dialogX
 
     // WalletConnect V2
     def wallet_connect_version = "1.4.1"

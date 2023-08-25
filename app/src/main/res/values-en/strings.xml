@@ -51,5 +51,8 @@
   <string name="wc_next">Next</string>
   <string name="wc_con">WalletConnect is connecting your wallet</string>
   <string name="wc_coned">Already connected to the following wallets</string>
+  <string name="del_str">Delete</string>
+  <string name="del_tip_str">Delete?</string>
+
 
 </resources>

@@ -841,6 +841,8 @@
     <string name="re_asset">내 자산 회수</string>
     <string name="do_back_sign">백업 지갑을 사용하여 스캔하고 서명하세요</string>
     <string name="check_mnem">니모닉 확인</string>
-    <string name="update_ver_str">版本更新</string>
-    <string name="up_new_str">当前已是最新版本</string>
+    <string name="update_ver_str">버전 업데이트</string>
+    <string name="up_new_str">현재 최신 버전</string>
+    <string name="create_wallet_pre">먼저 지갑을 생성해주세요</string>
+    <string name="pwd_fail_str">잘못된 비밀번호</string>
 </resources>

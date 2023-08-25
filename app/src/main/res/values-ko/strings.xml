@@ -51,4 +51,6 @@
   <string name="wc_next">다음</string>
   <string name="wc_con">WalletConnect가 귀하의 지갑을 연결하고 있습니다</string>
   <string name="wc_coned">이미 다음 지갑에 연결되어 있습니다.</string>
+  <string name="del_str">삭제</string>
+  <string name="del_tip_str">삭제하시겠습니까?</string>
 </resources>

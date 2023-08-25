@@ -889,8 +889,9 @@
     <string name="re_asset">Retrieve my assets</string>
     <string name="do_back_sign">Please use the backup wallet to scan and sign</string>
     <string name="check_mnem">Verify mnemonic</string>
-    <string name="update_ver_str">版本更新</string>
-    <string name="up_new_str">当前已是最新版本</string>
-
+    <string name="update_ver_str">version update</string>
+    <string name="up_new_str">Currently the latest version</string>
+    <string name="create_wallet_pre">Please create a wallet first</string>
+    <string name="pwd_fail_str">wrong password</string>
 
 </resources>
