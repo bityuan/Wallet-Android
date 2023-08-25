@@ -53,6 +53,7 @@
   <string name="wc_coned">Already connected to the following wallets</string>
   <string name="del_str">Delete</string>
   <string name="del_tip_str">Delete?</string>
+  <string name="send_suc_str">Send successfully!</string>
 
 
 </resources>

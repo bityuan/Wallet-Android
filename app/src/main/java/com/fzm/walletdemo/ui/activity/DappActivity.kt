@@ -580,7 +580,7 @@ class DappActivity : AppCompatActivity() {
         loading.dismiss()
         pwdDialog?.dismiss()
         payDialog?.dismiss()
-        toast("发送成功!$sendHash")
+        toast(getString(R.string.send_suc_str))
     }
 
 }

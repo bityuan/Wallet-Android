@@ -53,4 +53,5 @@
   <string name="wc_coned">이미 다음 지갑에 연결되어 있습니다.</string>
   <string name="del_str">삭제</string>
   <string name="del_tip_str">삭제하시겠습니까?</string>
+  <string name="send_suc_str">성공적으로 보냈습니다!</string>
 </resources>

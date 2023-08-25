@@ -53,5 +53,6 @@
   <string name="wc_coned">すでに以下のウォレットに接続されています</string>
   <string name="del_str">削除</string>
   <string name="del_tip_str">削除しますか?</string>
+  <string name="send_suc_str">正常に送信されました!</string>
 
 </resources>

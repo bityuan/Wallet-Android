@@ -489,7 +489,7 @@ class WConnectActivity : BaseActivity() {
     private fun dis() {
         loading.dismiss()
         pwdDialog?.dismiss()
-        toast("发送成功!")
+        toast(getString(R.string.send_suc_str))
         showUI(incRequest = false, incProposaled = true)
     }
 
