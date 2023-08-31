@@ -103,9 +103,8 @@ class JsWCApi(
                 callbackId.toLong()
             )
             jsListener.onEthCall(call)
-            //webView.post {  }
         } catch (e: Exception) {
-            //
+            e.printStackTrace()
         }
     }
 

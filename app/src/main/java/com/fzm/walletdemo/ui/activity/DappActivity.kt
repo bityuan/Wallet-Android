@@ -75,7 +75,6 @@ import wendu.dsbridge.DWebView
 import java.util.concurrent.TimeUnit
 import kotlin.math.pow
 
-
 @Route(path = RouterPath.APP_DAPP)
 class DappActivity : AppCompatActivity() {
 
@@ -114,9 +113,7 @@ class DappActivity : AppCompatActivity() {
         configChainNet()
         doBar()
         binding.xbar.tvToolbar.text = name
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            initWebView()
-        }
+        initWebView()
         url?.let {
             binding.webDapp.loadUrl(it)
         }
@@ -176,10 +173,9 @@ class DappActivity : AppCompatActivity() {
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun initWebView() {
         DWebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
-        binding.webDapp.addJavascriptObject(JsApi(binding.webDapp, this), "null")
+        binding.webDapp.addJavascriptObject(JsApi(binding.webDapp, this), null)
         binding.webDapp.addJavascriptInterface(JsWCApi(binding.webDapp, this, jsListener), "alpha")
         binding.webDapp.settings.javaScriptEnabled = true
         binding.webDapp.settings.domStorageEnabled = true
