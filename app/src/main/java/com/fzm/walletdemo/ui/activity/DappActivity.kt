@@ -90,7 +90,7 @@ class DappActivity : AppCompatActivity() {
 
     @JvmField
     @Autowired
-    var chainNet:Int = -1
+    var chainNet: Int = -1
 
     private var address = Address.EMPTY
     private var nodeUrl = GoWallet.WEB3_BNB
@@ -119,8 +119,8 @@ class DappActivity : AppCompatActivity() {
         }
     }
 
-    private fun configChainNet(){
-        when(chainNet){
+    private fun configChainNet() {
+        when (chainNet) {
             0 -> {
                 val addr = GoWallet.getChain("ETH")?.address
                 addr?.let {
@@ -129,6 +129,7 @@ class DappActivity : AppCompatActivity() {
                     chainId = GoWallet.CHAIN_ID_BTY_L
                 }
             }
+
             1 -> {
                 val addr = GoWallet.getChain("ETH")?.address
                 addr?.let {
@@ -137,6 +138,7 @@ class DappActivity : AppCompatActivity() {
                     chainId = GoWallet.CHAIN_ID_ETH_L
                 }
             }
+
             2 -> {
                 val addr = GoWallet.getChain("BNB")?.address
                 addr?.let {
@@ -329,151 +331,163 @@ class DappActivity : AppCompatActivity() {
 
     private val jsListener = object : JsListener {
         override fun onRequestAccounts(callbackId: Long) {
+            try {
+                val callback = String.format(
+                    JS_CALLBACK,
+                    callbackId,
+                    "[\"$address\"]"
+                )
 
-            val callback = String.format(
-                JS_CALLBACK,
-                callbackId,
-                "[\"$address\"]"
-            )
-
-            binding.webDapp.evaluateJavascript(callback) { message: String? ->
-                Timber.d(message)
+                binding.webDapp.evaluateJavascript(callback) { message: String? ->
+                    Timber.d(message)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
+
         }
 
 
         override fun onEthCall(call: Web3Call) {
-            lifecycleScope.launch(Dispatchers.IO) {
-                val httpService = HttpService(nodeUrl)
-                val web3j = Web3j.build(httpService)
-                val tran = Transaction.createFunctionCallTransaction(
-                    address.toString(),
-                    null,
-                    null,
-                    call.gasLimit,
-                    call.to.toString(),
-                    call.value,
-                    call.payload
-                )
-                val value = web3j?.ethCall(tran, call.blockParam)?.send()?.value
-                val callback: String = String.format(JS_CALLBACK_ON, call.leafPosition, value)
-                withContext(Dispatchers.Main) {
-                    //All WebView methods must be called on the same thread
-                    //所以都放在主线程
-                    binding.webDapp.evaluateJavascript(callback) { message: String? ->
-                        Timber.d(message)
+            try {
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val httpService = HttpService(nodeUrl)
+                    val web3j = Web3j.build(httpService)
+                    val tran = Transaction.createFunctionCallTransaction(
+                        address.toString(),
+                        null,
+                        null,
+                        call.gasLimit,
+                        call.to.toString(),
+                        call.value,
+                        call.payload
+                    )
+                    val value = web3j?.ethCall(tran, call.blockParam)?.send()?.value
+                    val callback: String = String.format(JS_CALLBACK_ON, call.leafPosition, value)
+                    withContext(Dispatchers.Main) {
+                        //All WebView methods must be called on the same thread
+                        //所以都放在主线程
+                        binding.webDapp.evaluateJavascript(callback) { message: String? ->
+                            Timber.d(message)
+                        }
                     }
-                }
 
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
 
         }
 
         override fun onSignTransaction(transaction: Web3Transaction?) {
-            lifecycleScope.launch(Dispatchers.Main) {
+            try {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    val view = LayoutInflater.from(this@DappActivity)
+                        .inflate(R.layout.fragment_session_request, null)
+                    val ivDappIcon = view.findViewById<ImageView>(R.id.iv_dapp_icon)
+                    val tvDappName = view.findViewById<TextView>(R.id.tv_dapp_name)
+                    val tvDappUrl = view.findViewById<TextView>(R.id.tv_dapp_url)
+                    ivDappIcon.visibility = View.GONE
+                    val tvPayMsg = view.findViewById<TextView>(R.id.tv_pay_msg)
+                    val tvValue = view.findViewById<TextView>(R.id.tv_value)
+                    val tvOutAddress = view.findViewById<TextView>(R.id.tv_out_address)
+                    val tvInAddress = view.findViewById<TextView>(R.id.tv_in_address)
+                    val tvWCFee = view.findViewById<TextView>(R.id.tv_wc_fee)
+                    val tvCancel = view.findViewById<TextView>(R.id.tv_cancel)
+                    val btnNext = view.findViewById<Button>(R.id.btn_next)
+                    transaction?.let { tran ->
+                        val va18 = 10.0.pow(18.0)
+                        val pValue = "${tran.value.toLong() / va18}".toPlainStr(8)
+                        val chainName = GoWallet.CHAIN_ID_MAPS_L[chainId]
+                        val netName = GoWallet.NET_MAPS[chainId]
+                        tvDappName.text = "$netName"
+                        tvDappUrl.text = url
+                        tvValue.text = "$pValue $chainName"
+                        tvOutAddress.text = address.toString()
+                        tvInAddress.text = tran.recipient.toString()
+                        tvPayMsg.text = "$chainName ${getString(R.string.home_transfer)}"
 
-                val view = LayoutInflater.from(this@DappActivity)
-                    .inflate(R.layout.fragment_session_request, null)
-                val ivDappIcon = view.findViewById<ImageView>(R.id.iv_dapp_icon)
-                val tvDappName = view.findViewById<TextView>(R.id.tv_dapp_name)
-                val tvDappUrl = view.findViewById<TextView>(R.id.tv_dapp_url)
-                ivDappIcon.visibility = View.GONE
-                val tvPayMsg = view.findViewById<TextView>(R.id.tv_pay_msg)
-                val tvValue = view.findViewById<TextView>(R.id.tv_value)
-                val tvOutAddress = view.findViewById<TextView>(R.id.tv_out_address)
-                val tvInAddress = view.findViewById<TextView>(R.id.tv_in_address)
-                val tvWCFee = view.findViewById<TextView>(R.id.tv_wc_fee)
-                val tvCancel = view.findViewById<TextView>(R.id.tv_cancel)
-                val btnNext = view.findViewById<Button>(R.id.btn_next)
-                transaction?.let { tran ->
-                    val va18 = 10.0.pow(18.0)
-                    val pValue = "${tran.value.toLong() / va18}".toPlainStr(8)
-                    val chainName = GoWallet.CHAIN_ID_MAPS_L[chainId]
-                    val netName = GoWallet.NET_MAPS[chainId]
-                    tvDappName.text = "$netName"
-                    tvDappUrl.text = url
-                    tvValue.text = "$pValue $chainName"
-                    tvOutAddress.text = address.toString()
-                    tvInAddress.text = tran.recipient.toString()
-                    tvPayMsg.text = "$chainName ${getString(R.string.home_transfer)}"
-
-                    if (chainName == "BTY") {
-                        lifecycleScope.launch(Dispatchers.IO) {
-                            val gasPriceResult = walletRepository.getGasPrice()
-                            val countResult =
-                                walletRepository.getTransactionCount(address.toString())
-                            withContext(Dispatchers.Main) {
-                                if (gasPriceResult.isSucceed()) {
-                                    gasPriceResult.data()?.let {
-                                        gasPrice = it.substringAfter("0x").toLong(16)
+                        if (chainName == "BTY") {
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                val gasPriceResult = walletRepository.getGasPrice()
+                                val countResult =
+                                    walletRepository.getTransactionCount(address.toString())
+                                withContext(Dispatchers.Main) {
+                                    if (gasPriceResult.isSucceed()) {
+                                        gasPriceResult.data()?.let {
+                                            gasPrice = it.substringAfter("0x").toLong(16)
+                                        }
                                     }
-                                }
-                                if (countResult.isSucceed()) {
-                                    countResult.data()?.let {
-                                        count = it.substringAfter("0x").toLong(16)
+                                    if (countResult.isSucceed()) {
+                                        countResult.data()?.let {
+                                            count = it.substringAfter("0x").toLong(16)
+                                        }
                                     }
-                                }
 
-                                showGasUI(
-                                    tvWCFee,
-                                    gasPrice,
-                                    transaction.gasLimit.toLong(),
-                                    chainName
-                                )
+                                    showGasUI(
+                                        tvWCFee,
+                                        gasPrice,
+                                        transaction.gasLimit.toLong(),
+                                        chainName
+                                    )
+                                }
+                            }
+                        } else {
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                val web3Url = GoWallet.getWeb3UrlL(chainId)
+                                val web3j = Web3j.build(HttpService(web3Url))
+                                val gasPriceResult = web3j.ethGasPrice().send()
+                                val countResult = web3j.ethGetTransactionCount(
+                                    address.toString(), DefaultBlockParameterName.LATEST
+                                ).send()
+                                withContext(Dispatchers.Main) {
+                                    gasPrice = gasPriceResult.gasPrice.toLong()
+                                    count = countResult.transactionCount.toLong()
+                                    showGasUI(
+                                        tvWCFee,
+                                        gasPrice,
+                                        transaction.gasLimit.toLong(),
+                                        chainName
+                                    )
+                                }
                             }
                         }
-                    } else {
-                        lifecycleScope.launch(Dispatchers.IO) {
-                            val web3Url = GoWallet.getWeb3UrlL(chainId)
-                            val web3j = Web3j.build(HttpService(web3Url))
-                            val gasPriceResult = web3j.ethGasPrice().send()
-                            val countResult = web3j.ethGetTransactionCount(
-                                address.toString(), DefaultBlockParameterName.LATEST
-                            ).send()
-                            withContext(Dispatchers.Main) {
-                                gasPrice = gasPriceResult.gasPrice.toLong()
-                                count = countResult.transactionCount.toLong()
-                                showGasUI(
-                                    tvWCFee,
-                                    gasPrice,
-                                    transaction.gasLimit.toLong(),
-                                    chainName
-                                )
+
+
+                        payDialog =
+                            AlertDialog.Builder(this@DappActivity).setView(view).create().apply {
+                                window?.setBackgroundDrawableResource(android.R.color.transparent)
                             }
+                        payDialog?.setCancelable(false)
+                        payDialog?.show()
+
+                        tvCancel.setOnClickListener {
+                            payDialog?.dismiss()
                         }
-                    }
+                        btnNext.setOnClickListener {
+                            val input = tran.payload?.substringAfter("0x")
+                            val input64 =
+                                Base64.encodeToString(Walletapi.hexTobyte(input), Base64.DEFAULT)
+                            val createTran = CreateTran(
+                                address.toString(),
+                                tran.gasLimit.toLong(),
+                                gasPrice,
+                                input64,
+                                count,
+                                tran.recipient.toString(),
+                                tran.value.toLong()
+                            )
+                            showPWD(createTran, chainName)
 
-
-                    payDialog =
-                        AlertDialog.Builder(this@DappActivity).setView(view).create().apply {
-                            window?.setBackgroundDrawableResource(android.R.color.transparent)
                         }
-                    payDialog?.setCancelable(false)
-                    payDialog?.show()
-
-                    tvCancel.setOnClickListener {
-                        payDialog?.dismiss()
+                        //
                     }
-                    btnNext.setOnClickListener {
-                        val input = tran.payload?.substringAfter("0x")
-                        val input64 =
-                            Base64.encodeToString(Walletapi.hexTobyte(input), Base64.DEFAULT)
-                        val createTran = CreateTran(
-                            address.toString(),
-                            tran.gasLimit.toLong(),
-                            gasPrice,
-                            input64,
-                            count,
-                            tran.recipient.toString(),
-                            tran.value.toLong()
-                        )
-                        showPWD(createTran, chainName)
 
-                    }
-                    //
                 }
-
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
+
         }
     }
 
@@ -509,50 +523,44 @@ class DappActivity : AppCompatActivity() {
                 pwdDialog?.dismiss()
             }
             bindingDialog.btnOk.setOnClickListener {
-                val password = bindingDialog.etInput.text.toString()
-                if (password.isEmpty()) {
-                    toast(getString(R.string.my_wallet_password_tips))
-                    return@setOnClickListener
-                }
-                loading.show()
-                lifecycleScope.launch(Dispatchers.IO) {
-                    val wallet = LitePal.find<PWallet>(MyWallet.getId())
-                    wallet?.let { w ->
-                        val check = GoWallet.checkPasswd(password, w.password)
-                        if (!check) {
-                            withContext(Dispatchers.Main) {
-                                toast(getString(R.string.pwd_fail_str))
-                                loading.dismiss()
-                            }
-                        } else {
-                            val bPassword = GoWallet.encPasswd(password)!!
-                            val mnem: String = GoWallet.decMenm(bPassword, w.mnem)
-                            chainName?.let { name ->
-                                val privKey =
-                                    GoWallet.getPrikey(if (name == "BTY") "ETH" else name, mnem)
-                                val createJson = gson.toJson(createTran)
-                                logDebug("构造数据 == $createJson")
-                                val bCreate = Walletapi.stringTobyte(createJson)
+                try {
+                    val password = bindingDialog.etInput.text.toString()
+                    if (password.isEmpty()) {
+                        toast(getString(R.string.my_wallet_password_tips))
+                        return@setOnClickListener
+                    }
+                    loading.show()
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        val wallet = LitePal.find<PWallet>(MyWallet.getId(), true)
+                        wallet?.let { w ->
+                            val check = GoWallet.checkPasswd(password, w.password)
+                            if (!check) {
+                                withContext(Dispatchers.Main) {
+                                    toast(getString(R.string.pwd_fail_str))
+                                    loading.dismiss()
+                                }
+                            } else {
+                                when (w.type) {
+                                    PWallet.TYPE_NOMAL -> {
+                                        val bPassword = GoWallet.encPasswd(password)!!
+                                        val mnem: String = GoWallet.decMenm(bPassword, w.mnem)
+                                        chainName?.let { name ->
+                                            val privKey =
+                                                GoWallet.getPrikey(
+                                                    if (name == "BTY") "ETH" else name,
+                                                    mnem
+                                                )
+                                            signAndSend(name, privKey, createTran)
+                                        }
+                                    }
 
-                                val signed = GoWallet.signTran(
-                                    if (name == "BTY") "BTYETH" else name, bCreate, privKey, 2
-                                )
-                                signed?.let {
-                                    if (name == "BTY") {
-                                        val send = walletRepository.sendRawTransaction(signed)
-                                        withContext(Dispatchers.Main) {
-                                            if (send.isSucceed()) {
-                                                send.data()?.let { sendHash ->
-                                                    dis(sendHash)
-                                                }
-                                            }
+                                    PWallet.TYPE_PRI_KEY -> {
+                                        val priCoin = w.coinList[0]
+                                        val privKey = priCoin.getPrivkey(password)
+                                        chainName?.let { name ->
+                                            signAndSend(name, privKey, createTran)
                                         }
-                                    } else {
-                                        val send = GoWallet.sendTran(chainName, signed, "")
-                                        val sendHash = JSONObject(send!!).getString("result")
-                                        withContext(Dispatchers.Main) {
-                                            dis(sendHash)
-                                        }
+
                                     }
                                 }
 
@@ -561,13 +569,48 @@ class DappActivity : AppCompatActivity() {
                         }
 
                     }
-
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
+
             }
 
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    private suspend fun signAndSend(name: String, privKey: String, createTran: CreateTran) {
+        try {
+            val createJson = gson.toJson(createTran)
+            logDebug("构造数据 == $createJson")
+            val bCreate = Walletapi.stringTobyte(createJson)
+
+            val signed = GoWallet.signTran(
+                if (name == "BTY") "BTYETH" else name, bCreate, privKey, 2
+            )
+            signed?.let {
+                if (name == "BTY") {
+                    val send = walletRepository.sendRawTransaction(signed)
+                    withContext(Dispatchers.Main) {
+                        if (send.isSucceed()) {
+                            send.data()?.let { sendHash ->
+                                dis(sendHash)
+                            }
+                        }
+                    }
+                } else {
+                    val send = GoWallet.sendTran(name, signed, "")
+                    val sendHash = JSONObject(send!!).getString("result")
+                    withContext(Dispatchers.Main) {
+                        dis(sendHash)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
     }
 
     private val gson = GsonBuilder().serializeNulls().create()

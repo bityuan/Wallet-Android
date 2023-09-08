@@ -390,41 +390,7 @@ class OutActivity : BaseActivity() {
 
                                 //如果需要代扣
                                 if (coinToken.proxy) {
-                                    val gsendTx = GsendTx().apply {
-                                        feepriv = if(it.platform == IPConfig.YBF_CHAIN) YBF_BTY_PR else BTY_PR
-                                        to = toAddress
-                                        tokenSymbol = it.name
-                                        execer = coinToken.exer
-                                        amount = money.toDouble()
-                                        txpriv = privkey
-                                        //消耗的BTY
-                                        fee = BTY_FEE
-                                        //扣的手续费接收地址
-                                        tokenFeeAddr = YBF_FEE_ADDR
-                                        //扣多少手续费
-                                        tokenFee = if(it.platform == IPConfig.YBF_CHAIN) YBF_TOKEN_FEE else TOKEN_FEE
-                                        if (it.treaty == "1") {
-                                            coinsForFee = false
-                                            tokenFeeSymbol = oldName
-                                        } else if (it.treaty == "2") {
-                                            coinsForFee = true
-                                        }
-                                        //feeAddressID是收比特元的手续费地址格式，txAddressID是当前用户地址格式
-                                        feeAddressID = if(it.address.startsWith("0x")) 2 else 0
-                                        txAddressID = if(it.address.startsWith("0x")) 2 else 0
-                                    }
-                                    val gsendTxResp = Walletapi.coinsTxGroup(gsendTx)
-                                    GoWallet.sendTran(it.chain, gsendTxResp.signedTx, it.name)
-                                    val sendTx = gsendTxResp.txId
-                                    runOnUiThread {
-                                        loading.dismiss()
-                                        ToastUtils.show(
-                                            this@OutActivity,
-                                            R.string.home_transfer_currency_success
-                                        )
-                                        finish()
-                                    }
-
+                                    toPara(it,money)
                                 } else {
                                     handleTransactions(toAddress, money)
                                 }
@@ -433,7 +399,12 @@ class OutActivity : BaseActivity() {
                             PWallet.TYPE_PRI_KEY -> {
                                 configPrikeyWallet(it)
                                 privkey = it.getPrivkey(password)
-                                handleTransactions(toAddress, money)
+                                //如果需要代扣
+                                if (coinToken.proxy) {
+                                    toPara(it,money)
+                                } else {
+                                    handleTransactions(toAddress, money)
+                                }
                             }
 
                             PWallet.TYPE_RECOVER -> {
@@ -450,6 +421,43 @@ class OutActivity : BaseActivity() {
                     e.printStackTrace()
                 }
             }
+        }
+    }
+
+    private fun toPara(it:Coin,money:String){
+        val gsendTx = GsendTx().apply {
+            feepriv = if(it.platform == IPConfig.YBF_CHAIN) YBF_BTY_PR else BTY_PR
+            to = toAddress
+            tokenSymbol = it.name
+            execer = coinToken.exer
+            amount = money.toDouble()
+            txpriv = privkey
+            //消耗的BTY
+            fee = BTY_FEE
+            //扣的手续费接收地址
+            tokenFeeAddr = YBF_FEE_ADDR
+            //扣多少手续费
+            tokenFee = if(it.platform == IPConfig.YBF_CHAIN) YBF_TOKEN_FEE else TOKEN_FEE
+            if (it.treaty == "1") {
+                coinsForFee = false
+                tokenFeeSymbol = oldName
+            } else if (it.treaty == "2") {
+                coinsForFee = true
+            }
+            //feeAddressID是收比特元的手续费地址格式，txAddressID是当前用户地址格式
+            feeAddressID = if(it.address.startsWith("0x")) 2 else 0
+            txAddressID = if(it.address.startsWith("0x")) 2 else 0
+        }
+        val gsendTxResp = Walletapi.coinsTxGroup(gsendTx)
+        GoWallet.sendTran(it.chain, gsendTxResp.signedTx, it.name)
+        val sendTx = gsendTxResp.txId
+        runOnUiThread {
+            loading.dismiss()
+            ToastUtils.show(
+                this@OutActivity,
+                R.string.home_transfer_currency_success
+            )
+            finish()
         }
     }
 
