@@ -378,7 +378,7 @@ class WConnectActivity : BaseActivity() {
                 val input = param.data.substringAfter("0x")
                 val input64 = Base64.encodeToString(Walletapi.hexTobyte(input), Base64.DEFAULT)
                 val createTran = CreateTran(
-                    param.from, gas, gasPrice, input64, count, param.to, value
+                    param.from, gas.toBigInteger(), gasPrice.toBigInteger(), input64, count, param.to, value.toBigInteger()
                 )
 
 

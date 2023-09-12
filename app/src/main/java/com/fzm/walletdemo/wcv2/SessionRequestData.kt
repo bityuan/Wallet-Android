@@ -2,6 +2,7 @@ package com.fzm.walletdemo.wcv2
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
+import java.math.BigInteger
 
 
 data class WCEthereumTransaction(
@@ -20,10 +21,10 @@ data class WCEthereumTransaction(
 
 data class CreateTran(
     val from: String,
-    val gas: Long,
-    val gasPrice: Long,
+    val gas: BigInteger,
+    val gasPrice: BigInteger,
     val input: String,
     val nonce: Long,
     val to: String,
-    val value: Long,
+    val value: BigInteger,
 )

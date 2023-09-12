@@ -33,27 +33,32 @@ class JsWCApi(
         gasPrice: String?,
         payload: String?
     ) {
-        val dValue = if (value == null || value == "undefined") {
-            "0"
-        }else {
-            value
+        try {
+            val dValue = if (value == null || value == "undefined") {
+                "0"
+            } else {
+                value
+            }
+
+            val dGasPrice = gasPrice ?: "0"
+            val transaction = Web3Transaction(
+                if (TextUtils.isEmpty(recipient)) Address.EMPTY else Address(recipient!!),
+                null,
+                Hex.hexToBigInteger(dValue),
+                Hex.hexToBigInteger(dGasPrice, BigInteger.ZERO),
+                Hex.hexToBigInteger(gasLimit, BigInteger.ZERO),
+                Hex.hexToLong(nonce, -1),
+                payload,
+                callbackId.toLong()
+            )
+
+            webView.post {
+                jsListener.onSignTransaction(transaction)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
 
-        val dGasPrice = gasPrice?:"0"
-        val transaction = Web3Transaction(
-            if (TextUtils.isEmpty(recipient)) Address.EMPTY else Address(recipient!!),
-            null,
-            Hex.hexToBigInteger(dValue),
-            Hex.hexToBigInteger(dGasPrice, BigInteger.ZERO),
-            Hex.hexToBigInteger(gasLimit, BigInteger.ZERO),
-            Hex.hexToLong(nonce, -1),
-            payload,
-            callbackId.toLong()
-        )
-
-        webView.post {
-            jsListener.onSignTransaction(transaction)
-        }
 
     }
 
@@ -66,7 +71,6 @@ class JsWCApi(
     fun signPersonalMessage(callbackId: Int, data: String?) {
         Timber.tag("edao").v("signPersonalMessage")
     }
-
 
 
     @JavascriptInterface

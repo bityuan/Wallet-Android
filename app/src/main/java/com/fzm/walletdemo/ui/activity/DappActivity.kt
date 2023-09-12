@@ -213,7 +213,7 @@ class DappActivity : AppCompatActivity() {
             web3ViewClient.jsInjectorClient.chainId = chainId
             web3ViewClient.jsInjectorClient.rpcUrl = nodeUrl
             web3ViewClient.jsInjectorClient.walletAddress = address
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
 
@@ -234,7 +234,7 @@ class DappActivity : AppCompatActivity() {
         if (item.itemId == 1) {
             try {
                 binding.webDapp.reload()
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
@@ -406,91 +406,101 @@ class DappActivity : AppCompatActivity() {
                     val tvCancel = view.findViewById<TextView>(R.id.tv_cancel)
                     val btnNext = view.findViewById<Button>(R.id.btn_next)
                     transaction?.let { tran ->
-                        val va18 = 10.0.pow(18.0)
-                        val pValue = "${tran.value.toLong() / va18}".toPlainStr(8)
-                        val chainName = GoWallet.CHAIN_ID_MAPS_L[chainId]
-                        val netName = GoWallet.NET_MAPS[chainId]
-                        tvDappName.text = "$netName"
-                        tvDappUrl.text = url
-                        tvValue.text = "$pValue $chainName"
-                        tvOutAddress.text = address.toString()
-                        tvInAddress.text = tran.recipient.toString()
-                        tvPayMsg.text = "$chainName ${getString(R.string.home_transfer)}"
+                        try {
+                            val valStr = tran.value.toString()
+                            val subvalStr = valStr.substring(0, valStr.length - 10)
+                            val va8 = 10.0.pow(8.0)
+                            val pValue = "${subvalStr.toLong() / va8}".toPlainStr(8)
+                            val chainName = GoWallet.CHAIN_ID_MAPS_L[chainId]
+                            val netName = GoWallet.NET_MAPS[chainId]
+                            tvDappName.text = "$netName"
+                            tvDappUrl.text = url
+                            tvValue.text = "$pValue $chainName"
+                            tvOutAddress.text = address.toString()
+                            tvInAddress.text = tran.recipient.toString()
+                            tvPayMsg.text = "$chainName ${getString(R.string.home_transfer)}"
 
-                        if (chainName == "BTY") {
-                            lifecycleScope.launch(Dispatchers.IO) {
-                                val gasPriceResult = walletRepository.getGasPrice()
-                                val countResult =
-                                    walletRepository.getTransactionCount(address.toString())
-                                withContext(Dispatchers.Main) {
-                                    if (gasPriceResult.isSucceed()) {
-                                        gasPriceResult.data()?.let {
-                                            gasPrice = it.substringAfter("0x").toLong(16)
+                            if (chainName == "BTY") {
+                                lifecycleScope.launch(Dispatchers.IO) {
+                                    val gasPriceResult = walletRepository.getGasPrice()
+                                    val countResult =
+                                        walletRepository.getTransactionCount(address.toString())
+                                    withContext(Dispatchers.Main) {
+                                        if (gasPriceResult.isSucceed()) {
+                                            gasPriceResult.data()?.let {
+                                                gasPrice = it.substringAfter("0x").toLong(16)
+                                            }
                                         }
-                                    }
-                                    if (countResult.isSucceed()) {
-                                        countResult.data()?.let {
-                                            count = it.substringAfter("0x").toLong(16)
+                                        if (countResult.isSucceed()) {
+                                            countResult.data()?.let {
+                                                count = it.substringAfter("0x").toLong(16)
+                                            }
                                         }
-                                    }
 
-                                    showGasUI(
-                                        tvWCFee,
-                                        gasPrice,
-                                        transaction.gasLimit.toLong(),
-                                        chainName
-                                    )
+                                        showGasUI(
+                                            tvWCFee,
+                                            gasPrice,
+                                            transaction.gasLimit.toLong(),
+                                            chainName
+                                        )
+                                    }
+                                }
+                            } else {
+                                lifecycleScope.launch(Dispatchers.IO) {
+                                    val web3Url = GoWallet.getWeb3UrlL(chainId)
+                                    val web3j = Web3j.build(HttpService(web3Url))
+                                    val gasPriceResult = web3j.ethGasPrice().send()
+                                    val countResult = web3j.ethGetTransactionCount(
+                                        address.toString(), DefaultBlockParameterName.LATEST
+                                    ).send()
+                                    withContext(Dispatchers.Main) {
+                                        gasPrice = gasPriceResult.gasPrice.toLong()
+                                        count = countResult.transactionCount.toLong()
+                                        showGasUI(
+                                            tvWCFee,
+                                            gasPrice,
+                                            transaction.gasLimit.toLong(),
+                                            chainName
+                                        )
+                                    }
                                 }
                             }
-                        } else {
-                            lifecycleScope.launch(Dispatchers.IO) {
-                                val web3Url = GoWallet.getWeb3UrlL(chainId)
-                                val web3j = Web3j.build(HttpService(web3Url))
-                                val gasPriceResult = web3j.ethGasPrice().send()
-                                val countResult = web3j.ethGetTransactionCount(
-                                    address.toString(), DefaultBlockParameterName.LATEST
-                                ).send()
-                                withContext(Dispatchers.Main) {
-                                    gasPrice = gasPriceResult.gasPrice.toLong()
-                                    count = countResult.transactionCount.toLong()
-                                    showGasUI(
-                                        tvWCFee,
-                                        gasPrice,
-                                        transaction.gasLimit.toLong(),
-                                        chainName
+
+
+                            payDialog =
+                                AlertDialog.Builder(this@DappActivity).setView(view).create()
+                                    .apply {
+                                        window?.setBackgroundDrawableResource(android.R.color.transparent)
+                                    }
+                            payDialog?.setCancelable(false)
+                            payDialog?.show()
+
+                            tvCancel.setOnClickListener {
+                                payDialog?.dismiss()
+                            }
+                            btnNext.setOnClickListener {
+                                val input = tran.payload?.substringAfter("0x")
+                                val input64 =
+                                    Base64.encodeToString(
+                                        Walletapi.hexTobyte(input),
+                                        Base64.DEFAULT
                                     )
-                                }
+                                val createTran = CreateTran(
+                                    address.toString(),
+                                    tran.gasLimit,
+                                    gasPrice.toBigInteger(),
+                                    input64,
+                                    count,
+                                    tran.recipient.toString(),
+                                    tran.value
+                                )
+                                showPWD(createTran, chainName)
+
                             }
+                            //
+                        } catch (e: Exception) {
+                            e.printStackTrace()
                         }
-
-
-                        payDialog =
-                            AlertDialog.Builder(this@DappActivity).setView(view).create().apply {
-                                window?.setBackgroundDrawableResource(android.R.color.transparent)
-                            }
-                        payDialog?.setCancelable(false)
-                        payDialog?.show()
-
-                        tvCancel.setOnClickListener {
-                            payDialog?.dismiss()
-                        }
-                        btnNext.setOnClickListener {
-                            val input = tran.payload?.substringAfter("0x")
-                            val input64 =
-                                Base64.encodeToString(Walletapi.hexTobyte(input), Base64.DEFAULT)
-                            val createTran = CreateTran(
-                                address.toString(),
-                                tran.gasLimit.toLong(),
-                                gasPrice,
-                                input64,
-                                count,
-                                tran.recipient.toString(),
-                                tran.value.toLong()
-                            )
-                            showPWD(createTran, chainName)
-
-                        }
-                        //
                     }
 
                 }
@@ -593,7 +603,6 @@ class DappActivity : AppCompatActivity() {
     private suspend fun signAndSend(name: String, privKey: String, createTran: CreateTran) {
         try {
             val createJson = gson.toJson(createTran)
-            logDebug("构造数据 == $createJson")
             val bCreate = Walletapi.stringTobyte(createJson)
 
             val signed = GoWallet.signTran(
