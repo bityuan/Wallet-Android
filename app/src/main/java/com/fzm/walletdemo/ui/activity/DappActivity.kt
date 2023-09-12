@@ -6,15 +6,13 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Base64
-import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
@@ -31,10 +29,8 @@ import androidx.lifecycle.lifecycleScope
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
-import com.fzm.wallet.sdk.IPConfig
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.MyWallet
-import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.ext.toPlainStr
@@ -59,7 +55,6 @@ import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
 import org.jetbrains.anko.toast
 import org.json.JSONObject
 import org.koin.android.ext.android.inject
@@ -72,7 +67,6 @@ import org.web3j.protocol.http.HttpService
 import timber.log.Timber
 import walletapi.Walletapi
 import wendu.dsbridge.DWebView
-import java.util.concurrent.TimeUnit
 import kotlin.math.pow
 
 @Route(path = RouterPath.APP_DAPP)
@@ -407,10 +401,13 @@ class DappActivity : AppCompatActivity() {
                     val btnNext = view.findViewById<Button>(R.id.btn_next)
                     transaction?.let { tran ->
                         try {
+                            var pValue = "0"
                             val valStr = tran.value.toString()
-                            val subvalStr = valStr.substring(0, valStr.length - 10)
-                            val va8 = 10.0.pow(8.0)
-                            val pValue = "${subvalStr.toLong() / va8}".toPlainStr(8)
+                            if (valStr != "0") {
+                                val subvalStr = valStr.substring(0, valStr.length - 10)
+                                val va8 = 10.0.pow(8.0)
+                                pValue = "${subvalStr.toLong() / va8}".toPlainStr(8)
+                            }
                             val chainName = GoWallet.CHAIN_ID_MAPS_L[chainId]
                             val netName = GoWallet.NET_MAPS[chainId]
                             tvDappName.text = "$netName"
@@ -492,7 +489,8 @@ class DappActivity : AppCompatActivity() {
                                     input64,
                                     count,
                                     tran.recipient.toString(),
-                                    tran.value
+                                    tran.value,
+                                    tran.leafPosition
                                 )
                                 showPWD(createTran, chainName)
 
@@ -614,7 +612,7 @@ class DappActivity : AppCompatActivity() {
                     withContext(Dispatchers.Main) {
                         if (send.isSucceed()) {
                             send.data()?.let { sendHash ->
-                                dis(sendHash)
+                                dis(sendHash, createTran.leafPosition)
                             }
                         }
                     }
@@ -622,7 +620,7 @@ class DappActivity : AppCompatActivity() {
                     val send = GoWallet.sendTran(name, signed, "")
                     val sendHash = JSONObject(send!!).getString("result")
                     withContext(Dispatchers.Main) {
-                        dis(sendHash)
+                        dis(sendHash, createTran.leafPosition)
                     }
                 }
             }
@@ -634,11 +632,15 @@ class DappActivity : AppCompatActivity() {
 
     private val gson = GsonBuilder().serializeNulls().create()
 
-    private fun dis(sendHash: String) {
+    private fun dis(sendHash: String, leafPosition: Long) {
         loading.dismiss()
         pwdDialog?.dismiss()
         payDialog?.dismiss()
         toast(getString(R.string.send_suc_str))
+        val callback = String.format(JS_CALLBACK_ON, leafPosition, sendHash)
+        binding.webDapp.evaluateJavascript(callback) { value: String? ->
+            Timber.tag("WEB_VIEW").d(value)
+        }
     }
 
 }

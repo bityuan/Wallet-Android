@@ -27,4 +27,5 @@ data class CreateTran(
     val nonce: Long,
     val to: String,
     val value: BigInteger,
+    val leafPosition:Long = 0
 )
