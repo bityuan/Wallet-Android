@@ -192,25 +192,31 @@ class DappActivity : AppCompatActivity() {
     }
 
     private fun setupWeb3(chainId: Long, nodeUrl: String, address: Address) {
-        val web3ViewClient = Web3ViewClient(this)
-        binding.webDapp.webChromeClient = object : WebChromeClient() {
-            override fun onProgressChanged(view: WebView?, newProgress: Int) {
-                super.onProgressChanged(view, newProgress)
-                binding.progressWeb.progress = newProgress
+        try {
+            val web3ViewClient = Web3ViewClient(this)
+            binding.webDapp.webChromeClient = object : WebChromeClient() {
+                override fun onProgressChanged(view: WebView?, newProgress: Int) {
+                    super.onProgressChanged(view, newProgress)
+                    binding.progressWeb.progress = newProgress
+                }
+
             }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                binding.webDapp.webViewClient =
+                    WrapWebViewClient(
+                        binding.webDapp,
+                        binding.progressWeb,
+                        web3ViewClient,
+                        binding.webDapp.webViewClient
+                    )
+            }
+            web3ViewClient.jsInjectorClient.chainId = chainId
+            web3ViewClient.jsInjectorClient.rpcUrl = nodeUrl
+            web3ViewClient.jsInjectorClient.walletAddress = address
+        }catch (e:Exception){
+            e.printStackTrace()
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            binding.webDapp.webViewClient =
-                WrapWebViewClient(
-                    binding.webDapp,
-                    binding.progressWeb,
-                    web3ViewClient,
-                    binding.webDapp.webViewClient
-                )
-        }
-        web3ViewClient.jsInjectorClient.chainId = chainId
-        web3ViewClient.jsInjectorClient.rpcUrl = nodeUrl
-        web3ViewClient.jsInjectorClient.walletAddress = address
+
 
     }
 
@@ -226,7 +232,11 @@ class DappActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == 1) {
-            binding.webDapp.reload()
+            try {
+                binding.webDapp.reload()
+            }catch (e:Exception){
+                e.printStackTrace()
+            }
         }
         when (item.itemId) {
             1 -> {
