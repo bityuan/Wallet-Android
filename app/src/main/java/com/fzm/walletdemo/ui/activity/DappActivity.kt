@@ -12,7 +12,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
@@ -328,6 +327,8 @@ class DappActivity : AppCompatActivity() {
     //-------------------------web3 listener--------------------------------
     private val JS_CALLBACK = "AlphaWallet.executeCallback(%1\$s, null, %2\$s)"
     private val JS_CALLBACK_ON = "AlphaWallet.executeCallback(%1\$s, null, \"%2\$s\")"
+    private val JS_CALLBACK_ON_FAILURE = "AlphaWallet.executeCallback(%1\$s, \"%2\$s\", null)"
+    private val JS_CANCELLED = "cancelled"
 
     var gasPrice = 0L
     var count = 0L
@@ -474,6 +475,10 @@ class DappActivity : AppCompatActivity() {
 
                             tvCancel.setOnClickListener {
                                 payDialog?.dismiss()
+                                val callback: String = String.format(JS_CALLBACK_ON_FAILURE, tran.leafPosition, JS_CANCELLED)
+                                binding.webDapp.evaluateJavascript(callback) { value: String? ->
+                                    Timber.tag("WEB_VIEW").d(value)
+                                }
                             }
                             btnNext.setOnClickListener {
                                 val input = tran.payload?.substringAfter("0x")
