@@ -77,25 +77,9 @@ class SearchDappActivity : BaseActivity() {
     }
 
     private fun gotoDapp(url: String) {
-        val menu = PopMenu.show(listOf(GoWallet.NET_BTY, GoWallet.NET_ETH, GoWallet.NET_BNB))
-        menu.onMenuItemClickListener =
-            OnMenuItemClickListener { dialog, text, index ->
-                ARouter.getInstance().build(RouterPath.APP_DAPP)
-                    .withString("name", getString(R.string.exp_str))
-                    .withString("url", url).withInt("chainNet", index).navigation()
-
-                false
-            }
-        menu.onIconChangeCallBack = object : OnIconChangeCallBack<PopMenu>() {
-            override fun getIcon(dialog: PopMenu?, index: Int, menuText: String?): Int {
-                return when (index) {
-                    0 -> R.mipmap.my_wallet_bty
-                    1 -> R.mipmap.my_wallet_eth
-                    2 -> R.mipmap.my_wallet_bnb
-                    else -> R.mipmap.my_wallet_eth
-                }
-            }
-        }
+        ARouter.getInstance().build(RouterPath.APP_DAPP)
+            .withString("name", getString(R.string.exp_str))
+            .withString("url", url).navigation()
 
     }
 

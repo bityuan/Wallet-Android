@@ -14,17 +14,18 @@ import java.util.*
 
 class GoWallet {
     companion object {
-       const val WEB3_BNB = "https://bsc.publicnode.com"
-       const val WEB3_ETH = "https://rpc.flashbots.net"
-       const val WEB3_BTY = "https://mainnet.bityuan.com/eth"
-       private const val CHAIN_ID_ETH = "eip155:1"
-       private const val CHAIN_ID_BNB = "eip155:56"
-       private const val CHAIN_ID_BTY = "eip155:2999"
+        const val WEB3_BNB = "https://bsc.publicnode.com"
+        const val WEB3_ETH = "https://rpc.flashbots.net"
+        const val WEB3_BTY = "https://mainnet.bityuan.com/eth"
+        private const val CHAIN_ID_ETH = "eip155:1"
+        private const val CHAIN_ID_BNB = "eip155:56"
+        private const val CHAIN_ID_BTY = "eip155:2999"
 
         const val CHAIN_ID_ETH_L = 1L
         const val CHAIN_ID_BNB_L = 56L
         const val CHAIN_ID_BTY_L = 2999L
 
+        const val CHAIN_NET = "chainNet"
         const val NET_ETH = "Ethereum"
         const val NET_BNB = "BNB Smart Chain"
         const val NET_BTY = "BitYuan Mainnet"
@@ -734,6 +735,7 @@ class GoWallet {
                 else -> WEB3_ETH
             }
         }
+
         fun getWeb3UrlL(chainId: Long): String {
             return when (chainId) {
                 CHAIN_ID_ETH_L -> {
@@ -745,6 +747,16 @@ class GoWallet {
                 }
 
                 else -> WEB3_ETH
+            }
+        }
+
+
+        fun getChainNet(index: Int):String {
+            return when (index) {
+                0 -> NET_BTY
+                1 -> NET_ETH
+                2 -> NET_BNB
+                else -> NET_BTY
             }
         }
     }

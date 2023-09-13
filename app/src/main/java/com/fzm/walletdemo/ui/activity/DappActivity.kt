@@ -30,12 +30,14 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.MyWallet
+import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.ext.toPlainStr
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.utils.GoWallet
+import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.fzm.wallet.sdk.utils.StatusBarUtil
 import com.fzm.walletdemo.BuildConfig
 import com.fzm.walletdemo.R
@@ -81,9 +83,6 @@ class DappActivity : AppCompatActivity() {
     @Autowired
     var url: String? = null
 
-    @JvmField
-    @Autowired
-    var chainNet: Int = -1
 
     private var address = Address.EMPTY
     private var nodeUrl = GoWallet.WEB3_BNB
@@ -113,6 +112,7 @@ class DappActivity : AppCompatActivity() {
     }
 
     private fun configChainNet() {
+        val chainNet = MMkvUtil.decodeInt(GoWallet.CHAIN_NET)
         when (chainNet) {
             0 -> {
                 val addr = GoWallet.getChain("ETH")?.address
