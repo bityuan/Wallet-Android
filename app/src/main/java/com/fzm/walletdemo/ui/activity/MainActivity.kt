@@ -7,15 +7,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import com.alibaba.android.arouter.facade.annotation.Route
-import com.fzm.wallet.sdk.IPConfig
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
 import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.net.walletQualifier
+import com.fzm.wallet.sdk.utils.LocalManageUtil
 import com.fzm.walletdemo.R
-import com.fzm.walletdemo.W
 import com.fzm.walletdemo.databinding.ActivityMainBinding
 import com.fzm.walletdemo.ui.WalletHelper
 import com.fzm.walletdemo.ui.fragment.ExploreFragment
@@ -29,8 +28,6 @@ import com.fzm.walletmodule.update.UpdateUtils
 import com.fzm.walletmodule.vm.WalletViewModel
 import com.jeremyliao.liveeventbus.LiveEventBus
 import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
 import org.litepal.LitePal
@@ -63,6 +60,19 @@ class MainActivity : BaseActivity() {
         configWallets()
     }
 
+    override fun onResume() {
+        super.onResume()
+        initLanguage()
+    }
+
+
+    private fun initLanguage() {
+        val langIndex = LocalManageUtil.getLanguage()
+        if (langIndex != 0) {
+            LocalManageUtil.setApplicationLanguage(this, langIndex)
+        }
+    }
+
     override fun configWallets() {
         super.configWallets()
         if (WalletHelper.isSQ()) {
@@ -85,7 +95,7 @@ class MainActivity : BaseActivity() {
             }
 
         })
-        if(!WalletHelper.isSQ()){
+        if (!WalletHelper.isSQ()) {
             walletViewModel.getUpdate()
         }
     }
@@ -193,24 +203,28 @@ class MainActivity : BaseActivity() {
                 }
                 currentTab = binding.lyHome
             }
+
             1 -> {
                 currentTab?.isSelected = false
                 binding.lyExplore.isSelected = true
                 showExploreFragment(fragmentTransaction)
                 currentTab = binding.lyExplore
             }
+
             2 -> {
                 currentTab?.isSelected = false
                 binding.lyMy.isSelected = true
                 showMyFragment(fragmentTransaction)
                 currentTab = binding.lyMy
             }
+
             3 -> {
                 currentTab?.isSelected = false
                 binding.lyTian.isSelected = true
                 showTiAnFragment(fragmentTransaction)
                 currentTab = binding.lyTian
             }
+
             4 -> {
                 currentTab?.isSelected = false
                 binding.lyTp.isSelected = true
@@ -334,7 +348,6 @@ class MainActivity : BaseActivity() {
         super.onNewIntent(intent)
         setTabSelection(0)
     }
-
 
 
     override fun onDestroy() {

@@ -39,6 +39,7 @@ import com.fzm.walletdemo.ui.activity.MainActivity
 import com.fzm.walletdemo.wcv2.WConnectActivity
 import com.fzm.walletmodule.ui.activity.AddCoinActivity
 import com.fzm.walletmodule.ui.activity.MyWalletsActivity
+import com.fzm.walletmodule.ui.base.BaseFragment
 import com.fzm.walletmodule.ui.fragment.WalletFragment
 import com.fzm.walletmodule.utils.ClickUtils
 import com.fzm.walletmodule.vm.WalletViewModel

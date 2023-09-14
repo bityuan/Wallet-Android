@@ -6,8 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,9 +21,11 @@ import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
+import com.fzm.wallet.sdk.base.logDebug
+import com.fzm.wallet.sdk.utils.LocalManageUtil
+import com.fzm.wallet.sdk.utils.StatusBarUtil
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.ui.widget.LoadingView
-import com.fzm.wallet.sdk.utils.StatusBarUtil
 import java.util.*
 
 abstract class BaseActivity : AppCompatActivity() {
@@ -43,12 +45,20 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initLanguage()
         if (mConfigFinish) {
             initIntentFilter()
         }
         loadingView = LoadingView()
         StatusBarUtil.setStatusBarColor(this, mStatusColor, true)
         StatusBarUtil.StatusBarLightMode(this)
+    }
+
+    private fun initLanguage(){
+        val langIndex = LocalManageUtil.getLanguage()
+        if (langIndex != 0) {
+            LocalManageUtil.setApplicationLanguage(this, langIndex)
+        }
     }
 
     private fun initIntentFilter() {

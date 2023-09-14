@@ -11,13 +11,14 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.utils.LocalManageUtil
 import com.fzm.walletdemo.R
+import com.fzm.walletmodule.ui.base.BaseActivity
 import com.permissionx.guolindev.PermissionX
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Route(path = RouterPath.APP_SPLASH)
-class SplashActivity : AppCompatActivity() {
+class SplashActivity : BaseActivity() {
 
     private val requestList = mutableListOf(
         Manifest.permission.CAMERA,
@@ -25,6 +26,7 @@ class SplashActivity : AppCompatActivity() {
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        mCustomToobar = true
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
         requestPermission()
@@ -57,15 +59,11 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun gotoMain() {
-        //init language
-        val langIndex = LocalManageUtil.getLanguage()
-        if (langIndex != 0) {
-            LocalManageUtil.setApplicationLanguage(this, langIndex)
-        }
         lifecycleScope.launch(Dispatchers.IO) {
             delay(1000)
             ARouter.getInstance().build(RouterPath.APP_MAIN).navigation()
             finish()
         }
     }
+
 }
