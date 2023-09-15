@@ -14,6 +14,8 @@ import java.util.*
 
 class GoWallet {
     companion object {
+        val HTTP_HEADER = "http://"
+        val HTTPS_HEADER = "https://"
         const val WEB3_BNB = "https://bsc.publicnode.com"
         const val WEB3_ETH = "https://rpc.flashbots.net"
         const val WEB3_BTY = "https://mainnet.bityuan.com/eth"
@@ -751,12 +753,21 @@ class GoWallet {
         }
 
 
-        fun getChainNet(index: Int):String {
+        fun getChainNet(index: Int): String {
             return when (index) {
                 0 -> NET_BTY
                 1 -> NET_ETH
                 2 -> NET_BNB
                 else -> NET_BTY
+            }
+        }
+
+        fun getNewUrl(url: String): String {
+            val lowUrl = url.lowercase()
+            return if (!lowUrl.startsWith(HTTP_HEADER) && !lowUrl.startsWith(HTTPS_HEADER)) {
+                "$HTTPS_HEADER$lowUrl"
+            } else {
+                lowUrl
             }
         }
     }

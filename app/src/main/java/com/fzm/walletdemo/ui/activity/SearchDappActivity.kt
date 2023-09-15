@@ -7,6 +7,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.fzm.walletdemo.R
@@ -77,9 +78,10 @@ class SearchDappActivity : BaseActivity() {
     }
 
     private fun gotoDapp(url: String) {
+        val newUrl = GoWallet.getNewUrl(url)
         ARouter.getInstance().build(RouterPath.APP_DAPP)
             .withString("name", getString(R.string.exp_str))
-            .withString("url", url).navigation()
+            .withString("url", newUrl).navigation()
 
     }
 
