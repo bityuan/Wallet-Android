@@ -56,6 +56,7 @@ import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 import org.json.JSONObject
 import org.koin.android.ext.android.inject
@@ -224,13 +225,6 @@ class DappActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == 1) {
-            try {
-                binding.webDapp.reload()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
         when (item.itemId) {
             1 -> {
                 binding.webDapp.reload()
@@ -367,9 +361,21 @@ class DappActivity : AppCompatActivity() {
                         call.value,
                         call.payload
                     )
-                    val value = web3j?.ethCall(tran, call.blockParam)?.send()?.value
-                    val callback: String = String.format(JS_CALLBACK_ON, call.leafPosition, value)
+                    var value: String? = ""
+                    try {
+                        value = web3j?.ethCall(tran, call.blockParam)?.send()?.value
+                    } catch (e: Exception) {
+                        withContext(Dispatchers.Main) {
+                            longToast("${getString(R.string.basic_error_all)}  $e")
+                            dis()
+                            binding.webDapp.reload()
+                            e.printStackTrace()
+                        }
+                    }
+
                     withContext(Dispatchers.Main) {
+                        val callback: String =
+                            String.format(JS_CALLBACK_ON, call.leafPosition, value)
                         //All WebView methods must be called on the same thread
                         //所以都放在主线程
                         binding.webDapp.evaluateJavascript(callback) { message: String? ->
@@ -475,7 +481,11 @@ class DappActivity : AppCompatActivity() {
 
                             tvCancel.setOnClickListener {
                                 payDialog?.dismiss()
-                                val callback: String = String.format(JS_CALLBACK_ON_FAILURE, tran.leafPosition, JS_CANCELLED)
+                                val callback: String = String.format(
+                                    JS_CALLBACK_ON_FAILURE,
+                                    tran.leafPosition,
+                                    JS_CANCELLED
+                                )
                                 binding.webDapp.evaluateJavascript(callback) { value: String? ->
                                     Timber.tag("WEB_VIEW").d(value)
                                 }
@@ -617,15 +627,18 @@ class DappActivity : AppCompatActivity() {
                     withContext(Dispatchers.Main) {
                         if (send.isSucceed()) {
                             send.data()?.let { sendHash ->
-                                dis(sendHash, createTran.leafPosition)
+                                sendSuccess(sendHash, createTran.leafPosition)
                             }
+                        } else {
+                            dis()
+                            toast("${getString(R.string.basic_error_send)}  ${send.error()}")
                         }
                     }
                 } else {
                     val send = GoWallet.sendTran(name, signed, "")
                     val sendHash = JSONObject(send!!).getString("result")
                     withContext(Dispatchers.Main) {
-                        dis(sendHash, createTran.leafPosition)
+                        sendSuccess(sendHash, createTran.leafPosition)
                     }
                 }
             }
@@ -637,15 +650,19 @@ class DappActivity : AppCompatActivity() {
 
     private val gson = GsonBuilder().serializeNulls().create()
 
-    private fun dis(sendHash: String, leafPosition: Long) {
-        loading.dismiss()
-        pwdDialog?.dismiss()
-        payDialog?.dismiss()
+    private fun sendSuccess(sendHash: String, leafPosition: Long) {
+        dis()
         toast(getString(R.string.send_suc_str))
         val callback = String.format(JS_CALLBACK_ON, leafPosition, sendHash)
         binding.webDapp.evaluateJavascript(callback) { value: String? ->
             Timber.tag("WEB_VIEW").d(value)
         }
+    }
+
+    private fun dis() {
+        loading.dismiss()
+        pwdDialog?.dismiss()
+        payDialog?.dismiss()
     }
 
 }
