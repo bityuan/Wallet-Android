@@ -1,23 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
     android:orientation="vertical">
 
+
     <TextView
+        android:id="@+id/tv_mytv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:text="@string/main_my"
         android:textColor="@color/my_item_text"
-        android:textSize="16sp"
+        android:textSize="30sp"
         android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="105dp"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="12dp"
+        android:background="@mipmap/bg_myspace_white"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_contacts"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:text="@string/my_contact"
+            android:textColor="@color/my_item_text"
+            android:textSize="14sp"
+            app:drawableTopCompat="@mipmap/my_contacts" />
+
+
+        <TextView
+            android:id="@+id/tv_notice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:text="@string/my_message"
+            android:textColor="@color/my_item_text"
+            android:textSize="14sp"
+            app:drawableTopCompat="@mipmap/my_message" />
+    </LinearLayout>
+
 
     <TextView
         android:id="@+id/tv_share"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:background="@android:color/white"
         android:drawableLeft="@mipmap/icon_fenxiang"
         android:drawableRight="@drawable/ic_right"
@@ -97,6 +137,7 @@
         android:text="@string/my_about"
         android:textColor="@color/my_item_text"
         android:textSize="16sp" />
+
     <TextView
         android:id="@+id/tv_recover"
         android:layout_width="match_parent"

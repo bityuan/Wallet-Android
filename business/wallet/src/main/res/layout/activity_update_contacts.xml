@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.fzm.wallet.sdk.widget.MyDrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="106dp"
+                            android:layout_marginLeft="13dp"
+                            android:layout_marginTop="17dp"
+                            android:layout_marginRight="13dp"
+                            android:background="@drawable/img_address_top"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:gravity="center_vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="9dp"
+                                    android:text="@string/my_contact"
+                                    android:textColor="@color/color_333649" />
+
+                                <EditText
+                                    android:id="@+id/et_nick_name"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="10dp"
+                                    android:layout_marginRight="10dp"
+                                    android:layout_weight="1"
+                                    android:background="@null"
+                                    android:gravity="right"
+                                    android:hint="@string/my_add_less_16"
+                                    android:inputType="text"
+                                    android:textColor="@color/color_333649"
+                                    android:textColorHint="@color/color_8E92A3"
+                                    android:textSize="16sp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginRight="14dp"
+                                    android:text="@string/my_add_none"
+                                    android:textColor="@color/red_common"
+                                    android:textSize="13sp"
+                                    android:visibility="gone" />
+                            </LinearLayout>
+
+                            <include layout="@layout/layout_line" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:gravity="center_vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="9dp"
+                                    android:text="@string/my_contact_phone"
+                                    android:textColor="@color/gray_33" />
+
+                                <EditText
+                                    android:id="@+id/et_phone"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="10dp"
+                                    android:layout_marginTop="8dp"
+                                    android:layout_marginRight="10dp"
+                                    android:layout_marginBottom="10dp"
+                                    android:background="@null"
+                                    android:gravity="right"
+                                    android:hint="@string/my_add_11"
+                                    android:inputType="phone"
+                                    android:textColor="@color/gray_33"
+                                    android:textColorHint="@color/gray_99"
+                                    android:textSize="16sp" />
+
+
+                            </LinearLayout>
+                        </LinearLayout>
+                    </FrameLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="17dp"
+                    android:layout_marginBottom="9dp"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="16dp">
+
+                    <View
+                        android:layout_width="3dp"
+                        android:layout_height="14dp"
+                        android:background="#7190FF" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:background="@android:color/white"
+                        android:gravity="center_vertical"
+                        android:text="@string/my_contact_address"
+                        android:textColor="@color/color_333649" />
+                </LinearLayout>
+
+                <cn.finalteam.loadingviewfinal.RecyclerViewFinal
+                    android:id="@+id/rv_address_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/white" />
+
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <include layout="@layout/include_add_contacts_draw" android:id="@+id/inc_draw"/>
+
+    </com.fzm.wallet.sdk.widget.MyDrawerLayout>
+</FrameLayout>

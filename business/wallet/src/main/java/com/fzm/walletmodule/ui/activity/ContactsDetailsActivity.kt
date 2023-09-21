@@ -1,0 +1,105 @@
+package com.fzm.walletmodule.ui.activity
+
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.alibaba.android.arouter.facade.annotation.Autowired
+import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
+import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.db.entity.Address
+import com.fzm.wallet.sdk.db.entity.Contacts
+import com.fzm.walletmodule.R
+import com.fzm.walletmodule.databinding.ActivityContactsDetailsBinding
+import com.fzm.walletmodule.ui.base.BaseActivity
+import com.zhy.adapter.recyclerview.CommonAdapter
+import com.zhy.adapter.recyclerview.base.ViewHolder
+import org.jetbrains.anko.toast
+import org.litepal.LitePal
+import org.litepal.extension.find
+
+@Route(path = RouterPath.WALLET_CONTACTS_DETAILS)
+class ContactsDetailsActivity : BaseActivity() {
+
+    private val binding by lazy { ActivityContactsDetailsBinding.inflate(layoutInflater) }
+    private lateinit var mCommonAdapter: CommonAdapter<*>
+    private val mAddressList = mutableListOf<Address>()
+    private var mCheckedPosition = -1
+
+    @JvmField
+    @Autowired(name = RouterPath.PARAM_CONTACTS_ID)
+    var contactsId: Long = 0
+
+    private lateinit var mContacts: Contacts
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(binding.root)
+        title = getString(R.string.title_contacts_details)
+        ARouter.getInstance().inject(this)
+        initView()
+        initListener()
+        initData()
+    }
+
+    override fun initView() {
+        super.initView()
+        binding.rvList.layoutManager = LinearLayoutManager(this)
+        mCommonAdapter = object : CommonAdapter<Address>(this, R.layout.listitem_check_address, mAddressList) {
+            override fun convert(holder: ViewHolder, address: Address, position: Int) {
+                holder.setText(R.id.tv_name, address.cointype)
+                holder.setText(R.id.tv_address, address.address)
+                if (address.isChecked == 1) {
+                    holder.setBackgroundRes(R.id.root, R.drawable.shape_address_check)
+                    mCheckedPosition = position
+                } else {
+                    holder.setBackgroundRes(R.id.root, R.drawable.bg_white_rectangle)
+                }
+                holder.getView<View>(R.id.iv_copy).setOnClickListener {
+                    val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    val mClipData = ClipData.newPlainText("Label", address.address)
+                    cm.setPrimaryClip(mClipData)
+                    toast(getString(R.string.copy_success))
+                }
+            }
+        }
+        binding.rvList.adapter = mCommonAdapter
+        binding.rvList.setOnItemClickListener { holder, position ->
+            for (address in mAddressList) {
+                address.isChecked = 0
+            }
+            val address = mAddressList[position]
+            address.isChecked = 1
+            mCommonAdapter.notifyDataSetChanged()
+        }
+    }
+
+    override fun initData() {
+        super.initData()
+        mContacts = LitePal.find<Contacts>(contactsId, true)
+        binding.tvNickName.text = mContacts.nickName
+        binding.tvPhone.text = mContacts.phone
+        mAddressList.clear()
+        mAddressList.addAll(mContacts.addressList)
+        mCommonAdapter.notifyDataSetChanged()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val item = menu.add(0, 1, 0, getString(R.string.my_contact_detail_edit))
+        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == 1) {
+            ARouter.getInstance().build(RouterPath.WALLET_UPDATE_CONTACTS)
+                .withInt(RouterPath.PARAM_FROM, 1).withLong(RouterPath.PARAM_CONTACTS_ID,contactsId).navigation()        }
+        return super.onOptionsItemSelected(item)
+    }
+
+}

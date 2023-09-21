@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/ll_search"
+        android:layout_width="match_parent"
+        android:layout_height="39dp"
+        android:layout_marginBottom="6dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/shape_round_white_edit"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:drawableLeft="@mipmap/icon_search_program"
+            android:drawablePadding="8dp"
+            android:gravity="center"
+            android:text="@string/my_search"
+            android:textColor="@color/color_8E92A3"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ll_do_search"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="39dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="6dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_round_white_edit"
+            android:gravity="center"
+            android:paddingLeft="5dp">
+
+            <EditText
+                android:id="@+id/et_search"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@null"
+                android:drawableLeft="@mipmap/icon_search_program"
+                android:drawablePadding="8dp"
+                android:hint="@string/my_search"
+                android:textColor="@color/color_333649"
+                android:textColorHint="@color/color_8E92A3"
+                android:textSize="16sp"
+                android:visibility="visible" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_cancle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="5dp"
+            android:text="@string/cancel"
+            android:textColor="@color/gray_99"
+            android:textSize="16sp" />
+
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_search" android:id="@+id/inc_search"/>
+
+
+    <FrameLayout
+        android:id="@+id/fl_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <cn.finalteam.loadingviewfinal.RecyclerViewFinal
+            android:id="@+id/rv_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/tv_dialog"
+            android:layout_width="80.0dip"
+            android:layout_height="80.0dip"
+            android:layout_gravity="center"
+            android:background="@color/colorPrimaryDark"
+            android:gravity="center"
+            android:textColor="#ffffffff"
+            android:textSize="30dp"
+            android:visibility="invisible" />
+
+        <com.fzm.wallet.sdk.widget.sidebar.SideBar
+            android:id="@+id/sidebar_character"
+            android:layout_width="25dp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="right|center"
+            android:layout_marginRight="3dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="130dp"
+                android:layout_height="125dp"
+                android:src="@mipmap/bg_state_empty_contacts" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="@string/my_contact_none"
+                android:textColor="@color/gray_99"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+
+    </FrameLayout>
+
+    <cn.finalteam.loadingviewfinal.RecyclerViewFinal
+        android:id="@+id/rv_search_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone">
+
+    </cn.finalteam.loadingviewfinal.RecyclerViewFinal>
+
+</LinearLayout>

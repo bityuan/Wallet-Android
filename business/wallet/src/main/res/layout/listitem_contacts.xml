@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.jiang.android.lib.widget.SwipeItemLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/swipe_content"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="27dp"
+    android:background="@android:color/white">
+    <!--     app:bga_sil_bottomMode="pullOut"
+    app:bga_sil_springDistance="20dp"
+    app:bga_sil_swipeDirection="left"-->
+
+
+    <TextView
+        android:id="@+id/tv_delete"
+        android:layout_width="92dp"
+        android:layout_height="60dp"
+        android:background="@color/color_8E92A3"
+        android:clickable="true"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/delete"
+        android:textColor="@android:color/white"
+        android:textSize="17sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="vertical"
+        android:paddingLeft="24dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tv_name_first"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:gravity="center"
+                android:text="阿"
+                android:background="@drawable/bg_constacts_blue"
+                android:includeFontPadding="false"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                />
+
+
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="@string/common_null"
+                android:layout_marginLeft="11dp"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tv_phone"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:gravity="center_vertical"
+                android:text="@string/common_null"
+                android:textColor="@color/color_8E92A3"
+                android:layout_marginRight="3dp"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_line"
+            android:background="@color/lineColor"/>
+    </LinearLayout>
+
+
+</com.jiang.android.lib.widget.SwipeItemLayout>
+
+

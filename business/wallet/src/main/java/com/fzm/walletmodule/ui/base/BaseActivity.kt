@@ -42,7 +42,6 @@ abstract class BaseActivity : AppCompatActivity() {
     fun setStatusColor(res: Int) {
         mStatusColor = resources.getColor(res)
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initLanguage()

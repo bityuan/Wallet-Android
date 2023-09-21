@@ -126,6 +126,7 @@ ext {
     //https://mvnrepository.com/artifact/com.trustwallet/wallet-core
     trustwallet ="com.trustwallet:wallet-core:2.6.3"
     dialogX ="com.github.kongzue.DialogX:DialogX:0.0.48"
+    IndexRecyclerView ="com.github.jiang111:IndexRecyclerView:v1.1"
 
 
 }

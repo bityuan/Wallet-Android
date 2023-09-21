@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fy_root"
+    android:fitsSystemWindows="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_gravity="bottom"
+                    android:background="@android:color/white" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="106dp"
+                    android:layout_marginLeft="13dp"
+                    android:layout_marginTop="17dp"
+                    android:layout_marginRight="13dp"
+                    android:background="@drawable/img_address_top"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="9dp"
+                            android:text="@string/my_contact_nickname"
+                            android:textColor="@color/color_333649" />
+
+                        <TextView
+                            android:id="@+id/tv_nick_name"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_weight="1"
+                            android:background="@null"
+                            android:gravity="right"
+                            android:inputType="text"
+                            android:textColor="@color/color_333649"
+                            android:textColorHint="@color/color_8E92A3"
+                            android:textSize="16sp" />
+
+                    </LinearLayout>
+
+                    <include layout="@layout/layout_line" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="9dp"
+                            android:text="@string/my_contact_phone"
+                            android:textColor="@color/gray_33" />
+
+                        <TextView
+                            android:id="@+id/tv_phone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:background="@null"
+                            android:gravity="right"
+                            android:inputType="phone"
+                            android:textColor="@color/gray_33"
+                            android:textColorHint="@color/gray_99"
+                            android:textSize="16sp" />
+
+
+                    </LinearLayout>
+                </LinearLayout>
+            </FrameLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:paddingLeft="16dp"
+            android:paddingTop="18dp"
+            android:paddingBottom="5dp">
+
+
+            <TextView
+                android:layout_width="3dp"
+                android:layout_height="14dp"
+                android:background="#7190FF" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:text="@string/my_contact_address"
+                android:textColor="@color/color_333649"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+
+        <cn.finalteam.loadingviewfinal.RecyclerViewFinal
+            android:id="@+id/rv_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@android:color/white" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:paddingBottom="30dp">
+
+            <Button
+                android:id="@+id/btn_ok"
+                style="@style/buttonPressStyle"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:text="@string/my_contact_go" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</FrameLayout>

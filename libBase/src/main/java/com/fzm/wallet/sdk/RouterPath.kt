@@ -23,6 +23,9 @@ object RouterPath {
     const val WALLET_NEW_RECOVER_ADDRESS = "/wallet/NewRecoverAddressActivity"
     const val WALLET_RECOVER = "/wallet/RecoverActivity"
     const val WALLET_CHECKEMAIL = "/wallet/CheckEmailActivity"
+    const val WALLET_CONTACTS = "/wallet/ContactsActivity"
+    const val WALLET_UPDATE_CONTACTS = "/wallet/UpdateContactsActivity"
+    const val WALLET_CONTACTS_DETAILS = "/wallet/ContactsDetailsActivity"
 
     //app
     const val APP_SPLASH = "/app/SplashActivity"
@@ -48,4 +51,5 @@ object RouterPath {
     const val PARAM_WALLET = "wallet"
     const val PARAM_VISIBLE_MNEM = "visible_mnem"
     const val PARAM_WC_URL = "wc_url"
+    const val PARAM_CONTACTS_ID = "contacts_id"
 }

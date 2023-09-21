@@ -58,6 +58,12 @@ class MyFragment : Fragment() {
         binding.tvLang.setOnClickListener {
             ARouter.getInstance().build(RouterPath.APP_LANGUAGE).navigation()
         }
+        binding.tvContacts.setOnClickListener {
+            ARouter.getInstance().build(RouterPath.WALLET_CONTACTS).navigation()
+        }
+        binding.tvNotice.setOnClickListener {
+            ARouter.getInstance().build(RouterPath.APP_MESSAGES).navigation()
+        }
     }
 
     private fun initObserver() {

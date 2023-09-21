@@ -1,6 +1,7 @@
 package com.fzm.walletdemo.ui.activity
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -46,7 +47,7 @@ class MainActivity : BaseActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     override fun onCreate(savedInstanceState: Bundle?) {
         mCustomToobar = true
-        setStatusColor(android.R.color.transparent)
+        mStatusColor = Color.TRANSPARENT
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         initView()

@@ -61,6 +61,7 @@ dependencies {
     api cfg.trustwallet
     //debugApi  cfg.glance
     api cfg.dialogX
+    api cfg.IndexRecyclerView
 
     // WalletConnect V2
     def wallet_connect_version = "1.4.1"
