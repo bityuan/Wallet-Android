@@ -14,9 +14,11 @@ import com.fzm.wallet.sdk.IPConfig.Companion.TP_YBC
 import com.fzm.wallet.sdk.IPConfig.Companion.TP_YBSQ
 import com.fzm.wallet.sdk.IPConfig.Companion.TP_YJ
 import com.fzm.walletdemo.BuildConfig
+import com.fzm.walletdemo.R
 import com.fzm.walletdemo.W
 import com.fzm.walletdemo.databinding.WebDappBinding
 import com.fzm.walletdemo.ui.JsApi
+import com.fzm.walletdemo.ui.activity.MainActivity
 import wendu.dsbridge.DWebView
 
 class WebFragment : Fragment() {
@@ -24,9 +26,7 @@ class WebFragment : Fragment() {
     private lateinit var binding: WebDappBinding
 
     companion object {
-        //提案
         const val TAG_TIAN = "showTianFragment"
-        //投票
         const val TAG_TP = "showTPFragment"
     }
 
@@ -44,34 +44,50 @@ class WebFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initWebView()
+        if (tag == TAG_TIAN) {
+            binding.tvWebTitle.text = getString(R.string.tian_str)
+        } else if (tag == TAG_TP) {
+            binding.tvWebTitle.text = getString(R.string.tp_str)
+        }
+
+
         var url = ""
-        if(W.appType == IPConfig.APP_YBC) {
-            if(tag == TAG_TIAN){
+        if (W.appType == IPConfig.APP_YBC) {
+            if (tag == TAG_TIAN) {
                 url = SQZZ
-            }else if(tag == TAG_TP){
+            } else if (tag == TAG_TP) {
                 url = TP_YBC
             }
-        }
-        else if(W.appType == IPConfig.APP_YBS) {
-            if(tag == TAG_TIAN){
+        } else if (W.appType == IPConfig.APP_YBS) {
+            if (tag == TAG_TIAN) {
                 url = SQZZ
-            }else if(tag == TAG_TP){
+            } else if (tag == TAG_TP) {
                 url = TP_YBSQ
             }
-        }
-        else if(W.appType == IPConfig.APP_YJM) {
-            if(tag == TAG_TIAN){
+        } else if (W.appType == IPConfig.APP_YJM) {
+            if (tag == TAG_TIAN) {
                 url = SQZZ
-            }else if(tag == TAG_TP){
+            } else if (tag == TAG_TP) {
                 url = TP_YJ
             }
         }
         binding.webDapp.loadUrl(url)
     }
+
     private fun initWebView() {
+        binding.ivBack.setOnClickListener {
+            if (binding.webDapp.canGoBack()) {
+                binding.webDapp.goBack()
+            } else {
+                activity?.let {
+                    (it as MainActivity).onBackPressed()
+                }
+
+            }
+        }
         DWebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
         activity?.let {
-            binding.webDapp.addJavascriptObject(JsApi(binding.webDapp,it), null)
+            binding.webDapp.addJavascriptObject(JsApi(binding.webDapp, it), null)
         }
         //binding.webDapp.addJavascriptObject(JSApi(this), null)
         binding.webDapp.settings.javaScriptEnabled = true

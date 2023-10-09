@@ -54,6 +54,8 @@
     <string name="del_str">删除</string>
     <string name="del_tip_str">是否删除?</string>
     <string name="send_suc_str">发送成功!</string>
+    <string name="tian_str">提案</string>
+    <string name="tp_str">投票</string>
 
 
 </resources>

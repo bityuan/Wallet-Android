@@ -54,6 +54,8 @@
   <string name="del_str">Delete</string>
   <string name="del_tip_str">Delete?</string>
   <string name="send_suc_str">Send successfully!</string>
+  <string name="tian_str">proposal</string>
+  <string name="tp_str">vote</string>
 
 
 </resources>

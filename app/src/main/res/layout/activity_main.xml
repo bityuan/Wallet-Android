@@ -39,7 +39,7 @@
                 android:id="@+id/tv_tian"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="提案"
+                android:text="@string/tian_str"
                 android:textColor="@color/selector_bottom_tab_text"
                 android:textSize="12sp" />
 
@@ -64,7 +64,7 @@
                 android:id="@+id/tv_tp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="投票"
+                android:text="@string/tp_str"
                 android:textColor="@color/selector_bottom_tab_text"
                 android:textSize="12sp" />
 
