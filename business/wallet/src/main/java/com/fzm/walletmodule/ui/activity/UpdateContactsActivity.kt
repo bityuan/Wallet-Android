@@ -67,6 +67,15 @@ class UpdateContactsActivity : BaseActivity() {
     @JvmField
     @Autowired(name = RouterPath.PARAM_CONTACTS_ID)
     var contactsId: Long = 0
+
+    @JvmField
+    @Autowired(name = RouterPath.PARAM_COIN)
+    var coin: Coin? = null
+
+    @JvmField
+    @Autowired(name = RouterPath.PARAM_ADDRESS)
+    var addr: String? = null
+
     private lateinit var mCommonAdapter: CommonAdapter<*>
     private lateinit var mDrawAdapter: CommonAdapter<*>
     private val mCoinList = mutableListOf<Coin>()
@@ -106,7 +115,7 @@ class UpdateContactsActivity : BaseActivity() {
         mCommonAdapter =
             object : CommonAdapter<Address>(this, R.layout.listitem_edit_address, mAddressList) {
                 override fun convert(holder: ViewHolder, address: Address, position: Int) {
-                    holder.setText(R.id.tv_coin_type, address.cointype)
+                    holder.setText(R.id.tv_coin_type, "${address.name}(${address.nickName})")
                     holder.setText(R.id.et_address, address.address)
 
                     holder.setOnClickListener(R.id.iv_scan) {
@@ -116,10 +125,10 @@ class UpdateContactsActivity : BaseActivity() {
 
                     }
                     holder.setOnClickListener(R.id.iv_delete) {
-                        val addr=mAddressList[holder.adapterPosition]
+                        val addr = mAddressList[holder.adapterPosition]
                         mAddressList.removeAt(holder.adapterPosition)
                         mCommonAdapter.notifyItemRemoved(holder.adapterPosition)
-                        if (!address.isAdd){
+                        if (!address.isAdd) {
                             delAddrList.add(addr)
                         }
                         toast(getString(R.string.my_delete_success))
@@ -151,6 +160,20 @@ class UpdateContactsActivity : BaseActivity() {
                         mAddressList.addAll(contacts.addressList)
                         mCommonAdapter.notifyDataSetChanged()
                     }
+                }
+            }
+
+            2 -> {
+                title = getString(R.string.my_contact_add)
+                coin?.let { co ->
+                    val address = Address()
+                    address.name = co.name
+                    address.platform = co.platform
+                    address.nickName = co.nickname
+                    address.address = addr.toString()
+                    address.isAdd = true
+                    mAddressList.add(address)
+                    mCommonAdapter.notifyItemInserted(mAddressList.size - 1)
                 }
 
 
@@ -190,10 +213,7 @@ class UpdateContactsActivity : BaseActivity() {
         binding.incDraw.rvList.setOnItemClickListener { _, position ->
             binding.drawerLayout.closeDrawer(GravityCompat.END)
             val coin: Coin = mCoinList[position]
-            val address = Address()
-            address.cointype = coin.name
-            address.platform = coin.platform
-            address.isAdd = true
+            val address = buildAddress(coin.name, coin.platform, coin.nickname)
             mAddressList.add(address)
             mCommonAdapter.notifyItemInserted(mAddressList.size - 1)
         }
@@ -213,6 +233,15 @@ class UpdateContactsActivity : BaseActivity() {
         }
     }
 
+    private fun buildAddress(name: String, platform: String, nickname: String): Address {
+        val address = Address()
+        address.name = name
+        address.platform = platform
+        address.nickName = nickname
+        address.isAdd = true
+        return address
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val item = menu.add(0, 1, 0, getString(R.string.contacts_save))
@@ -229,7 +258,7 @@ class UpdateContactsActivity : BaseActivity() {
                 contacts.nickName = nickName
                 contacts.phone = phone
                 contacts.addressList = mAddressList
-                if (from == 0) {
+                if (from == 0 || from == 2) {
                     LitePal.saveAll(mAddressList)
                     contacts.save()
 
@@ -241,17 +270,17 @@ class UpdateContactsActivity : BaseActivity() {
                             "$contactsId"
                         )
                     }
-                    for (del in delAddrList){
+                    for (del in delAddrList) {
                         del.delete()
                     }
                     contacts.saveOrUpdate("id = ?", "$contactsId")
                 }
+                finish()
                 ARouter.getInstance().build(RouterPath.WALLET_CONTACTS).navigation()
             }
         }
         return super.onOptionsItemSelected(item)
     }
-
 
 
     private fun checked(nickName: String, phone: String): Boolean {
@@ -263,7 +292,7 @@ class UpdateContactsActivity : BaseActivity() {
             Toast.makeText(this, getString(R.string.my_add_less_16), Toast.LENGTH_SHORT).show()
             checked = false
         } else if (!TextUtils.isEmpty(phone) && !RegularUtils.isMobileSimple(phone)) {
-            Toast.makeText(this, "手机号格式不正确", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.tip_phone_str), Toast.LENGTH_SHORT).show()
             checked = false
         } else if (mAddressList.isEmpty()) {
             Toast.makeText(this, getString(R.string.my_add_add_address), Toast.LENGTH_SHORT).show()
@@ -274,7 +303,9 @@ class UpdateContactsActivity : BaseActivity() {
                 if (TextUtils.isEmpty(addr)) {
                     Toast.makeText(
                         this,
-                        getString(R.string.my_add_add) + address.cointype + getString(R.string.my_add_address),
+                        getString(R.string.my_add_add) + "${address.name}(${address.nickName})" + getString(
+                            R.string.my_add_address
+                        ),
                         Toast.LENGTH_SHORT
                     ).show()
                     checked = false
@@ -282,7 +313,7 @@ class UpdateContactsActivity : BaseActivity() {
                 } else if (addr.length < 20 || !RegularUtils.isAddress(addr)) {
                     Toast.makeText(
                         this,
-                        address.cointype + getString(R.string.my_add_address_illegal),
+                        "${address.name}(${address.nickName})${getString(R.string.my_add_address_illegal)}",
                         Toast.LENGTH_SHORT
                     ).show()
                     checked = false

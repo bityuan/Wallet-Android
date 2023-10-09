@@ -73,7 +73,7 @@ class ContactAdapter(context: Context?, layoutId: Int, datas: MutableList<Contac
             val tvDelete = holder.getView<TextView>(R.id.tv_delete)
             if (tvDelete.text == mContext.getString(R.string.o_delete)) {
                 closeSwipeLayouts()
-                swipeDeleteListener.delete(position)
+                swipeDeleteListener.delete(holder.adapterPosition)
             } else {
                 holder.setBackgroundRes(R.id.tv_delete, R.color.red_common)
                 holder.setText(R.id.tv_delete, mContext.getString(R.string.o_delete))

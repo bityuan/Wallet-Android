@@ -12,28 +12,23 @@ open class KTBaseBean : LitePalSupport(), Serializable {
 }
 
 class Contacts : Indexable, KTBaseBean() {
-    companion object {
-        val NICK_NAME = "nickName"
-        val SIMPLE_NAME = "simpleName"
-    }
-
-
     override fun getIndex(): String {
         return sortLetters
     }
 
-    lateinit var nickName: String
-    lateinit var phone: String
-    lateinit var sortLetters: String
-    lateinit var addressList: List<Address>
+    var nickName: String = ""
+    var phone: String = ""
+    var sortLetters: String = ""
+    var addressList: List<Address> = mutableListOf()
     var status: Int = 0
 }
 
 
 class Address : KTBaseBean() {
-    lateinit var contacts: Contacts
-    lateinit var cointype: String
+    var contacts: Contacts? = null
+    var name: String = ""
     var platform: String = ""
+    var nickName: String = ""
     var address: String = ""
 
     //0未选中  1选中

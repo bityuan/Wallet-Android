@@ -9,9 +9,7 @@ import com.google.gson.reflect.TypeToken
 open class Constants {
     companion object {
         const val COINS_KEY = "coins_key"
-        const val FROM = "from"
         const val PAGE_LIMIT = 20L
-        const val DELAYED_TIME = 8 * 1000.toLong()
 
 
         fun setCoins(list: List<Coin>) {

@@ -7,7 +7,7 @@
     <string name="my_create_wallet">创建账户</string>
     <string name="my_import_wallet">导入账户</string>
     <string name="my_wallet_read_toast">请先勾选协议</string>
-    <string name="wallet_name">账户名称</string>
+    <string name="wallet_name">钱包名称</string>
     <string name="my_set_password_toast">请输入8–16位数字、字母组合</string>
     <string name="set_wallet_password">请设置账户密码</string>
     <string name="my_set_password_different">两次密码不相同！</string>
@@ -127,7 +127,7 @@
     <string name="home_please_input_receipt_address">请输入收款地址</string>
     <string name="home_please_input_amount">请输入金额</string>
     <string name="home_receipt_send_address_is_same">收款地址和转账地址相同</string>
-    <string name="home_receipt_address_is_illegal">收款地址不合法！</string>
+    <string name="home_receipt_address_is_illegal">收款地址格式不正确</string>
     <string name="home_input_greater_than_zero_amount">请输入大于0的金额</string>
     <string name="home_balance_insufficient">余额不足...</string>
     <string name="fee_not_enough">矿工费余额不足</string>
@@ -231,4 +231,6 @@
     <string name="my_add_address">的地址</string>
     <string name="my_add_address_illegal">的地址不合法</string>
     <string name="my_delete_success">删除成功</string>
+    <string name="tip_phone_str">手机号格式不正确</string>
+    <string name="con_add_str">当前钱包暂未添加</string>
 </resources>

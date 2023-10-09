@@ -2,28 +2,45 @@ package com.fzm.walletmodule.ui.activity
 
 import android.os.Bundle
 import android.text.TextUtils
+import androidx.lifecycle.lifecycleScope
+import com.alibaba.android.arouter.facade.annotation.Autowired
+import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.IPConfig.Companion.YBF_TOKEN_FEE
+import com.fzm.wallet.sdk.RouterPath
 import com.fzm.walletmodule.R
 
 import com.fzm.wallet.sdk.bean.Transactions
+import com.fzm.wallet.sdk.db.entity.Address
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.databinding.ActivityTransactionDetailsBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.litepal.LitePal
+import org.litepal.extension.find
 
-
+@Route(path = RouterPath.WALLET_TRANSACTION_DETAILS)
 class TransactionDetailsActivity : BaseActivity() {
-    private lateinit var transaction: Transactions
-    private lateinit var coin: Coin
     private val binding by lazy { ActivityTransactionDetailsBinding.inflate(layoutInflater) }
+
+    @JvmField
+    @Autowired(name = RouterPath.PARAM_COIN)
+    var coin: Coin? = null
+
+    @JvmField
+    @Autowired(name = RouterPath.PARAM_TRANSACTIONS)
+    var transactions: Transactions? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        ARouter.getInstance().inject(this)
         showInLoading()
-        initIntent()
         initListener()
         initData()
         configWallets()
@@ -42,51 +59,88 @@ class TransactionDetailsActivity : BaseActivity() {
             ClipboardUtils.clip(this, binding.tvHash.text.toString())
 
         }
+
+        binding.btnAddContacts.setOnClickListener {
+            transactions?.let { transaction ->
+                val otherAddress =
+                    if (transaction.type == Transactions.TYPE_SEND) transaction.to else transaction.from
+                ARouter.getInstance().build(RouterPath.WALLET_UPDATE_CONTACTS)
+                    .withInt(RouterPath.PARAM_FROM, 2).withSerializable(RouterPath.PARAM_COIN, coin)
+                    .withString(RouterPath.PARAM_ADDRESS, otherAddress).navigation()
+            }
+
+        }
     }
 
-    override fun initIntent() {
-        super.initIntent()
-        transaction =
-            intent.getSerializableExtra(Transactions::class.java.simpleName) as Transactions
-        coin = intent.getSerializableExtra(Coin::class.java.simpleName) as Coin
-    }
 
     override fun initData() {
         super.initData()
-        binding.tvOutAddress.text = transaction.from
-        binding.tvInAddress.text = transaction.to
-        if(GoWallet.isPara(coin)) {
-            if(transaction.note!!.contains("para")) {
-                binding.tvMiner.text = "0 ${coin.uiName}"
-            }else {
-                binding.tvMiner.text = "$YBF_TOKEN_FEE ${coin.uiName}"
-            }
-        }else {
-            binding.tvMiner.text = "${transaction.fee} ${coin.newChain.cointype}"
-        }
-        binding.tvBlock.text = transaction.height.toString()
+        coin?.let { co ->
+            transactions?.let { transaction ->
+                binding.tvOutAddress.text = transaction.from
+                binding.tvInAddress.text = transaction.to
+                if (GoWallet.isPara(co)) {
+                    if (transaction.note!!.contains("para")) {
+                        binding.tvMiner.text = "0 ${co.uiName}"
+                    } else {
+                        binding.tvMiner.text = "$YBF_TOKEN_FEE ${co.uiName}"
+                    }
+                } else {
+                    binding.tvMiner.text = "${transaction.fee} ${co.newChain.cointype}"
+                }
+                binding.tvBlock.text = transaction.height.toString()
 
-        binding.tvHash.text = transaction.txid
-        if (!TextUtils.isEmpty(transaction.nickName)) {
-            binding.tvNickName.text = "${transaction.nickName}"
-        }
-        binding.tvInout.text =
-            if (transaction.type == Transactions.TYPE_SEND) Transactions.OUT_STR else Transactions.IN_STR
-        binding.tvNumber.text = transaction.value
-        binding.tvCoin.text = coin.uiName
-        binding.tvNote.text =
-            if (TextUtils.isEmpty(transaction.note)) getString(R.string.home_no) else transaction.note
-        when (transaction.status) {
-            -1 -> {
-                handleStatus(getString(R.string.home_transaction_fails), R.mipmap.icon_fail)
-                binding.tvTime.text = TimeUtils.getTime(transaction.blocktime * 1000L)
+                binding.tvHash.text = transaction.txid
+                if (!TextUtils.isEmpty(transaction.nickName)) {
+                    binding.tvNickName.text = "${transaction.nickName}"
+                }
+                binding.tvInout.text =
+                    if (transaction.type == Transactions.TYPE_SEND) Transactions.OUT_STR else Transactions.IN_STR
+                binding.tvNumber.text = transaction.value
+                binding.tvCoin.text = co.uiName
+                binding.tvNote.text =
+                    if (TextUtils.isEmpty(transaction.note)) getString(R.string.home_no) else transaction.note
+                when (transaction.status) {
+                    -1 -> {
+                        handleStatus(getString(R.string.home_transaction_fails), R.mipmap.icon_fail)
+                        binding.tvTime.text = TimeUtils.getTime(transaction.blocktime * 1000L)
+                    }
+
+                    0 -> handleStatus(getString(R.string.home_confirming), R.mipmap.icon_waitting)
+                    1 -> {
+                        handleStatus(
+                            getString(R.string.home_transaction_success), R.mipmap.icon_success
+                        )
+                        binding.tvTime.text = TimeUtils.getTime(transaction.blocktime * 1000L)
+                    }
+                }
+
+                lifecycleScope.launch(Dispatchers.IO) {
+                    var names = ""
+                    try {
+                        val otherAddress =
+                            if (transaction.type == Transactions.TYPE_SEND) transaction.to else transaction.from
+                        val addressList =
+                            LitePal.where("address = ?", otherAddress).find<Address>(true)
+                        val list = mutableListOf<String?>()
+                        for (addr in addressList) {
+                            list.add(addr.contacts?.nickName)
+                        }
+                        names = list.joinToString(separator = " ")
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+
+                    withContext(Dispatchers.Main) {
+                        binding.tvContacts.text = names
+                    }
+                }
+
+
             }
-            0 -> handleStatus(getString(R.string.home_confirming), R.mipmap.icon_waitting)
-            1 -> {
-                handleStatus(getString(R.string.home_transaction_success), R.mipmap.icon_success)
-                binding.tvTime.text = TimeUtils.getTime(transaction.blocktime * 1000L)
-            }
+
         }
+
     }
 
     private fun handleStatus(text: String, imgId: Int) {

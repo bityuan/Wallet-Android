@@ -8,18 +8,18 @@ public class AddressCheckUtils {
 
 
     public static boolean check(String chain, String toAddress) {
-        if (!RegularUtils.isEnglish(toAddress)) {
-            return false;
-        }
         switch (chain) {
             case Walletapi.TypeBitcoinString:
                 return isBTCAddress(toAddress);
             case Walletapi.TypeBtyString:
                 return isBTYAddress(toAddress);
             case Walletapi.TypeETHString:
+            case Walletapi.TypeBnbString:
                 return isETHAddress(toAddress);
             case Walletapi.TypeDcrString:
                 return isDCRAddress(toAddress);
+            case Walletapi.TypeTrxString:
+                return isTRXAddress(toAddress);
         }
 
         return true;
@@ -56,6 +56,12 @@ public class AddressCheckUtils {
 
     public static boolean isDCRAddress(String input) {
         if (!input.startsWith("Ds") || input.length() < 20) {
+            return false;
+        }
+        return true;
+    }
+    public static boolean isTRXAddress(String input) {
+        if (!input.startsWith("T") || input.length() < 20) {
             return false;
         }
         return true;

@@ -1,6 +1,7 @@
 package com.fzm.walletmodule.ui.activity
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -24,6 +25,7 @@ import com.fzm.wallet.sdk.IPConfig.Companion.YBF_FEE_ADDR
 import com.fzm.wallet.sdk.IPConfig.Companion.YBF_TOKEN_FEE
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
+import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.bean.StringResult
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
@@ -34,6 +36,7 @@ import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.utils.AddressCheckUtils
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.ListUtils
+import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.fzm.wallet.sdk.utils.RegularUtils
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.databinding.ActivityOutBinding
@@ -64,6 +67,7 @@ import walletapi.WalletRecover
 import walletapi.Walletapi
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import java.util.Locale
 
 //原BTY,BTC和ETH格式的BTY，查余额，账单，构造签名发送都是 "BTY",BNB的BTY是"BNB"
 //原YCC查余额，账单，构造签名发送都是"ETH",BTC和ETH格式的YCC，查余额，账单，构造签名发送都是 "YCC",BNB的YCC是"BNB"
@@ -87,6 +91,10 @@ class OutActivity : BaseActivity() {
     @Autowired
     var coin: Coin? = null
 
+    @JvmField
+    @Autowired(name = RouterPath.PARAM_ADDRESS)
+    var address: String? = null
+
     //主链余额
     var chainBalance: Double = 0.0
     private var oldName = ""
@@ -96,16 +104,27 @@ class OutActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         ARouter.getInstance().inject(this)
+        initObserver()
         initView()
         initData()
         initListener()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        val address = intent.getStringExtra(RouterPath.PARAM_ADDRESS)
+        binding.etToAddress.setText(address)
+    }
+
+    override fun initObserver() {
+        super.initObserver()
     }
 
 
     override fun initView() {
         coin?.let {
             oldName = it.name
-            binding.tvCoinName.text = it.uiName + getString(R.string.home_transfer)
+            title = "${it.uiName}(${it.nickname})${getString(R.string.home_transfer)}"
             binding.tvBalance.text = "${it.balance} ${it.uiName}"
             coinToken = it.newChain
             //危险操作，此页面不可对coin进行数据库修改，不然chain和name也会被修改
@@ -140,11 +159,15 @@ class OutActivity : BaseActivity() {
 
                 }
             }
+
+            if (!address.isNullOrEmpty()) {
+                binding.etToAddress.setText(address)
+            }
         }
     }
 
     private fun handleDNS(input: String) {
-        if (input.contains(".")) {
+        if (input.contains(".") && oldName in listOf("BTY","BTC","ETH","TRX","BNB")) {
             getAddressByDns(input)
         } else {
             getDnsByAddress(input)
@@ -159,7 +182,23 @@ class OutActivity : BaseActivity() {
 
     //通过域名查询地址为正向解析kind=0，类型不重要
     private fun getAddressByDns(dns: String) {
-        walletViewModel.getDNSResolve(key = dns, kind = 0)
+        val newDNS = getDNS(dns)
+        if (newDNS.isEmpty()) {
+            toast(getString(R.string.home_receipt_address_is_illegal))
+            return
+        }
+        walletViewModel.getDNSResolve(key = newDNS, kind = 0)
+    }
+
+    private fun getDNS(dns: String): String {
+        val count = dns.count { it == '.' }
+        //至少要有一个.
+        if (count >= 2) {
+            return dns
+        } else if (count == 1) {
+            return "${oldName.lowercase()}.$dns"
+        }
+        return ""
     }
 
     private var min = 0
@@ -192,7 +231,8 @@ class OutActivity : BaseActivity() {
         if (coinToken.proxy) {
             binding.seekbarFee.visibility = View.GONE
             binding.llVMiner.visibility = View.GONE
-            binding.tvFee.text = "${if(coin?.platform == IPConfig.YBF_CHAIN) YBF_TOKEN_FEE else TOKEN_FEE} $oldName"
+            binding.tvFee.text =
+                "${if (coin?.platform == IPConfig.YBF_CHAIN) YBF_TOKEN_FEE else TOKEN_FEE} $oldName"
         } else {
             outViewModel.getMiner(minerChain!!)
         }
@@ -274,6 +314,15 @@ class OutActivity : BaseActivity() {
             }
             RemarksTipsDialogView(this, false)
         }
+
+        binding.ivContact.setOnClickListener {
+            coin?.let {
+                ARouter.getInstance().build(RouterPath.WALLET_CONTACTS)
+                    .withSerializable(RouterPath.PARAM_COIN, coin)
+                    .navigation()
+            }
+
+        }
         binding.ivScan.setOnClickListener {
             if (ClickUtils.isFastDoubleClick()) {
                 return@setOnClickListener
@@ -298,18 +347,32 @@ class OutActivity : BaseActivity() {
             } else {
                 loading.show()
                 lifecycleScope.launch(Dispatchers.IO) {
-                    val dnsRep = walletRepository.getDNSResolve(1, toAddress, 0)
+                    val newDNS = getDNS(toAddress)
+                    if (newDNS.isEmpty()) {
+                        toast(getString(R.string.home_receipt_address_is_illegal))
+                        return@launch
+                    }
+                    val dnsRep = walletRepository.getDNSResolve(1, newDNS, 0)
                     withContext(Dispatchers.Main) {
                         if (dnsRep.isSucceed()) {
                             dnsRep.data()?.let { list ->
                                 if (list.isNotEmpty()) {
+                                    showDnsList(list)
                                     loading.dismiss()
                                     toAddress = list[0]
-                                    showPwdDialog()
+                                    if (RegularUtils.isAddress(toAddress)) {
+                                        showPwdDialog()
+                                    } else {
+                                        ToastUtils.show(
+                                            this@OutActivity,
+                                            getString(R.string.home_receipt_address_is_illegal)
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
+
                 }
             }
 
@@ -325,15 +388,15 @@ class OutActivity : BaseActivity() {
 
             if (it.chain == it.name) {
                 if (inputMoney + fee > dBalance) {
-                    toast("余额不足!")
+                    toast(getString(R.string.home_balance_insufficient))
                     return false
                 }
             } else {
                 if (inputMoney > dBalance) {
-                    toast("余额不足!")
+                    toast(getString(R.string.home_balance_insufficient))
                     return false
                 } else if (fee > chainBalance) {
-                    toast("矿工费不足!")
+                    toast(getString(R.string.fee_not_enough))
                     return false
                 }
             }
@@ -344,6 +407,10 @@ class OutActivity : BaseActivity() {
 
     private var addressId = 0
     private fun showPwdDialog() {
+        if (!AddressCheckUtils.check(coin?.chain, toAddress)) {
+            ToastUtils.show(this, getString(R.string.home_receipt_address_is_illegal))
+            return
+        }
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_pwd, null)
         val dialog = AlertDialog.Builder(this).setView(view).create().apply {
             window?.setBackgroundDrawableResource(android.R.color.transparent)
@@ -390,7 +457,7 @@ class OutActivity : BaseActivity() {
 
                                 //如果需要代扣
                                 if (coinToken.proxy) {
-                                    toPara(it,money)
+                                    toPara(it, money)
                                 } else {
                                     handleTransactions(toAddress, money)
                                 }
@@ -401,7 +468,7 @@ class OutActivity : BaseActivity() {
                                 privkey = it.getPrivkey(password)
                                 //如果需要代扣
                                 if (coinToken.proxy) {
-                                    toPara(it,money)
+                                    toPara(it, money)
                                 } else {
                                     handleTransactions(toAddress, money)
                                 }
@@ -424,9 +491,9 @@ class OutActivity : BaseActivity() {
         }
     }
 
-    private fun toPara(it:Coin,money:String){
+    private fun toPara(it: Coin, money: String) {
         val gsendTx = GsendTx().apply {
-            feepriv = if(it.platform == IPConfig.YBF_CHAIN) YBF_BTY_PR else BTY_PR
+            feepriv = if (it.platform == IPConfig.YBF_CHAIN) YBF_BTY_PR else BTY_PR
             to = toAddress
             tokenSymbol = it.name
             execer = coinToken.exer
@@ -437,7 +504,7 @@ class OutActivity : BaseActivity() {
             //扣的手续费接收地址
             tokenFeeAddr = YBF_FEE_ADDR
             //扣多少手续费
-            tokenFee = if(it.platform == IPConfig.YBF_CHAIN) YBF_TOKEN_FEE else TOKEN_FEE
+            tokenFee = if (it.platform == IPConfig.YBF_CHAIN) YBF_TOKEN_FEE else TOKEN_FEE
             if (it.treaty == "1") {
                 coinsForFee = false
                 tokenFeeSymbol = oldName
@@ -445,8 +512,8 @@ class OutActivity : BaseActivity() {
                 coinsForFee = true
             }
             //feeAddressID是收比特元的手续费地址格式，txAddressID是当前用户地址格式
-            feeAddressID = if(it.address.startsWith("0x")) 2 else 0
-            txAddressID = if(it.address.startsWith("0x")) 2 else 0
+            feeAddressID = if (it.address.startsWith("0x")) 2 else 0
+            txAddressID = if (it.address.startsWith("0x")) 2 else 0
         }
         val gsendTxResp = Walletapi.coinsTxGroup(gsendTx)
         GoWallet.sendTran(it.chain, gsendTxResp.signedTx, it.name)
@@ -619,13 +686,13 @@ class OutActivity : BaseActivity() {
         } else if (toAddress == coin?.address) {
             ToastUtils.show(this, R.string.home_receipt_send_address_is_same)
             return false
-        } else if (!RegularUtils.isEnglish(toAddress)) {
+        }/* else if (!RegularUtils.isEnglish(toAddress)) {
             ToastUtils.show(this, R.string.home_receipt_address_is_illegal)
             return false
         } else if (!AddressCheckUtils.check(coin?.chain, toAddress)) {
             ToastUtils.show(this, getString(R.string.home_receipt_address_is_illegal))
             return false
-        }
+        }*/
         return true
     }
 

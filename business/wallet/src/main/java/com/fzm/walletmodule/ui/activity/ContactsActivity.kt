@@ -9,11 +9,13 @@ import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.db.entity.Address
+import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.Contacts
 import com.fzm.wallet.sdk.widget.sidebar.CharacterParser
 import com.fzm.walletmodule.BuildConfig
@@ -23,6 +25,7 @@ import com.fzm.walletmodule.databinding.ActivityContactsBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.KeyboardUtils
 import com.jiang.android.lib.adapter.expand.StickyRecyclerHeadersDecoration
+import kotlinx.android.synthetic.main.view_header_wallet.name
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -31,6 +34,8 @@ import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.litepal.LitePal
 import org.litepal.extension.count
+import org.litepal.extension.delete
+import org.litepal.extension.find
 import org.litepal.extension.findAll
 import java.util.Collections
 import java.util.Locale
@@ -43,9 +48,15 @@ class ContactsActivity : BaseActivity() {
     private val mContactsList = mutableListOf<Contacts>()
     private lateinit var mContactAdapter: ContactAdapter
 
+    @JvmField
+    @Autowired
+    var coin: Coin? = null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        ARouter.getInstance().inject(this)
         title = getString(R.string.title_contacts)
         initView()
         initListener()
@@ -80,11 +91,16 @@ class ContactsActivity : BaseActivity() {
         binding.rvList.setOnItemClickListener { holder, position ->
             val contacts = mContactsList[position]
             ARouter.getInstance().build(RouterPath.WALLET_CONTACTS_DETAILS)
-                .withLong(RouterPath.PARAM_CONTACTS_ID, contacts.id).navigation()
+                .withLong(RouterPath.PARAM_CONTACTS_ID, contacts.id)
+                .withSerializable(RouterPath.PARAM_COIN, coin)
+                .navigation()
         }
         mContactAdapter.setSwipeDeleteListener(object : ContactAdapter.SwipeDeleteListener {
             override fun delete(position: Int) {
-                //resetRemoveItems(position)
+                val contacts = mContactsList[position]
+                LitePal.delete<Contacts>(contacts.id)
+                mContactsList.removeAt(position)
+                mContactAdapter.notifyItemRemoved(position)
             }
 
         })
@@ -97,7 +113,16 @@ class ContactsActivity : BaseActivity() {
         }
 
         binding.incSearch.etSearch.doOnTextChanged { text, start, count, after ->
-            //contactsViewModel.getContactsList(text.toString())
+            lifecycleScope.launch(Dispatchers.IO) {
+                val contactsList = LitePal.where("nickName like ? or phone like ?","%$text%","%$text%").find(Contacts::class.java)
+                mDataContacts = handleSortLetters(contactsList)
+                withContext(Dispatchers.Main){
+                    mContactsList.clear()
+                    mContactsList.addAll(mDataContacts)
+                    Collections.sort(mContactsList, PinyinComparator())
+                    mContactAdapter.notifyDataSetChanged()
+                }
+            }
         }
 
     }
@@ -197,7 +222,6 @@ class ContactsActivity : BaseActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        logDebug("============ onNewIntent===========")
         getContactsList()
     }
 

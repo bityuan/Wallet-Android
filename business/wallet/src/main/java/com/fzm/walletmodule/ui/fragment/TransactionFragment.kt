@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.alibaba.android.arouter.launcher.ARouter
+import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.bean.response.TransactionResponse
 import com.fzm.wallet.sdk.db.entity.Coin
@@ -143,10 +145,10 @@ class TransactionFragment : BaseFragment() {
                 break
             }
         }
-        startActivity<TransactionDetailsActivity>(
-            Transactions::class.java.simpleName to transactions,
-            Coin::class.java.simpleName to coin, Constants.FROM to "list"
-        )
+        ARouter.getInstance().build(RouterPath.WALLET_TRANSACTION_DETAILS)
+            .withSerializable(RouterPath.PARAM_COIN, coin)
+            .withSerializable(RouterPath.PARAM_TRANSACTIONS, transactions)
+            .navigation()
     }
 
     override fun initRefresh() {

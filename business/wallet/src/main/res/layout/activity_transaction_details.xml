@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/stateView"
     android:layout_width="match_parent"
+    android:paddingBottom="30dp"
     android:layout_height="match_parent">
 
     <LinearLayout
@@ -139,11 +140,16 @@
                                     android:drawablePadding="3dp"
                                     android:ellipsize="middle"
                                     android:gravity="right"
-                                    android:singleLine="true"
                                     android:textColor="@color/color_333649"
                                     android:textSize="15sp" />
 
                             </LinearLayout>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/height_line"
+                                android:layout_marginTop="10dp"
+                                android:background="@color/lineColor" />
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -168,11 +174,16 @@
                                     android:drawablePadding="3dp"
                                     android:ellipsize="middle"
                                     android:gravity="right"
-                                    android:singleLine="true"
                                     android:textColor="@color/color_333649"
                                     android:textSize="15sp" />
 
                             </LinearLayout>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/height_line"
+                                android:layout_marginTop="10dp"
+                                android:background="@color/lineColor" />
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -201,12 +212,6 @@
 
                         </LinearLayout>
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/height_line"
-                            android:layout_marginLeft="@dimen/dp_16"
-                            android:layout_marginTop="16dp"
-                            android:background="@color/lineColor" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -264,7 +269,6 @@
                                     android:drawablePadding="3dp"
                                     android:ellipsize="middle"
                                     android:gravity="right"
-                                    android:singleLine="true"
                                     android:textColor="@color/color_333649"
                                     android:textSize="15sp" />
 
@@ -332,7 +336,30 @@
                                     android:textSize="15sp" />
 
                             </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="14dp"
+                                android:gravity="center_vertical">
 
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="关联联系人"
+                                    android:textColor="@color/color_8E92A3"
+                                    android:textSize="15sp" />
+
+                                <TextView
+                                    android:id="@+id/tv_contacts"
+                                    android:layout_width="303dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="13dp"
+                                    android:layout_weight="1"
+                                    android:gravity="right"
+                                    android:textColor="@color/color_333649"
+                                    android:textSize="15sp" />
+
+                            </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
 
@@ -342,11 +369,18 @@
         </ScrollView>
 
 
-
-
     </LinearLayout>
 
-
+    <Button
+        android:id="@+id/btn_add_contacts"
+        android:layout_alignParentBottom="true"
+        style="@style/buttonPressStyle"
+        android:layout_width="match_parent"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="@dimen/dp_16"
+        android:layout_marginRight="@dimen/dp_16"
+        android:layout_marginBottom="29dp"
+        android:text="@string/my_contact_add" />
 
   <!--  <include layout="@layout/layout_loading_white"/>-->
 

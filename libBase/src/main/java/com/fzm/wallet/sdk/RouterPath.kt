@@ -13,6 +13,7 @@ object RouterPath {
     const val WALLET_OUT = "/wallet/OutActivity"
     const val WALLET_IN = "/wallet/InActivity"
     const val WALLET_TRANSACTIONS = "/wallet/TransactionsActivity"
+    const val WALLET_TRANSACTION_DETAILS = "/wallet/TransactionDetailsActivity"
     const val WALLET_CHOOSE_CHAIN = "/wallet/ChooseChainActivity"
     const val WALLET_WALLET_DETAILS = "/wallet/WalletDetailsActivity"
     const val WALLET_CHECK_MNEM = "/wallet/CheckMnemActivity"
@@ -44,8 +45,10 @@ object RouterPath {
 
     //param
     const val PARAM_COIN = "coin"
+    const val PARAM_TRANSACTIONS = "transactions"
     const val PARAM_SCAN = "scan"
     const val PARAM_FROM = "from"
+    const val PARAM_ADDRESS = "address"
     const val PARAM_NFT_TRAN = "nft_tran"
     const val PARAM_APPS_ID = "apps_id"
     const val PARAM_WALLET = "wallet"

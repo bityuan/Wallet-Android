@@ -32,6 +32,7 @@ class SearchDappActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        title = getString(R.string.my_search)
         initView()
         initData()
         binding.tvSearch.setOnClickListener {
