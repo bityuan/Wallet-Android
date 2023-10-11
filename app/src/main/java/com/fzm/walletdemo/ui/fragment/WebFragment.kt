@@ -75,6 +75,9 @@ class WebFragment : Fragment() {
     }
 
     private fun initWebView() {
+        binding.ivRefresh.setOnClickListener {
+            binding.webDapp.reload()
+        }
         binding.ivBack.setOnClickListener {
             if (binding.webDapp.canGoBack()) {
                 binding.webDapp.goBack()

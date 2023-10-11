@@ -2,12 +2,16 @@ package com.fzm.walletmodule.ui.activity
 
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
+import com.fzm.wallet.sdk.IPConfig
 import com.fzm.wallet.sdk.IPConfig.Companion.YBF_TOKEN_FEE
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.base.IAppTypeProvider
+import com.fzm.wallet.sdk.base.ROUTE_APP_TYPE
 import com.fzm.walletmodule.R
 
 import com.fzm.wallet.sdk.bean.Transactions
@@ -44,6 +48,15 @@ class TransactionDetailsActivity : BaseActivity() {
         initListener()
         initData()
         configWallets()
+    }
+
+    override fun configWallets() {
+        super.configWallets()
+        val navigation =
+            ARouter.getInstance().build(ROUTE_APP_TYPE).navigation() as IAppTypeProvider
+        if (navigation.getAppType() == IPConfig.APP_MY_DAO) {
+            binding.btnAddContacts.visibility = View.VISIBLE
+        }
     }
 
     override fun initListener() {

@@ -384,6 +384,7 @@
 
     <Button
         android:id="@+id/btn_add_contacts"
+        android:visibility="gone"
         android:layout_alignParentBottom="true"
         style="@style/buttonPressStyle"
         android:layout_width="match_parent"

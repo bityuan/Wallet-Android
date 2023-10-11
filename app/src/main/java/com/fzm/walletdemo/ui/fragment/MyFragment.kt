@@ -38,6 +38,7 @@ class MyFragment : Fragment() {
         initObserver()
         if(WalletHelper.isSQ()){
             binding.tvRecover.visibility = View.GONE
+            binding.llContacts.visibility = View.GONE
         }
         binding.tvCheckUpdate.text = "v" + AppUtils.getAppVersion(context)
         binding.tvShare.setOnClickListener {

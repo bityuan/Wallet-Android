@@ -17,6 +17,7 @@
         android:textStyle="bold" />
 
     <LinearLayout
+        android:id="@+id/ll_contacts"
         android:layout_width="match_parent"
         android:layout_height="105dp"
         android:layout_gravity="bottom"
