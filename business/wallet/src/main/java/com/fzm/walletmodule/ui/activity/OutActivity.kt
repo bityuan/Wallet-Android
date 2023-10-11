@@ -124,6 +124,7 @@ class OutActivity : BaseActivity() {
     override fun initView() {
         coin?.let {
             oldName = it.name
+            it.oldName = oldName
             title = "${it.uiName}(${it.nickname})${getString(R.string.home_transfer)}"
             binding.tvBalance.text = "${it.balance} ${it.uiName}"
             coinToken = it.newChain

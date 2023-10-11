@@ -99,7 +99,7 @@ class ContactsDetailsActivity : BaseActivity() {
                 gotoOut(addr)
             } else {
                 coin?.let { co ->
-                    if ("${co.name}${co.platform}" != "${addr.name}${addr.platform}") {
+                    if ("${co.oldName}${co.platform}" != "${addr.name}${addr.platform}") {
                         toast("请选择${co.name}(${co.nickname})对应的地址")
                         return@setOnClickListener
                     }

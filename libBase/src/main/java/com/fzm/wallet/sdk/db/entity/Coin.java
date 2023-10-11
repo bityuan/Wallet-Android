@@ -51,6 +51,8 @@ public class Coin extends BaseBean implements Comparable<Coin> {
     private String optionalName;
     @Column(ignore = true)
     private String scanAddress;
+    @Column(ignore = true)
+    private String oldName;
     private float rmb;
     @SerializedName("id")
     private String netId;
@@ -64,6 +66,14 @@ public class Coin extends BaseBean implements Comparable<Coin> {
 
     public void setContract_address(String contract_address) {
         this.contract_address = contract_address;
+    }
+
+    public String getOldName() {
+        return oldName;
+    }
+
+    public void setOldName(String oldName) {
+        this.oldName = oldName;
     }
 
     public boolean getExchange() {
