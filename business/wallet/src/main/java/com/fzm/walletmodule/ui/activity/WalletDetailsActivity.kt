@@ -9,8 +9,11 @@ import androidx.lifecycle.lifecycleScope
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
+import com.fzm.wallet.sdk.IPConfig
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.base.IAppTypeProvider
 import com.fzm.wallet.sdk.base.MyWallet
+import com.fzm.wallet.sdk.base.ROUTE_APP_TYPE
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.db.entity.PWallet.TYPE_PRI_KEY
@@ -75,6 +78,7 @@ class WalletDetailsActivity : BaseActivity() {
         initListener()
     }
 
+
     override fun initView() {
         super.initView()
         tvTitle.text = getString(R.string.title_wallet_details)
@@ -84,6 +88,12 @@ class WalletDetailsActivity : BaseActivity() {
 
     override fun configWallets() {
         super.configWallets()
+        val navigation =
+            ARouter.getInstance().build(ROUTE_APP_TYPE).navigation() as IAppTypeProvider
+        if(navigation.getAppType() != IPConfig.APP_MY_DAO){
+            binding.tvNewRecoverAddress.visibility = View.GONE
+        }
+
         lifecycleScope.launch(Dispatchers.IO) {
             mPWallet = find(PWallet::class.java, walletid)
             withContext(Dispatchers.Main) {
