@@ -233,4 +233,6 @@
     <string name="my_delete_success">删除成功</string>
     <string name="tip_phone_str">手机号格式不正确</string>
     <string name="con_add_str">当前钱包暂未添加</string>
+    <string name="p_choose_str">请选择</string>
+    <string name="d_addr_str">对应的地址</string>
 </resources>

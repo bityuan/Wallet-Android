@@ -895,5 +895,7 @@
     <string name="pwd_fail_str">wrong password</string>
     <string name="tip_phone_str">Incorrect phone number format</string>
     <string name="con_add_str">The current wallet has not been added yet</string>
+    <string name="p_choose_str">Please select</string>
+    <string name="d_addr_str">Corresponding address</string>
 
 </resources>

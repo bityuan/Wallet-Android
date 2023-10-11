@@ -100,7 +100,7 @@ class ContactsDetailsActivity : BaseActivity() {
             } else {
                 coin?.let { co ->
                     if ("${co.oldName}${co.platform}" != "${addr.name}${addr.platform}") {
-                        toast("请选择${co.name}(${co.nickname})对应的地址")
+                        toast("${getString(R.string.p_choose_str)}${co.oldName}(${co.nickname})${getString(R.string.d_addr_str)}")
                         return@setOnClickListener
                     }
                     ARouter.getInstance().build(RouterPath.WALLET_OUT)
