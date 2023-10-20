@@ -86,6 +86,7 @@
     <string name="qrcode_error">二维码识别失败，请端正相机重新扫描！</string>
     <string name="qrcode_success_sign">扫码完成,请去签名</string>
     <string name="my_wallets_chose1">创建/导入</string>
+    <string name="my_wallets_chose2">观察账户</string>
     <string name="my_wallets_current_wallet">当前账户</string>
     <string name="my_wallets_mnem_walllet">助记词账户</string>
     <string name="home_empty">暂无资产，快去添加吧</string>
@@ -170,6 +171,7 @@
     <string name="backup_recover_str">创建找回钱包</string>
     <string name="imp_mnem_str">导入助记词</string>
     <string name="imp_priv_str">导入私钥</string>
+    <string name="imp_addr_str">导入观察账户</string>
     <string name="imp_recover_str">导入找回钱包</string>
     <string name="choose_chain_str">选择主链</string>
     <string name="recover_input_priv_str">请输入控制地址的私钥</string>
@@ -235,4 +237,6 @@
     <string name="con_add_str">当前钱包暂未添加</string>
     <string name="p_choose_str">请选择</string>
     <string name="d_addr_str">对应的地址</string>
+    <string name="p_chain_choose">请先选择主链</string>
+    <string name="check_str">检测到您使用模拟器创建账户，请切换到真机</string>
 </resources>

@@ -16,6 +16,7 @@ import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.base.ROUTE_APP_TYPE
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.db.entity.PWallet.TYPE_ADDR_KEY
 import com.fzm.wallet.sdk.db.entity.PWallet.TYPE_PRI_KEY
 import com.fzm.wallet.sdk.db.entity.PWallet.TYPE_RECOVER
 import com.fzm.wallet.sdk.utils.GoWallet
@@ -90,7 +91,7 @@ class WalletDetailsActivity : BaseActivity() {
         super.configWallets()
         val navigation =
             ARouter.getInstance().build(ROUTE_APP_TYPE).navigation() as IAppTypeProvider
-        if(navigation.getAppType() != IPConfig.APP_MY_DAO){
+        if (navigation.getAppType() != IPConfig.APP_MY_DAO) {
             binding.tvNewRecoverAddress.visibility = View.GONE
         }
 
@@ -104,6 +105,16 @@ class WalletDetailsActivity : BaseActivity() {
                             binding.tvOutMnem.visibility = View.GONE
                             binding.tvNewRecoverAddress.visibility = View.GONE
                         }
+
+                        TYPE_ADDR_KEY -> {
+                            binding.tvForgetPassword.visibility = View.GONE
+                            binding.tvUpdatePassword.visibility = View.GONE
+                            binding.tvOutMnem.visibility = View.GONE
+                            binding.tvOutPriv.visibility = View.GONE
+                            binding.tvOutPub.visibility = View.GONE
+                            binding.tvNewRecoverAddress.visibility = View.GONE
+                        }
+
                         TYPE_RECOVER -> {
                             binding.tvForgetPassword.visibility = View.GONE
                             binding.tvOutMnem.visibility = View.GONE
@@ -167,7 +178,15 @@ class WalletDetailsActivity : BaseActivity() {
             if (isFastClick()) {
                 return@setOnClickListener
             }
-            checkPassword(2)
+            mPWallet?.let {
+                if (it.type == TYPE_ADDR_KEY) {
+                    doingDelete()
+                } else {
+                    checkPassword(2)
+                }
+            }
+
+
         }
 
         binding.tvNewRecoverAddress.setOnClickListener {
@@ -287,42 +306,15 @@ class WalletDetailsActivity : BaseActivity() {
 
 
             }
+
             2 -> {
                 dismiss()
                 withContext(Dispatchers.Main) {
-                    commonBinding.tvResult.text = getString(R.string.my_wallet_detail_safe)
-                    commonBinding.tvResult.textColor = Color.RED
-                    commonBinding.tvResultDetails.text =
-                        getString(R.string.my_wallet_detail_delete_message)
-                    commonBinding.btnLeft.visibility = View.VISIBLE
-                    commonBinding.btnLeft.setOnClickListener {
-                        commonDialog.dismiss()
-                    }
-                    commonBinding.btnRight.setOnClickListener {
-                        lifecycleScope.launch(Dispatchers.Main) {
-                            val job1 = lifecycleScope.launch(Dispatchers.IO) {
-                                mPWallet?.let {
-                                    LitePal.delete<PWallet>(it.id)
-                                }
-                            }
-                            job1.join()
-
-                            lifecycleScope.launch(Dispatchers.IO) {
-                                val wallet = LitePal.findFirst<PWallet>()
-                                MyWallet.setId(wallet?.id ?: MyWallet.ID_DEFAULT)
-                                withContext(Dispatchers.Main) {
-                                    commonDialog.dismiss()
-                                    finish()
-                                }
-                            }
-
-                        }
-
-                    }
-                    commonDialog.show()
+                    doingDelete()
                 }
 
             }
+
             3 -> {
                 val mnem = getMnem(password)
                 withContext(Dispatchers.Main) {
@@ -332,6 +324,40 @@ class WalletDetailsActivity : BaseActivity() {
 
             }
         }
+    }
+
+    private fun doingDelete() {
+        commonBinding.tvResult.text = getString(R.string.my_wallet_detail_safe)
+        commonBinding.tvResult.textColor = Color.RED
+        commonBinding.tvResultDetails.text =
+            getString(R.string.my_wallet_detail_delete_message)
+        commonBinding.btnLeft.visibility = View.VISIBLE
+        commonBinding.btnLeft.setOnClickListener {
+            commonDialog.dismiss()
+        }
+        commonBinding.btnRight.setOnClickListener {
+            lifecycleScope.launch(Dispatchers.Main) {
+                val job1 = lifecycleScope.launch(Dispatchers.IO) {
+                    mPWallet?.let {
+                        LitePal.delete<PWallet>(it.id)
+                    }
+                }
+                job1.join()
+
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val wallet = LitePal.findFirst<PWallet>()
+                    MyWallet.setId(wallet?.id ?: MyWallet.ID_DEFAULT)
+                    withContext(Dispatchers.Main) {
+                        commonDialog.dismiss()
+                        finish()
+                    }
+                }
+
+            }
+
+        }
+        commonDialog.show()
+
     }
 
     private fun getMnem(password: String): String {

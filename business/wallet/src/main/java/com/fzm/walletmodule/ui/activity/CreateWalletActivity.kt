@@ -87,7 +87,7 @@ class CreateWalletActivity : BaseActivity() {
 
     private fun gotoFinishTask() {
         if (EmulatorDetectUtil.isEmulator(this)) {
-            ToastUtils.show(this, "检测到您使用模拟器创建账户，请切换到真机")
+            ToastUtils.show(this, getString(R.string.check_str))
         } else {
             finishTask()
         }

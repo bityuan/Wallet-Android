@@ -184,6 +184,12 @@ class HomeFragment : Fragment() {
                 binding.header.tvWalletName.text = getString(R.string.priv_account_str)
                 binding.header.ivAddCoin.visibility = View.VISIBLE
             }
+            TYPE_ADDR_KEY -> {
+                val chain = pWallet.coinList[0].chain
+                binding.header.rlWalletBg.backgroundResource = getWalletBg(chain)
+                binding.header.tvWalletName.text = getString(R.string.my_wallets_chose2)
+                binding.header.ivAddCoin.visibility = View.VISIBLE
+            }
             TYPE_RECOVER -> {
                 binding.header.tvWalletName.text = getString(R.string.recover_account_str)
                 binding.header.rlWalletBg.backgroundResource = R.mipmap.header_wallet_recover_wallet

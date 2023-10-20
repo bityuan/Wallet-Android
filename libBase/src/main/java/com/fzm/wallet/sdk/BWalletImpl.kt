@@ -1,6 +1,7 @@
 package com.fzm.wallet.sdk
 
 import android.content.Context
+import com.fzm.wallet.sdk.alpha.AddressWallet
 import com.fzm.wallet.sdk.alpha.NormalWallet
 import com.fzm.wallet.sdk.alpha.PrivateKeyWallet
 import com.fzm.wallet.sdk.alpha.RecoverWallet
@@ -45,6 +46,9 @@ internal class BWalletImpl : BWallet {
             }
             PWallet.TYPE_PRI_KEY -> {
                 PrivateKeyWallet(PWallet()).init(configuration)
+            }
+            PWallet.TYPE_ADDR_KEY -> {
+                AddressWallet(PWallet()).init(configuration)
             }
             PWallet.TYPE_RECOVER -> {
                 RecoverWallet(PWallet()).init(configuration)

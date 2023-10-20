@@ -12,6 +12,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.alibaba.android.arouter.facade.annotation.Autowired
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bumptech.glide.Glide
 import com.fzm.wallet.sdk.BWallet
@@ -22,6 +24,7 @@ import com.fzm.wallet.sdk.base.*
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.exception.ImportWalletException
+import com.fzm.wallet.sdk.utils.AddressCheckUtils
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.databinding.ActivityImportWalletBinding
@@ -42,20 +45,22 @@ import org.jetbrains.anko.toast
 import org.litepal.LitePal
 import org.litepal.extension.count
 import org.litepal.extension.find
+import java.util.ArrayList
 
+@Route(path = RouterPath.WALLET_IMPORTWALLET)
 class ImportWalletActivity : BaseActivity() {
 
+    @JvmField
+    @Autowired(name = RouterPath.PARAM_FROM)
+    var from: Int = 0
+
     private val wallet: BWallet get() = BWallet.get()
-    private val views by lazy {
-        listOf(
-            mnemBinding.root,
-            privateKeyBinding.root,
-            recoverBinding.root
-        )
-    }
+    private var views: MutableList<View> = ArrayList()
+
     private val binding by lazy { ActivityImportWalletBinding.inflate(layoutInflater) }
     private val mnemBinding by lazy { ViewImport0Binding.inflate(layoutInflater) }
     private val privateKeyBinding by lazy { ViewImport1Binding.inflate(layoutInflater) }
+    private val addressBinding by lazy { ViewImport1Binding.inflate(layoutInflater) }
     private val recoverBinding by lazy { ViewImport2Binding.inflate(layoutInflater) }
 
     private var titleList = listOf<String>()
@@ -66,12 +71,13 @@ class ImportWalletActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        title = getString(R.string.my_import_wallet)
+        ARouter.getInstance().inject(this)
         configWallets()
         initView()
         initData()
         initListener()
         initObserver()
+
     }
 
     override fun configWallets() {
@@ -80,19 +86,37 @@ class ImportWalletActivity : BaseActivity() {
             ARouter.getInstance().build(ROUTE_APP_TYPE).navigation() as IAppTypeProvider
         titleList = when (navigation.getAppType()) {
             IPConfig.APP_MY_DAO -> {
-                listOf(
-                    getString(R.string.imp_mnem_str),
-                    getString(R.string.imp_priv_str),
-                    getString(R.string.imp_recover_str)
-                )
+                if (from == 1) {
+                    binding.tabLayout.visibility = View.GONE
+                    listOf(
+                        getString(R.string.imp_addr_str),
+                    )
+                } else {
+                    binding.tabLayout.visibility = View.VISIBLE
+                    listOf(
+                        getString(R.string.imp_mnem_str),
+                        getString(R.string.imp_priv_str),
+                        getString(R.string.imp_recover_str)
+                    )
+                }
+
             }
 
             else -> {
+                binding.tabLayout.visibility = View.VISIBLE
                 listOf(
                     getString(R.string.imp_mnem_str),
-                    getString(R.string.imp_priv_str)
+                    getString(R.string.imp_priv_str),
                 )
             }
+        }
+
+        if (from == 1) {
+            views.add(addressBinding.root)
+        } else {
+            views.add(mnemBinding.root)
+            views.add(privateKeyBinding.root)
+            views.add(recoverBinding.root)
         }
     }
 
@@ -100,13 +124,28 @@ class ImportWalletActivity : BaseActivity() {
         super.initView()
         binding.viewPager.adapter = ImportAdapter()
         binding.tabLayout.setupWithViewPager(binding.viewPager)
+        if (from == 1) {
+            binding.llPwd.visibility = View.GONE
+            title = getString(R.string.imp_addr_str)
+            addressBinding.etInput.hint = getString(R.string.import_wallet_hint2)
+        } else {
+            binding.llPwd.visibility = View.VISIBLE
+            title = getString(R.string.my_import_wallet)
+        }
     }
 
     override fun initData() {
-        val name = "助记词账户" + (count + 1)
-        binding.etWalletName.setText(name)
+        if (from == 1) {
+            val name = getString(R.string.my_wallets_chose2) + (count + 1)
+            binding.etWalletName.setText(name)
+        } else {
+            val name = getString(R.string.wallet_mnem) + (count + 1)
+            binding.etWalletName.setText(name)
+        }
+
         mnemBinding.etMnem.setRegex(LimitEditText.REGEX_CHINESE_ENGLISH)
         privateKeyBinding.etInput.setRegex(LimitEditText.REGEX_ENGLISH_AND_NUM)
+        addressBinding.etInput.setRegex(LimitEditText.REGEX_ENGLISH_AND_NUM)
         recoverBinding.etInputPriv.setRegex(LimitEditText.REGEX_ENGLISH_AND_NUM)
         recoverBinding.etInputXaddr.setRegex(LimitEditText.REGEX_ENGLISH_AND_NUM)
     }
@@ -132,19 +171,19 @@ class ImportWalletActivity : BaseActivity() {
                 importType = position
                 when (importType) {
                     0 -> {
-                        val name = "助记词账户" + (count + 1)
+                        val name = getString(R.string.wallet_mnem) + (count + 1)
                         binding.etWalletName.setText(name)
                         updateMenu(true)
                     }
 
                     1 -> {
-                        val name = "私钥账户" + (count + 1)
+                        val name = getString(R.string.wallet_priv) + (count + 1)
                         binding.etWalletName.setText(name)
                         updateMenu(true)
                     }
 
                     2 -> {
-                        val name = "找回账户" + (count + 1)
+                        val name = getString(R.string.wallet_recover) + (count + 1)
                         binding.etWalletName.setText(name)
                         updateMenu(false)
                     }
@@ -203,11 +242,14 @@ class ImportWalletActivity : BaseActivity() {
         privateKeyBinding.rlChooseChain.setOnClickListener {
             ARouter.getInstance().build(RouterPath.WALLET_CHOOSE_CHAIN).navigation()
         }
+        addressBinding.rlChooseChain.setOnClickListener {
+            ARouter.getInstance().build(RouterPath.WALLET_CHOOSE_CHAIN).navigation()
+        }
 
         binding.btnImport.setOnClickListener {
             hideKeyboard(binding.btnImport)
             if (EmulatorDetectUtil.isEmulator(this)) {
-                ToastUtils.show(this, "检测到您使用模拟器创建账户，请切换到真机")
+                ToastUtils.show(this, getString(R.string.check_str))
             } else {
                 finishTask()
             }
@@ -227,8 +269,18 @@ class ImportWalletActivity : BaseActivity() {
         //扫一扫
         LiveEventBus.get<String>(LIVE_KEY_SCAN).observe(this, Observer { scan ->
             when (importType) {
-                0 -> mnemBinding.etMnem.setText(scan)
-                1 -> privateKeyBinding.etInput.setText(scan)
+                0 -> {
+                    if (from == 1) {
+                        addressBinding.etInput.setText(scan)
+                    } else {
+                        mnemBinding.etMnem.setText(scan)
+                    }
+                }
+
+                1 -> {
+                    privateKeyBinding.etInput.setText(scan)
+                }
+
                 2 -> {
                     if (scanFrom == 1) {
                         recoverBinding.etInputPriv.setText(scan)
@@ -241,9 +293,16 @@ class ImportWalletActivity : BaseActivity() {
         })
         LiveEventBus.get<Coin>(LIVE_KEY_CHOOSE_CHAIN).observe(this, Observer { coin ->
             chooseChain = coin
-            privateKeyBinding.tvChain.text = coin.name
-            privateKeyBinding.ivChain.visibility = View.VISIBLE
-            Glide.with(this).load(coin.icon).into(privateKeyBinding.ivChain)
+            if (from == 1) {
+                addressBinding.tvChain.text = coin.name
+                addressBinding.ivChain.visibility = View.VISIBLE
+                Glide.with(this).load(coin.icon).into(addressBinding.ivChain)
+            } else {
+                privateKeyBinding.tvChain.text = coin.name
+                privateKeyBinding.ivChain.visibility = View.VISIBLE
+                Glide.with(this).load(coin.icon).into(privateKeyBinding.ivChain)
+            }
+
         })
     }
 
@@ -255,58 +314,104 @@ class ImportWalletActivity : BaseActivity() {
         val walletName = binding.etWalletName.text.toString()
         val password = binding.etWalletPassword.text.toString()
         val passwordAgain = binding.etWalletPasswordAgain.text.toString()
-        if (!checked(walletName, password, passwordAgain)) {
-            return
-        }
 
         lifecycleScope.launch(Dispatchers.Main) {
 
             var id: Long = -1
             when (importType) {
                 0 -> {
-                    val mnem = mnemBinding.etMnem.text.toString()
-                    if (mnem.isNullOrEmpty()) {
-                        ToastUtils.show(
-                            this@ImportWalletActivity,
-                            getString(R.string.please_input_mnem)
-                        )
-                        return@launch
-                    }
-                    val job1 = lifecycleScope.launch(Dispatchers.Main) {
-                        try {
-                            showLoading()
-                            id = wallet.importWallet(
-                                WalletConfiguration.mnemonicWallet(
-                                    mnem,
-                                    walletName,
-                                    password,
-                                    Constants.getCoins()
-                                )
+                    if (from == 1) {
+                        val address = addressBinding.etInput.text.toString()
+                        if (chooseChain == null) {
+                            Toast.makeText(
+                                this@ImportWalletActivity,
+                                getString(R.string.p_chain_choose),
+                                Toast.LENGTH_SHORT
                             )
-
-                        } catch (e: ImportWalletException) {
-                            dismiss()
-                            ToastUtils.show(this@ImportWalletActivity, e.message)
+                                .show()
+                            return@launch
+                        } else if (address.isEmpty()) {
+                            ToastUtils.show(
+                                this@ImportWalletActivity,
+                                getString(R.string.import_wallet_hint2)
+                            )
+                            return@launch
+                        } else if (!AddressCheckUtils.check(chooseChain!!.chain, address)) {
+                            toast(getString(R.string.my_contact_scan_invalid))
+                            return@launch
                         }
+
+                        chooseChain?.let { chooseChain ->
+                            val job4 = lifecycleScope.launch(Dispatchers.Main) {
+                                showLoading()
+                                try {
+                                    id = wallet.importWallet(
+                                        WalletConfiguration.addressWallet(
+                                            address, walletName,
+                                            listOf(chooseChain)
+                                        )
+                                    )
+                                } catch (e: ImportWalletException) {
+                                    dismiss()
+                                    ToastUtils.show(this@ImportWalletActivity, e.message)
+                                }
+                            }
+
+                            job4.join()
+                        }
+
+                    } else {
+                        if (!checked(walletName, password, passwordAgain)) {
+                            return@launch
+                        }
+                        val mnem = mnemBinding.etMnem.text.toString()
+                        if (mnem.isEmpty()) {
+                            ToastUtils.show(
+                                this@ImportWalletActivity,
+                                getString(R.string.please_input_mnem)
+                            )
+                            return@launch
+                        }
+                        val job1 = lifecycleScope.launch(Dispatchers.Main) {
+                            try {
+                                showLoading()
+                                id = wallet.importWallet(
+                                    WalletConfiguration.mnemonicWallet(
+                                        mnem,
+                                        walletName,
+                                        password,
+                                        Constants.getCoins()
+                                    )
+                                )
+
+                            } catch (e: ImportWalletException) {
+                                dismiss()
+                                ToastUtils.show(this@ImportWalletActivity, e.message)
+                            }
+                        }
+
+                        job1.join()
                     }
 
-                    job1.join()
                 }
 
                 1 -> {
+                    if (!checked(walletName, password, passwordAgain)) {
+                        return@launch
+                    }
                     val privateKey = privateKeyBinding.etInput.text.toString()
                     if (chooseChain == null) {
                         Toast.makeText(
                             this@ImportWalletActivity,
-                            "请先选择主链",
+                            getString(R.string.p_chain_choose),
                             Toast.LENGTH_SHORT
                         )
                             .show()
                         return@launch
-                    } else if (privateKey.isNullOrEmpty()) {
+                    } else if (privateKey.isEmpty()) {
                         ToastUtils.show(
                             this@ImportWalletActivity,
-                            getString(R.string.please_input_prikey)
+                            getString(R.string.import_wallet_hint1)
                         )
                         return@launch
                     }
@@ -332,7 +437,11 @@ class ImportWalletActivity : BaseActivity() {
 
                 }
 
+
                 2 -> {
+                    if (!checked(walletName, password, passwordAgain)) {
+                        return@launch
+                    }
                     val privateKey = recoverBinding.etInputPriv.text.toString()
                     val xAddress = recoverBinding.etInputXaddr.text.toString()
                     if (privateKey.isEmpty()) {

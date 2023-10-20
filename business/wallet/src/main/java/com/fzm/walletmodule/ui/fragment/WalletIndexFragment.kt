@@ -42,8 +42,7 @@ class WalletIndexFragment : BaseFragment() {
             if (isFastClick()) {
                 return@setOnClickListener
             }
-            val intent = Intent(activity, ImportWalletActivity::class.java)
-            startActivity(intent)
+            ARouter.getInstance().build(RouterPath.WALLET_IMPORTWALLET).navigation()
         }
 
     }

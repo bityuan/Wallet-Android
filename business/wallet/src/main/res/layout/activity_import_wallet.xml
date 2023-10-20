@@ -62,6 +62,7 @@
                     android:background="#D9DCE9" />
 
                 <LinearLayout
+                    android:id="@+id/ll_pwd"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">

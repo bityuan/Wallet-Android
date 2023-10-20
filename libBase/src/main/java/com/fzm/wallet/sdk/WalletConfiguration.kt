@@ -68,9 +68,9 @@ class WalletConfiguration {
         fun addressWallet(
             address: String,
             walletName: String,
-            password: String,
             coins: List<Coin>
         ) = WalletConfiguration().apply {
+            this.type = PWallet.TYPE_ADDR_KEY
             this.address = address
             this.walletName = walletName
             this.password = password

@@ -173,6 +173,7 @@
     <string name="chain_remarks_tips">On chain remark:information on the chain, you can query on the chain</string>
     <string name="local_remarks_tips">Local remark:Information is not chained and saved locally</string>
     <string name="text_tips">I know</string>
+    <string name="imp_addr_str">Import observation account</string>
 
 
     <!--===============================我的==============================-->
@@ -897,5 +898,7 @@
     <string name="con_add_str">The current wallet has not been added yet</string>
     <string name="p_choose_str">Please select</string>
     <string name="d_addr_str">Corresponding address</string>
+    <string name="p_chain_choose">Please select the main chain first</string>
+    <string name="check_str">Detected that you are using the emulator to create an account. Please switch to the real machine</string>
 
 </resources>

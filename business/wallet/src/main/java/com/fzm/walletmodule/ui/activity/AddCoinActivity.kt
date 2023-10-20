@@ -172,7 +172,7 @@ class AddCoinActivity : BaseActivity() {
         ).find(Coin::class.java, true)
 
         isChainCoin =
-            mPWallet?.type == PWallet.TYPE_PRI_KEY || mPWallet?.type == PWallet.TYPE_RECOVER
+            mPWallet?.type == PWallet.TYPE_PRI_KEY || mPWallet?.type == PWallet.TYPE_ADDR_KEY || mPWallet?.type == PWallet.TYPE_RECOVER
 
         if (ListUtils.isEmpty(homeData)) {
             chain = ""

@@ -27,6 +27,7 @@ object RouterPath {
     const val WALLET_CONTACTS = "/wallet/ContactsActivity"
     const val WALLET_UPDATE_CONTACTS = "/wallet/UpdateContactsActivity"
     const val WALLET_CONTACTS_DETAILS = "/wallet/ContactsDetailsActivity"
+    const val WALLET_IMPORTWALLET = "/wallet/ImportWalletActivity"
 
     //app
     const val APP_SPLASH = "/app/SplashActivity"

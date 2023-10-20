@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RadioGroup
+import android.widget.RadioGroup.OnCheckedChangeListener
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,14 +36,16 @@ import walletapi.Walletapi
 class MyWalletsActivity : BaseActivity() {
     private lateinit var mAdapter: Adapter
     private var mSelectedId: Long = 0
+    private val addressList: MutableList<PWallet> = ArrayList()
     private val list: MutableList<PWallet> = ArrayList()
+    private val adapterList: MutableList<PWallet> = ArrayList()
     private val binding by lazy { ActivityMyWalletsBinding.inflate(layoutInflater) }
     override fun onCreate(savedInstanceState: Bundle?) {
         mConfigFinish = true
+        mCustomToobar = true
         mStatusColor = Color.WHITE
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        title = getString(R.string.my_wallets_chose1)
         initData()
         refresh()
         initListener()
@@ -50,10 +54,10 @@ class MyWalletsActivity : BaseActivity() {
     override fun initData() {
         binding.rvList.layoutManager = LinearLayoutManager(this)
 
-        mAdapter = Adapter(list)
+        mAdapter = Adapter(adapterList)
         binding.rvList.adapter = mAdapter
         mAdapter.setOnItemClickListener { position ->
-            val wallet = list[position]
+            val wallet = adapterList[position]
             MyWallet.setId(wallet.id)
             LiveEventBus.get<Long>(LIVE_KEY_WALLET).post(wallet.id)
             finish()
@@ -62,26 +66,40 @@ class MyWalletsActivity : BaseActivity() {
 
     private fun refresh() {
         mSelectedId = MyWallet.getId()
+        addressList.clear()
         list.clear()
         lifecycleScope.launch(Dispatchers.IO) {
             val walletList = LitePal.findAll<PWallet>(true)
             walletList.forEach {
-                if (it.id == mSelectedId) {
-                    list.add(0, it)
-                } else {
-                    list.add(it)
+                if (it.type == TYPE_ADDR_KEY) {
+                    if (it.id == mSelectedId) {
+                        addressList.add(0, it)
+                    } else {
+                        addressList.add(it)
 
+                    }
+                } else {
+                    if (it.id == mSelectedId) {
+                        list.add(0, it)
+                    } else {
+                        list.add(it)
+
+                    }
                 }
             }
             withContext(Dispatchers.Main) {
+                adapterList.clear()
+                adapterList.addAll(list)
                 mAdapter.notifyDataSetChanged()
             }
         }
-
-
     }
 
+    private var menuCheck = 0
     override fun initListener() {
+        binding.ivBack.setOnClickListener {
+            finish()
+        }
         binding.flCreate.setOnClickListener {
             if (isFastClick()) {
                 return@setOnClickListener
@@ -92,7 +110,25 @@ class MyWalletsActivity : BaseActivity() {
             if (isFastClick()) {
                 return@setOnClickListener
             }
-            startActivity<ImportWalletActivity>()
+            ARouter.getInstance().build(RouterPath.WALLET_IMPORTWALLET)
+                .withInt(RouterPath.PARAM_FROM, menuCheck).navigation()
+
+        }
+        binding.rgMenu.setOnCheckedChangeListener { radioGroup, checkedId ->
+            if (checkedId == R.id.rb_choose1) {
+                menuCheck = 0
+                binding.flCreate.visibility = View.VISIBLE
+                adapterList.clear()
+                adapterList.addAll(list)
+                mAdapter.notifyDataSetChanged()
+
+            } else if (checkedId == R.id.rb_choose2) {
+                menuCheck = 1
+                binding.flCreate.visibility = View.GONE
+                adapterList.clear()
+                adapterList.addAll(addressList)
+                mAdapter.notifyDataSetChanged()
+            }
         }
     }
 
@@ -124,6 +160,7 @@ class MyWalletsActivity : BaseActivity() {
                             ivWalletType.imageResource = R.mipmap.my_wallet_coins
                             rlWallet.backgroundResource = R.mipmap.my_wallet_bg_black
                         }
+
                         TYPE_PRI_KEY -> {
                             ivWalletType.visibility = View.VISIBLE
                             tvWalletType.text = getString(R.string.wallet_priv)
@@ -131,11 +168,20 @@ class MyWalletsActivity : BaseActivity() {
                             ivWalletType.imageResource = getWalletIcon(chain)
                             rlWallet.backgroundResource = getWalletBg(chain)
                         }
+                        TYPE_ADDR_KEY -> {
+                            ivWalletType.visibility = View.VISIBLE
+                            tvWalletType.text = wallet.coinList[0].address
+                            val chain = wallet.coinList[0].chain
+                            ivWalletType.imageResource = getWalletIcon(chain)
+                            rlWallet.backgroundResource = getWalletBg(chain)
+                        }
+
                         TYPE_RECOVER -> {
                             tvWalletType.text = getString(R.string.wallet_recover)
                             ivWalletType.visibility = View.GONE
                             rlWallet.backgroundResource = R.mipmap.my_wallet_bg_recover
                         }
+
                         else -> {}
                     }
                     holder.itemView.setOnClickListener { clickListener(position) }
