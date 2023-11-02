@@ -7,7 +7,9 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.base.logDebug
+import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.fzm.walletdemo.R
@@ -22,6 +24,8 @@ import com.kongzue.dialogx.interfaces.OnMenuItemClickListener
 import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
 import org.jetbrains.anko.toast
+import org.litepal.LitePal
+import org.litepal.extension.find
 
 @Route(path = RouterPath.APP_SEARCH_DAPP)
 class SearchDappActivity : BaseActivity() {
@@ -79,6 +83,12 @@ class SearchDappActivity : BaseActivity() {
     }
 
     private fun gotoDapp(url: String) {
+        val id = MyWallet.getId()
+        val wallet = LitePal.find<PWallet>(id)
+        if (wallet?.type == PWallet.TYPE_ADDR_KEY) {
+            toast(getString(R.string.str_addr_no))
+            return
+        }
         val newUrl = GoWallet.getNewUrl(url)
         ARouter.getInstance().build(RouterPath.APP_DAPP)
             .withString("name", getString(R.string.exp_str))

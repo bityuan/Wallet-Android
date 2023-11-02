@@ -2,6 +2,7 @@ package com.fzm.walletmodule.ui.activity
 
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -14,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
 import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.databinding.ActivityTransactionsBinding
@@ -28,6 +30,7 @@ import com.king.zxing.util.CodeUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.anko.toast
 
 @Route(path = RouterPath.WALLET_TRANSACTIONS)
 class TransactionsActivity : BaseActivity() {
@@ -66,7 +69,8 @@ class TransactionsActivity : BaseActivity() {
         super.initObserver()
         LiveEventBus.get<String>(LIVE_KEY_SCAN).observe(this, Observer { scan ->
             ARouter.getInstance().build(RouterPath.WALLET_OUT)
-                .withSerializable(RouterPath.PARAM_COIN, coin).withString(RouterPath.PARAM_ADDRESS,scan).navigation()
+                .withSerializable(RouterPath.PARAM_COIN, coin)
+                .withString(RouterPath.PARAM_ADDRESS, scan).navigation()
         })
     }
 
@@ -76,6 +80,13 @@ class TransactionsActivity : BaseActivity() {
             if (isFastClick()) {
                 return@setOnClickListener
             }
+            coin?.let {
+                if (it.getpWallet().type == PWallet.TYPE_ADDR_KEY) {
+                    toast(getString(R.string.str_addr_no))
+                    return@setOnClickListener
+                }
+            }
+
             ARouter.getInstance().build(RouterPath.WALLET_OUT)
                 .withSerializable(RouterPath.PARAM_COIN, coin).navigation()
         }
@@ -101,6 +112,12 @@ class TransactionsActivity : BaseActivity() {
         }
 
         binding.ivTScan.setOnClickListener {
+            coin?.let {
+                if (it.getpWallet().type == PWallet.TYPE_ADDR_KEY) {
+                    toast(getString(R.string.str_addr_no))
+                    return@setOnClickListener
+                }
+            }
             ARouter.getInstance().build(RouterPath.WALLET_CAPTURE).navigation()
         }
     }

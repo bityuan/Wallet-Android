@@ -900,5 +900,6 @@
     <string name="d_addr_str">Corresponding address</string>
     <string name="p_chain_choose">Please select the main chain first</string>
     <string name="check_str">Detected that you are using the emulator to create an account. Please switch to the real machine</string>
+    <string name="str_addr_no">Observation wallet currently not supported</string>
 
 </resources>

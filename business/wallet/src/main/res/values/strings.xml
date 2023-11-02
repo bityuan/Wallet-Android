@@ -239,4 +239,5 @@
     <string name="d_addr_str">对应的地址</string>
     <string name="p_chain_choose">请先选择主链</string>
     <string name="check_str">检测到您使用模拟器创建账户，请切换到真机</string>
+    <string name="str_addr_no">观察钱包暂不支持</string>
 </resources>

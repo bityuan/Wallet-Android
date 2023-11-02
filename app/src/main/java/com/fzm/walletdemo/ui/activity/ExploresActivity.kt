@@ -12,6 +12,7 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.bean.ExploreBean
 import com.fzm.wallet.sdk.db.entity.PWallet
@@ -35,6 +36,7 @@ import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
 import org.litepal.LitePal
 import org.litepal.extension.count
+import org.litepal.extension.find
 
 
 @Route(path = RouterPath.APP_EXPLORES)
@@ -70,8 +72,9 @@ class ExploresActivity : BaseActivity() {
                 exAdapter.setOnItemClickListener {
                     try {
                         val appId = "${app.apps[it].id}"
+                        val type = app.apps[it].type
                         if (MMkvUtil.decodeBoolean(appId)) {
-                            gotoDapp(it)
+                            gotoDapp(it, type)
                         } else {
                             MaterialDialog.Builder(this@ExploresActivity)
                                 .negativeText(getString(R.string.cancel))
@@ -84,8 +87,7 @@ class ExploresActivity : BaseActivity() {
                                 }.onNegative { dialog, which ->
                                     dismiss()
                                 }.onPositive { dialog, which ->
-
-                                    gotoDapp(it)
+                                    gotoDapp(it, type)
                                 }.build().show()
                         }
                     } catch (e: Exception) {
@@ -101,7 +103,7 @@ class ExploresActivity : BaseActivity() {
 
     }
 
-    private fun gotoDapp(index: Int) {
+    private fun gotoDapp(index: Int, type: Int) {
         apps[index].let { appBean ->
             if (appBean.type == 1) {
                 val count = LitePal.count<PWallet>()
@@ -110,6 +112,13 @@ class ExploresActivity : BaseActivity() {
                     return@let
                 }
             }
+            val id = MyWallet.getId()
+            val wallet = LitePal.find<PWallet>(id)
+            if (wallet?.type == PWallet.TYPE_ADDR_KEY) {
+                toast(getString(R.string.str_addr_no))
+                return@let
+            }
+
             ARouter.getInstance().build(RouterPath.APP_DAPP).withString("name", appBean.name)
                 .withString("url", appBean.app_url).navigation()
         }
