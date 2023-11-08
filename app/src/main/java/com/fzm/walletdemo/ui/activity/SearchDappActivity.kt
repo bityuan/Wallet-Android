@@ -23,8 +23,10 @@ import com.kongzue.dialogx.interfaces.OnIconChangeCallBack
 import com.kongzue.dialogx.interfaces.OnMenuItemClickListener
 import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
+import org.jetbrains.anko.support.v4.toast
 import org.jetbrains.anko.toast
 import org.litepal.LitePal
+import org.litepal.extension.count
 import org.litepal.extension.find
 
 @Route(path = RouterPath.APP_SEARCH_DAPP)
@@ -83,6 +85,11 @@ class SearchDappActivity : BaseActivity() {
     }
 
     private fun gotoDapp(url: String) {
+        val count = LitePal.count<PWallet>()
+        if (count == 0) {
+            toast(getString(R.string.create_wallet_pre))
+            return
+        }
         val id = MyWallet.getId()
         val wallet = LitePal.find<PWallet>(id)
         if (wallet?.type == PWallet.TYPE_ADDR_KEY) {

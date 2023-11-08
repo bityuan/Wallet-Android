@@ -19,6 +19,7 @@ import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.ActivityMainBinding
 import com.fzm.walletdemo.ui.WalletHelper
 import com.fzm.walletdemo.ui.fragment.ExploreFragment
+import com.fzm.walletdemo.ui.fragment.ExploreFragmentOld
 import com.fzm.walletdemo.ui.fragment.HomeFragment
 import com.fzm.walletdemo.ui.fragment.MyFragment
 import com.fzm.walletdemo.ui.fragment.WebFragment
@@ -38,7 +39,7 @@ import org.litepal.LitePal.count
 class MainActivity : BaseActivity() {
     private var tianFragment: WebFragment? = null
     private var tpFragment: WebFragment? = null
-    private var exploreFragment: ExploreFragment? = null
+    private var exploreFragment: ExploreFragmentOld? = null
     private var mWalletIndexFragment: WalletIndexFragment? = null
     private var mHomeFragment: HomeFragment? = null
     private var myFragment: MyFragment? = null
@@ -289,7 +290,7 @@ class MainActivity : BaseActivity() {
         if (exploreFragment != null) {
             fragmentTransaction.show(exploreFragment!!)
         } else {
-            exploreFragment = ExploreFragment()
+            exploreFragment = ExploreFragmentOld()
             fragmentTransaction.add(
                 R.id.fl_tabcontent,
                 exploreFragment!!,

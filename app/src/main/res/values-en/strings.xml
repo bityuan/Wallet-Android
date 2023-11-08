@@ -56,6 +56,6 @@
   <string name="send_suc_str">Send successfully!</string>
   <string name="tian_str">proposal</string>
   <string name="tp_str">vote</string>
-
+  <string name="tp_error">The event is too hot, please try again later</string>
 
 </resources>

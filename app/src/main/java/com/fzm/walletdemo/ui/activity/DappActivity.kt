@@ -323,6 +323,7 @@ class DappActivity : AppCompatActivity() {
     private val JS_CALLBACK_ON = "AlphaWallet.executeCallback(%1\$s, null, \"%2\$s\")"
     private val JS_CALLBACK_ON_FAILURE = "AlphaWallet.executeCallback(%1\$s, \"%2\$s\", null)"
     private val JS_CANCELLED = "cancelled"
+    private val JS_FAIL = "Fail"
 
     var gasPrice = 0L
     var count = 0L
@@ -366,9 +367,11 @@ class DappActivity : AppCompatActivity() {
                         value = web3j?.ethCall(tran, call.blockParam)?.send()?.value
                     } catch (e: Exception) {
                         withContext(Dispatchers.Main) {
-                            longToast("${getString(R.string.basic_error_all)}  $e")
+                            //优化报错提示，去掉自动刷新
+                            //longToast("${getString(R.string.basic_error_all)}  $e")
+                            toast("${getString(R.string.tp_error)}")
                             dis()
-                            binding.webDapp.reload()
+                            //binding.webDapp.reload()
                             e.printStackTrace()
                         }
                     }
@@ -630,8 +633,9 @@ class DappActivity : AppCompatActivity() {
                                 sendSuccess(sendHash, createTran.leafPosition)
                             }
                         } else {
-                            dis()
-                            toast("${getString(R.string.basic_error_send)}  ${send.error()}")
+                            //给H5一个反馈来刷新按钮
+                            //弹出发送失败，数据解析失败，一般是发送到主网超时，或者主网卡住了
+                            sendFail(send.error(), createTran.leafPosition);
                         }
                     }
                 } else {
@@ -654,6 +658,19 @@ class DappActivity : AppCompatActivity() {
         dis()
         toast(getString(R.string.send_suc_str))
         val callback = String.format(JS_CALLBACK_ON, leafPosition, sendHash)
+        binding.webDapp.evaluateJavascript(callback) { value: String? ->
+            Timber.tag("WEB_VIEW").d(value)
+        }
+    }
+
+    private fun sendFail(error: String, leafPosition: Long) {
+        dis()
+        toast("${getString(R.string.basic_error_send)}")
+        val callback: String = String.format(
+            JS_CALLBACK_ON_FAILURE,
+            leafPosition,
+            JS_FAIL
+        )
         binding.webDapp.evaluateJavascript(callback) { value: String? ->
             Timber.tag("WEB_VIEW").d(value)
         }

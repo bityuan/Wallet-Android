@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="basic_error_send">发送失败</string>
+    <string name="basic_error_send">发送失败，请重试</string>
     <string name="basic_error_all">发生错误，请重试</string>
     <string name="basic_error_unknown">未知错误，请稍后再试</string>
     <string name="basic_error_certificate">证书错误</string>
