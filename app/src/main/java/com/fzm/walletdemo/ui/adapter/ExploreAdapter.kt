@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.alibaba.android.arouter.launcher.ARouter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.bean.ExploreBean
 import com.fzm.walletdemo.databinding.ItemExploreBinding
 import com.fzm.walletdemo.databinding.ItemExploreGridBinding
@@ -26,6 +28,7 @@ class ExploreAdapter(private val context: Context) :
         const val PAYLOAD_NAME = "payload_name"
         const val PAYLOAD_SLOGAN = "payload_slogan"
         const val PAYLOAD_ICON = "payload_icon"
+        const val PAYLOAD_STYLE = "payload_style"
     }
 
     fun setData(list: List<ExploreBean.AppsBean>) {
@@ -91,6 +94,10 @@ class ExploreAdapter(private val context: Context) :
             is TitleViewHolder -> {
                 val item = list[position]
                 holder.binding.tvTitle.text = item.name
+                holder.binding.llAll.setOnClickListener {
+                    ARouter.getInstance().build(RouterPath.APP_EXPLORES)
+                        .withInt(RouterPath.PARAM_APPS_ID, item.ids).navigation()
+                }
             }
             is GridViewHolder -> {
                 val item = list[position]
@@ -134,6 +141,11 @@ class ExploreAdapter(private val context: Context) :
                                 .load(item.icon)
                                 .apply(RequestOptions().transforms(CenterCrop(), RoundedCorners(20)))
                                 .into(holder.binding.ivExplore)
+                        }
+                    }
+                    PAYLOAD_STYLE -> {
+                        if (holder is ViewHolder) {
+                            onBindViewHolder(holder, position)
                         }
                     }
                 }

@@ -120,6 +120,7 @@ class ExploreFragmentOld : Fragment() {
                     //在数据上做文章，添加第一条为title
                     //title的style都设置为1
                     val titleBean = ExploreBean.AppsBean().apply {
+                        ids = l.id
                         id = -1
                         name = l.name
                         style = 1

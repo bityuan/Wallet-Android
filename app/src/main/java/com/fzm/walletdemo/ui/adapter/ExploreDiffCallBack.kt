@@ -51,6 +51,9 @@ class ExploreDiffCallBack(
         if (oldItem.icon != newItem.icon) {
             payload.putString(ExploreAdapter.PAYLOAD_ICON, newItem.icon)
         }
+        if (oldItem.style != newItem.style) {
+            payload.putInt(ExploreAdapter.PAYLOAD_STYLE, newItem.style)
+        }
         return payload
     }
 

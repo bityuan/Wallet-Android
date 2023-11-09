@@ -57,7 +57,7 @@ public class ExploreBean {
          * app_url : https://www.zhengfan.com
          * slogan : 这是红包
          */
-
+        private  int ids;
         private int id;
         private String name;
         private String icon;
@@ -72,6 +72,14 @@ public class ExploreBean {
 
         public int getStyle() {
             return style;
+        }
+
+        public int getIds() {
+            return ids;
+        }
+
+        public void setIds(int ids) {
+            this.ids = ids;
         }
 
         public void setStyle(int style) {
