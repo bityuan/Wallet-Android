@@ -30,7 +30,6 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.MyWallet
-import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.ext.toPlainStr
@@ -56,7 +55,6 @@ import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 import org.json.JSONObject
 import org.koin.android.ext.android.inject
@@ -70,6 +68,7 @@ import timber.log.Timber
 import walletapi.Walletapi
 import wendu.dsbridge.DWebView
 import kotlin.math.pow
+
 
 @Route(path = RouterPath.APP_DAPP)
 class DappActivity : AppCompatActivity() {

@@ -3,7 +3,9 @@
     android:id="@+id/fl_wc_grant"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F8FA">
+    android:background="@drawable/shape_re_white"
+    android:layout_margin="30dp"
+   >
 
 
     <FrameLayout
@@ -116,7 +118,8 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_marginStart="12dp"
+                android:layout_height="0.5dp"
                 android:layout_marginTop="8dp"
                 android:background="@color/lineColor" />
             <LinearLayout
@@ -149,7 +152,8 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_marginStart="12dp"
+                android:layout_height="0.5dp"
                 android:layout_marginTop="8dp"
                 android:background="@color/lineColor" />
             <LinearLayout
@@ -182,7 +186,8 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_marginStart="12dp"
+                android:layout_height="0.5dp"
                 android:layout_marginTop="8dp"
                 android:background="@color/lineColor" />
             <LinearLayout
@@ -221,9 +226,9 @@
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="20dp"
             android:layout_marginRight="16dp"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="30dp"
             android:background="@drawable/bg_import_wallet_button_ok"
             android:gravity="center"
             android:text="@string/wc_next"
