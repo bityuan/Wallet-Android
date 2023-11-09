@@ -10,14 +10,15 @@
 
     <ImageView
         android:id="@+id/iv_explore"
-        android:layout_width="52dp"
-        android:layout_height="52dp" />
+        android:background="@drawable/shape_cir"
+        android:layout_width="50dp"
+        android:layout_height="50dp" />
 
     <TextView
         android:id="@+id/tv_explore_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="6dp"
         android:ellipsize="end"
         android:singleLine="true"
         android:textColor="#333333"
