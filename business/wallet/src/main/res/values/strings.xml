@@ -108,7 +108,7 @@
     <string name="home_receipt_currency_address">收款方</string>
     <string name="home_send_number">发送数量</string>
     <string name="home_hint_please_input_count">请输入数量</string>
-    <string name="home_miner_fee">矿工费\u3000</string>
+    <string name="home_miner_fee">矿工费</string>
     <string name="home_slow">慢</string>
     <string name="home_fast">快</string>
     <string name="home_optional">（选填）</string>

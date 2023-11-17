@@ -9,7 +9,9 @@ const val REGEX_CHINESE = "[\u4e00-\u9fa5]+"
 const val LIVE_KEY_CHOOSE_CHAIN = "live_key_choose_chain"
 const val LIVE_KEY_SCAN = "live_key_scan"
 const val LIVE_KEY_WALLET = "live_key_wallet"
+const val LIVE_KEY_FEE = "live_key_fee"
 const val PRE_X_RECOVER = "X_RECOVER"
+const val FEE_CUSTOM_POSITION = 33
 
 fun logDebug(log: String) {
     if (BuildConfig.DEBUG) {

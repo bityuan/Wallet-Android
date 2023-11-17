@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Base64
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -19,16 +20,26 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.ProgressBar
+import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.RouterPath.PARAM_CHAIN_ID
+import com.fzm.wallet.sdk.RouterPath.PARAM_FEE_POSITION
+import com.fzm.wallet.sdk.RouterPath.PARAM_GAS
+import com.fzm.wallet.sdk.RouterPath.PARAM_GAS_PRICE
+import com.fzm.wallet.sdk.base.FEE_CUSTOM_POSITION
+import com.fzm.wallet.sdk.base.LIVE_KEY_FEE
+import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
 import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
 import com.fzm.wallet.sdk.db.entity.PWallet
@@ -39,6 +50,7 @@ import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.fzm.wallet.sdk.utils.StatusBarUtil
 import com.fzm.walletdemo.BuildConfig
+import com.fzm.walletdemo.DGear
 import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.ActivityDappBinding
 import com.fzm.walletdemo.ui.JsApi
@@ -52,6 +64,7 @@ import com.fzm.walletdemo.web3.bean.Web3Transaction
 import com.fzm.walletdemo.web3.listener.JsListener
 import com.fzm.walletmodule.utils.ClipboardUtils
 import com.google.gson.GsonBuilder
+import com.jeremyliao.liveeventbus.LiveEventBus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -67,6 +80,7 @@ import org.web3j.protocol.http.HttpService
 import timber.log.Timber
 import walletapi.Walletapi
 import wendu.dsbridge.DWebView
+import java.math.BigInteger
 import kotlin.math.pow
 
 
@@ -87,6 +101,13 @@ class DappActivity : AppCompatActivity() {
     private var address = Address.EMPTY
     private var nodeUrl = GoWallet.WEB3_BNB
     private var chainId: Long = GoWallet.CHAIN_ID_BNB_L
+    private var feePosition = 2
+    private lateinit var cGas: BigInteger
+    private lateinit var cGasPrice: BigInteger
+    private var tvFee: TextView? = null
+    private var tvWCFee: TextView? = null
+    private var tvLevel: TextView? = null
+    private var chainName: String? = ""
 
     private val walletRepository: WalletRepository by inject(walletQualifier)
     private val loading by lazy {
@@ -102,13 +123,37 @@ class DappActivity : AppCompatActivity() {
         setContentView(binding.root)
         title = getString(R.string.exp_str)
         ARouter.getInstance().inject(this)
+        initObserve()
         configChainNet()
+        chainName = GoWallet.CHAIN_ID_MAPS_L[chainId]
         doBar()
         binding.xbar.tvToolbar.text = name
         initWebView()
         url?.let {
             binding.webDapp.loadUrl(it)
         }
+
+    }
+
+    private fun initObserve() {
+        LiveEventBus.get<DGear>(LIVE_KEY_FEE).observe(this, Observer { dGear ->
+            feePosition = dGear.position
+            cGas = dGear.gas
+            cGasPrice = dGear.gasPrice
+            showGasUI(cGasPrice.toLong(), cGas.toLong(), chainName)
+            setLevel(tvLevel)
+        })
+    }
+
+    private fun setLevel(tvLevel: TextView?) {
+        val level = when (feePosition) {
+            0 -> "最快"
+            1 -> "标准"
+            2 -> "经济"
+            FEE_CUSTOM_POSITION -> "自定义"
+            else -> "经济"
+        }
+        tvLevel?.text = level
     }
 
     private fun configChainNet() {
@@ -195,13 +240,12 @@ class DappActivity : AppCompatActivity() {
 
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                binding.webDapp.webViewClient =
-                    WrapWebViewClient(
-                        binding.webDapp,
-                        binding.progressWeb,
-                        web3ViewClient,
-                        binding.webDapp.webViewClient
-                    )
+                binding.webDapp.webViewClient = WrapWebViewClient(
+                    binding.webDapp,
+                    binding.progressWeb,
+                    web3ViewClient,
+                    binding.webDapp.webViewClient
+                )
             }
             web3ViewClient.jsInjectorClient.chainId = chainId
             web3ViewClient.jsInjectorClient.rpcUrl = nodeUrl
@@ -255,8 +299,7 @@ class DappActivity : AppCompatActivity() {
         val progressBar: ProgressBar,
         val internalClient: Web3ViewClient,
         val externalClient: WebViewClient?
-    ) :
-        WebViewClient() {
+    ) : WebViewClient() {
         private var loadInterface: URLLoadInterface? = null
         private var loadingError = false
         private var redirect = false
@@ -292,14 +335,14 @@ class DappActivity : AppCompatActivity() {
 
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
             redirect = true
-            return (externalClient!!.shouldOverrideUrlLoading(view, url)
-                    || internalClient.shouldOverrideUrlLoading(view, url))
+            return (externalClient!!.shouldOverrideUrlLoading(
+                view,
+                url
+            ) || internalClient.shouldOverrideUrlLoading(view, url))
         }
 
         override fun onReceivedError(
-            view: WebView?,
-            request: WebResourceRequest?,
-            error: WebResourceError?
+            view: WebView?, request: WebResourceRequest?, error: WebResourceError?
         ) {
             loadingError = true
             externalClient?.onReceivedError(view, request, error)
@@ -307,12 +350,13 @@ class DappActivity : AppCompatActivity() {
 
         @RequiresApi(api = Build.VERSION_CODES.N)
         override fun shouldOverrideUrlLoading(
-            view: WebView?,
-            request: WebResourceRequest?
+            view: WebView?, request: WebResourceRequest?
         ): Boolean {
             redirect = true
-            return (externalClient!!.shouldOverrideUrlLoading(view, request)
-                    || internalClient.shouldOverrideUrlLoading(view, request))
+            return (externalClient!!.shouldOverrideUrlLoading(
+                view,
+                request
+            ) || internalClient.shouldOverrideUrlLoading(view, request))
         }
     }
 
@@ -332,9 +376,7 @@ class DappActivity : AppCompatActivity() {
         override fun onRequestAccounts(callbackId: Long) {
             try {
                 val callback = String.format(
-                    JS_CALLBACK,
-                    callbackId,
-                    "[\"$address\"]"
+                    JS_CALLBACK, callbackId, "[\"$address\"]"
                 )
 
                 binding.webDapp.evaluateJavascript(callback) { message: String? ->
@@ -392,6 +434,7 @@ class DappActivity : AppCompatActivity() {
 
         }
 
+
         override fun onSignTransaction(transaction: Web3Transaction?) {
             try {
                 lifecycleScope.launch(Dispatchers.Main) {
@@ -405,11 +448,18 @@ class DappActivity : AppCompatActivity() {
                     val tvValue = view.findViewById<TextView>(R.id.tv_value)
                     val tvOutAddress = view.findViewById<TextView>(R.id.tv_out_address)
                     val tvInAddress = view.findViewById<TextView>(R.id.tv_in_address)
-                    val tvWCFee = view.findViewById<TextView>(R.id.tv_wc_fee)
+                    tvFee = view.findViewById<TextView>(R.id.tv_fee)
+                    tvWCFee = view.findViewById<TextView>(R.id.tv_wc_fee)
+                    tvLevel = view.findViewById<TextView>(R.id.tv_level)
                     val tvCancel = view.findViewById<TextView>(R.id.tv_cancel)
                     val btnNext = view.findViewById<Button>(R.id.btn_next)
+                    val llSetFee = view.findViewById<LinearLayout>(R.id.ll_set_fee)
                     transaction?.let { tran ->
                         try {
+                            setLevel(tvLevel)
+                            cGas = tran.gasLimit
+                            cGasPrice = gasPrice.toBigInteger()
+
                             var pValue = "0"
                             val valStr = tran.value.toString()
                             if (valStr != "0") {
@@ -417,7 +467,6 @@ class DappActivity : AppCompatActivity() {
                                 val va8 = 10.0.pow(8.0)
                                 pValue = "${subvalStr.toLong() / va8}".toPlainStr(8)
                             }
-                            val chainName = GoWallet.CHAIN_ID_MAPS_L[chainId]
                             val netName = GoWallet.NET_MAPS[chainId]
                             tvDappName.text = "$netName"
                             tvDappUrl.text = url
@@ -444,10 +493,7 @@ class DappActivity : AppCompatActivity() {
                                         }
 
                                         showGasUI(
-                                            tvWCFee,
-                                            gasPrice,
-                                            transaction.gasLimit.toLong(),
-                                            chainName
+                                            gasPrice, transaction.gasLimit.toLong(), chainName
                                         )
                                     }
                                 }
@@ -463,10 +509,7 @@ class DappActivity : AppCompatActivity() {
                                         gasPrice = gasPriceResult.gasPrice.toLong()
                                         count = countResult.transactionCount.toLong()
                                         showGasUI(
-                                            tvWCFee,
-                                            gasPrice,
-                                            transaction.gasLimit.toLong(),
-                                            chainName
+                                            gasPrice, transaction.gasLimit.toLong(), chainName
                                         )
                                     }
                                 }
@@ -484,9 +527,7 @@ class DappActivity : AppCompatActivity() {
                             tvCancel.setOnClickListener {
                                 payDialog?.dismiss()
                                 val callback: String = String.format(
-                                    JS_CALLBACK_ON_FAILURE,
-                                    tran.leafPosition,
-                                    JS_CANCELLED
+                                    JS_CALLBACK_ON_FAILURE, tran.leafPosition, JS_CANCELLED
                                 )
                                 binding.webDapp.evaluateJavascript(callback) { value: String? ->
                                     Timber.tag("WEB_VIEW").d(value)
@@ -494,15 +535,13 @@ class DappActivity : AppCompatActivity() {
                             }
                             btnNext.setOnClickListener {
                                 val input = tran.payload?.substringAfter("0x")
-                                val input64 =
-                                    Base64.encodeToString(
-                                        Walletapi.hexTobyte(input),
-                                        Base64.DEFAULT
-                                    )
+                                val input64 = Base64.encodeToString(
+                                    Walletapi.hexTobyte(input), Base64.DEFAULT
+                                )
                                 val createTran = CreateTran(
                                     address.toString(),
-                                    tran.gasLimit,
-                                    gasPrice.toBigInteger(),
+                                    cGas,
+                                    cGasPrice,
                                     input64,
                                     count,
                                     tran.recipient.toString(),
@@ -511,6 +550,15 @@ class DappActivity : AppCompatActivity() {
                                 )
                                 showPWD(createTran, chainName)
 
+                            }
+
+
+
+                            llSetFee.setOnClickListener {
+                                gotoSetFee()
+                            }
+                            tvWCFee?.setOnClickListener {
+                                gotoSetFee()
                             }
                             //
                         } catch (e: Exception) {
@@ -526,8 +574,14 @@ class DappActivity : AppCompatActivity() {
         }
     }
 
+    private fun gotoSetFee() {
+        ARouter.getInstance().build(RouterPath.APP_SETFEE).withInt(PARAM_FEE_POSITION, feePosition)
+            .withLong(PARAM_CHAIN_ID, chainId).withLong(PARAM_GAS, cGas.toLong())
+            .withLong(PARAM_GAS_PRICE, cGasPrice.toLong()).navigation()
+    }
 
-    private fun showGasUI(tvWCFee: TextView, gasPrice: Long, gas: Long, chainName: String?) {
+
+    private fun showGasUI(gasPrice: Long, gas: Long, chainName: String?) {
         try {
             val va9 = 10.0.pow(9.0)
             val va18 = 10.0.pow(18.0)
@@ -535,8 +589,8 @@ class DappActivity : AppCompatActivity() {
 
             val dGas = (gasPrice * gas) / va18
             val newGas = "$dGas".toPlainStr(6)
-
-            tvWCFee.text = "$newGas $chainName = Gas($gas)*GasPrice($newGasPirce GWEI)"
+            tvFee?.text = "$newGas $chainName"
+            tvWCFee?.text = "$newGas $chainName = Gas($gas)*GasPrice($newGasPirce GWEI)"
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -580,11 +634,9 @@ class DappActivity : AppCompatActivity() {
                                         val bPassword = GoWallet.encPasswd(password)!!
                                         val mnem: String = GoWallet.decMenm(bPassword, w.mnem)
                                         chainName?.let { name ->
-                                            val privKey =
-                                                GoWallet.getPrikey(
-                                                    if (name == "BTY") "ETH" else name,
-                                                    mnem
-                                                )
+                                            val privKey = GoWallet.getPrikey(
+                                                if (name == "BTY") "ETH" else name, mnem
+                                            )
                                             signAndSend(name, privKey, createTran)
                                         }
                                     }
@@ -666,9 +718,7 @@ class DappActivity : AppCompatActivity() {
         dis()
         toast("${getString(R.string.basic_error_send)}")
         val callback: String = String.format(
-            JS_CALLBACK_ON_FAILURE,
-            leafPosition,
-            JS_FAIL
+            JS_CALLBACK_ON_FAILURE, leafPosition, JS_FAIL
         )
         binding.webDapp.evaluateJavascript(callback) { value: String? ->
             Timber.tag("WEB_VIEW").d(value)

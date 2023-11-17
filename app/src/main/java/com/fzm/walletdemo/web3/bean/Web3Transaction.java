@@ -11,7 +11,7 @@ public class Web3Transaction
     public final Address sender;
     public final BigInteger value;
     public final BigInteger gasPrice;
-    public final BigInteger gasLimit;
+    public BigInteger gasLimit;
 
     // EIP1559
     public BigInteger maxFeePerGas;

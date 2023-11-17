@@ -27,6 +27,9 @@ class GoWallet {
         const val CHAIN_ID_BNB_L = 56L
         const val CHAIN_ID_BTY_L = 2999L
 
+        //ETH BNB BTY GAS转账都是21000
+        const val GAS_OUT:Long = 21000
+
         const val CHAIN_NET = "chainNet"
         const val NET_ETH = "Ethereum"
         const val NET_BNB = "BNB Smart Chain"

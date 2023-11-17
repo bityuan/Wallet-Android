@@ -79,7 +79,13 @@
             android:label="@string/my_about"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
-
+        <activity
+            android:name=".ui.activity.SetFeeActivity"
+            android:exported="false"
+            android:label="@string/fee_setting"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.DownLoadActivity"
             android:exported="false"

@@ -99,7 +99,7 @@ class ContactsDetailsActivity : BaseActivity() {
                 gotoOut(addr)
             } else {
                 coin?.let { co ->
-                    if ("${co.oldName}${co.platform}" != "${addr.name}${addr.platform}") {
+                    if ("${co.oldName}${co.platform}" != "${addr.name}${addr.platform}" && co.oldName != "BTY" && co.oldName != "YCC") {
                         toast("${getString(R.string.p_choose_str)}${co.oldName}(${co.nickname})${getString(R.string.d_addr_str)}")
                         return@setOnClickListener
                     }

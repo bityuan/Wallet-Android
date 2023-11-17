@@ -57,5 +57,6 @@
   <string name="tian_str">proposal</string>
   <string name="tp_str">vote</string>
   <string name="tp_error">The event is too hot, please try again later</string>
+    <string name="fee_setting">set gas fee</string>
 
 </resources>

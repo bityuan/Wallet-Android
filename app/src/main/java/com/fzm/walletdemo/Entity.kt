@@ -1,11 +1,19 @@
 package com.fzm.walletdemo
 
+import java.math.BigInteger
 
-data class Explore(
-    val id: Int,
-    val name: String,
-    val icon: String,
-    val type: Int,
-    val app_url: String,
-    val slogan: String
+data class Gear(
+    val speed: String,
+    val gas: BigInteger,
+    //gwei
+    val gasPrice: BigInteger,
+    val gasStr: String,
+    val gasPriceStr: String,
+    val newGas: String,
+    val content: String,
+)
+data class DGear(
+    val gas: BigInteger,
+    val gasPrice: BigInteger,
+    val position:Int
 )

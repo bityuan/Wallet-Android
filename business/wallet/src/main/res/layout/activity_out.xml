@@ -212,7 +212,6 @@
                     android:background="@drawable/bg_number_flag"
                     android:hint="@string/home_hint_please_input_count"
                     android:inputType="number|numberDecimal"
-
                     android:maxLength="15"
                     android:paddingLeft="10dp"
                     android:text=""

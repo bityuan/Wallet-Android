@@ -3,9 +3,7 @@
     android:id="@+id/fl_wc_grant"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/shape_re_white"
-    android:layout_margin="30dp"
-   >
+    android:background="@drawable/shape_re_white">
 
 
     <FrameLayout
@@ -44,8 +42,7 @@
             android:id="@+id/iv_dapp_icon"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_gravity="center_horizontal"
-           />
+            android:layout_gravity="center_horizontal" />
 
         <TextView
             android:id="@+id/tv_dapp_name"
@@ -72,8 +69,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
             android:layout_marginTop="22dp"
+            android:layout_marginEnd="16dp"
             android:background="@android:color/white"
             android:orientation="vertical">
 
@@ -90,10 +87,10 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="12dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -118,16 +115,17 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_marginStart="12dp"
                 android:layout_height="0.5dp"
+                android:layout_marginStart="12dp"
                 android:layout_marginTop="8dp"
                 android:background="@color/lineColor" />
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="12dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -152,16 +150,17 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_marginStart="12dp"
                 android:layout_height="0.5dp"
+                android:layout_marginStart="12dp"
                 android:layout_marginTop="8dp"
                 android:background="@color/lineColor" />
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="12dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -186,35 +185,78 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_marginStart="12dp"
                 android:layout_height="0.5dp"
+                android:layout_marginStart="12dp"
                 android:layout_marginTop="8dp"
                 android:background="@color/lineColor" />
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
-                android:layout_marginBottom="10dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="12dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
                     android:text="@string/wc_fee"
                     android:textColor="@color/gray_8e"
                     android:textSize="13sp" />
 
+
                 <TextView
-                    android:id="@+id/tv_wc_fee"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tv_fee"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginLeft="16dp"
-                    android:text="00"
+                    android:layout_marginStart="16dp"
+                    android:text="0"
+                    android:clickable="true"
+                    android:textColor="@color/text_color_sel"
+                    android:textSize="13sp"
+                    android:focusable="true" />
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:id="@+id/ll_set_fee"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:background="@drawable/shape_6"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:id="@+id/tv_level"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:textColor="@color/gray_33"
                     android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tv_wc_fee"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginStart="16dp"
+                    android:text="0"
+                    android:clickable="true"
+                    android:textColor="@color/text_color_sel"
+                    android:textSize="12sp"
+                    android:focusable="true" />
+
+                <ImageView
+                    android:src="@mipmap/icon_right_wallet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
 
 
             </LinearLayout>

@@ -25,7 +25,6 @@ import com.fzm.wallet.sdk.IPConfig.Companion.YBF_FEE_ADDR
 import com.fzm.wallet.sdk.IPConfig.Companion.YBF_TOKEN_FEE
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
-import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.bean.StringResult
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
@@ -36,7 +35,6 @@ import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.utils.AddressCheckUtils
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.ListUtils
-import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.fzm.wallet.sdk.utils.RegularUtils
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.databinding.ActivityOutBinding
@@ -67,7 +65,6 @@ import walletapi.WalletRecover
 import walletapi.Walletapi
 import java.math.RoundingMode
 import java.text.DecimalFormat
-import java.util.Locale
 
 //原BTY,BTC和ETH格式的BTY，查余额，账单，构造签名发送都是 "BTY",BNB的BTY是"BNB"
 //原YCC查余额，账单，构造签名发送都是"ETH",BTC和ETH格式的YCC，查余额，账单，构造签名发送都是 "YCC",BNB的YCC是"BNB"

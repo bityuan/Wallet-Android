@@ -43,6 +43,7 @@ object RouterPath {
     const val APP_LANGUAGE = "/app/LanguageActivity"
     const val APP_WEBTEST = "/app/WebTestActivity"
     const val APP_WCONNECT = "/app/WConnectActivity"
+    const val APP_SETFEE = "/app/SetFeeActivity"
 
     //param
     const val PARAM_COIN = "coin"
@@ -56,4 +57,8 @@ object RouterPath {
     const val PARAM_VISIBLE_MNEM = "visible_mnem"
     const val PARAM_WC_URL = "wc_url"
     const val PARAM_CONTACTS_ID = "contacts_id"
+    const val PARAM_FEE_POSITION = "fee_position"
+    const val PARAM_CHAIN_ID = "chain_id"
+    const val PARAM_GAS = "gas"
+    const val PARAM_GAS_PRICE = "gas_price"
 }
