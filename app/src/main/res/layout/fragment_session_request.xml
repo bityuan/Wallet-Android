@@ -213,8 +213,6 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginStart="16dp"
                     android:text="0"
-                    android:clickable="true"
-                    android:textColor="@color/text_color_sel"
                     android:textSize="13sp"
                     android:focusable="true" />
             </LinearLayout>
@@ -228,9 +226,8 @@
                 android:padding="10dp"
                 android:background="@drawable/shape_6"
                 android:gravity="center_vertical"
-                android:layout_marginLeft="12dp"
+                android:layout_marginStart="12dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginRight="12dp"
                 android:layout_marginBottom="10dp">
 
                 <TextView
