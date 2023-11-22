@@ -144,11 +144,11 @@ class DappActivity : AppCompatActivity() {
 
     private fun setLevel(tvLevel: TextView?) {
         val level = when (feePosition) {
-            0 -> "最快"
-            1 -> "标准"
-            2 -> "经济"
-            FEE_CUSTOM_POSITION -> "自定义"
-            else -> "经济"
+            0 -> getString(R.string.high_str)
+            1 -> getString(R.string.standard_str)
+            2 -> getString(R.string.low_str)
+            FEE_CUSTOM_POSITION -> getString(R.string.custom_str)
+            else -> getString(R.string.low_str)
         }
         tvLevel?.text = level
     }

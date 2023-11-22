@@ -58,5 +58,10 @@
   <string name="tp_str">vote</string>
   <string name="tp_error">The event is too hot, please try again later</string>
     <string name="fee_setting">set gas fee</string>
+    <string name="high_str">high</string>
+  <string name="standard_str">standard</string>
+  <string name="low_str">low</string>
+  <string name="custom_str">custom</string>
+  <string name="enter_str">please enter</string>
 
 </resources>

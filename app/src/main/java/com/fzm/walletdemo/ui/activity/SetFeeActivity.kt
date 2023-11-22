@@ -143,9 +143,9 @@ class SetFeeActivity : BaseActivity() {
         val middlePrice = (gasPrice.toLong() * 1.4)
         val lowPrice = gasPrice.toDouble()
 
-        val high = configGear("最快", highPrice.toLong().toBigInteger(), highPrice)
-        val middle = configGear("标准", middlePrice.toLong().toBigInteger(), middlePrice)
-        val low = configGear("经济", lowPrice.toLong().toBigInteger(), lowPrice)
+        val high = configGear(getString(R.string.high_str), highPrice.toLong().toBigInteger(), highPrice)
+        val middle = configGear(getString(R.string.standard_str), middlePrice.toLong().toBigInteger(), middlePrice)
+        val low = configGear(getString(R.string.low_str), lowPrice.toLong().toBigInteger(), lowPrice)
         gearList.add(high)
         gearList.add(middle)
         gearList.add(low)
@@ -210,10 +210,10 @@ class SetFeeActivity : BaseActivity() {
             val gas = binding.etGas.text.toString()
             val gasPrice = binding.etGasPrice.text.toString()
             if (gas.isEmpty()) {
-                toast("请输入gas")
+                toast("${getString(R.string.enter_str)} gas")
                 return
             } else if (gasPrice.isEmpty()) {
-                toast("请输入gasPrice")
+                toast("${getString(R.string.enter_str)} gasPrice")
                 return
             }
             val price = gasPrice.toLong() * va9
