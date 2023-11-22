@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Base64
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -22,7 +21,6 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
-import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
@@ -39,7 +37,6 @@ import com.fzm.wallet.sdk.RouterPath.PARAM_GAS
 import com.fzm.wallet.sdk.RouterPath.PARAM_GAS_PRICE
 import com.fzm.wallet.sdk.base.FEE_CUSTOM_POSITION
 import com.fzm.wallet.sdk.base.LIVE_KEY_FEE
-import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
 import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
 import com.fzm.wallet.sdk.db.entity.PWallet
@@ -224,7 +221,9 @@ class DappActivity : AppCompatActivity() {
         val userAgentString = binding.webDapp.settings.userAgentString
         val resultAgent = "$userAgentString;wallet;1.0"
         binding.webDapp.settings.userAgentString = resultAgent
-
+        //https://www.cnblogs.com/ufreedom/p/4229590.html
+        //禁用_blank打开新窗口，解决打开外部超链接失效问题
+        binding.webDapp.settings.setSupportMultipleWindows(false)
         setupWeb3(chainId, nodeUrl, address)
 
     }
@@ -525,6 +524,7 @@ class DappActivity : AppCompatActivity() {
                             payDialog?.show()
 
                             tvCancel.setOnClickListener {
+                                feePosition = 2
                                 payDialog?.dismiss()
                                 val callback: String = String.format(
                                     JS_CALLBACK_ON_FAILURE, tran.leafPosition, JS_CANCELLED
