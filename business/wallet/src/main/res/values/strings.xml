@@ -240,4 +240,10 @@
     <string name="p_chain_choose">请先选择主链</string>
     <string name="check_str">检测到您使用模拟器创建账户，请切换到真机</string>
     <string name="str_addr_no">观察钱包暂不支持</string>
+    <string name="high_str">最快</string>
+    <string name="standard_str">标准</string>
+    <string name="low_str">经济</string>
+    <string name="custom_str">自定义</string>
+    <string name="tip_fee_high">您设置的矿工费太高，请选择合适的矿工费</string>
+    <string name="tip_init_fee">正在初始化矿工费...</string>
 </resources>

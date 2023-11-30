@@ -59,6 +59,7 @@ object RouterPath {
     const val PARAM_CONTACTS_ID = "contacts_id"
     const val PARAM_FEE_POSITION = "fee_position"
     const val PARAM_CHAIN_ID = "chain_id"
+    const val PARAM_ORIG_GAS = "orig_gas"
     const val PARAM_GAS = "gas"
     const val PARAM_GAS_PRICE = "gas_price"
 }

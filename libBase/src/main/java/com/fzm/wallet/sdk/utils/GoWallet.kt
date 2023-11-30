@@ -28,13 +28,16 @@ class GoWallet {
         const val CHAIN_ID_BTY_L = 2999L
 
         //ETH BNB BTY GAS转账都是21000
-        const val GAS_OUT:Long = 21000
+        const val GAS_OUT: Long = 21000
 
         const val CHAIN_NET = "chainNet"
         const val NET_ETH = "Ethereum"
         const val NET_BNB = "BNB Smart Chain"
         const val NET_BTY = "BitYuan Mainnet"
 
+
+        val CHAIN_MAPS =
+            mapOf("ETH" to CHAIN_ID_ETH_L, "BNB" to CHAIN_ID_BNB_L, "BTY" to CHAIN_ID_BTY_L)
 
         val CHAIN_ID_MAPS =
             mapOf(CHAIN_ID_ETH to "ETH", CHAIN_ID_BNB to "BNB", CHAIN_ID_BTY to "BTY")
@@ -741,7 +744,7 @@ class GoWallet {
             }
         }
 
-        fun getWeb3UrlL(chainId: Long): String {
+        fun getWeb3UrlL(chainId: Long?): String {
             return when (chainId) {
                 CHAIN_ID_ETH_L -> {
                     WEB3_ETH

@@ -318,12 +318,49 @@
 
             </LinearLayout>
 
-            <View
+
+
+            <LinearLayout
+                android:id="@+id/ll_set_fee"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/height_line"
-                android:layout_marginLeft="@dimen/dp_16"
-                android:layout_marginRight="@dimen/dp_16"
-                android:background="@color/color_D9DCE9" />
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:padding="10dp"
+                android:background="@drawable/shape_6"
+                android:gravity="center_vertical"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:id="@+id/tv_level"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/gray_33"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tv_wc_fee"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/text_color_sel"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginStart="16dp"
+                    android:text="0"
+                    android:clickable="true"
+                    android:textSize="12sp"
+                    android:focusable="true" />
+
+                <ImageView
+                    android:src="@mipmap/icon_right_wallet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+
+
 
             <LinearLayout
                 android:layout_width="match_parent"

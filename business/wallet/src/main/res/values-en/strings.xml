@@ -902,4 +902,11 @@
     <string name="check_str">Detected that you are using the emulator to create an account. Please switch to the real machine</string>
     <string name="str_addr_no">Observation wallet currently not supported</string>
 
+    <string name="high_str">high</string>
+    <string name="standard_str">standard</string>
+    <string name="low_str">low</string>
+    <string name="custom_str">custom</string>
+    <string name="tip_fee_high">The miner fee you set is too high, please choose the appropriate miner fee</string>
+    <string name="tip_init_fee">Initializing miner fees...</string>
+
 </resources>

@@ -4,9 +4,11 @@ package com.fzm.walletmodule.ui.activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.SeekBar
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -24,12 +26,15 @@ import com.fzm.wallet.sdk.IPConfig.Companion.YBF_BTY_PR
 import com.fzm.wallet.sdk.IPConfig.Companion.YBF_FEE_ADDR
 import com.fzm.wallet.sdk.IPConfig.Companion.YBF_TOKEN_FEE
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.base.FEE_CUSTOM_POSITION
+import com.fzm.wallet.sdk.base.LIVE_KEY_FEE
 import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
 import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.bean.StringResult
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.ext.toPlainStr
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.utils.AddressCheckUtils
@@ -37,6 +42,7 @@ import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.ListUtils
 import com.fzm.wallet.sdk.utils.RegularUtils
 import com.fzm.walletmodule.R
+import com.fzm.walletmodule.bean.DGear
 import com.fzm.walletmodule.databinding.ActivityOutBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.RemarksTipsDialogView
@@ -60,11 +66,16 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.litepal.LitePal.where
 import org.litepal.extension.find
+import org.web3j.protocol.Web3j
+import org.web3j.protocol.core.DefaultBlockParameterName
+import org.web3j.protocol.http.HttpService
 import walletapi.GsendTx
 import walletapi.WalletRecover
 import walletapi.Walletapi
+import java.math.BigInteger
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import kotlin.math.pow
 
 //原BTY,BTC和ETH格式的BTY，查余额，账单，构造签名发送都是 "BTY",BNB的BTY是"BNB"
 //原YCC查余额，账单，构造签名发送都是"ETH",BTC和ETH格式的YCC，查余额，账单，构造签名发送都是 "YCC",BNB的YCC是"BNB"
@@ -165,7 +176,7 @@ class OutActivity : BaseActivity() {
     }
 
     private fun handleDNS(input: String) {
-        if (input.contains(".") && oldName in listOf("BTY","BTC","ETH","TRX","BNB")) {
+        if (input.contains(".") && oldName in listOf("BTY", "BTC", "ETH", "TRX", "BNB")) {
             getAddressByDns(input)
         } else {
             getDnsByAddress(input)
@@ -224,15 +235,23 @@ class OutActivity : BaseActivity() {
                 ToastUtils.show(this, it.error())
             }
         })
-        val minerChain =
-            if (coin?.chain == "ETH" && coin?.name != "ETH") "ETHTOKEN" else coin?.chain
+
         if (coinToken.proxy) {
             binding.seekbarFee.visibility = View.GONE
             binding.llVMiner.visibility = View.GONE
+            binding.llSetFee.visibility = View.GONE
             binding.tvFee.text =
                 "${if (coin?.platform == IPConfig.YBF_CHAIN) YBF_TOKEN_FEE else TOKEN_FEE} $oldName"
         } else {
-            outViewModel.getMiner(minerChain!!)
+            if (customChain()) {
+                binding.seekbarFee.visibility = View.GONE
+                binding.llVMiner.visibility = View.GONE
+                initFee()
+            } else {
+                binding.llSetFee.visibility = View.GONE
+                //val minerChain = if (coin?.chain == "ETH" && coin?.name != "ETH") "ETHTOKEN" else coin?.chain
+                outViewModel.getMiner(coin?.chain!!)
+            }
         }
         binding.seekbarFee.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -316,8 +335,7 @@ class OutActivity : BaseActivity() {
         binding.ivContact.setOnClickListener {
             coin?.let {
                 ARouter.getInstance().build(RouterPath.WALLET_CONTACTS)
-                    .withSerializable(RouterPath.PARAM_COIN, coin)
-                    .navigation()
+                    .withSerializable(RouterPath.PARAM_COIN, coin).navigation()
             }
 
         }
@@ -336,6 +354,18 @@ class OutActivity : BaseActivity() {
             if (!checkAddressAndMoney(toAddress, money)) {
                 return@setOnClickListener
             }
+
+            if (customChain()) {
+                if (fee > 0.1) {
+                    toast(getString(R.string.tip_fee_high))
+                    return@setOnClickListener
+                }
+                if (!(::cGasPrice.isInitialized && ::cGas.isInitialized)) {
+                    toast(getString(R.string.tip_init_fee))
+                    return@setOnClickListener
+                }
+            }
+
             if (!checkFee(money)) {
                 return@setOnClickListener
             }
@@ -377,7 +407,17 @@ class OutActivity : BaseActivity() {
 
         }
 
+
+        //自定义矿工费
+        binding.llSetFee.setOnClickListener {
+            gotoSetFee()
+        }
+        binding.tvWcFee.setOnClickListener {
+            gotoSetFee()
+        }
+
     }
+
 
     private fun checkFee(money: String): Boolean {
         coin?.let {
@@ -519,8 +559,7 @@ class OutActivity : BaseActivity() {
         runOnUiThread {
             loading.dismiss()
             ToastUtils.show(
-                this@OutActivity,
-                R.string.home_transfer_currency_success
+                this@OutActivity, R.string.home_transfer_currency_success
             )
             finish()
         }
@@ -695,4 +734,125 @@ class OutActivity : BaseActivity() {
     }
 
 
+    //-----------------------------------------自定义fee-------------------------------------
+    private var chainId: Long? = GoWallet.CHAIN_ID_BNB_L
+    private var chainName: String? = ""
+    var gasPrice = 0L
+    private var feePosition = 2
+
+    private lateinit var origGas: BigInteger
+    private lateinit var cGas: BigInteger
+    private lateinit var cGasPrice: BigInteger
+    private fun gotoSetFee() {
+        if (::cGasPrice.isInitialized && ::cGas.isInitialized) {
+            ARouter.getInstance().build(RouterPath.APP_SETFEE)
+                .withInt(RouterPath.PARAM_FEE_POSITION, feePosition)
+                .withLong(RouterPath.PARAM_CHAIN_ID, chainId!!)
+                .withLong(RouterPath.PARAM_ORIG_GAS, origGas.toLong())
+                .withLong(RouterPath.PARAM_GAS, cGas.toLong())
+                .withLong(RouterPath.PARAM_GAS_PRICE, cGasPrice.toLong()).navigation()
+        } else {
+            toast(getString(R.string.tip_init_fee))
+        }
+
+    }
+
+    private fun initFeeObserver() {
+        LiveEventBus.get<DGear>(LIVE_KEY_FEE).observe(this, Observer { dGear ->
+            feePosition = dGear.position
+            cGas = dGear.gas
+            cGasPrice = dGear.gasPrice
+            showGasUI(cGasPrice.toLong(), cGas.toLong(), chainName)
+            setLevel(binding.tvLevel)
+        })
+    }
+
+    private fun initFee() {
+        initFeeObserver()
+        chainName = coin?.chain
+        chainId = GoWallet.CHAIN_MAPS[chainName]
+        val gas = GoWallet.GAS_OUT
+        setLevel(binding.tvLevel)
+        if (chainName == "BTY") {
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    val gasPriceResult = walletRepository.getGasPrice()
+                    withContext(Dispatchers.Main) {
+                        if (gasPriceResult.isSucceed()) {
+                            gasPriceResult.data()?.let {
+                                gasPrice = it.substringAfter("0x").toLong(16)
+                                origGas = gas.toBigInteger()
+                                cGas = gas.toBigInteger()
+                                cGasPrice = gasPrice.toBigInteger()
+                                showGasUI(gasPrice, gas, chainName)
+                            }
+                        }
+
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
+            }
+        } else if (chainName == "BNB" || chainName == "ETH") {
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    val web3Url = GoWallet.getWeb3UrlL(chainId)
+                    val web3j = Web3j.build(HttpService(web3Url))
+                    val gasPriceResult = web3j.ethGasPrice().send()
+                    withContext(Dispatchers.Main) {
+                        gasPrice = gasPriceResult.gasPrice.toLong()
+                        origGas = gas.toBigInteger()
+                        cGas = gas.toBigInteger()
+                        cGasPrice = gasPrice.toBigInteger()
+                        showGasUI(gasPrice, gas, chainName)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
+            }
+        }
+
+    }
+
+
+    private fun showGasUI(gasPrice: Long, gas: Long, chainName: String?) {
+        try {
+            val va9 = 10.0.pow(9.0)
+            val va18 = 10.0.pow(18.0)
+            val newGasPirce = "${gasPrice / va9}".toPlainStr(2)
+
+            val dGas = (gasPrice * gas) / va18
+            val newGas = "$dGas".toPlainStr(6)
+            binding.tvFee.text = "$newGas $chainName"
+            binding.tvWcFee.text = "$newGas $chainName = Gas($gas)*GasPrice($newGasPirce GWEI)"
+            fee = newGas.toDouble()
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+    }
+
+
+    private fun customChain(): Boolean {
+        coin?.let {
+            if (it.chain == "ETH" || it.chain == "BNB") {
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun setLevel(tvLevel: TextView?) {
+        val level = when (feePosition) {
+            0 -> getString(R.string.high_str)
+            1 -> getString(R.string.standard_str)
+            2 -> getString(R.string.low_str)
+            FEE_CUSTOM_POSITION -> getString(R.string.custom_str)
+            else -> getString(R.string.low_str)
+        }
+        tvLevel?.text = level
+    }
 }

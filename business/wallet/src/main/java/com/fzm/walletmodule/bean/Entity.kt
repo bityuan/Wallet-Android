@@ -1,4 +1,4 @@
-package com.fzm.walletdemo
+package com.fzm.walletmodule.bean
 
 import java.math.BigInteger
 

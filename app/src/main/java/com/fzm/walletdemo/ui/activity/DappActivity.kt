@@ -35,6 +35,7 @@ import com.fzm.wallet.sdk.RouterPath.PARAM_CHAIN_ID
 import com.fzm.wallet.sdk.RouterPath.PARAM_FEE_POSITION
 import com.fzm.wallet.sdk.RouterPath.PARAM_GAS
 import com.fzm.wallet.sdk.RouterPath.PARAM_GAS_PRICE
+import com.fzm.wallet.sdk.RouterPath.PARAM_ORIG_GAS
 import com.fzm.wallet.sdk.base.FEE_CUSTOM_POSITION
 import com.fzm.wallet.sdk.base.LIVE_KEY_FEE
 import com.fzm.wallet.sdk.base.MyWallet
@@ -47,7 +48,7 @@ import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.fzm.wallet.sdk.utils.StatusBarUtil
 import com.fzm.walletdemo.BuildConfig
-import com.fzm.walletdemo.DGear
+import com.fzm.walletmodule.bean.DGear
 import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.ActivityDappBinding
 import com.fzm.walletdemo.ui.JsApi
@@ -100,6 +101,9 @@ class DappActivity : AppCompatActivity() {
     private var chainId: Long = GoWallet.CHAIN_ID_BNB_L
     private var feePosition = 2
     private lateinit var cGas: BigInteger
+
+    //原始gas
+    private lateinit var origGas: BigInteger
     private lateinit var cGasPrice: BigInteger
     private var tvFee: TextView? = null
     private var tvWCFee: TextView? = null
@@ -456,6 +460,7 @@ class DappActivity : AppCompatActivity() {
                     transaction?.let { tran ->
                         try {
                             setLevel(tvLevel)
+                            origGas = tran.gasLimit
                             cGas = tran.gasLimit
                             cGasPrice = gasPrice.toBigInteger()
 
@@ -476,41 +481,51 @@ class DappActivity : AppCompatActivity() {
 
                             if (chainName == "BTY") {
                                 lifecycleScope.launch(Dispatchers.IO) {
-                                    val gasPriceResult = walletRepository.getGasPrice()
-                                    val countResult =
-                                        walletRepository.getTransactionCount(address.toString())
-                                    withContext(Dispatchers.Main) {
-                                        if (gasPriceResult.isSucceed()) {
-                                            gasPriceResult.data()?.let {
-                                                gasPrice = it.substringAfter("0x").toLong(16)
+                                    try {
+                                        val gasPriceResult = walletRepository.getGasPrice()
+                                        val countResult =
+                                            walletRepository.getTransactionCount(address.toString())
+                                        withContext(Dispatchers.Main) {
+                                            if (gasPriceResult.isSucceed()) {
+                                                gasPriceResult.data()?.let {
+                                                    gasPrice = it.substringAfter("0x").toLong(16)
+                                                }
                                             }
-                                        }
-                                        if (countResult.isSucceed()) {
-                                            countResult.data()?.let {
-                                                count = it.substringAfter("0x").toLong(16)
+                                            if (countResult.isSucceed()) {
+                                                countResult.data()?.let {
+                                                    count = it.substringAfter("0x").toLong(16)
+                                                }
                                             }
-                                        }
 
-                                        showGasUI(
-                                            gasPrice, transaction.gasLimit.toLong(), chainName
-                                        )
+                                            showGasUI(
+                                                gasPrice, transaction.gasLimit.toLong(), chainName
+                                            )
+                                        }
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
                                     }
+
                                 }
                             } else {
                                 lifecycleScope.launch(Dispatchers.IO) {
-                                    val web3Url = GoWallet.getWeb3UrlL(chainId)
-                                    val web3j = Web3j.build(HttpService(web3Url))
-                                    val gasPriceResult = web3j.ethGasPrice().send()
-                                    val countResult = web3j.ethGetTransactionCount(
-                                        address.toString(), DefaultBlockParameterName.LATEST
-                                    ).send()
-                                    withContext(Dispatchers.Main) {
-                                        gasPrice = gasPriceResult.gasPrice.toLong()
-                                        count = countResult.transactionCount.toLong()
-                                        showGasUI(
-                                            gasPrice, transaction.gasLimit.toLong(), chainName
-                                        )
+                                    try {
+                                        val web3Url = GoWallet.getWeb3UrlL(chainId)
+                                        val web3j = Web3j.build(HttpService(web3Url))
+                                        val gasPriceResult = web3j.ethGasPrice().send()
+                                        val countResult = web3j.ethGetTransactionCount(
+                                            address.toString(), DefaultBlockParameterName.LATEST
+                                        ).send()
+                                        withContext(Dispatchers.Main) {
+                                            gasPrice = gasPriceResult.gasPrice.toLong()
+                                            count = countResult.transactionCount.toLong()
+                                            showGasUI(
+                                                gasPrice, transaction.gasLimit.toLong(), chainName
+                                            )
+                                        }
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
                                     }
+
                                 }
                             }
 
@@ -576,8 +591,11 @@ class DappActivity : AppCompatActivity() {
 
     private fun gotoSetFee() {
         ARouter.getInstance().build(RouterPath.APP_SETFEE).withInt(PARAM_FEE_POSITION, feePosition)
-            .withLong(PARAM_CHAIN_ID, chainId).withLong(PARAM_GAS, cGas.toLong())
-            .withLong(PARAM_GAS_PRICE, cGasPrice.toLong()).navigation()
+            .withLong(PARAM_CHAIN_ID, chainId)
+            .withLong(PARAM_ORIG_GAS, origGas.toLong())
+            .withLong(PARAM_GAS, cGas.toLong())
+            .withLong(PARAM_GAS_PRICE, cGasPrice.toLong())
+            .navigation()
     }
 
 
@@ -669,6 +687,8 @@ class DappActivity : AppCompatActivity() {
 
     private suspend fun signAndSend(name: String, privKey: String, createTran: CreateTran) {
         try {
+            //发送后重置为经济
+            feePosition = 2
             val createJson = gson.toJson(createTran)
             val bCreate = Walletapi.stringTobyte(createJson)
 

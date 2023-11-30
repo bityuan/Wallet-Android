@@ -14,8 +14,8 @@ import com.fzm.wallet.sdk.ext.toPlainStr
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.utils.GoWallet
-import com.fzm.walletdemo.DGear
-import com.fzm.walletdemo.Gear
+import com.fzm.walletmodule.bean.DGear
+import com.fzm.walletmodule.bean.Gear
 import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.ActivitySetfeeBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
@@ -57,6 +57,10 @@ class SetFeeActivity : BaseActivity() {
     @JvmField
     @Autowired(name = RouterPath.PARAM_GAS)
     var gas: Long = GoWallet.GAS_OUT
+
+    @JvmField
+    @Autowired(name = RouterPath.PARAM_ORIG_GAS)
+    var origGas: Long = GoWallet.GAS_OUT
 
     @JvmField
     @Autowired(name = RouterPath.PARAM_GAS_PRICE)
@@ -155,14 +159,14 @@ class SetFeeActivity : BaseActivity() {
 
     private fun configGear(speed: String, gasPrice: BigInteger, gasPriceL: Double): Gear {
         val netName = GoWallet.CHAIN_ID_MAPS_L[chainId]
-        val bigGas = gas.toBigInteger()
-        val gasStr = gas.toString()
+        val bigGas = origGas.toBigInteger()
+        val gasStr = origGas.toString()
         val gasPriceStr = "${gasPriceL / va9}".toPlainStr(2)
 
 
-        val dGas = (gasPriceL * gas) / va18
+        val dGas = (gasPriceL * origGas) / va18
         val newGas = "$dGas".toPlainStr(6)
-        val content = "$newGas $netName = Gas($gas)*GasPrice($gasPriceStr GWEI)"
+        val content = "$newGas $netName = Gas($origGas)*GasPrice($gasPriceStr GWEI)"
         return Gear(speed, bigGas, gasPrice, gasStr, gasPriceStr, "$newGas $netName", content)
     }
 
@@ -216,7 +220,7 @@ class SetFeeActivity : BaseActivity() {
                 toast("${getString(R.string.enter_str)} gasPrice")
                 return
             }
-            val price = gasPrice.toLong() * va9
+            val price = gasPrice.toDouble() * va9
             val dGear =
                 DGear(gas.toBigInteger(), price.toLong().toBigInteger(), FEE_CUSTOM_POSITION)
             LiveEventBus.get<DGear>(LIVE_KEY_FEE).post(dGear)
@@ -228,4 +232,5 @@ class SetFeeActivity : BaseActivity() {
 
 
     }
+
 }

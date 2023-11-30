@@ -58,10 +58,6 @@
     <string name="tp_str">投票</string>
     <string name="tp_error">活动太火爆了，请稍后重试</string>
     <string name="fee_setting">矿工费设置</string>
-    <string name="high_str">最快</string>
-    <string name="standard_str">标准</string>
-    <string name="low_str">经济</string>
-    <string name="custom_str">自定义</string>
     <string name="enter_str">请输入</string>
 
 
