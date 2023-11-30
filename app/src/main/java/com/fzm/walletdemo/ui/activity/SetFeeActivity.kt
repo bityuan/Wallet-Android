@@ -147,9 +147,15 @@ class SetFeeActivity : BaseActivity() {
         val middlePrice = (gasPrice.toLong() * 1.4)
         val lowPrice = gasPrice.toDouble()
 
-        val high = configGear(getString(R.string.high_str), highPrice.toLong().toBigInteger(), highPrice)
-        val middle = configGear(getString(R.string.standard_str), middlePrice.toLong().toBigInteger(), middlePrice)
-        val low = configGear(getString(R.string.low_str), lowPrice.toLong().toBigInteger(), lowPrice)
+        val high =
+            configGear(getString(R.string.high_str), highPrice.toLong().toBigInteger(), highPrice)
+        val middle = configGear(
+            getString(R.string.standard_str),
+            middlePrice.toLong().toBigInteger(),
+            middlePrice
+        )
+        val low =
+            configGear(getString(R.string.low_str), lowPrice.toLong().toBigInteger(), lowPrice)
         gearList.add(high)
         gearList.add(middle)
         gearList.add(low)
@@ -210,24 +216,28 @@ class SetFeeActivity : BaseActivity() {
     }
 
     private fun post() {
-        if (selectedCustom) {
-            val gas = binding.etGas.text.toString()
-            val gasPrice = binding.etGasPrice.text.toString()
-            if (gas.isEmpty()) {
-                toast("${getString(R.string.enter_str)} gas")
-                return
-            } else if (gasPrice.isEmpty()) {
-                toast("${getString(R.string.enter_str)} gasPrice")
-                return
+        try {
+            if (selectedCustom) {
+                val gas = binding.etGas.text.toString()
+                val gasPrice = binding.etGasPrice.text.toString()
+                if (gas.isEmpty()) {
+                    toast("${getString(R.string.enter_str)} gas")
+                    return
+                } else if (gasPrice.isEmpty()) {
+                    toast("${getString(R.string.enter_str)} gasPrice")
+                    return
+                }
+                val price = gasPrice.toDouble() * va9
+                val dGear =
+                    DGear(gas.toBigInteger(), price.toLong().toBigInteger(), FEE_CUSTOM_POSITION)
+                LiveEventBus.get<DGear>(LIVE_KEY_FEE).post(dGear)
+            } else {
+                val gear = gearList[selectedPosition]
+                val dGear = DGear(gear.gas, gear.gasPrice, selectedPosition)
+                LiveEventBus.get<DGear>(LIVE_KEY_FEE).post(dGear)
             }
-            val price = gasPrice.toDouble() * va9
-            val dGear =
-                DGear(gas.toBigInteger(), price.toLong().toBigInteger(), FEE_CUSTOM_POSITION)
-            LiveEventBus.get<DGear>(LIVE_KEY_FEE).post(dGear)
-        } else {
-            val gear = gearList[selectedPosition]
-            val dGear = DGear(gear.gas, gear.gasPrice, selectedPosition)
-            LiveEventBus.get<DGear>(LIVE_KEY_FEE).post(dGear)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
 
 
