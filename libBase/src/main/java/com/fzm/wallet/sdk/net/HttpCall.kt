@@ -23,10 +23,10 @@ suspend fun <T> apiCall(call: suspend () -> HttpResponse<T>): HttpResult<T> {
 suspend fun <T> goCall(call: suspend () -> GoResponse<T>): HttpResult<T> {
     return try {
         call().let {
-            if (it.error.isNullOrEmpty()) {
+            if (it.error == null) {
                 HttpResult.Success(it.result)
             } else {
-                HttpResult.Error(it.error)
+                HttpResult.Error(it.error.message ?: "unknown error")
             }
         }
     } catch (e: Exception) {
@@ -34,13 +34,14 @@ suspend fun <T> goCall(call: suspend () -> GoResponse<T>): HttpResult<T> {
     }
 
 }
+
 suspend fun <T> dnsCall(call: suspend () -> DNSResponse<T>): HttpResult<T> {
     return try {
         call().let {
             if (it.code == "baas.err.success") {
                 HttpResult.Success(it.data)
             } else {
-                HttpResult.Error(it.message?:"")
+                HttpResult.Error(it.message ?: "")
             }
         }
     } catch (e: Exception) {

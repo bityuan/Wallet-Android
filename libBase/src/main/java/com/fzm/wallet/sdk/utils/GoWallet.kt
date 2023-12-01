@@ -213,6 +213,19 @@ class GoWallet {
             }
             return lCoin.balance
         }
+        fun getWCBalance(address:String,cointype: String,tokenSymbol: String): String {
+            val balanceStr = getbalance(address, cointype, tokenSymbol)
+            if (!TextUtils.isEmpty(balanceStr)) {
+                val balanceResponse = gson.fromJson(balanceStr, BalanceResponse::class.java)
+                if (balanceResponse != null) {
+                    val balance = balanceResponse.result
+                    if (balance != null) {
+                        return balance.balance
+                    }
+                }
+            }
+            return "0.0"
+        }
 
         fun isPara(coin: Coin): Boolean {
             return (coin.chain == "ETH" && coin.platform != "ethereum")

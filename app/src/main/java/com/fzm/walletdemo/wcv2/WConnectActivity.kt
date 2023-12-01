@@ -45,6 +45,7 @@ import com.walletconnect.web3.wallet.client.Web3Wallet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 import org.json.JSONObject
 import org.koin.android.ext.android.inject
@@ -58,7 +59,6 @@ import walletapi.Walletapi
 import java.math.BigInteger
 import kotlin.math.pow
 
-//处理选择矿工费的情况
 @Route(path = RouterPath.APP_WCONNECT)
 class WConnectActivity : BaseActivity() {
 
@@ -317,6 +317,7 @@ class WConnectActivity : BaseActivity() {
     //------------------------------------------请求-----------------------------------------------
     private var requestTopic = ""
     private var requestId = 0L
+    private var coinBalance: Double = 0.0;
     private fun showRequest(sessionRequest: Wallet.Model.SessionRequest) {
         try {
             requestTopic = sessionRequest.topic
@@ -359,6 +360,13 @@ class WConnectActivity : BaseActivity() {
             }
             val pValue = "${value / va18}".toPlainStr(8)
             val chainName = CHAIN_ID_MAPS[sessionRequest.chainId]
+            lifecycleScope.launch(Dispatchers.IO) {
+                val balance = GoWallet.getWCBalance(param.from, chainName!!, "")
+                withContext(Dispatchers.Main) {
+                    coinBalance = balance.toDouble()
+                }
+            }
+
             binding.incRequest.tvValue.text = "$pValue $chainName"
             binding.incRequest.tvPayMsg.text = "$chainName ${getString(R.string.home_transfer)}"
             binding.incRequest.tvOutAddress.text = param.from
@@ -421,6 +429,11 @@ class WConnectActivity : BaseActivity() {
 
             binding.incRequest.btnNext.setOnClickListener {
                 if (::cGas.isInitialized && ::cGasPrice.isInitialized) {
+                    Log.v("tag","coinb ==    $coinBalance,  dgas ====== $dGas")
+                    if (coinBalance < dGas) {
+                        toast(getString(R.string.fee_not_enough))
+                        return@setOnClickListener
+                    }
                     val input = param.data.substringAfter("0x")
                     val input64 = Base64.encodeToString(Walletapi.hexTobyte(input), Base64.DEFAULT)
                     val createTran = CreateTran(
@@ -439,6 +452,7 @@ class WConnectActivity : BaseActivity() {
 
     }
 
+
     private fun gotoSetFee() {
         if (::cGas.isInitialized && ::cGasPrice.isInitialized) {
             ARouter.getInstance().build(RouterPath.APP_SETFEE)
@@ -452,7 +466,7 @@ class WConnectActivity : BaseActivity() {
 
     }
 
-
+    private var dGas: Double = 0.0;
     private fun showGasUI(gasPrice: Long, gas: Long, chainName: String?) {
         try {
             cGasPrice = gasPrice.toBigInteger()
@@ -460,7 +474,7 @@ class WConnectActivity : BaseActivity() {
             val va18 = 10.0.pow(18.0)
             val newGasPirce = "${gasPrice / va9}".toPlainStr(2)
 
-            val dGas = (gasPrice * gas) / va18
+            dGas = (gasPrice * gas) / va18
             val newGas = "$dGas".toPlainStr(6)
             binding.incRequest.tvFee.text = "$newGas $chainName"
             binding.incRequest.tvWcFee.text =
@@ -485,6 +499,7 @@ class WConnectActivity : BaseActivity() {
                 pwdDialog?.dismiss()
             }
             bindingDialog.btnOk.setOnClickListener {
+
                 val password = bindingDialog.etInput.text.toString()
                 if (password.isEmpty()) {
                     toast(getString(R.string.my_wallet_password_tips))
@@ -516,12 +531,15 @@ class WConnectActivity : BaseActivity() {
                                     if (name == "BTY") {
                                         val send = walletRepository.sendRawTransaction(signed)
                                         withContext(Dispatchers.Main) {
+                                            dis()
                                             if (send.isSucceed()) {
                                                 send.data()?.let { sendHash ->
                                                     responseWC(sendHash)
-                                                    dis()
                                                 }
+                                            }else {
+                                                longToast(send.error())
                                             }
+
                                         }
                                     } else {
                                         val send = GoWallet.sendTran(chainName, signed, "")
