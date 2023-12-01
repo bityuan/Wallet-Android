@@ -360,7 +360,7 @@ class OutActivity : BaseActivity() {
                     toast(getString(R.string.tip_fee_high))
                     return@setOnClickListener
                 }
-                if (!(::cGasPrice.isInitialized && ::cGas.isInitialized)) {
+                if (!::cGasPrice.isInitialized || !::cGas.isInitialized) {
                     toast(getString(R.string.tip_init_fee))
                     return@setOnClickListener
                 }

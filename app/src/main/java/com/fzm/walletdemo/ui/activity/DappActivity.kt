@@ -105,6 +105,7 @@ class DappActivity : AppCompatActivity() {
     //原始gas
     private lateinit var origGas: BigInteger
     private lateinit var cGasPrice: BigInteger
+    private var dGas:Double = 0.0
     private var tvFee: TextView? = null
     private var tvWCFee: TextView? = null
     private var tvLevel: TextView? = null
@@ -462,7 +463,7 @@ class DappActivity : AppCompatActivity() {
                             setLevel(tvLevel)
                             origGas = tran.gasLimit
                             cGas = tran.gasLimit
-                            cGasPrice = gasPrice.toBigInteger()
+
 
                             var pValue = "0"
                             val valStr = tran.value.toString()
@@ -590,22 +591,26 @@ class DappActivity : AppCompatActivity() {
     }
 
     private fun gotoSetFee() {
-        ARouter.getInstance().build(RouterPath.APP_SETFEE).withInt(PARAM_FEE_POSITION, feePosition)
-            .withLong(PARAM_CHAIN_ID, chainId)
-            .withLong(PARAM_ORIG_GAS, origGas.toLong())
-            .withLong(PARAM_GAS, cGas.toLong())
-            .withLong(PARAM_GAS_PRICE, cGasPrice.toLong())
-            .navigation()
+        if(::cGas.isInitialized && ::cGasPrice.isInitialized){
+            ARouter.getInstance().build(RouterPath.APP_SETFEE).withInt(PARAM_FEE_POSITION, feePosition)
+                .withLong(PARAM_CHAIN_ID, chainId)
+                .withLong(PARAM_ORIG_GAS, origGas.toLong())
+                .withLong(PARAM_GAS, cGas.toLong())
+                .withLong(PARAM_GAS_PRICE, cGasPrice.toLong())
+                .navigation()
+        }
+
     }
 
 
     private fun showGasUI(gasPrice: Long, gas: Long, chainName: String?) {
         try {
+            cGasPrice = gasPrice.toBigInteger()
             val va9 = 10.0.pow(9.0)
             val va18 = 10.0.pow(18.0)
             val newGasPirce = "${gasPrice / va9}".toPlainStr(2)
 
-            val dGas = (gasPrice * gas) / va18
+            dGas = (gasPrice * gas) / va18
             val newGas = "$dGas".toPlainStr(6)
             tvFee?.text = "$newGas $chainName"
             tvWCFee?.text = "$newGas $chainName = Gas($gas)*GasPrice($newGasPirce GWEI)"
@@ -615,7 +620,14 @@ class DappActivity : AppCompatActivity() {
 
     }
 
-
+    private fun customChain():Boolean{
+        chainName?.let {
+            if (it == "ETH" || it == "BNB") {
+                return true
+            }
+        }
+        return false
+    }
     private var pwdDialog: Dialog? = null
     private fun showPWD(createTran: CreateTran, chainName: String?) {
         try {
@@ -631,6 +643,17 @@ class DappActivity : AppCompatActivity() {
             }
             bindingDialog.btnOk.setOnClickListener {
                 try {
+                    if (customChain()) {
+                        if (dGas > 0.1) {
+                            toast(getString(com.fzm.walletmodule.R.string.tip_fee_high))
+                            return@setOnClickListener
+                        }
+                        if (!::cGasPrice.isInitialized || !::cGas.isInitialized) {
+                            toast(getString(R.string.tip_init_fee))
+                            return@setOnClickListener
+                        }
+                    }
+
                     val password = bindingDialog.etInput.text.toString()
                     if (password.isEmpty()) {
                         toast(getString(R.string.my_wallet_password_tips))

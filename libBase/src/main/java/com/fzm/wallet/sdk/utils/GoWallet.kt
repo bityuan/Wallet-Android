@@ -35,6 +35,8 @@ class GoWallet {
         const val NET_BNB = "BNB Smart Chain"
         const val NET_BTY = "BitYuan Mainnet"
 
+        val CHAIN_MAPS_LL =
+            mapOf(CHAIN_ID_ETH to CHAIN_ID_ETH_L, CHAIN_ID_BNB to CHAIN_ID_BNB_L, CHAIN_ID_BTY to CHAIN_ID_BTY_L)
 
         val CHAIN_MAPS =
             mapOf("ETH" to CHAIN_ID_ETH_L, "BNB" to CHAIN_ID_BNB_L, "BTY" to CHAIN_ID_BTY_L)

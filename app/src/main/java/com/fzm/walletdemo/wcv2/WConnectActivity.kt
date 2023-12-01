@@ -6,6 +6,7 @@ import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -17,6 +18,8 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.base.FEE_CUSTOM_POSITION
+import com.fzm.wallet.sdk.base.LIVE_KEY_FEE
 import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
@@ -27,11 +30,14 @@ import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.GoWallet.Companion.CHAIN_ID_MAPS
+import com.fzm.wallet.sdk.utils.GoWallet.Companion.CHAIN_MAPS_LL
 import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.ActivityWconnectBinding
+import com.fzm.walletmodule.bean.DGear
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.GsonBuilder
+import com.jeremyliao.liveeventbus.LiveEventBus
 import com.walletconnect.android.Core
 import com.walletconnect.android.CoreClient
 import com.walletconnect.web3.wallet.client.Wallet
@@ -49,10 +55,21 @@ import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.http.HttpService
 import timber.log.Timber
 import walletapi.Walletapi
+import java.math.BigInteger
 import kotlin.math.pow
 
+//处理选择矿工费的情况
 @Route(path = RouterPath.APP_WCONNECT)
 class WConnectActivity : BaseActivity() {
+
+    private var chainId: Long = GoWallet.CHAIN_ID_BNB_L
+    private var feePosition = 2
+    private lateinit var cGas: BigInteger
+
+    //原始gas
+    private lateinit var origGas: BigInteger
+    private lateinit var cGasPrice: BigInteger
+    private var chainName: String? = ""
 
     private val binding by lazy { ActivityWconnectBinding.inflate(layoutInflater) }
 
@@ -74,7 +91,6 @@ class WConnectActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        logDebug("欢迎。。")
         ARouter.getInstance().inject(this)
         initObserver()
     }
@@ -108,6 +124,15 @@ class WConnectActivity : BaseActivity() {
             }
         })
         initWCV2()
+
+
+        LiveEventBus.get<DGear>(LIVE_KEY_FEE).observe(this, Observer { dGear ->
+            feePosition = dGear.position
+            cGas = dGear.gas
+            cGasPrice = dGear.gasPrice
+            showGasUI(cGasPrice.toLong(), cGas.toLong(), chainName)
+            setLevel(binding.incRequest.tvLevel)
+        })
     }
 
 
@@ -169,6 +194,7 @@ class WConnectActivity : BaseActivity() {
                 chain = it.chains[0]
             }
             val chooseChain = CHAIN_ID_MAPS[chain]
+            chainId = CHAIN_MAPS_LL[chain]!!
             chooseChain?.let { choose ->
                 address = GoWallet.getChain(if (choose == "BTY") "ETH" else choose)?.address
                 namespaces = configNamespaces(chain, address)
@@ -262,7 +288,8 @@ class WConnectActivity : BaseActivity() {
     ) {
         try {
             showUI(incProposaled = true)
-            binding.incProposaled.tvWalletState.text = "${sessionProposal.name} ${getString(R.string.wc_coned)}"
+            binding.incProposaled.tvWalletState.text =
+                "${sessionProposal.name} ${getString(R.string.wc_coned)}"
             binding.incProposaled.tvDappUrl.text = sessionProposal.url
             binding.incProposaled.tvAddress.text = address
             binding.incProposaled.tvChain.text = chooseChain
@@ -313,6 +340,12 @@ class WConnectActivity : BaseActivity() {
                 }
                 showUI(incRequest = false, incProposaled = true)
             }
+            binding.incRequest.llSetFee.setOnClickListener {
+                gotoSetFee()
+            }
+            binding.incRequest.tvWcFee.setOnClickListener {
+                gotoSetFee()
+            }
             binding.incRequest.tvDappName.text = sessionRequest.peerMetaData?.name
             binding.incRequest.tvDappUrl.text = sessionRequest.peerMetaData?.url?.extractHost()
             Glide.with(this).load(sessionRequest.peerMetaData?.icons?.firstOrNull())
@@ -333,56 +366,70 @@ class WConnectActivity : BaseActivity() {
 
             //handle fee
             val gas = param.gas.substringAfter("0x").toLong(16)
+            setLevel(binding.incRequest.tvLevel)
+            origGas = gas.toBigInteger()
+            cGas = gas.toBigInteger()
 
             //handle count(nonce) and gasPrice
             var gasPrice = 0L
             var count = 0L
             if (chainName == "BTY") {
                 lifecycleScope.launch(Dispatchers.IO) {
-                    val gasPriceResult = walletRepository.getGasPrice()
-                    val countResult = walletRepository.getTransactionCount(param.from)
-                    withContext(Dispatchers.Main) {
-                        if (gasPriceResult.isSucceed()) {
-                            gasPriceResult.data()?.let {
-                                gasPrice = it.substringAfter("0x").toLong(16)
+                    try {
+                        val gasPriceResult = walletRepository.getGasPrice()
+                        val countResult = walletRepository.getTransactionCount(param.from)
+                        withContext(Dispatchers.Main) {
+                            if (gasPriceResult.isSucceed()) {
+                                gasPriceResult.data()?.let {
+                                    gasPrice = it.substringAfter("0x").toLong(16)
+                                }
                             }
-                        }
-                        if (countResult.isSucceed()) {
-                            countResult.data()?.let {
-                                count = it.substringAfter("0x").toLong(16)
+                            if (countResult.isSucceed()) {
+                                countResult.data()?.let {
+                                    count = it.substringAfter("0x").toLong(16)
+                                }
                             }
-                        }
 
-                        showGasUI(gasPrice, gas, chainName)
+                            showGasUI(gasPrice, gas, chainName)
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
+
                 }
             } else {
                 lifecycleScope.launch(Dispatchers.IO) {
-                    val web3Url = GoWallet.getWeb3Url(sessionRequest.chainId)
-                    val web3j = Web3j.build(HttpService(web3Url))
-                    val gasPriceResult = web3j.ethGasPrice().send()
-                    val countResult = web3j.ethGetTransactionCount(
-                        param.from, DefaultBlockParameterName.LATEST
-                    ).send()
-                    withContext(Dispatchers.Main) {
-                        gasPrice = gasPriceResult.gasPrice.toLong()
-                        count = countResult.transactionCount.toLong()
-                        showGasUI(gasPrice, gas, chainName)
+                    try {
+                        val web3Url = GoWallet.getWeb3Url(sessionRequest.chainId)
+                        val web3j = Web3j.build(HttpService(web3Url))
+                        val gasPriceResult = web3j.ethGasPrice().send()
+                        val countResult = web3j.ethGetTransactionCount(
+                            param.from, DefaultBlockParameterName.LATEST
+                        ).send()
+                        withContext(Dispatchers.Main) {
+                            gasPrice = gasPriceResult.gasPrice.toLong()
+                            count = countResult.transactionCount.toLong()
+                            showGasUI(gasPrice, gas, chainName)
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
+
                 }
             }
 
 
             binding.incRequest.btnNext.setOnClickListener {
+                if (::cGas.isInitialized && ::cGasPrice.isInitialized) {
+                    val input = param.data.substringAfter("0x")
+                    val input64 = Base64.encodeToString(Walletapi.hexTobyte(input), Base64.DEFAULT)
+                    val createTran = CreateTran(
+                        param.from, cGas, cGasPrice, input64, count, param.to, value.toBigInteger()
+                    )
 
-                val input = param.data.substringAfter("0x")
-                val input64 = Base64.encodeToString(Walletapi.hexTobyte(input), Base64.DEFAULT)
-                val createTran = CreateTran(
-                    param.from, gas.toBigInteger(), gasPrice.toBigInteger(), input64, count, param.to, value.toBigInteger()
-                )
+                    showPWD(createTran, chainName)
+                }
 
-
-                showPWD(createTran, chainName)
             }
 
 
@@ -392,16 +439,30 @@ class WConnectActivity : BaseActivity() {
 
     }
 
+    private fun gotoSetFee() {
+        if (::cGas.isInitialized && ::cGasPrice.isInitialized) {
+            ARouter.getInstance().build(RouterPath.APP_SETFEE)
+                .withInt(RouterPath.PARAM_FEE_POSITION, feePosition)
+                .withLong(RouterPath.PARAM_CHAIN_ID, chainId)
+                .withLong(RouterPath.PARAM_ORIG_GAS, origGas.toLong())
+                .withLong(RouterPath.PARAM_GAS, cGas.toLong())
+                .withLong(RouterPath.PARAM_GAS_PRICE, cGasPrice.toLong())
+                .navigation()
+        }
+
+    }
+
 
     private fun showGasUI(gasPrice: Long, gas: Long, chainName: String?) {
         try {
+            cGasPrice = gasPrice.toBigInteger()
             val va9 = 10.0.pow(9.0)
             val va18 = 10.0.pow(18.0)
             val newGasPirce = "${gasPrice / va9}".toPlainStr(2)
 
             val dGas = (gasPrice * gas) / va18
             val newGas = "$dGas".toPlainStr(6)
-
+            binding.incRequest.tvFee.text = "$newGas $chainName"
             binding.incRequest.tvWcFee.text =
                 "$newGas $chainName = Gas($gas)*GasPrice($newGasPirce GWEI)"
         } catch (e: Exception) {
@@ -508,6 +569,19 @@ class WConnectActivity : BaseActivity() {
     override fun onDestroy() {
         disConnect()
         super.onDestroy()
+    }
+
+
+    //custom fee
+    private fun setLevel(tvLevel: TextView?) {
+        val level = when (feePosition) {
+            0 -> getString(R.string.high_str)
+            1 -> getString(R.string.standard_str)
+            2 -> getString(R.string.low_str)
+            FEE_CUSTOM_POSITION -> getString(R.string.custom_str)
+            else -> getString(R.string.low_str)
+        }
+        tvLevel?.text = level
     }
 
 }
