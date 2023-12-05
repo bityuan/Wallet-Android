@@ -568,11 +568,11 @@ class WConnectActivity : BaseActivity() {
     private fun dis() {
         loading.dismiss()
         pwdDialog?.dismiss()
-        toast(getString(R.string.send_suc_str))
         showUI(incRequest = false, incProposaled = true)
     }
 
     private fun responseWC(sendHash: String) {
+        toast(getString(R.string.send_suc_str))
         val sessionRequestResponse = Wallet.Params.SessionRequestResponse(
             requestTopic, Wallet.Model.JsonRpcResponse.JsonRpcResult(
                 requestId, sendHash

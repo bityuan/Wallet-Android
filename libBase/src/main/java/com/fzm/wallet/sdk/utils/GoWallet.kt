@@ -2,6 +2,7 @@ package com.fzm.wallet.sdk.utils
 
 import android.text.TextUtils
 import android.util.Log
+import com.fzm.wallet.sdk.IPConfig
 import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.bean.response.BalanceResponse
 import com.fzm.wallet.sdk.db.entity.Coin
@@ -16,9 +17,9 @@ class GoWallet {
     companion object {
         val HTTP_HEADER = "http://"
         val HTTPS_HEADER = "https://"
-        const val WEB3_BNB = "https://bsc.publicnode.com"
-        const val WEB3_ETH = "https://rpc.flashbots.net"
-        const val WEB3_BTY = "https://mainnet.bityuan.com/eth"
+        const val WEB3_BNB = IPConfig.WEB3_BNB_NODE
+        const val WEB3_ETH = IPConfig.WEB3_ETH_NODE
+        const val WEB3_BTY = IPConfig.WEB3_BTY_NODE
         private const val CHAIN_ID_ETH = "eip155:1"
         private const val CHAIN_ID_BNB = "eip155:56"
         private const val CHAIN_ID_BTY = "eip155:2999"
@@ -36,7 +37,11 @@ class GoWallet {
         const val NET_BTY = "BitYuan Mainnet"
 
         val CHAIN_MAPS_LL =
-            mapOf(CHAIN_ID_ETH to CHAIN_ID_ETH_L, CHAIN_ID_BNB to CHAIN_ID_BNB_L, CHAIN_ID_BTY to CHAIN_ID_BTY_L)
+            mapOf(
+                CHAIN_ID_ETH to CHAIN_ID_ETH_L,
+                CHAIN_ID_BNB to CHAIN_ID_BNB_L,
+                CHAIN_ID_BTY to CHAIN_ID_BTY_L
+            )
 
         val CHAIN_MAPS =
             mapOf("ETH" to CHAIN_ID_ETH_L, "BNB" to CHAIN_ID_BNB_L, "BTY" to CHAIN_ID_BTY_L)
@@ -200,20 +205,27 @@ class GoWallet {
          * @return String?  余额
          */
         fun handleBalance(lCoin: Coin): String {
-            val coinToken = lCoin.newChain
-            val balanceStr = getbalance(lCoin.address, coinToken.cointype, coinToken.tokenSymbol)
-            if (!TextUtils.isEmpty(balanceStr)) {
-                val balanceResponse = gson.fromJson(balanceStr, BalanceResponse::class.java)
-                if (balanceResponse != null) {
-                    val balance = balanceResponse.result
-                    if (balance != null) {
-                        return balance.balance
+            try {
+                val coinToken = lCoin.newChain
+                val balanceStr =
+                    getbalance(lCoin.address, coinToken.cointype, coinToken.tokenSymbol)
+                if (!TextUtils.isEmpty(balanceStr)) {
+                    val balanceResponse = gson.fromJson(balanceStr, BalanceResponse::class.java)
+                    if (balanceResponse != null) {
+                        val balance = balanceResponse.result
+                        if (balance != null) {
+                            return balance.balance
+                        }
                     }
                 }
+                return lCoin.balance
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
             return lCoin.balance
         }
-        fun getWCBalance(address:String,cointype: String,tokenSymbol: String): String {
+
+        fun getWCBalance(address: String, cointype: String, tokenSymbol: String): String {
             val balanceStr = getbalance(address, cointype, tokenSymbol)
             if (!TextUtils.isEmpty(balanceStr)) {
                 val balanceResponse = gson.fromJson(balanceStr, BalanceResponse::class.java)

@@ -2,7 +2,6 @@ apply from: lib
 apply plugin: 'org.jetbrains.kotlin.android'
 def cfg = rootProject.ext
 dependencies {
-    implementation project(':libBase')
     implementation 'androidx.appcompat:appcompat:1.3.0'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
@@ -10,6 +9,7 @@ dependencies {
     testImplementation  cfg.library.junit
     androidTestImplementation cfg.library.junitext
     androidTestImplementation cfg.library.espressocore
+    implementation project(path: ':libBase')
 }
 
 

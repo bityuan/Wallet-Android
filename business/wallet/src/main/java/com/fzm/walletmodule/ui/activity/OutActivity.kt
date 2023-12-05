@@ -79,6 +79,7 @@ import kotlin.math.pow
 
 //原BTY,BTC和ETH格式的BTY，查余额，账单，构造签名发送都是 "BTY",BNB的BTY是"BNB"
 //原YCC查余额，账单，构造签名发送都是"ETH",BTC和ETH格式的YCC，查余额，账单，构造签名发送都是 "YCC",BNB的YCC是"BNB"
+//动态链上fee 是否会导致转账失败情况处理？
 @Route(path = RouterPath.WALLET_OUT)
 class OutActivity : BaseActivity() {
 

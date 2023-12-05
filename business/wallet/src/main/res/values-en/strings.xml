@@ -908,5 +908,6 @@
     <string name="custom_str">custom</string>
     <string name="tip_fee_high">The miner fee you set is too high, please choose the appropriate miner fee</string>
     <string name="tip_init_fee">Initializing miner fees...</string>
+    <string name="try_imp">Attempt to re import to resolve the issue</string>
 
 </resources>

@@ -198,21 +198,25 @@ class SetFeeActivity : BaseActivity() {
     }
 
     private fun chooseCustom(from: Int) {
-        if (from == 1) {
-            val gasPriceStr = "${gasPrice / va9}".toPlainStr(2)
-            binding.etGasPrice.setText(gasPriceStr)
-            binding.etGas.setText(gas.toString())
+        try {
+            if (from == 1) {
+                val gasPriceStr = "${gasPrice / va9}".toPlainStr(2)
+                binding.etGasPrice.setText(gasPriceStr)
+                binding.etGas.setText(gas.toString())
 
-        } else {
-            val gear = gearList[selectedPosition]
-            binding.etGasPrice.setText(gear.gasPriceStr)
-            binding.etGas.setText(gear.gasStr)
+            } else {
+                val gear = gearList[selectedPosition]
+                binding.etGasPrice.setText(gear.gasPriceStr)
+                binding.etGas.setText(gear.gasStr)
+            }
+            selectedPosition = -1
+            mCommonAdapter.notifyDataSetChanged()
+            selectedCustom = true
+            binding.llCustom.setBackgroundResource(R.drawable.shape_fee_selected)
+            binding.llCustomInput.visibility = View.VISIBLE
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        selectedPosition = -1
-        mCommonAdapter.notifyDataSetChanged()
-        selectedCustom = true
-        binding.llCustom.setBackgroundResource(R.drawable.shape_fee_selected)
-        binding.llCustomInput.visibility = View.VISIBLE
     }
 
     private fun post() {

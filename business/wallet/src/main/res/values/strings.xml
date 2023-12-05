@@ -246,4 +246,5 @@
     <string name="custom_str">自定义</string>
     <string name="tip_fee_high">您设置的矿工费太高，请选择合适的矿工费</string>
     <string name="tip_init_fee">正在初始化矿工费...</string>
+    <string name="try_imp">尝试重新导入解决问题</string>
 </resources>

@@ -385,10 +385,15 @@ class WalletDetailsActivity : BaseActivity() {
                                             "${coin.name}公钥"
                                         )
                                     } else if (it.type == PWallet.TYPE_PRI_KEY) {
-                                        WalletManager().exportContent(
-                                            this@WalletDetailsActivity,
-                                            coin.pubkey, "${coin.name}公钥"
-                                        )
+                                        if(coin.pubkey != null){
+                                            WalletManager().exportContent(
+                                                this@WalletDetailsActivity,
+                                                coin.pubkey, "${coin.name}公钥"
+                                            )
+                                        }else {
+                                            toast(getString(R.string.try_imp))
+                                        }
+
                                     }
                                 }
 

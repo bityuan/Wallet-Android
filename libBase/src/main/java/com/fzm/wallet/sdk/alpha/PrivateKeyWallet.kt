@@ -28,6 +28,8 @@ class PrivateKeyWallet(wallet: PWallet) : BaseWallet(wallet) {
                 val encByteKey = Walletapi.encKey(bPassword, Walletapi.hexTobyte(privateKey))
                 val encPrivateKey = Walletapi.byteTohex(encByteKey)
                 chooseChain.setPrivkey(encPrivateKey)
+                val pubKey = GoWallet.priToPub(chooseChain.chain,privateKey!!)
+                chooseChain.pubkey = Walletapi.byteTohex(pubKey)
                 configuration.coins = listOf(chooseChain)
             }
             withContext(Dispatchers.IO) {
