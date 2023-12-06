@@ -1,148 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:orientation="vertical">
-
-
-    <FrameLayout
-        android:id="@+id/fl_tabcontent"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="10dp"
-        android:layout_weight="1" />
-
+    android:fitsSystemWindows="true">
 
     <LinearLayout
-        android:paddingBottom="10dp"
-        android:id="@+id/ll_main_bottom"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white">
-        <LinearLayout
-            android:id="@+id/ly_tian"
-            android:visibility="gone"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/selector_tian"
-                android:focusable="false" />
 
-            <TextView
-                android:id="@+id/tv_tian"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/tian_str"
-                android:textColor="@color/selector_bottom_tab_text"
-                android:textSize="12sp" />
+        <FrameLayout
+            android:id="@+id/fl_tabcontent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1" />
 
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/ly_tp"
-            android:visibility="gone"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/selector_toupiao"
-                android:focusable="false" />
-
-            <TextView
-                android:id="@+id/tv_tp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/tp_str"
-                android:textColor="@color/selector_bottom_tab_text"
-                android:textSize="12sp" />
-
-        </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/ly_home"
-            android:layout_width="0dp"
+            android:id="@+id/ll_main_bottom"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:background="@android:color/white"
+            android:paddingBottom="10dp">
 
-            <ImageView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/ly_tian"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/selector_home"
-                android:focusable="false" />
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone">
 
-            <TextView
-                android:id="@+id/tv_home"
-                android:layout_width="wrap_content"
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/selector_tian"
+                    android:focusable="false" />
+
+                <TextView
+                    android:id="@+id/tv_tian"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tian_str"
+                    android:textColor="@color/selector_bottom_tab_text"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ly_tp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/main_home"
-                android:textColor="@color/selector_bottom_tab_text"
-                android:textSize="12sp" />
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone">
 
-        </LinearLayout>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/selector_toupiao"
+                    android:focusable="false" />
 
-        <LinearLayout
-            android:id="@+id/ly_explore"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
+                <TextView
+                    android:id="@+id/tv_tp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tp_str"
+                    android:textColor="@color/selector_bottom_tab_text"
+                    android:textSize="12sp" />
 
-            <ImageView
-                android:layout_width="wrap_content"
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ly_home"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/selector_explore"
-                android:focusable="false" />
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_explore_bottom"
-                android:layout_width="wrap_content"
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/selector_home"
+                    android:focusable="false" />
+
+                <TextView
+                    android:id="@+id/tv_home"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_home"
+                    android:textColor="@color/selector_bottom_tab_text"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ly_explore"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/main_explore"
-                android:textColor="@color/selector_bottom_tab_text"
-                android:textSize="12sp" />
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
 
-        </LinearLayout>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/selector_explore"
+                    android:focusable="false" />
 
-        <LinearLayout
-            android:id="@+id/ly_my"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
+                <TextView
+                    android:id="@+id/tv_explore_bottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_explore"
+                    android:textColor="@color/selector_bottom_tab_text"
+                    android:textSize="12sp" />
 
-            <ImageView
-                android:layout_width="wrap_content"
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ly_my"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/selector_my"
-                android:focusable="false" />
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/main_my"
-                android:textColor="@color/selector_bottom_tab_text"
-                android:textSize="12sp" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/selector_my"
+                    android:focusable="false" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_my"
+                    android:textColor="@color/selector_bottom_tab_text"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_main_wc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="100dp"
+        android:src="@mipmap/ic_wconnect"
+        android:visibility="gone" />
+</FrameLayout>

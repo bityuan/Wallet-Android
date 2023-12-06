@@ -11,6 +11,8 @@ const val LIVE_KEY_SCAN = "live_key_scan"
 const val LIVE_KEY_WALLET = "live_key_wallet"
 const val LIVE_KEY_FEE = "live_key_fee"
 const val PRE_X_RECOVER = "X_RECOVER"
+const val LIVE_WC_STATUS = "live_wc_status"
+const val LIVE_WC_MODEL = "live_wc_model"
 const val FEE_CUSTOM_POSITION = 33
 
 fun logDebug(log: String) {

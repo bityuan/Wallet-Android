@@ -1,10 +1,13 @@
 package com.fzm.walletdemo.wcv2
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.IPConfig.Companion.projectId
+import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.base.LIVE_WC_MODEL
+import com.fzm.wallet.sdk.base.LIVE_WC_STATUS
 import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.walletdemo.IApplication
+import com.jeremyliao.liveeventbus.LiveEventBus
 import com.walletconnect.android.Core
 import com.walletconnect.android.CoreClient
 import com.walletconnect.android.relay.ConnectionType
@@ -13,10 +16,6 @@ import com.walletconnect.web3.wallet.client.Web3Wallet
 import timber.log.Timber
 
 object InitWCV2 {
-
-    private val _signModel = MutableLiveData<Wallet.Model?>()
-    val signModel: LiveData<Wallet.Model?>
-        get() = _signModel
 
     init {
         logDebug("===============单例初始化v2================")
@@ -62,28 +61,32 @@ object InitWCV2 {
             }
 
             override fun onSessionDelete(sessionDelete: Wallet.Model.SessionDelete) {
-                //网页主动断开
                 logDebug("返回：onSessionDelete = $sessionDelete")
-                _signModel.postValue(sessionDelete)
+                postModel(sessionDelete)
+                postToMain(false)
 
             }
 
             override fun onSessionProposal(sessionProposal: Wallet.Model.SessionProposal) {
                 logDebug("返回：onSessionProposal = $sessionProposal")
-                _signModel.postValue(sessionProposal)
+                postModel(sessionProposal)
 
             }
 
             override fun onSessionRequest(sessionRequest: Wallet.Model.SessionRequest) {
                 logDebug("返回：onSessionRequest = $sessionRequest")
-                _signModel.postValue(sessionRequest)
-
+                ARouter.getInstance().build(RouterPath.APP_WCONNECT)
+                    .withInt(RouterPath.PARAM_FROM,2)
+                    .navigation()
+                WCParam.sessionRequest = sessionRequest
+                postModel(sessionRequest)
             }
 
             override fun onSessionSettleResponse(settleSessionResponse: Wallet.Model.SettledSessionResponse) {
                 //连上以后会返回新的sessiontopic ，断开连接要用新的
                 logDebug("返回：onSessionSettleResponse = $settleSessionResponse")
-                _signModel.postValue(settleSessionResponse)
+                postToMain(true)
+                postModel(settleSessionResponse)
 
             }
 
@@ -94,4 +97,14 @@ object InitWCV2 {
 
         })
     }
+
+
+    private fun postToMain(state:Boolean){
+        LiveEventBus.get<Boolean>(LIVE_WC_STATUS).post(state)
+    }
+
+    private fun postModel(model:Wallet.Model?){
+        LiveEventBus.get<Wallet.Model?>(LIVE_WC_MODEL).post(model)
+    }
+
 }

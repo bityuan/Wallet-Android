@@ -8,8 +8,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
+import com.fzm.wallet.sdk.base.LIVE_WC_STATUS
 import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
@@ -244,6 +246,15 @@ class MainActivity : BaseActivity() {
                 setTabSelection(0)
             }
         })
+
+        LiveEventBus.get<Boolean>(LIVE_WC_STATUS).observe(this, Observer { state ->
+            binding.ivMainWc.visibility = if (state) View.VISIBLE else View.GONE
+        })
+        binding.ivMainWc.setOnClickListener {
+            ARouter.getInstance().build(RouterPath.APP_WCONNECT).withInt(RouterPath.PARAM_FROM, 1)
+                .navigation()
+        }
+
     }
 
     private fun hideFragments(transaction: FragmentTransaction) {

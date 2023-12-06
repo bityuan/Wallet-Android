@@ -20,6 +20,8 @@ import com.bumptech.glide.request.RequestOptions
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.FEE_CUSTOM_POSITION
 import com.fzm.wallet.sdk.base.LIVE_KEY_FEE
+import com.fzm.wallet.sdk.base.LIVE_WC_MODEL
+import com.fzm.wallet.sdk.base.LIVE_WC_STATUS
 import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
@@ -84,10 +86,14 @@ class WConnectActivity : BaseActivity() {
         }
     }
 
+    //from = 1 is main, from = 2 is InitWCV2
+    @JvmField
+    @Autowired(name = RouterPath.PARAM_FROM)
+    var from: Int = 0
+
     @JvmField
     @Autowired(name = RouterPath.PARAM_WC_URL)
     var wcUrl: String? = null
-    private var settledTopic: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -95,10 +101,19 @@ class WConnectActivity : BaseActivity() {
         initObserver()
     }
 
-
     override fun initObserver() {
         super.initObserver()
-        InitWCV2.signModel.observe(this@WConnectActivity, Observer { walletModel ->
+        if (from == 1) {
+            WCParam.sessionProposal?.let { sp ->
+                showProposaled(sp, WCParam.address, WCParam.chooseChain)
+            }
+
+        } else if (from == 2) {
+            WCParam.sessionRequest?.let { sr ->
+                showRequest(sr)
+            }
+        }
+        LiveEventBus.get<Wallet.Model?>(LIVE_WC_MODEL).observe(this, Observer { walletModel ->
             when (walletModel) {
                 is Wallet.Model.SessionProposal -> {
                     logDebug("activity - SessionProposal ")
@@ -116,8 +131,8 @@ class WConnectActivity : BaseActivity() {
                 }
 
                 is Wallet.Model.SessionDelete -> {
-                    //web主动断开，监听到后关闭当前activity即可
-                    finish()
+                   //暂不处理
+
                 }
 
                 else -> {}
@@ -140,6 +155,8 @@ class WConnectActivity : BaseActivity() {
 
     private fun initWCV2() {
         //projectId 每天都连接限制，到达限制次数后就超时
+        //从InitWCV2跳转到这里，传null即不用二次连接
+        InitWCV2
         wcUrl?.let { wurl ->
             //连接
             pair(wurl)
@@ -170,7 +187,7 @@ class WConnectActivity : BaseActivity() {
         when (settleSessionResponse) {
             is Wallet.Model.SettledSessionResponse.Result -> {
                 //断开连接需要这个topic
-                settledTopic = settleSessionResponse.session.topic
+                WCParam.settledTopic = settleSessionResponse.session.topic
                 //showProposaled(settleSessionResponse)
             }
 
@@ -222,6 +239,9 @@ class WConnectActivity : BaseActivity() {
                         logDebug("$error")
                     }
                 }
+                WCParam.sessionProposal = sessionProposal
+                WCParam.address = address
+                WCParam.chooseChain = chooseChain
                 showProposaled(sessionProposal, address, chooseChain)
             }
 
@@ -249,6 +269,7 @@ class WConnectActivity : BaseActivity() {
         incProposaled: Boolean = false,
         incRequest: Boolean = false
     ) {
+        logDebug("incLoading = $incLoading,incProposal = $incProposal,incProposaled = $incProposaled,incRequest = $incRequest")
         binding.incLoading.root.visibility = if (incLoading) View.VISIBLE else View.GONE
         binding.incProposal.root.visibility = if (incProposal) View.VISIBLE else View.GONE
         binding.incProposaled.root.visibility = if (incProposaled) View.VISIBLE else View.GONE
@@ -303,13 +324,19 @@ class WConnectActivity : BaseActivity() {
     }
 
     private fun disConnect() {
-        settledTopic?.let { topic ->
+        WCParam.settledTopic?.let { topic ->
             val sessionDisconnect = Wallet.Params.SessionDisconnect(topic)
             Web3Wallet.disconnectSession(sessionDisconnect) { error ->
                 logDebug("disconnectSession = $error")
             }
+            postToMain(false)
+
         }
 
+    }
+
+    private fun postToMain(state: Boolean) {
+        LiveEventBus.get<Boolean>(LIVE_WC_STATUS).post(state)
     }
 
     private val gson = GsonBuilder().serializeNulls().create()
@@ -339,7 +366,11 @@ class WConnectActivity : BaseActivity() {
                 Web3Wallet.respondSessionRequest(sessionRequestResponse) { error ->
                     logDebug("respondSessionRequest error  = $error")
                 }
-                showUI(incRequest = false, incProposaled = true)
+                if (from == 2) {
+                    finish()
+                } else {
+                    showUI(incRequest = false, incProposaled = true)
+                }
             }
             binding.incRequest.llSetFee.setOnClickListener {
                 gotoSetFee()
@@ -429,7 +460,6 @@ class WConnectActivity : BaseActivity() {
 
             binding.incRequest.btnNext.setOnClickListener {
                 if (::cGas.isInitialized && ::cGasPrice.isInitialized) {
-                    Log.v("tag","coinb ==    $coinBalance,  dgas ====== $dGas")
                     if (coinBalance < dGas) {
                         toast(getString(R.string.fee_not_enough))
                         return@setOnClickListener
@@ -536,7 +566,7 @@ class WConnectActivity : BaseActivity() {
                                                 send.data()?.let { sendHash ->
                                                     responseWC(sendHash)
                                                 }
-                                            }else {
+                                            } else {
                                                 longToast(send.error())
                                             }
 
@@ -584,11 +614,6 @@ class WConnectActivity : BaseActivity() {
         }
     }
 
-    override fun onDestroy() {
-        disConnect()
-        super.onDestroy()
-    }
-
 
     //custom fee
     private fun setLevel(tvLevel: TextView?) {
@@ -601,5 +626,6 @@ class WConnectActivity : BaseActivity() {
         }
         tvLevel?.text = level
     }
+
 
 }
