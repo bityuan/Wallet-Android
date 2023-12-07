@@ -131,7 +131,7 @@ class WConnectActivity : BaseActivity() {
                 }
 
                 is Wallet.Model.SessionDelete -> {
-                   //暂不处理
+                    //暂不处理
 
                 }
 
@@ -598,7 +598,11 @@ class WConnectActivity : BaseActivity() {
     private fun dis() {
         loading.dismiss()
         pwdDialog?.dismiss()
-        showUI(incRequest = false, incProposaled = true)
+        if (from == 2) {
+            finish()
+        } else {
+            showUI(incRequest = false, incProposaled = true)
+        }
     }
 
     private fun responseWC(sendHash: String) {
