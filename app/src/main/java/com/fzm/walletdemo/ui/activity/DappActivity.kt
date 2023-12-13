@@ -93,7 +93,7 @@ class DappActivity : AppCompatActivity() {
     var name: String? = null
 
     @JvmField
-    @Autowired
+    @Autowired(name = RouterPath.PARAM_URL)
     var url: String? = null
 
 
@@ -125,13 +125,12 @@ class DappActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        title = getString(R.string.exp_str)
         ARouter.getInstance().inject(this)
         initObserve()
         configChainNet()
         chainName = GoWallet.CHAIN_ID_MAPS_L[chainId]
         doBar()
-        binding.xbar.tvToolbar.text = name
+        binding.xbar.tvToolbar.text = name ?: getString(R.string.exp_str)
         initWebView()
         url?.let {
             binding.webDapp.loadUrl(it)

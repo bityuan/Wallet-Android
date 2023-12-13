@@ -63,4 +63,5 @@ object RouterPath {
     const val PARAM_GAS = "gas"
     const val PARAM_GAS_PRICE = "gas_price"
     const val PARAM_ORIG_GAS_PRICE = "orig_gas_price"
+    const val PARAM_URL = "url"
 }

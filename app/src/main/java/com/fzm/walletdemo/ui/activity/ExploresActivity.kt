@@ -120,7 +120,7 @@ class ExploresActivity : BaseActivity() {
             }
 
             ARouter.getInstance().build(RouterPath.APP_DAPP).withString("name", appBean.name)
-                .withString("url", appBean.app_url).navigation()
+                .withString(RouterPath.PARAM_URL, appBean.app_url).navigation()
         }
     }
 }

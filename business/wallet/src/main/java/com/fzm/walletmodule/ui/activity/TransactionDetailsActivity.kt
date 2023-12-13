@@ -1,5 +1,6 @@
 package com.fzm.walletmodule.ui.activity
 
+import android.graphics.Paint
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
@@ -9,6 +10,7 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.IPConfig
 import com.fzm.wallet.sdk.IPConfig.Companion.YBF_TOKEN_FEE
+import com.fzm.wallet.sdk.IPConfig.Companion.getBrowserUrl
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.IAppTypeProvider
 import com.fzm.wallet.sdk.base.ROUTE_APP_TYPE
@@ -24,6 +26,7 @@ import com.fzm.walletmodule.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.anko.toast
 import org.litepal.LitePal
 import org.litepal.extension.find
 
@@ -45,6 +48,7 @@ class TransactionDetailsActivity : BaseActivity() {
         setContentView(binding.root)
         ARouter.getInstance().inject(this)
         showInLoading()
+        initView()
         initListener()
         initData()
         configWallets()
@@ -59,6 +63,12 @@ class TransactionDetailsActivity : BaseActivity() {
         }
     }
 
+    override fun initView() {
+        super.initView()
+        binding.tvHash.paint.flags = Paint.UNDERLINE_TEXT_FLAG //下划线
+        binding.tvHash.paint.isAntiAlias = true//抗锯齿
+    }
+
     override fun initListener() {
         super.initListener()
         binding.tvOutAddress.setOnClickListener {
@@ -70,6 +80,20 @@ class TransactionDetailsActivity : BaseActivity() {
         }
         binding.ivHxCopy.setOnClickListener {
             ClipboardUtils.clip(this, binding.tvHash.text.toString())
+
+        }
+        binding.tvHash.setOnClickListener {
+            coin?.let {
+                val coinToken = it.newChain
+                val url = getBrowserUrl(coinToken.cointype)
+                if (url.isEmpty()) {
+                    toast(getString(R.string.no_sup))
+                } else {
+                    ARouter.getInstance().build(RouterPath.APP_DAPP)
+                        .withString(RouterPath.PARAM_URL, "$url${transactions?.txid}").navigation()
+                }
+
+            }
 
         }
 

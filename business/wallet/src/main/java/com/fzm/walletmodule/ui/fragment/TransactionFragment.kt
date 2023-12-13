@@ -12,7 +12,9 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.bean.response.TransactionResponse
+import com.fzm.wallet.sdk.db.entity.Address
 import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.Contacts
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.fzm.walletmodule.R
@@ -31,6 +33,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.support.v4.startActivity
+import org.litepal.LitePal
+import org.litepal.extension.find
 
 
 class TransactionFragment : BaseFragment() {
@@ -245,5 +249,27 @@ class TransactionFragment : BaseFragment() {
             mList.addAll(list)
         }
     }
+
+
+    private fun getWalletNames(address: String): String {
+        var names = ""
+        val coinList = LitePal.where("address = ?", address).find<Coin>(true)
+        for (coin in coinList) {
+            val walletName = coin.getpWallet().name
+            names += "$walletName,"
+        }
+        return names
+    }
+
+    private fun getContacts(address: String): String {
+        var names = ""
+        val addrList = LitePal.where("address = ?", address).find<Address>(true)
+        for (coin in addrList) {
+            val nickName = coin.contacts?.nickName
+            names += "$nickName,"
+        }
+        return names
+    }
+
 
 }

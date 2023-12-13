@@ -910,5 +910,6 @@
     <string name="tip_init_fee">Initializing miner fees...</string>
     <string name="try_imp">Attempt to re import to resolve the issue</string>
     <string name="fee_to_low">Miner fees are too low</string>
+    <string name="no_sup">Not currently supported</string>
 
 </resources>

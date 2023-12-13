@@ -248,4 +248,5 @@
     <string name="tip_init_fee">正在初始化矿工费...</string>
     <string name="try_imp">尝试重新导入解决问题</string>
     <string name="fee_to_low">矿工费过低</string>
+    <string name="no_sup">暂不支持</string>
 </resources>

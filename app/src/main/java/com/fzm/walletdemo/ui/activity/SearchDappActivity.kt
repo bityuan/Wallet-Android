@@ -98,8 +98,7 @@ class SearchDappActivity : BaseActivity() {
         }
         val newUrl = GoWallet.getNewUrl(url)
         ARouter.getInstance().build(RouterPath.APP_DAPP)
-            .withString("name", getString(R.string.exp_str))
-            .withString("url", newUrl).navigation()
+            .withString(RouterPath.PARAM_URL, newUrl).navigation()
 
     }
 

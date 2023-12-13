@@ -46,7 +46,7 @@ class WebTestActivity : BaseActivity() {
                 PreferencesUtils.putString(this, "testurl", urls)
             }
             ARouter.getInstance().build(RouterPath.APP_DAPP).withString("name", "web测试")
-                .withString("url", binding.etUrl.text.toString()).navigation()
+                .withString(RouterPath.PARAM_URL, binding.etUrl.text.toString()).navigation()
         }
     }
 
