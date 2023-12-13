@@ -247,4 +247,5 @@
     <string name="tip_fee_high">您设置的矿工费太高，请选择合适的矿工费</string>
     <string name="tip_init_fee">正在初始化矿工费...</string>
     <string name="try_imp">尝试重新导入解决问题</string>
+    <string name="fee_to_low">矿工费过低</string>
 </resources>

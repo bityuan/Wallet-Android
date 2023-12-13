@@ -36,6 +36,7 @@ import com.fzm.wallet.sdk.RouterPath.PARAM_FEE_POSITION
 import com.fzm.wallet.sdk.RouterPath.PARAM_GAS
 import com.fzm.wallet.sdk.RouterPath.PARAM_GAS_PRICE
 import com.fzm.wallet.sdk.RouterPath.PARAM_ORIG_GAS
+import com.fzm.wallet.sdk.RouterPath.PARAM_ORIG_GAS_PRICE
 import com.fzm.wallet.sdk.base.FEE_CUSTOM_POSITION
 import com.fzm.wallet.sdk.base.LIVE_KEY_FEE
 import com.fzm.wallet.sdk.base.MyWallet
@@ -104,6 +105,7 @@ class DappActivity : AppCompatActivity() {
 
     //原始gas
     private lateinit var origGas: BigInteger
+    private lateinit var origGasPirce: BigInteger
     private lateinit var cGasPrice: BigInteger
     private var dGas:Double = 0.0
     private var tvFee: TextView? = null
@@ -490,6 +492,7 @@ class DappActivity : AppCompatActivity() {
                                             if (gasPriceResult.isSucceed()) {
                                                 gasPriceResult.data()?.let {
                                                     gasPrice = it.substringAfter("0x").toLong(16)
+                                                    origGasPirce = gasPrice.toBigInteger()
                                                 }
                                             }
                                             if (countResult.isSucceed()) {
@@ -518,6 +521,7 @@ class DappActivity : AppCompatActivity() {
                                         ).send()
                                         withContext(Dispatchers.Main) {
                                             gasPrice = gasPriceResult.gasPrice.toLong()
+                                            origGasPirce = gasPriceResult.gasPrice
                                             count = countResult.transactionCount.toLong()
                                             showGasUI(
                                                 gasPrice, transaction.gasLimit.toLong(), chainName
@@ -597,6 +601,7 @@ class DappActivity : AppCompatActivity() {
                 .withLong(PARAM_ORIG_GAS, origGas.toLong())
                 .withLong(PARAM_GAS, cGas.toLong())
                 .withLong(PARAM_GAS_PRICE, cGasPrice.toLong())
+                .withLong(PARAM_ORIG_GAS_PRICE, origGasPirce.toLong())
                 .navigation()
         }
 

@@ -14,6 +14,10 @@ import com.fzm.wallet.sdk.ext.toPlainStr
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.utils.GoWallet
+import com.fzm.wallet.sdk.utils.GoWallet.Companion.HIGH
+import com.fzm.wallet.sdk.utils.GoWallet.Companion.LOW
+import com.fzm.wallet.sdk.utils.GoWallet.Companion.LOW_GAS_PRICE
+import com.fzm.wallet.sdk.utils.GoWallet.Companion.MIDDLE
 import com.fzm.walletmodule.bean.DGear
 import com.fzm.walletmodule.bean.Gear
 import com.fzm.walletdemo.R
@@ -64,7 +68,11 @@ class SetFeeActivity : BaseActivity() {
 
     @JvmField
     @Autowired(name = RouterPath.PARAM_GAS_PRICE)
-    var gasPrice: Long = -1L
+    var dGasPrice: Long = -1L
+
+    @JvmField
+    @Autowired(name = RouterPath.PARAM_ORIG_GAS_PRICE)
+    var origGasPrice: Long = -1L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,7 +122,7 @@ class SetFeeActivity : BaseActivity() {
                             if (gasPriceResult.isSucceed()) {
                                 gasPriceResult.data()?.let {
                                     val gasPrice = it.substringAfter("0x").toLong(16)
-                                    addGears(gasPrice.toBigInteger())
+                                    addGears(gasPrice)
                                 }
                             }
                         }
@@ -130,7 +138,9 @@ class SetFeeActivity : BaseActivity() {
                         val web3j = Web3j.build(HttpService(web3Url))
                         val gasPriceResult = web3j.ethGasPrice().send()
                         withContext(Dispatchers.Main) {
-                            addGears(gasPriceResult.gasPrice)
+                            val price = gasPriceResult.gasPrice.toLong()
+                            val dGasPrice = if(price <= LOW_GAS_PRICE) LOW_GAS_PRICE else price
+                            addGears(dGasPrice)
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
@@ -141,11 +151,13 @@ class SetFeeActivity : BaseActivity() {
         }
     }
 
-    private fun addGears(gasPrice: BigInteger) {
+    private fun addGears(gasPrice: Long) {
 
-        val highPrice = (gasPrice.toLong() * 1.8)
-        val middlePrice = (gasPrice.toLong() * 1.4)
-        val lowPrice = gasPrice.toDouble()
+        val highPrice = (gasPrice * HIGH)
+        val middlePrice = (gasPrice * MIDDLE)
+        val lowPrice = if (origGasPrice == -1L) {
+            gasPrice * LOW
+        } else origGasPrice.toDouble()
 
         val high =
             configGear(getString(R.string.high_str), highPrice.toLong().toBigInteger(), highPrice)
@@ -200,7 +212,7 @@ class SetFeeActivity : BaseActivity() {
     private fun chooseCustom(from: Int) {
         try {
             if (from == 1) {
-                val gasPriceStr = "${gasPrice / va9}".toPlainStr(2)
+                val gasPriceStr = "${dGasPrice / va9}".toPlainStr(2)
                 binding.etGasPrice.setText(gasPriceStr)
                 binding.etGas.setText(gas.toString())
 

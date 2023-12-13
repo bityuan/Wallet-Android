@@ -39,6 +39,8 @@ import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.utils.AddressCheckUtils
 import com.fzm.wallet.sdk.utils.GoWallet
+import com.fzm.wallet.sdk.utils.GoWallet.Companion.LOW
+import com.fzm.wallet.sdk.utils.GoWallet.Companion.LOW_GAS_PRICE
 import com.fzm.wallet.sdk.utils.ListUtils
 import com.fzm.wallet.sdk.utils.RegularUtils
 import com.fzm.walletmodule.R
@@ -691,7 +693,11 @@ class OutActivity : BaseActivity() {
                         return@runOnUiThread
                     }
                     if (!TextUtils.isEmpty(result.error)) {
-                        ToastUtils.show(this, result.error)
+                        if(result.error == "transaction underpriced") {
+                            ToastUtils.show(this, getString(R.string.fee_to_low))
+                        }else {
+                            ToastUtils.show(this, result.error)
+                        }
                         finish()
                         return@runOnUiThread
                     }
@@ -741,8 +747,10 @@ class OutActivity : BaseActivity() {
     var gasPrice = 0L
     private var feePosition = 2
 
+    //Long类型不可用于lateinit
     private lateinit var origGas: BigInteger
     private lateinit var cGas: BigInteger
+    private lateinit var origGasPirce: BigInteger
     private lateinit var cGasPrice: BigInteger
     private fun gotoSetFee() {
         if (::cGasPrice.isInitialized && ::cGas.isInitialized) {
@@ -751,7 +759,9 @@ class OutActivity : BaseActivity() {
                 .withLong(RouterPath.PARAM_CHAIN_ID, chainId!!)
                 .withLong(RouterPath.PARAM_ORIG_GAS, origGas.toLong())
                 .withLong(RouterPath.PARAM_GAS, cGas.toLong())
-                .withLong(RouterPath.PARAM_GAS_PRICE, cGasPrice.toLong()).navigation()
+                .withLong(RouterPath.PARAM_ORIG_GAS_PRICE, origGasPirce.toLong())
+                .withLong(RouterPath.PARAM_GAS_PRICE, cGasPrice.toLong())
+                .navigation()
         } else {
             toast(getString(R.string.tip_init_fee))
         }
@@ -785,6 +795,7 @@ class OutActivity : BaseActivity() {
                                 origGas = gas.toBigInteger()
                                 cGas = gas.toBigInteger()
                                 cGasPrice = gasPrice.toBigInteger()
+                                origGasPirce = gasPrice.toBigInteger()
                                 showGasUI(gasPrice, gas, chainName)
                             }
                         }
@@ -802,10 +813,13 @@ class OutActivity : BaseActivity() {
                     val web3j = Web3j.build(HttpService(web3Url))
                     val gasPriceResult = web3j.ethGasPrice().send()
                     withContext(Dispatchers.Main) {
-                        gasPrice = gasPriceResult.gasPrice.toLong()
+                        val price = gasPriceResult.gasPrice.toLong()
+                        val lowGasPrice = (LOW_GAS_PRICE * LOW).toLong()
+                        gasPrice = if(price <= LOW_GAS_PRICE) lowGasPrice else (price * LOW).toLong()
                         origGas = gas.toBigInteger()
                         cGas = gas.toBigInteger()
                         cGasPrice = gasPrice.toBigInteger()
+                        origGasPirce = gasPrice.toBigInteger()
                         showGasUI(gasPrice, gas, chainName)
                     }
                 } catch (e: Exception) {
@@ -835,7 +849,6 @@ class OutActivity : BaseActivity() {
         }
 
     }
-
 
     private fun customChain(): Boolean {
         coin?.let {

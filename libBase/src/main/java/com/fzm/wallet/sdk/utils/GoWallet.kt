@@ -15,6 +15,7 @@ import java.util.*
 
 class GoWallet {
     companion object {
+        const val LOW_GAS_PRICE = 3000000000
         val HTTP_HEADER = "http://"
         val HTTPS_HEADER = "https://"
         const val WEB3_BNB = IPConfig.WEB3_BNB_NODE
@@ -35,6 +36,10 @@ class GoWallet {
         const val NET_ETH = "Ethereum"
         const val NET_BNB = "BNB Smart Chain"
         const val NET_BTY = "BitYuan Mainnet"
+
+        const val LOW: Double = 1.5
+        const val MIDDLE: Double = 2.0
+        const val HIGH: Double = 3.0
 
         val CHAIN_MAPS_LL =
             mapOf(

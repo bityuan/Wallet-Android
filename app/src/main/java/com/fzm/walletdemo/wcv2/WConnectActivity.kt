@@ -70,6 +70,7 @@ class WConnectActivity : BaseActivity() {
 
     //原始gas
     private lateinit var origGas: BigInteger
+    private lateinit var origGasPirce: BigInteger
     private lateinit var cGasPrice: BigInteger
     private var chainName: String? = ""
 
@@ -421,6 +422,7 @@ class WConnectActivity : BaseActivity() {
                             if (gasPriceResult.isSucceed()) {
                                 gasPriceResult.data()?.let {
                                     gasPrice = it.substringAfter("0x").toLong(16)
+                                    origGasPirce = gasPrice.toBigInteger()
                                 }
                             }
                             if (countResult.isSucceed()) {
@@ -447,6 +449,7 @@ class WConnectActivity : BaseActivity() {
                         ).send()
                         withContext(Dispatchers.Main) {
                             gasPrice = gasPriceResult.gasPrice.toLong()
+                            origGasPirce = gasPriceResult.gasPrice
                             count = countResult.transactionCount.toLong()
                             showGasUI(gasPrice, gas, chainName)
                         }
@@ -459,19 +462,37 @@ class WConnectActivity : BaseActivity() {
 
 
             binding.incRequest.btnNext.setOnClickListener {
-                if (::cGas.isInitialized && ::cGasPrice.isInitialized) {
-                    if (coinBalance < dGas) {
-                        toast(getString(R.string.fee_not_enough))
-                        return@setOnClickListener
-                    }
-                    val input = param.data.substringAfter("0x")
-                    val input64 = Base64.encodeToString(Walletapi.hexTobyte(input), Base64.DEFAULT)
-                    val createTran = CreateTran(
-                        param.from, cGas, cGasPrice, input64, count, param.to, value.toBigInteger()
-                    )
+                try {
+                    if (::cGas.isInitialized && ::cGasPrice.isInitialized) {
+                        if (coinBalance < dGas) {
+                            toast(getString(R.string.fee_not_enough))
+                            return@setOnClickListener
+                        }
+                        var input64: String? = null
+                        param.data?.let {
+                            val input = param.data.substringAfter("0x")
+                            input64 =
+                                Base64.encodeToString(Walletapi.hexTobyte(input), Base64.DEFAULT)
+                        }
 
-                    showPWD(createTran, chainName)
+                        val createTran = CreateTran(
+                            param.from,
+                            cGas,
+                            cGasPrice,
+                            input64,
+                            count,
+                            param.to,
+                            value.toBigInteger()
+                        )
+
+                        showPWD(createTran, chainName)
+
+
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
+
 
             }
 
@@ -491,6 +512,7 @@ class WConnectActivity : BaseActivity() {
                 .withLong(RouterPath.PARAM_ORIG_GAS, origGas.toLong())
                 .withLong(RouterPath.PARAM_GAS, cGas.toLong())
                 .withLong(RouterPath.PARAM_GAS_PRICE, cGasPrice.toLong())
+                .withLong(RouterPath.PARAM_ORIG_GAS_PRICE, origGasPirce.toLong())
                 .navigation()
         }
 
@@ -554,6 +576,7 @@ class WConnectActivity : BaseActivity() {
                                 val createJson = gson.toJson(createTran)
                                 val bCreate = Walletapi.stringTobyte(createJson)
 
+                                //{"execer":"Y29pbnM=","fee":100000,"nonce":2610561061402188162,"payload":"GAEKCQoDQlRZEMCEPQ==","to":"16PmeytY8CU3AF4UB87xrqqwcshXpGxSg7"}
                                 val signed = GoWallet.signTran(
                                     if (name == "BTY") "BTYETH" else name, bCreate, privKey, 2
                                 )
