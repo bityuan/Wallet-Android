@@ -65,8 +65,17 @@ class TransactionsActivity : BaseActivity() {
 
 
     override fun initView() {
-        val state = MMkvUtil.decodeBoolean(TRAN_STATE_KEY)
-        binding.cbRecord.isChecked = state
+        coin?.let {
+            if (it.name == "USDT") {
+                binding.cbRecord.visibility = View.VISIBLE
+                binding.tvLowUsd.visibility = View.VISIBLE
+                val state = MMkvUtil.decodeBoolean(TRAN_STATE_KEY)
+                binding.cbRecord.isChecked = state
+            } else {
+                binding.cbRecord.visibility = View.GONE
+                binding.tvLowUsd.visibility = View.GONE
+            }
+        }
         setupViewPager()
         Glide.with(this).load(coin?.icon).into(binding.ivBName)
     }
@@ -126,13 +135,16 @@ class TransactionsActivity : BaseActivity() {
             }
             ARouter.getInstance().build(RouterPath.WALLET_CAPTURE).navigation()
         }
-        binding.tabLayout.addOnTabSelectedListener(object :OnTabSelectedListener {
+        binding.tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
-                when (tab.position) {
-                    0 -> transactionFragment0.doAsset()
-                    1 -> transactionFragment1.doAsset()
-                    2 -> transactionFragment2.doAsset()
+                if (coin?.name == "USDT") {
+                    when (tab.position) {
+                        0 -> transactionFragment0.doAsset()
+                        1 -> transactionFragment1.doAsset()
+                        2 -> transactionFragment2.doAsset()
+                    }
                 }
+
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {
@@ -144,12 +156,15 @@ class TransactionsActivity : BaseActivity() {
         })
 
         binding.cbRecord.setOnCheckedChangeListener { compoundButton, check ->
-            MMkvUtil.encode(TRAN_STATE_KEY, check)
-            when (binding.viewPager.currentItem) {
-                0 -> transactionFragment0.doAsset()
-                1 -> transactionFragment1.doAsset()
-                2 -> transactionFragment2.doAsset()
+            if (coin?.name == "USDT") {
+                MMkvUtil.encode(TRAN_STATE_KEY, check)
+                when (binding.viewPager.currentItem) {
+                    0 -> transactionFragment0.doAsset()
+                    1 -> transactionFragment1.doAsset()
+                    2 -> transactionFragment2.doAsset()
+                }
             }
+
         }
     }
 

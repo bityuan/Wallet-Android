@@ -151,7 +151,6 @@ class TransactionFragment : BaseFragment() {
 
     override fun initRefresh() {
         super.initRefresh()
-        dState = MMkvUtil.decodeBoolean(Constants.TRAN_STATE_KEY)
         binding.swlLayout.setOnRefreshListener {
             doRefresh()
         }
@@ -170,7 +169,9 @@ class TransactionFragment : BaseFragment() {
 
 
     private fun getDatas(index: Long) {
-        dState = MMkvUtil.decodeBoolean(Constants.TRAN_STATE_KEY)
+        if(coin.name == "USDT") {
+            dState = MMkvUtil.decodeBoolean(Constants.TRAN_STATE_KEY)
+        }
         val tokensymbol = GoWallet.getTokensymbol(coin)
         var datas: String?
         lifecycleScope.launch(Dispatchers.IO) {
