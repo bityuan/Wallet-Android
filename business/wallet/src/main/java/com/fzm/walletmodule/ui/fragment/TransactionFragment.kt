@@ -14,13 +14,11 @@ import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.bean.response.TransactionResponse
 import com.fzm.wallet.sdk.db.entity.Address
 import com.fzm.wallet.sdk.db.entity.Coin
-import com.fzm.wallet.sdk.db.entity.Contacts
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.databinding.FragmentTransactionBinding
-import com.fzm.walletmodule.ui.activity.TransactionDetailsActivity
 import com.fzm.walletmodule.ui.activity.TransactionsActivity
 import com.fzm.walletmodule.ui.base.BaseFragment
 import com.fzm.walletmodule.utils.NetWorkUtils
@@ -32,7 +30,6 @@ import com.zhy.adapter.recyclerview.base.ViewHolder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.support.v4.startActivity
 import org.litepal.LitePal
 import org.litepal.extension.find
 
@@ -48,6 +45,8 @@ class TransactionFragment : BaseFragment() {
     private var isCanLoadMore = false
 
     private lateinit var binding: FragmentTransactionBinding
+    //默认不隐藏
+    private var dState: Boolean = false
 
 
     companion object {
@@ -65,9 +64,7 @@ class TransactionFragment : BaseFragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FragmentTransactionBinding.inflate(inflater, container, false)
         return binding.root
@@ -116,9 +113,7 @@ class TransactionFragment : BaseFragment() {
                         -1 -> handleStatus(holder, getString(R.string.home_transaction_fails), fail)
                         0 -> handleStatus(holder, getString(R.string.home_confirming), pedding)
                         1 -> handleStatus(
-                            holder,
-                            getString(R.string.home_transaction_success),
-                            success
+                            holder, getString(R.string.home_transaction_success), success
                         )
                     }
                 }
@@ -151,12 +146,12 @@ class TransactionFragment : BaseFragment() {
         }
         ARouter.getInstance().build(RouterPath.WALLET_TRANSACTION_DETAILS)
             .withSerializable(RouterPath.PARAM_COIN, coin)
-            .withSerializable(RouterPath.PARAM_TRANSACTIONS, transactions)
-            .navigation()
+            .withSerializable(RouterPath.PARAM_TRANSACTIONS, transactions).navigation()
     }
 
     override fun initRefresh() {
         super.initRefresh()
+        dState = MMkvUtil.decodeBoolean(Constants.TRAN_STATE_KEY)
         binding.swlLayout.setOnRefreshListener {
             doRefresh()
         }
@@ -175,6 +170,7 @@ class TransactionFragment : BaseFragment() {
 
 
     private fun getDatas(index: Long) {
+        dState = MMkvUtil.decodeBoolean(Constants.TRAN_STATE_KEY)
         val tokensymbol = GoWallet.getTokensymbol(coin)
         var datas: String?
         lifecycleScope.launch(Dispatchers.IO) {
@@ -236,17 +232,23 @@ class TransactionFragment : BaseFragment() {
     private fun addList(list: List<Transactions>) {
         if (GoWallet.isPara(coin)) {
             for (transactions in list) {
-                if (transactions.type == "send"
-                    && transactions.note == "token fee"
-                    && transactions.status == 1
-                ) {//发送的手续费记录
+                if (transactions.type == "send" && transactions.note == "token fee" && transactions.status == 1) {//发送的手续费记录
                     mTokenFeeList.add(transactions)
+                    continue
+                }
+                if (dState && transactions.value?.toDouble()!! < 1 && coin.name == "USDT") {
                     continue
                 }
                 mList.add(transactions)
             }
         } else {
-            mList.addAll(list)
+            for (transactions in list) {
+                if (dState && transactions.value?.toDouble()!! < 1 && coin.name == "USDT") {
+                    continue
+                }
+                mList.add(transactions)
+            }
+
         }
     }
 
@@ -269,6 +271,11 @@ class TransactionFragment : BaseFragment() {
             names += "$nickName,"
         }
         return names
+    }
+
+
+    fun doAsset() {
+        doRefresh()
     }
 
 

@@ -17,7 +17,9 @@ import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.utils.GoWallet
+import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.fzm.walletmodule.R
+import com.fzm.walletmodule.base.Constants.Companion.TRAN_STATE_KEY
 import com.fzm.walletmodule.databinding.ActivityTransactionsBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.fragment.TransactionFragment
@@ -25,6 +27,8 @@ import com.fzm.walletmodule.ui.widget.InQrCodeDialogView
 import com.fzm.walletmodule.utils.ClipboardUtils
 import com.fzm.walletmodule.utils.DecimalUtils
 import com.fzm.walletmodule.utils.isFastClick
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.jeremyliao.liveeventbus.LiveEventBus
 import com.king.zxing.util.CodeUtils
 import kotlinx.coroutines.Dispatchers
@@ -61,6 +65,8 @@ class TransactionsActivity : BaseActivity() {
 
 
     override fun initView() {
+        val state = MMkvUtil.decodeBoolean(TRAN_STATE_KEY)
+        binding.cbRecord.isChecked = state
         setupViewPager()
         Glide.with(this).load(coin?.icon).into(binding.ivBName)
     }
@@ -119,6 +125,31 @@ class TransactionsActivity : BaseActivity() {
                 }
             }
             ARouter.getInstance().build(RouterPath.WALLET_CAPTURE).navigation()
+        }
+        binding.tabLayout.addOnTabSelectedListener(object :OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                when (tab.position) {
+                    0 -> transactionFragment0.doAsset()
+                    1 -> transactionFragment1.doAsset()
+                    2 -> transactionFragment2.doAsset()
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab) {
+            }
+
+        })
+
+        binding.cbRecord.setOnCheckedChangeListener { compoundButton, check ->
+            MMkvUtil.encode(TRAN_STATE_KEY, check)
+            when (binding.viewPager.currentItem) {
+                0 -> transactionFragment0.doAsset()
+                1 -> transactionFragment1.doAsset()
+                2 -> transactionFragment2.doAsset()
+            }
         }
     }
 

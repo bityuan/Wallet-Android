@@ -9,7 +9,8 @@ import com.google.gson.reflect.TypeToken
 open class Constants {
     companion object {
         const val COINS_KEY = "coins_key"
-        const val PAGE_LIMIT = 20L
+        const val TRAN_STATE_KEY = "tran_state_key"
+        const val PAGE_LIMIT = 30L
 
 
         fun setCoins(list: List<Coin>) {

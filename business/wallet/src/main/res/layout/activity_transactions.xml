@@ -162,20 +162,46 @@
         </LinearLayout>
 
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FCFCFF"
-            android:drawableLeft="@mipmap/icon_transaction_record"
-            android:drawablePadding="9dp"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/dp_14"
-            android:paddingTop="11dp"
-            android:paddingBottom="11dp"
-            android:text="@string/home_transaction_record"
-            android:textColor="@color/color_333649"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:background="@android:color/white"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#FCFCFF"
+                android:drawableLeft="@mipmap/icon_transaction_record"
+                android:drawablePadding="9dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/dp_14"
+                android:paddingTop="11dp"
+                android:paddingBottom="11dp"
+                android:text="@string/home_transaction_record"
+                android:textColor="@color/color_333649"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <CheckBox
+                android:id="@+id/cb_record"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#FCFCFF"
+                android:gravity="center_vertical"
+                android:paddingTop="11dp"
+                android:paddingEnd="@dimen/dp_16"
+                android:paddingBottom="11dp"
+                android:text="@string/low_usd_str"
+                android:textColor="@color/gray_8e"
+                android:textSize="14sp" />
+
+        </LinearLayout>
 
 
         <LinearLayout

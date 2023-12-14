@@ -911,5 +911,6 @@
     <string name="try_imp">Attempt to re import to resolve the issue</string>
     <string name="fee_to_low">Miner fees are too low</string>
     <string name="no_sup">Not currently supported</string>
+    <string name="low_usd_str">Hide records with less than 1 USDT</string>
 
 </resources>
