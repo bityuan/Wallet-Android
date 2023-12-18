@@ -386,11 +386,13 @@ class WConnectActivity : BaseActivity() {
                 .into(binding.incRequest.ivDappIcon)
 
             //handle value
-            var value = 0L
-            param.value?.let {
-                value = it.substringAfter("0x").toLong(16)
+            var value: BigInteger = BigInteger.ONE
+            param.value?.let { dVal ->
+                value = BigInteger(dVal.substringAfter("0x"), 16)
+                //value = it.substringAfter("0x").toLong(16)
             }
-            val pValue = "${value / va18}".toPlainStr(8)
+            //val pValue = "${value / va18}".toPlainStr(8)
+            val pValue = "${value.div(va18.toBigDecimal().toBigInteger())}".toPlainStr(8)
             val chainName = CHAIN_ID_MAPS[sessionRequest.chainId]
             lifecycleScope.launch(Dispatchers.IO) {
                 val balance = GoWallet.getWCBalance(param.from, chainName!!, "")
@@ -482,7 +484,7 @@ class WConnectActivity : BaseActivity() {
                             input64,
                             count,
                             param.to,
-                            value.toBigInteger()
+                            value
                         )
 
                         showPWD(createTran, chainName)
@@ -559,7 +561,7 @@ class WConnectActivity : BaseActivity() {
                 }
                 loading.show()
                 lifecycleScope.launch(Dispatchers.IO) {
-                    val wallet = LitePal.find<PWallet>(MyWallet.getId())
+                    val wallet = LitePal.find<PWallet>(MyWallet.getId(), true)
                     wallet?.let { w ->
                         val check = GoWallet.checkPasswd(password, w.password)
                         if (!check) {
@@ -568,43 +570,34 @@ class WConnectActivity : BaseActivity() {
                                 loading.dismiss()
                             }
                         } else {
-                            val bPassword = GoWallet.encPasswd(password)!!
-                            val mnem: String = GoWallet.decMenm(bPassword, w.mnem)
-                            chainName?.let { name ->
-                                val privKey =
-                                    GoWallet.getPrikey(if (name == "BTY") "ETH" else name, mnem)
-                                val createJson = gson.toJson(createTran)
-                                val bCreate = Walletapi.stringTobyte(createJson)
+                            val createJson = gson.toJson(createTran)
+                            val bCreate = Walletapi.stringTobyte(createJson)
+                            when (w.type) {
+                                PWallet.TYPE_NOMAL -> {
+                                    val bPassword = GoWallet.encPasswd(password)!!
+                                    val mnem: String = GoWallet.decMenm(bPassword, w.mnem)
+                                    chainName?.let { name ->
+                                        val privKey =
+                                            GoWallet.getPrikey(
+                                                if (name == "BTY") "ETH" else name,
+                                                mnem
+                                            )
 
-                                //{"execer":"Y29pbnM=","fee":100000,"nonce":2610561061402188162,"payload":"GAEKCQoDQlRZEMCEPQ==","to":"16PmeytY8CU3AF4UB87xrqqwcshXpGxSg7"}
-                                val signed = GoWallet.signTran(
-                                    if (name == "BTY") "BTYETH" else name, bCreate, privKey, 2
-                                )
-                                signed?.let {
-                                    if (name == "BTY") {
-                                        val send = walletRepository.sendRawTransaction(signed)
-                                        withContext(Dispatchers.Main) {
-                                            dis()
-                                            if (send.isSucceed()) {
-                                                send.data()?.let { sendHash ->
-                                                    responseWC(sendHash)
-                                                }
-                                            } else {
-                                                longToast(send.error())
-                                            }
+                                        signAndSend(name, privKey, bCreate)
 
-                                        }
-                                    } else {
-                                        val send = GoWallet.sendTran(chainName, signed, "")
-                                        val sendHash = JSONObject(send!!).getString("result")
-                                        withContext(Dispatchers.Main) {
-                                            responseWC(sendHash)
-                                            dis()
-                                        }
                                     }
                                 }
 
+                                PWallet.TYPE_PRI_KEY -> {
+                                    val priCoin = w.coinList[0]
+                                    val privKey = priCoin.getPrivkey(password)
+                                    chainName?.let { name ->
+                                        signAndSend(name, privKey, bCreate)
+                                    }
+
+                                }
                             }
+
 
                         }
 
@@ -615,6 +608,37 @@ class WConnectActivity : BaseActivity() {
 
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+
+    private suspend fun signAndSend(name: String, privKey: String, bCreate: ByteArray) {
+        //{"execer":"Y29pbnM=","fee":100000,"nonce":2610561061402188162,"payload":"GAEKCQoDQlRZEMCEPQ==","to":"16PmeytY8CU3AF4UB87xrqqwcshXpGxSg7"}
+        val signed = GoWallet.signTran(
+            if (name == "BTY") "BTYETH" else name, bCreate, privKey, 2
+        )
+        signed?.let {
+            if (name == "BTY") {
+                val send = walletRepository.sendRawTransaction(signed)
+                withContext(Dispatchers.Main) {
+                    dis()
+                    if (send.isSucceed()) {
+                        send.data()?.let { sendHash ->
+                            responseWC(sendHash)
+                        }
+                    } else {
+                        longToast(send.error())
+                    }
+
+                }
+            } else {
+                val send = GoWallet.sendTran(name, signed, "")
+                val sendHash = JSONObject(send!!).getString("result")
+                withContext(Dispatchers.Main) {
+                    responseWC(sendHash)
+                    dis()
+                }
+            }
         }
     }
 
