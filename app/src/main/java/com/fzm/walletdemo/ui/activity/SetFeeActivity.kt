@@ -139,7 +139,7 @@ class SetFeeActivity : BaseActivity() {
                         val gasPriceResult = web3j.ethGasPrice().send()
                         withContext(Dispatchers.Main) {
                             val price = gasPriceResult.gasPrice.toLong()
-                            val dGasPrice = if(price <= LOW_GAS_PRICE) LOW_GAS_PRICE else price
+                            val dGasPrice = if (price <= LOW_GAS_PRICE) LOW_GAS_PRICE else price
                             addGears(dGasPrice)
                         }
                     } catch (e: Exception) {
@@ -159,18 +159,31 @@ class SetFeeActivity : BaseActivity() {
             gasPrice * LOW
         } else origGasPrice.toDouble()
 
-        val high =
-            configGear(getString(R.string.high_str), highPrice.toLong().toBigInteger(), highPrice)
+        val high = configGear(
+            getString(R.string.high_str),
+            highPrice.toLong().toBigInteger(),
+            highPrice
+        )
+
         val middle = configGear(
             getString(R.string.standard_str),
             middlePrice.toLong().toBigInteger(),
             middlePrice
         )
-        val low =
-            configGear(getString(R.string.low_str), lowPrice.toLong().toBigInteger(), lowPrice)
-        gearList.add(high)
-        gearList.add(middle)
-        gearList.add(low)
+
+        val low = configGear(
+            getString(R.string.low_str),
+            lowPrice.toLong().toBigInteger(),
+            lowPrice
+        )
+
+        if (chainId == GoWallet.CHAIN_ID_BTY_L) {
+            gearList.add(low)
+        } else {
+            gearList.add(high)
+            gearList.add(middle)
+            gearList.add(low)
+        }
         mCommonAdapter.notifyDataSetChanged()
     }
 
