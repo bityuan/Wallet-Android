@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.activity.HistoryActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:background="@mipmap/bg_history"
+        android:orientation="vertical"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:paddingLeft="20dp"
+        android:paddingTop="27dp">
+
+        <TextView
+            android:id="@+id/tv_out_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="已转 BTY (个)"
+            android:textColor="#D4B171"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_out_sum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="-"
+            android:textColor="#D4B171"
+            android:textSize="36sp" />
+
+
+    </LinearLayout>
+
+
+    <cn.finalteam.loadingviewfinal.SwipeRefreshLayoutFinal
+        android:id="@+id/swl_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:ptr_duration_to_close="300"
+        app:ptr_duration_to_close_header="1500"
+        app:ptr_keep_header_when_refresh="true"
+        app:ptr_ratio_of_header_height_to_refresh="1.2"
+        app:ptr_resistance="1.7">
+
+        <cn.finalteam.loadingviewfinal.RecyclerViewFinal
+            android:id="@+id/rv_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:cacheColorHint="#00000000"
+            android:descendantFocusability="beforeDescendants"
+            app:loadMoreMode="click|scroll"
+            app:loadMoreView="cn.finalteam.loadingviewfinal.DefaultLoadMoreView"
+            app:noLoadMoreHideView="false" />
+
+    </cn.finalteam.loadingviewfinal.SwipeRefreshLayoutFinal>
+
+</LinearLayout>

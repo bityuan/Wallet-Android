@@ -250,4 +250,9 @@
     <string name="fee_to_low">矿工费过低</string>
     <string name="no_sup">暂不支持</string>
     <string name="low_usd_str">隐藏不足1USDT的记录</string>
+    <string name="str_history">查看历史交易记录</string>
+    <string name="out_tip1">此交易与上一笔交易的地址、转账金额相同，请仔细核对</string>
+    <string name="out_tip2">当前收款地址为陌生地址，请仔细核对</string>
+    <string name="transferred_str">已转</string>
+    <string name="num_str">次</string>
 </resources>

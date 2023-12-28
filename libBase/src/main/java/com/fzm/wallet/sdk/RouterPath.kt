@@ -11,6 +11,7 @@ object RouterPath {
     const val WALLET_CREATE_WALLET = "/wallet/CreateWalletActivity"
     const val WALLET_CREATE_MNEM = "/wallet/CreateMnemActivity"
     const val WALLET_OUT = "/wallet/OutActivity"
+    const val WALLET_HISTORY = "/wallet/HistoryActivity"
     const val WALLET_IN = "/wallet/InActivity"
     const val WALLET_TRANSACTIONS = "/wallet/TransactionsActivity"
     const val WALLET_TRANSACTION_DETAILS = "/wallet/TransactionDetailsActivity"

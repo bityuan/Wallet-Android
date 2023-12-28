@@ -470,9 +470,10 @@ class WConnectActivity : BaseActivity() {
                             toast(getString(R.string.fee_not_enough))
                             return@setOnClickListener
                         }
+                        //普通转账input64就传null
                         var input64: String? = null
-                        param.data?.let {
-                            val input = param.data.substringAfter("0x")
+                        param.data?.let { data ->
+                            val input = data.substringAfter("0x")
                             input64 =
                                 Base64.encodeToString(Walletapi.hexTobyte(input), Base64.DEFAULT)
                         }

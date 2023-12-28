@@ -2,14 +2,16 @@ package com.fzm.walletmodule.ui.activity
 
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnFocusChangeListener
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -69,7 +71,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.litepal.LitePal.where
 import org.litepal.extension.find
 import org.web3j.protocol.Web3j
-import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.http.HttpService
 import walletapi.GsendTx
 import walletapi.WalletRecover
@@ -81,7 +82,6 @@ import kotlin.math.pow
 
 //原BTY,BTC和ETH格式的BTY，查余额，账单，构造签名发送都是 "BTY",BNB的BTY是"BNB"
 //原YCC查余额，账单，构造签名发送都是"ETH",BTC和ETH格式的YCC，查余额，账单，构造签名发送都是 "YCC",BNB的YCC是"BNB"
-//动态链上fee 是否会导致转账失败情况处理？
 @Route(path = RouterPath.WALLET_OUT)
 class OutActivity : BaseActivity() {
 
@@ -162,19 +162,58 @@ class OutActivity : BaseActivity() {
                 binding.llOutMiner.visibility = View.GONE
             }
 
-            binding.etToAddress.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
-                if (!hasFocus) {
-                    val input = binding.etToAddress.text.toString()
-                    if (input.isNotEmpty()) {
-                        handleDNS(input)
-                    }
-
-                }
-            }
-
             if (!address.isNullOrEmpty()) {
                 binding.etToAddress.setText(address)
             }
+
+
+            binding.etToAddress.onFocusChangeListener =
+                OnFocusChangeListener { v, hasFocus ->
+                    if (!hasFocus) {
+                        val input = binding.etToAddress.text.toString()
+                        if (input.isNotEmpty()) {
+                            binding.llHistory.visibility = View.VISIBLE
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                val countResult = walletRepository.queryTxHistoryCount(
+                                    it.chain,
+                                    it.name,
+                                    it.address,
+                                    input
+                                )
+                                withContext(Dispatchers.Main) {
+                                    if (countResult.isSucceed()) {
+                                        countResult.data()?.let { count ->
+                                            val historyCount = count.toInt()
+                                            binding.tvOutDetail.visibility =
+                                                if (historyCount > 0) View.VISIBLE else View.GONE
+                                            binding.tvOutNum.text = "${getString(R.string.transferred_str)}$historyCount ${getString(R.string.num_str)}"
+                                            binding.tvOutNum.setTextColor(
+                                                if (historyCount == 0) Color.RED else ContextCompat.getColor(
+                                                    this@OutActivity,
+                                                    R.color.color37
+                                                )
+                                            )
+                                        }
+                                    } else {
+                                        toast(countResult.error())
+                                    }
+                                }
+                            }
+
+                            // DNS
+                            handleDNS(input)
+
+                            binding.tvOutDetail.setOnClickListener {
+                                ARouter.getInstance().build(RouterPath.WALLET_HISTORY)
+                                    .withSerializable(RouterPath.PARAM_COIN,coin)
+                                    .withString(RouterPath.PARAM_ADDRESS,input)
+                                    .navigation()
+                            }
+                        }
+
+
+                    }
+                }
         }
     }
 
@@ -693,9 +732,9 @@ class OutActivity : BaseActivity() {
                         return@runOnUiThread
                     }
                     if (!TextUtils.isEmpty(result.error)) {
-                        if(result.error == "transaction underpriced") {
+                        if (result.error == "transaction underpriced") {
                             ToastUtils.show(this, getString(R.string.fee_to_low))
-                        }else {
+                        } else {
                             ToastUtils.show(this, result.error)
                         }
                         finish()
@@ -815,7 +854,8 @@ class OutActivity : BaseActivity() {
                     withContext(Dispatchers.Main) {
                         val price = gasPriceResult.gasPrice.toLong()
                         val lowGasPrice = (LOW_GAS_PRICE * LOW).toLong()
-                        gasPrice = if(price <= LOW_GAS_PRICE) lowGasPrice else (price * LOW).toLong()
+                        gasPrice =
+                            if (price <= LOW_GAS_PRICE) lowGasPrice else (price * LOW).toLong()
                         origGas = gas.toBigInteger()
                         cGas = gas.toBigInteger()
                         cGasPrice = gasPrice.toBigInteger()
@@ -851,11 +891,11 @@ class OutActivity : BaseActivity() {
     }
 
     private fun customChain(): Boolean {
-        coin?.let {
+        /*coin?.let {
             if (it.chain == "ETH" || it.chain == "BNB") {
                 return true
             }
-        }
+        }*/
         return false
     }
 

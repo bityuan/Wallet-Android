@@ -111,4 +111,67 @@ class WalletRepository constructor(private val apis: Apis) {
         return goCall { apis.sendRawTransaction(requestBody) }
     }
 
+    suspend fun queryTxHistoryCount(
+        cointype: String,
+        tokensymbol: String,
+        from: String,
+        to: String
+    ): HttpResult<String> {
+        val jobj = JSONObject()
+        jobj.put("cointype", cointype)
+        jobj.put("tokensymbol", tokensymbol)
+        jobj.put("from", from)
+        jobj.put("to", to)
+        val rawdata = JSONObject()
+        rawdata.put("payload", jobj)
+        rawdata.put("method", "QueryTxHistoryCount")
+
+
+        return goCall {
+            apis.queryTxHistoryCount(
+                toRequestBody(
+                    "Wallet.Transport",
+                    "cointype" to cointype,
+                    "tokensymbol" to tokensymbol,
+                    "rawdata" to rawdata
+                )
+            )
+        }
+    }
+
+
+    suspend fun queryTxHistoryDetail(
+        cointype: String,
+        tokensymbol: String,
+        from: String,
+        to: String,
+        direction: Int,
+        count: Int,
+        index: Int
+    ): HttpResult<TxTotal> {
+        val jobj = JSONObject()
+        jobj.put("cointype", cointype)
+        jobj.put("tokensymbol", tokensymbol)
+        jobj.put("from", from)
+        jobj.put("to", to)
+        jobj.put("direction", direction)
+        jobj.put("count", count)
+        jobj.put("index", index)
+        val rawdata = JSONObject()
+        rawdata.put("payload", jobj)
+        rawdata.put("method", "QueryTxHistoryDetail")
+
+
+        return goCall {
+            apis.queryTxHistoryDetail(
+                toRequestBody(
+                    "Wallet.Transport",
+                    "cointype" to cointype,
+                    "tokensymbol" to tokensymbol,
+                    "rawdata" to rawdata
+                )
+            )
+        }
+    }
+
 }

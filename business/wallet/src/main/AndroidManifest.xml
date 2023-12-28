@@ -32,6 +32,11 @@
             android:label=""
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.activity.HistoryActivity"
+            android:launchMode="singleTask"
+            android:label=""
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.activity.NewRecoverAddressActivity"
             android:label=""
             android:screenOrientation="portrait" />

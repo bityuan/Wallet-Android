@@ -154,6 +154,48 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:visibility="gone"
+                android:id="@+id/ll_history"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:background="#F3FDFF"
+                android:gravity="center_vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
+
+
+                <TextView
+                    android:id="@+id/tv_out_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_out_num"
+                    android:drawableLeft="@mipmap/ic_out_num"
+                    android:drawablePadding="10dp"
+                    android:paddingLeft="13dp"
+                    android:paddingTop="6dp"
+                    android:paddingRight="13dp"
+                    android:paddingBottom="6dp"
+                    android:text="-"
+                    android:textColor="#37AEC4"
+                    android:textSize="12sp" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/tv_out_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/str_history"
+                    android:textColor="#37AEC4"
+                    android:textSize="12sp" />
+
+
+            </LinearLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_dns_list"
                 android:layout_width="match_parent"

@@ -7,12 +7,14 @@ import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.DNSResponse
 import com.fzm.wallet.sdk.net.GoResponse
 import com.fzm.wallet.sdk.net.HttpResponse
+import com.fzm.wallet.sdk.net.UrlConfig
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
+import retrofit2.http.Url
 
 @JvmSuppressWildcards
 interface Apis {
@@ -87,4 +89,18 @@ interface Apis {
     suspend fun getGasPrice(@Body body: RequestBody): GoResponse<String>
     @POST(IPConfig.BTY_ETH_NODE)
     suspend fun sendRawTransaction(@Body body: RequestBody): GoResponse<String>
+
+
+    @POST
+    suspend fun queryTxHistoryCount(
+        @Body body: RequestBody,
+        @Url url: String = UrlConfig.GO_URL
+    ): GoResponse<String>
+
+
+    @POST
+    suspend fun queryTxHistoryDetail(
+        @Body body: RequestBody,
+        @Url url: String = UrlConfig.GO_URL
+    ): GoResponse<TxTotal>
 }

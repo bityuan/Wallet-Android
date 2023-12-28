@@ -107,7 +107,7 @@ class DappActivity : AppCompatActivity() {
     private lateinit var origGas: BigInteger
     private lateinit var origGasPirce: BigInteger
     private lateinit var cGasPrice: BigInteger
-    private var dGas:Double = 0.0
+    private var dGas: Double = 0.0
     private var tvFee: TextView? = null
     private var tvWCFee: TextView? = null
     private var tvLevel: TextView? = null
@@ -553,10 +553,14 @@ class DappActivity : AppCompatActivity() {
                                 }
                             }
                             btnNext.setOnClickListener {
-                                val input = tran.payload?.substringAfter("0x")
-                                val input64 = Base64.encodeToString(
-                                    Walletapi.hexTobyte(input), Base64.DEFAULT
-                                )
+                                //普通转账input64就传null
+                                var input64: String? = null
+                                tran.payload?.let { data ->
+                                    val input = data.substringAfter("0x")
+                                    input64 = Base64.encodeToString(
+                                        Walletapi.hexTobyte(input), Base64.DEFAULT
+                                    )
+                                }
                                 val createTran = CreateTran(
                                     address.toString(),
                                     cGas,
@@ -594,8 +598,9 @@ class DappActivity : AppCompatActivity() {
     }
 
     private fun gotoSetFee() {
-        if(::cGas.isInitialized && ::cGasPrice.isInitialized){
-            ARouter.getInstance().build(RouterPath.APP_SETFEE).withInt(PARAM_FEE_POSITION, feePosition)
+        if (::cGas.isInitialized && ::cGasPrice.isInitialized) {
+            ARouter.getInstance().build(RouterPath.APP_SETFEE)
+                .withInt(PARAM_FEE_POSITION, feePosition)
                 .withLong(PARAM_CHAIN_ID, chainId)
                 .withLong(PARAM_ORIG_GAS, origGas.toLong())
                 .withLong(PARAM_GAS, cGas.toLong())
@@ -624,7 +629,7 @@ class DappActivity : AppCompatActivity() {
 
     }
 
-    private fun customChain():Boolean{
+    private fun customChain(): Boolean {
         chainName?.let {
             if (it == "ETH" || it == "BNB") {
                 return true
@@ -632,6 +637,7 @@ class DappActivity : AppCompatActivity() {
         }
         return false
     }
+
     private var pwdDialog: Dialog? = null
     private fun showPWD(createTran: CreateTran, chainName: String?) {
         try {

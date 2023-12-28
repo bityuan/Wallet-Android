@@ -413,7 +413,6 @@
 
     <string name="basic_wheel_picker_choose_trade_type">Transaction Type</string>
     <string name="basic_wheel_picker_cancel">Cancel</string>
-    <string name="basic_wheel_picker_ok">Done</string>
     <string name="real_verify">verify</string>
     <string name="wallet_name">Wallet name</string>
     <string name="mnem_tip">Please keep your mnemonic in a safe place so that you can retrieve it if you lose it.</string>
@@ -912,5 +911,10 @@
     <string name="fee_to_low">Miner fees are too low</string>
     <string name="no_sup">Not currently supported</string>
     <string name="low_usd_str">Hide records with less than 1 USDT</string>
+    <string name="str_history">View historical transaction records</string>
+    <string name="out_tip1">This transaction has the same address and transfer amount as the previous transaction. Please carefully verify</string>
+    <string name="out_tip2">The current receiving address is an unfamiliar address, please double check</string>
+    <string name="transferred_str">Transferred</string>
+    <string name="num_str">times</string>
 
 </resources>
