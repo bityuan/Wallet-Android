@@ -49,8 +49,8 @@ ext {
             buildToolsVersion: "30.0.3",
             minSdkVersion    : 23,
             targetSdkVersion : 33,
-            versionCode      : 24300,
-            versionName      : "2.4.3"
+            versionCode      : 25000,
+            versionName      : "2.5.0"
     ]
 
     applicationId = [
@@ -108,7 +108,7 @@ ext {
     lifecycleLivedata = "androidx.lifecycle:lifecycle-livedata-ktx:2.3.1"
     lifecycleViewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
 
-    zxingLite = "com.king.zxing:zxing-lite:1.1.2"
+    zxingLite = "com.github.jenly1314:zxing-lite:2.4.0"
     backgroundLibrary = "com.github.JavaNoober.BackgroundLibrary:libraryx:1.7.3"
     fragmentKtx = "androidx.fragment:fragment-ktx:1.4.1"
     dsBridge = "com.github.wendux:DSBridge-Android:3.0.0"

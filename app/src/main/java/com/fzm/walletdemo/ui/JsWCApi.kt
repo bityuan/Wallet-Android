@@ -5,6 +5,7 @@ import android.util.Log
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import androidx.fragment.app.FragmentActivity
+import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.walletdemo.web3.bean.Address
 import com.fzm.walletdemo.web3.bean.Web3Call
 import com.fzm.walletdemo.web3.bean.Web3Transaction
@@ -69,7 +70,7 @@ class JsWCApi(
 
     @JavascriptInterface
     fun signPersonalMessage(callbackId: Int, data: String?) {
-        Timber.tag("edao").v("signPersonalMessage")
+        logDebug("------------------signPersonalMessage---------")
     }
 
 

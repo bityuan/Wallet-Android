@@ -2,6 +2,8 @@ package com.fzm.walletdemo.ui.activity
 
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.View
+import android.view.View.OnClickListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -109,14 +111,18 @@ class SearchDappActivity : BaseActivity() {
         mCommonAdapter = object : CommonAdapter<String>(this, R.layout.layout_text_m, mUrlList) {
             override fun convert(holder: ViewHolder, str: String, position: Int) {
                 holder.setText(R.id.tv_value, str)
+                holder.setOnClickListener(R.id.iv_to_up) {
+                    val url = mUrlList[position]
+                    binding.etSearch.setText(url)
+                    binding.etSearch.setSelection(url.length)
+                }
             }
         }
         binding.rvList.layoutManager = linearLayoutManager
         binding.rvList.adapter = mCommonAdapter
         binding.rvList.setOnItemClickListener { viewHolder, i ->
             val url = mUrlList[i]
-            binding.etSearch.setText(url)
-            binding.etSearch.setSelection(url.length)
+            gotoDapp(url)
         }
         binding.rvList.setOnItemLongClickListener { viewHolder, position ->
             MaterialDialog.Builder(this)

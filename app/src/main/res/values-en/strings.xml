@@ -53,11 +53,11 @@
   <string name="wc_coned">Already connected to the following wallets</string>
   <string name="del_str">Delete</string>
   <string name="del_tip_str">Delete?</string>
-  <string name="send_suc_str">Send successfully!</string>
   <string name="tian_str">proposal</string>
   <string name="tp_str">vote</string>
   <string name="tp_error">The event is too hot, please try again later</string>
     <string name="fee_setting">set gas fee</string>
   <string name="enter_str">please enter</string>
+    <string name="switch_account_str">Switch accounts</string>
 
 </resources>

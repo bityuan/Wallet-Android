@@ -158,6 +158,7 @@
     <string name="saturday">星期六</string>
     <string name="sunday">星期日</string>
     <string name="add_coin_tab_one">首页</string>
+    <string name="input_password">账户密码</string>
     <string name="rsp_dialog_input_password">请输入账户密码</string>
     <string name="label_exchange">闪兑</string>
     <string name="update_cancel">暂不更新</string>
@@ -255,4 +256,15 @@
     <string name="out_tip2">当前收款地址为陌生地址，请仔细核对</string>
     <string name="transferred_str">已转</string>
     <string name="num_str">次</string>
+    <string name="text_tips2">已知晓</string>
+    <string name="speed_up_str">加速交易</string>
+    <string name="cancel_tran_str">取消交易</string>
+    <string name="p_input_fee_str">请输入矿工费</string>
+    <string name="tip_fee_low">矿工费最低为原矿工费的1.2倍</string>
+    <string name="send_suc_str">发送成功!</string>
+    <string name="current_coin_noadd">当前币种未添加</string>
+    <string name="choose_c_str">当前选中</string>
+    <string name="tip_2">温馨提示</string>
+    <string name="eth_tip_speed">加速交易：加速ETH链上交易，加速成功返还上次未消耗手续费</string>
+    <string name="eth_tip_cancle">取消交易：取消ETH链上交易，取消成功返还上次未消耗手续费</string>
 </resources>

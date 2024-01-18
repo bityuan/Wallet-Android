@@ -1,46 +1,46 @@
 package com.fzm.walletmodule.ui.activity
 
-import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Vibrator
 import android.provider.MediaStore
 import android.text.TextUtils
-import android.view.MotionEvent
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
 import com.fzm.walletmodule.R
-import com.fzm.walletmodule.manager.PermissionManager
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.ToastUtils
-import com.fzm.walletmodule.utils.UriUtils
-import com.fzm.walletmodule.utils.permission.EasyPermissions
+import com.google.zxing.Result
 import com.jeremyliao.liveeventbus.LiveEventBus
-import com.king.zxing.CaptureHelper
-import com.king.zxing.OnCaptureCallback
+import com.king.zxing.CameraScan
+import com.king.zxing.DecodeConfig
+import com.king.zxing.DecodeFormatManager
+import com.king.zxing.DefaultCameraScan
+import com.king.zxing.analyze.MultiFormatAnalyzer
+import com.king.zxing.config.ResolutionCameraConfig
 import com.king.zxing.util.CodeUtils
-import kotlinx.android.synthetic.main.activity_capture_custom.*
-import kotlinx.android.synthetic.main.include_scan.*
-import org.jetbrains.anko.doAsync
+import kotlinx.android.synthetic.main.activity_capture_custom.my_toolbar
+import kotlinx.android.synthetic.main.activity_capture_custom.tv_picture
+import kotlinx.android.synthetic.main.include_scan.previewView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
 
 @Route(path = RouterPath.WALLET_CAPTURE)
-class CaptureCustomActivity : BaseActivity(), EasyPermissions.PermissionCallbacks,
-    OnCaptureCallback {
-    private var mRequstCode = -1
-    private var mCaptureHelper: CaptureHelper? = null
+class CaptureCustomActivity : BaseActivity(),
+    CameraScan.OnScanResultCallback {
+    private var mCameraScan: CameraScan? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         mCustomToobar = true
         mStatusColor = Color.TRANSPARENT
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_capture_custom)
-        initIntent()
         initMyToolbar()
         initScanUI()
-        requestPermission()
         initListener()
     }
 
@@ -52,25 +52,27 @@ class CaptureCustomActivity : BaseActivity(), EasyPermissions.PermissionCallback
     }
 
     private fun initScanUI() {
-        mCaptureHelper = CaptureHelper(this, surfaceView!!, viewfinderView)
-        mCaptureHelper!!.onCreate()
-        mCaptureHelper!!.setOnCaptureCallback(this)
-        setCaptureHelper(true, false)
-        tv_tip.text = getString(R.string.my_scan_toast)
-
-
+        setCaptureHelper()
     }
 
-    private fun setCaptureHelper(isVibrate: Boolean, isContinuous: Boolean) {
-        mCaptureHelper!!.vibrate(isVibrate)
-            .fullScreenScan(true)//全屏扫码
-            .supportVerticalCode(true)//支持扫垂直条码，建议有此需求时才使用。
-            .continuousScan(isContinuous) //连续扫码,默认false
-    }
+    private fun setCaptureHelper() {
+        //初始化解码配置
+        val decodeConfig = DecodeConfig()
+        decodeConfig.setHints(DecodeFormatManager.QR_CODE_HINTS).isFullAreaScan =
+            true //设置是否全区域识别，默认false
 
-    override fun initIntent() {
-        super.initIntent()
-        mRequstCode = intent.getIntExtra(REQUST_CODE, -1)
+
+        mCameraScan = DefaultCameraScan(this, previewView)
+        mCameraScan!!.setOnScanResultCallback(this)
+            .setAnalyzer(MultiFormatAnalyzer(decodeConfig))
+            .setVibrate(true)
+            .setCameraConfig(
+                ResolutionCameraConfig(
+                    this,
+                    ResolutionCameraConfig.IMAGE_QUALITY_720P
+                )
+            )
+            .startCamera()
     }
 
     private fun initMyToolbar() {
@@ -82,7 +84,7 @@ class CaptureCustomActivity : BaseActivity(), EasyPermissions.PermissionCallback
             actionBar.setDisplayUseLogoEnabled(false)
             actionBar.setHomeAsUpIndicator(R.drawable.ic_back_white)
         }
-        my_toolbar.setNavigationOnClickListener(View.OnClickListener { onBackPressed() })
+        my_toolbar.setNavigationOnClickListener { finish() }
     }
 
     private fun startPhotoCode() {
@@ -95,18 +97,6 @@ class CaptureCustomActivity : BaseActivity(), EasyPermissions.PermissionCallback
     }
 
 
-    fun requestPermission() {
-        if (EasyPermissions.hasPermissions(this, *PERMISSIONS)) {
-
-        } else {
-            EasyPermissions.requestPermissions(
-                this, getString(R.string.home_scan_toast),
-                RC_CAMERA, *PERMISSIONS
-            )
-        }
-
-
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -118,20 +108,14 @@ class CaptureCustomActivity : BaseActivity(), EasyPermissions.PermissionCallback
         }
     }
 
-    private fun asyncThread(runnable: Runnable) {
-        Thread(runnable).start()
-    }
 
     //解析相册二维码结果
     private fun parsePhoto(data: Intent) {
-        val path = UriUtils.INSTANCE.getImagePath(this, data)
-        if (TextUtils.isEmpty(path)) {
-            return
-        }
+        val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, data.data)
         //异步解析
-        doAsync {
-            val result = CodeUtils.parseCode(path)
-            runOnUiThread {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val result = CodeUtils.parseCode(bitmap)
+            withContext(Dispatchers.Main){
                 if (TextUtils.isEmpty(result)) {
                     ToastUtils.show(this@CaptureCustomActivity, getString(R.string.config_code))
                 } else {
@@ -140,19 +124,7 @@ class CaptureCustomActivity : BaseActivity(), EasyPermissions.PermissionCallback
                 }
             }
         }
-    }
 
-
-//-----------------------权限处理-------------------------
-
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
-    }
-
-    override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
-        reStartActivity()
     }
 
     //重启当前activity
@@ -162,54 +134,7 @@ class CaptureCustomActivity : BaseActivity(), EasyPermissions.PermissionCallback
         startActivity(intent)
     }
 
-    override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
-        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            PermissionManager(this@CaptureCustomActivity).showDialog(getString(R.string.home_scan_toast))
-        }
-    }
 
-
-    override fun onResume() {
-        super.onResume()
-        if (EasyPermissions.hasPermissions(this, *PERMISSIONS)) {
-            mCaptureHelper!!.onResume()
-        } else {
-            EasyPermissions.requestPermissions(
-                this, getString(R.string.home_scan_toast),
-                RC_CAMERA, *PERMISSIONS
-            )
-        }
-
-    }
-
-    override fun onPause() {
-        super.onPause()
-        mCaptureHelper!!.onPause()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mCaptureHelper!!.onDestroy()
-    }
-
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        mCaptureHelper!!.onTouchEvent(event)
-        return super.onTouchEvent(event)
-    }
-
-
-
-    //扫一扫二维码结果
-    override fun onResultCallback(result: String): Boolean {
-        post(result)
-        return false
-    }
-
-
-    private fun showVibrator() {
-        val vibrator = this.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        vibrator.vibrate(100L)
-    }
 
     private fun post(result: String) {
         LiveEventBus.get<String>(LIVE_KEY_SCAN).post(result)
@@ -217,21 +142,11 @@ class CaptureCustomActivity : BaseActivity(), EasyPermissions.PermissionCallback
 
 
     companion object {
-
-
-        val RESULT_SUCCESS = 1
-        private val RC_CAMERA = 111
         val REQUEST_IMAGE = 112
+    }
 
-        private val PERMISSIONS =
-            arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        val REQUST_CODE = "requstcode"
-
-        val REQUESTCODE_OUT = 1
-        val REQUESTCODE_HOME = 2
-        val REQUESTCODE_CONTRACTS = 3
-        val REQUESTCODE_CONTRACTS_ET = 4
-        val REQUESTCODE_TRANSACTIONS = 5
-
+    override fun onScanResultCallback(result: Result): Boolean {
+        post(result.text)
+        return false
     }
 }

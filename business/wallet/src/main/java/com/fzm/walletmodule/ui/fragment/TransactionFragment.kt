@@ -140,7 +140,7 @@ class TransactionFragment : BaseFragment() {
         val height = transactions.height
         for (t in mTokenFeeList) {
             if (t.height == height && "token fee" == t.note) {
-                transactions.fee = t.value
+                transactions.fee = t.value.toString()
                 break
             }
         }

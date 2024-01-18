@@ -27,6 +27,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -41,6 +42,7 @@ import com.fzm.wallet.sdk.base.FEE_CUSTOM_POSITION
 import com.fzm.wallet.sdk.base.LIVE_KEY_FEE
 import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
+import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.ext.toPlainStr
 import com.fzm.wallet.sdk.net.walletQualifier
@@ -52,6 +54,8 @@ import com.fzm.walletdemo.BuildConfig
 import com.fzm.walletmodule.bean.DGear
 import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.ActivityDappBinding
+import com.fzm.walletdemo.databinding.DialogDappBottomBinding
+import com.fzm.walletdemo.databinding.DialogDappWalletsBinding
 import com.fzm.walletdemo.ui.JsApi
 import com.fzm.walletdemo.ui.JsWCApi
 import com.fzm.walletdemo.wcv2.CreateTran
@@ -61,9 +65,12 @@ import com.fzm.walletdemo.web3.bean.Address
 import com.fzm.walletdemo.web3.bean.Web3Call
 import com.fzm.walletdemo.web3.bean.Web3Transaction
 import com.fzm.walletdemo.web3.listener.JsListener
+import com.fzm.walletmodule.ui.widget.configWindow
 import com.fzm.walletmodule.utils.ClipboardUtils
 import com.google.gson.GsonBuilder
 import com.jeremyliao.liveeventbus.LiveEventBus
+import com.zhy.adapter.recyclerview.CommonAdapter
+import com.zhy.adapter.recyclerview.base.ViewHolder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -72,6 +79,7 @@ import org.json.JSONObject
 import org.koin.android.ext.android.inject
 import org.litepal.LitePal
 import org.litepal.extension.find
+import org.litepal.extension.findAll
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.methods.request.Transaction
@@ -100,7 +108,9 @@ class DappActivity : AppCompatActivity() {
     private var address = Address.EMPTY
     private var nodeUrl = GoWallet.WEB3_BNB
     private var chainId: Long = GoWallet.CHAIN_ID_BNB_L
-    private var feePosition = 2
+
+    //private var feePosition = 2
+    private var feePosition = 0
     private lateinit var cGas: BigInteger
 
     //原始gas
@@ -112,6 +122,7 @@ class DappActivity : AppCompatActivity() {
     private var tvWCFee: TextView? = null
     private var tvLevel: TextView? = null
     private var chainName: String? = ""
+    private var currentAddress = ""
 
     private val walletRepository: WalletRepository by inject(walletQualifier)
     private val loading by lazy {
@@ -130,7 +141,7 @@ class DappActivity : AppCompatActivity() {
         configChainNet()
         chainName = GoWallet.CHAIN_ID_MAPS_L[chainId]
         doBar()
-        binding.xbar.tvToolbar.text = name ?: getString(R.string.exp_str)
+        binding.tvToolbar.text = name ?: getString(R.string.exp_str)
         initWebView()
         url?.let {
             binding.webDapp.loadUrl(it)
@@ -165,6 +176,7 @@ class DappActivity : AppCompatActivity() {
             0 -> {
                 val addr = GoWallet.getChain("ETH")?.address
                 addr?.let {
+                    currentAddress = it
                     address = Address(it)
                     nodeUrl = GoWallet.WEB3_BTY
                     chainId = GoWallet.CHAIN_ID_BTY_L
@@ -174,6 +186,7 @@ class DappActivity : AppCompatActivity() {
             1 -> {
                 val addr = GoWallet.getChain("ETH")?.address
                 addr?.let {
+                    currentAddress = it
                     address = Address(it)
                     nodeUrl = GoWallet.WEB3_ETH
                     chainId = GoWallet.CHAIN_ID_ETH_L
@@ -183,6 +196,7 @@ class DappActivity : AppCompatActivity() {
             2 -> {
                 val addr = GoWallet.getChain("BNB")?.address
                 addr?.let {
+                    currentAddress = it
                     address = Address(it)
                     nodeUrl = GoWallet.WEB3_BNB
                     chainId = GoWallet.CHAIN_ID_BNB_L
@@ -192,17 +206,21 @@ class DappActivity : AppCompatActivity() {
     }
 
     private fun doBar() {
-        setSupportActionBar(binding.xbar.toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.xbar.toolbar.setNavigationOnClickListener { onBackPressed() }
+        binding.toolbar.setNavigationOnClickListener { onBackPressed() }
         val view = (findViewById<View>(android.R.id.content) as ViewGroup).getChildAt(0)
         view.fitsSystemWindows = true
         StatusBarUtil.StatusBarLightMode(this)
+
+        binding.ivMenu.setOnClickListener {
+            showBottomDialog()
+        }
     }
 
     override fun onTitleChanged(title: CharSequence?, color: Int) {
         super.onTitleChanged(title, color)
-        binding.xbar.toolbar.title = ""
+        binding.toolbar.title = ""
     }
 
 
@@ -260,40 +278,6 @@ class DappActivity : AppCompatActivity() {
         }
 
 
-    }
-
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val menuItem = menu.add(0, 1, 0, getString(R.string.ref_str))
-        val menuItem1 = menu.add(0, 2, 0, getString(R.string.copy_url_str))
-        val menuItem2 = menu.add(0, 3, 0, getString(R.string.ex_open))
-        val menuItem3 = menu.add(0, 4, 0, getString(R.string.exit_str))
-        //menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            1 -> {
-                binding.webDapp.reload()
-            }
-
-            2 -> {
-                ClipboardUtils.clip(this, url)
-            }
-
-            3 -> {
-                val intent = Intent(Intent.ACTION_VIEW)
-                intent.addCategory(Intent.CATEGORY_BROWSABLE)
-                intent.data = Uri.parse(url)
-                startActivity(intent)
-            }
-
-            4 -> {
-                finish()
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 
 
@@ -553,26 +537,29 @@ class DappActivity : AppCompatActivity() {
                                 }
                             }
                             btnNext.setOnClickListener {
-                                //普通转账input64就传null
-                                var input64: String? = null
-                                tran.payload?.let { data ->
-                                    val input = data.substringAfter("0x")
-                                    input64 = Base64.encodeToString(
-                                        Walletapi.hexTobyte(input), Base64.DEFAULT
+                                try {
+                                    //普通转账input64就传null
+                                    var input64: String? = null
+                                    tran.payload?.let { data ->
+                                        val input = data.substringAfter("0x")
+                                        input64 = Base64.encodeToString(
+                                            Walletapi.hexTobyte(input), Base64.DEFAULT
+                                        )
+                                    }
+                                    val createTran = CreateTran(
+                                        address.toString(),
+                                        cGas,
+                                        cGasPrice,
+                                        input64,
+                                        count,
+                                        tran.recipient.toString(),
+                                        tran.value,
+                                        tran.leafPosition
                                     )
+                                    showPWD(createTran, chainName)
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
                                 }
-                                val createTran = CreateTran(
-                                    address.toString(),
-                                    cGas,
-                                    cGasPrice,
-                                    input64,
-                                    count,
-                                    tran.recipient.toString(),
-                                    tran.value,
-                                    tran.leafPosition
-                                )
-                                showPWD(createTran, chainName)
-
                             }
 
 
@@ -671,40 +658,47 @@ class DappActivity : AppCompatActivity() {
                     }
                     loading.show()
                     lifecycleScope.launch(Dispatchers.IO) {
-                        val wallet = LitePal.find<PWallet>(MyWallet.getId(), true)
-                        wallet?.let { w ->
-                            val check = GoWallet.checkPasswd(password, w.password)
-                            if (!check) {
-                                withContext(Dispatchers.Main) {
-                                    toast(getString(R.string.pwd_fail_str))
-                                    loading.dismiss()
-                                }
-                            } else {
-                                when (w.type) {
-                                    PWallet.TYPE_NOMAL -> {
-                                        val bPassword = GoWallet.encPasswd(password)!!
-                                        val mnem: String = GoWallet.decMenm(bPassword, w.mnem)
-                                        chainName?.let { name ->
-                                            val privKey = GoWallet.getPrikey(
-                                                if (name == "BTY") "ETH" else name, mnem
-                                            )
-                                            signAndSend(name, privKey, createTran)
-                                        }
+                        try {
+                            val wallet = LitePal.find<PWallet>(MyWallet.getId(), true)
+                            wallet?.let { w ->
+                                val check = GoWallet.checkPasswd(password, w.password)
+                                if (!check) {
+                                    withContext(Dispatchers.Main) {
+                                        toast(getString(R.string.pwd_fail_str))
+                                        loading.dismiss()
                                     }
-
-                                    PWallet.TYPE_PRI_KEY -> {
-                                        val priCoin = w.coinList[0]
-                                        val privKey = priCoin.getPrivkey(password)
-                                        chainName?.let { name ->
-                                            signAndSend(name, privKey, createTran)
+                                } else {
+                                    when (w.type) {
+                                        PWallet.TYPE_NOMAL -> {
+                                            val bPassword = GoWallet.encPasswd(password)!!
+                                            val mnem: String = GoWallet.decMenm(bPassword, w.mnem)
+                                            chainName?.let { name ->
+                                                val privKey = GoWallet.getPrikey(
+                                                    if (name == "BTY") "ETH" else name, mnem
+                                                )
+                                                signAndSend(name, privKey, createTran)
+                                            }
                                         }
 
+                                        PWallet.TYPE_PRI_KEY -> {
+                                            val priCoin = w.coinList[0]
+                                            val privKey = priCoin.getPrivkey(password)
+                                            chainName?.let { name ->
+                                                signAndSend(name, privKey, createTran)
+                                            }
+
+                                        }
+
+                                        else -> {}
                                     }
+
                                 }
 
                             }
-
+                        } catch (e: Exception) {
+                            e.printStackTrace()
                         }
+
 
                     }
                 } catch (e: Exception) {
@@ -782,6 +776,77 @@ class DappActivity : AppCompatActivity() {
         loading.dismiss()
         pwdDialog?.dismiss()
         payDialog?.dismiss()
+    }
+
+
+    private fun showBottomDialog() {
+        val bottomDialog = AlertDialog.Builder(this).create()
+        val bottomBinding = DialogDappBottomBinding.inflate(layoutInflater)
+        bottomBinding.tvSwitchAccount.setOnClickListener {
+            try {
+                bottomDialog.dismiss()
+                val wallets = LitePal.where("type = ?", "${PWallet.TYPE_NOMAL}").find<PWallet>(true)
+                val cName = if (chainName == "BTY") "ETH" else chainName
+                val walletsDialog = AlertDialog.Builder(this).create()
+                val walletsBinding = DialogDappWalletsBinding.inflate(layoutInflater)
+                walletsDialog.setView(walletsBinding.root)
+                walletsBinding.rvList.layoutManager = LinearLayoutManager(this)
+                val adapter =
+                    object : CommonAdapter<PWallet>(this, R.layout.item_dapp_wallet, wallets) {
+                        override fun convert(holder: ViewHolder, t: PWallet, position: Int) {
+                            val coin = t.coinList.find { it.name == cName }
+                            holder.setVisible(
+                                R.id.tv_current_wallet,
+                                currentAddress == "${coin?.address}"
+                            )
+                            holder.setText(R.id.tv_wallet_name, t.name)
+                            holder.setText(R.id.tv_address, "${coin?.address}")
+                        }
+
+                    }
+                walletsBinding.rvList.adapter = adapter
+                walletsBinding.rvList.setOnItemClickListener { viewHolder, i ->
+                    val coin = wallets[i].coinList.find { it.name == cName }
+                    coin?.let {
+                        currentAddress = it.address
+                        address = Address(currentAddress)
+                        setupWeb3(chainId, nodeUrl, address)
+                        binding.webDapp.reload()
+                        MyWallet.setId(wallets[i].id)
+                        walletsDialog.dismiss()
+                    }
+
+                }
+                configWindow(walletsDialog)
+                walletsDialog.show()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+
+        }
+        bottomBinding.tvRefresh.setOnClickListener {
+            binding.webDapp.reload()
+            bottomDialog.dismiss()
+        }
+        bottomBinding.tvBrowserOpen.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.addCategory(Intent.CATEGORY_BROWSABLE)
+            intent.data = Uri.parse(url)
+            startActivity(intent)
+            bottomDialog.dismiss()
+        }
+        bottomBinding.tvCopyUrl.setOnClickListener {
+            ClipboardUtils.clip(this, url)
+            bottomDialog.dismiss()
+        }
+        bottomBinding.tvExit.setOnClickListener {
+            bottomDialog.dismiss()
+            finish()
+        }
+        configWindow(bottomDialog)
+        bottomDialog.setView(bottomBinding.root)
+        bottomDialog.show()
     }
 
 }

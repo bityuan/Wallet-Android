@@ -2,8 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/stateView"
     android:layout_width="match_parent"
-    android:paddingBottom="30dp"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingBottom="30dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -251,6 +251,7 @@
                                 android:layout_height="@dimen/height_line"
                                 android:layout_marginTop="10dp"
                                 android:background="@color/lineColor" />
+
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -347,6 +348,7 @@
                                     android:textSize="15sp" />
 
                             </LinearLayout>
+
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -356,13 +358,13 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="关联联系人"
+                                    android:text="@string/title_contacts"
                                     android:textColor="@color/color_8E92A3"
                                     android:textSize="15sp" />
 
                                 <TextView
                                     android:id="@+id/tv_contacts"
-                                    android:layout_width="303dp"
+                                    android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_marginLeft="13dp"
                                     android:layout_weight="1"
@@ -384,16 +386,39 @@
 
     <Button
         android:id="@+id/btn_add_contacts"
-        android:visibility="gone"
-        android:layout_alignParentBottom="true"
         style="@style/buttonPressStyle"
         android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
         android:layout_marginLeft="@dimen/dp_16"
         android:layout_marginRight="@dimen/dp_16"
         android:layout_marginBottom="29dp"
-        android:text="@string/my_contact_add" />
+        android:text="@string/my_contact_add"
+        android:visibility="gone" />
 
-  <!--  <include layout="@layout/layout_loading_white"/>-->
+
+    <TextView
+        android:id="@+id/tv_tran_toto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="22dp"
+        android:layout_marginRight="19dp"
+        android:drawableTop="@mipmap/ic_tran_toto"
+        android:text="@string/speed_up_str"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tv_tran_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="82dp"
+        android:layout_marginRight="19dp"
+        android:drawableTop="@mipmap/ic_tran_cancel"
+        android:text="取消交易"
+        android:visibility="gone" />
+
+    <!--  <include layout="@layout/layout_loading_white"/>-->
 
 </RelativeLayout>

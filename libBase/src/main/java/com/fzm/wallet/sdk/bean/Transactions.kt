@@ -6,7 +6,7 @@ import java.io.Serializable
 class Transactions : Serializable {
 
     var blocktime: Long = 0
-    var fee: String? = null
+    var fee: String = "0"
     var from: String? = null
     var height = 0
     var to: String? = null

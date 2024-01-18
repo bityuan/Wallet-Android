@@ -78,12 +78,12 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:gravity="center_vertical"
-                        android:paddingRight="@dimen/dp_16">
+                        android:paddingEnd="@dimen/dp_16">
 
                         <View
                             android:layout_width="@dimen/dp_3"
                             android:layout_height="@dimen/dp_14"
-                            android:layout_marginRight="@dimen/dp_7"
+                            android:layout_marginEnd="@dimen/dp_7"
                             android:background="@color/color_7190FF" />
 
                         <TextView
@@ -114,9 +114,14 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1" />
-
+                        <ImageView
+                            android:id="@+id/iv_wallets"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@mipmap/ic_home_wallet" />
                         <ImageView
                             android:id="@+id/iv_contact"
+                            android:layout_marginStart="15dp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:src="@mipmap/icon_out_contacts" />

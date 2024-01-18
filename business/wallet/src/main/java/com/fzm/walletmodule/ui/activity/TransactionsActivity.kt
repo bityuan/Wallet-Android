@@ -176,6 +176,7 @@ class TransactionsActivity : BaseActivity() {
             transactionFragment2 = TransactionFragment.newInstance(2, it)
         }
 
+        binding.viewPager.offscreenPageLimit = 2
         pagerAdapter = Adapter(supportFragmentManager)
         pagerAdapter.addFragment(transactionFragment0, getString(R.string.trans_all))
         pagerAdapter.addFragment(transactionFragment1, getString(R.string.home_transfer))

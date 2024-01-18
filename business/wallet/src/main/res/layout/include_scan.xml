@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <SurfaceView
-        android:id="@+id/surfaceView"
+    <androidx.camera.view.PreviewView
+        android:id="@+id/previewView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
@@ -19,7 +19,6 @@
         app:laserColor="@color/colorPrimary"
         app:frameColor="@color/colorPrimary"
         app:cornerColor="@color/colorPrimary"
-        app:resultPointColor="@color/colorPrimary"
         app:labelTextLocation="bottom"
         app:laserStyle="grid"
         app:gridHeight="0dp"/>

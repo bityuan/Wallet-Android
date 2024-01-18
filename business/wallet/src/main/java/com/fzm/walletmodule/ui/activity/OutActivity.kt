@@ -5,13 +5,17 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnFocusChangeListener
+import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,6 +35,8 @@ import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.FEE_CUSTOM_POSITION
 import com.fzm.wallet.sdk.base.LIVE_KEY_FEE
 import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
+import com.fzm.wallet.sdk.base.MyWallet
+import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.bean.StringResult
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
@@ -44,12 +50,17 @@ import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.GoWallet.Companion.LOW
 import com.fzm.wallet.sdk.utils.GoWallet.Companion.LOW_GAS_PRICE
 import com.fzm.wallet.sdk.utils.ListUtils
+import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.fzm.wallet.sdk.utils.RegularUtils
 import com.fzm.walletmodule.R
+import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.bean.DGear
 import com.fzm.walletmodule.databinding.ActivityOutBinding
+import com.fzm.walletmodule.databinding.DialogWalletsBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.RemarksTipsDialogView
+import com.fzm.walletmodule.ui.widget.configWindow
+import com.fzm.walletmodule.ui.widget.configWindowDim
 import com.fzm.walletmodule.utils.ClickUtils
 import com.fzm.walletmodule.utils.ToastUtils
 import com.fzm.walletmodule.vm.OutViewModel
@@ -59,17 +70,21 @@ import com.jeremyliao.liveeventbus.LiveEventBus
 import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.MultiItemTypeAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
-import kotlinx.android.synthetic.main.activity_out.*
-import kotlinx.android.synthetic.main.item_text.*
+import kotlinx.android.synthetic.main.activity_out.et_note
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.anko.backgroundResource
+import org.jetbrains.anko.imageResource
+import org.jetbrains.anko.sdk27.coroutines.textChangedListener
 import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.litepal.LitePal
 import org.litepal.LitePal.where
 import org.litepal.extension.find
+import org.litepal.extension.findAll
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.http.HttpService
 import walletapi.GsendTx
@@ -84,6 +99,7 @@ import kotlin.math.pow
 //原YCC查余额，账单，构造签名发送都是"ETH",BTC和ETH格式的YCC，查余额，账单，构造签名发送都是 "YCC",BNB的YCC是"BNB"
 @Route(path = RouterPath.WALLET_OUT)
 class OutActivity : BaseActivity() {
+    private var mSelectedId: Long = 0
 
     private var toAddress: String = ""
     private lateinit var privkey: String
@@ -186,7 +202,10 @@ class OutActivity : BaseActivity() {
                                             val historyCount = count.toInt()
                                             binding.tvOutDetail.visibility =
                                                 if (historyCount > 0) View.VISIBLE else View.GONE
-                                            binding.tvOutNum.text = "${getString(R.string.transferred_str)}$historyCount ${getString(R.string.num_str)}"
+                                            binding.tvOutNum.text =
+                                                "${getString(R.string.transferred_str)}$historyCount ${
+                                                    getString(R.string.num_str)
+                                                }"
                                             binding.tvOutNum.setTextColor(
                                                 if (historyCount == 0) Color.RED else ContextCompat.getColor(
                                                     this@OutActivity,
@@ -205,8 +224,8 @@ class OutActivity : BaseActivity() {
 
                             binding.tvOutDetail.setOnClickListener {
                                 ARouter.getInstance().build(RouterPath.WALLET_HISTORY)
-                                    .withSerializable(RouterPath.PARAM_COIN,coin)
-                                    .withString(RouterPath.PARAM_ADDRESS,input)
+                                    .withSerializable(RouterPath.PARAM_COIN, coin)
+                                    .withString(RouterPath.PARAM_ADDRESS, input)
                                     .navigation()
                             }
                         }
@@ -397,6 +416,27 @@ class OutActivity : BaseActivity() {
                 return@setOnClickListener
             }
 
+            coin?.let {
+                try {
+                    val decValue = MMkvUtil.decodeString("value${it.netId}")
+                    if (decValue.isNotEmpty()) {
+                        val decValues = decValue.split(",")
+                        if (decValues[0] == toAddress && decValues[1] == money) {
+                            if (!gotoNext) {
+                                showTipDialog(getString(R.string.out_tip1))
+                                return@setOnClickListener
+                            }
+
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
+
+
+
             if (customChain()) {
                 if (fee > 0.1) {
                     toast(getString(R.string.tip_fee_high))
@@ -456,6 +496,84 @@ class OutActivity : BaseActivity() {
         }
         binding.tvWcFee.setOnClickListener {
             gotoSetFee()
+        }
+
+        binding.ivWallets.setOnClickListener {
+            try {
+                val wallets = LitePal.findAll<PWallet>(true)
+                val netId = coin?.netId
+                val walletsDialog = AlertDialog.Builder(this).create()
+                val walletsBinding = DialogWalletsBinding.inflate(layoutInflater)
+                walletsDialog.setView(walletsBinding.root)
+                walletsBinding.rvList.layoutManager = LinearLayoutManager(this)
+                val adapter =
+                    object : CommonAdapter<PWallet>(this, R.layout.item_wallet, wallets) {
+                        override fun convert(holder: ViewHolder, t: PWallet, position: Int) {
+                            val coin = t.coinList.find { it.netId == netId }
+                            holder.setText(R.id.tv_wallet_name, t.name)
+                            val address =
+                                if (coin == null) getString(R.string.current_coin_noadd) else coin.address
+                            holder.setText(R.id.tv_address, address)
+
+                            val ivWalletType = holder.getView<ImageView>(R.id.iv_wallet_type)
+                            val tvWalletType = holder.getView<TextView>(R.id.tv_wallet_type)
+                            val tvCurrentWallet = holder.getView<TextView>(R.id.tv_current_wallet)
+                            val rlWallet = holder.getView<RelativeLayout>(R.id.rl_wallet)
+
+
+                            tvCurrentWallet.visibility =
+                                if (t.id == mSelectedId) View.VISIBLE else View.GONE
+
+                            when (t.type) {
+                                PWallet.TYPE_NOMAL -> {
+                                    tvWalletType.text = getString(R.string.wallet_mnem)
+                                    ivWalletType.imageResource = R.mipmap.my_wallet_coins
+                                    rlWallet.backgroundResource = R.mipmap.my_wallet_bg_black
+                                }
+
+                                PWallet.TYPE_PRI_KEY -> {
+                                    tvWalletType.text = getString(R.string.wallet_priv)
+                                    val chain = t.coinList[0].chain
+                                    ivWalletType.imageResource = Constants.getWalletIcon(chain)
+                                    rlWallet.backgroundResource = Constants.getWalletBg(chain)
+                                }
+
+                                PWallet.TYPE_ADDR_KEY -> {
+                                    tvWalletType.text = getString(R.string.my_wallets_chose2)
+                                    val chain = t.coinList[0].chain
+                                    ivWalletType.imageResource = Constants.getWalletIcon(chain)
+                                    rlWallet.backgroundResource = Constants.getWalletBg(chain)
+                                }
+
+                                PWallet.TYPE_RECOVER -> {
+                                    tvWalletType.text = getString(R.string.wallet_recover)
+                                    ivWalletType.visibility = View.GONE
+                                    rlWallet.backgroundResource = R.mipmap.my_wallet_bg_recover
+                                }
+
+                                else -> {}
+                            }
+                        }
+
+                    }
+                walletsBinding.rvList.adapter = adapter
+                walletsBinding.rvList.setOnItemClickListener { viewHolder, i ->
+                    try {
+                        val coin = wallets[i].coinList.find { it.netId == netId }
+                        coin?.let {
+                            mSelectedId = wallets[i].id
+                            binding.etToAddress.setText(it.address)
+                            walletsDialog.dismiss()
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+                configWindow(walletsDialog)
+                walletsDialog.show()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
     }
@@ -741,6 +859,7 @@ class OutActivity : BaseActivity() {
                         return@runOnUiThread
                     }
                     ToastUtils.show(this, R.string.home_transfer_currency_success)
+                    MMkvUtil.encode("value${it.netId}", "$toAddress,$money")
                     finish()
                 }
 
@@ -908,5 +1027,23 @@ class OutActivity : BaseActivity() {
             else -> getString(R.string.low_str)
         }
         tvLevel?.text = level
+    }
+
+
+    private var gotoNext = false
+    private fun showTipDialog(content: String) {
+        val dialog = AlertDialog.Builder(this).create()
+        val view = LayoutInflater.from(this).inflate(R.layout.dialog_out_tip, null)
+        dialog.setCancelable(false)
+        dialog.setView(view)
+        val tvContent = view.findViewById<TextView>(R.id.tv_content)
+        tvContent.text = content
+        val tvOk = view.findViewById<TextView>(R.id.tv_ok)
+        configWindow(dialog, Gravity.CENTER)
+        tvOk.setOnClickListener {
+            dialog.dismiss()
+            gotoNext = true
+        }
+        dialog.show()
     }
 }

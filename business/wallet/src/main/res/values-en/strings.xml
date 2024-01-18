@@ -42,23 +42,11 @@
     <string name="red_packet_xml_contact_customer_service">Contact us</string>
     <!-- 红包模块 end -->
 
-    <!-- 石头剪刀布游戏模块 start -->
     <!-- 主页面模块 start -->
     <!-- activity -->
     <!-- dialog -->
-    <string name="rsp_dialog_input_password">请输入账户密码</string>
-    <string name="rsp_dialog_enter">确定</string>
-    <string name="rsp_dialog_set_nick_name">设置昵称</string>
-    <string name="rsp_dialog_input_nick_name">请输入昵称</string>
-    <!-- toast -->
-    <string name="rsp_toast_input_password">请输入账户密码</string>
-    <string name="rsp_toast_password_error">密码输入错误</string>
-
-
-    <string name="rsp_pay_password_sure">确认密码</string>
-
-
-    <!--应用详情-->
+    <string name="input_password">password</string>
+    <string name="rsp_dialog_input_password">Please enter your account password</string>
 
 
     <!--===============================首页==============================-->
@@ -916,5 +904,15 @@
     <string name="out_tip2">The current receiving address is an unfamiliar address, please double check</string>
     <string name="transferred_str">Transferred</string>
     <string name="num_str">times</string>
-
+    <string name="text_tips2">Known to know</string>
+    <string name="speed_up_str">speed up</string>
+    <string name="cancel_tran_str">Cancel Transaction</string>
+    <string name="p_input_fee_str">Please input the miner fee</string>
+    <string name="tip_fee_low">The minimum miner fee is 1.2 times the original miner fee</string>
+    <string name="send_suc_str">Send successfully!</string>
+    <string name="current_coin_noadd">Current currency not added</string>
+    <string name="choose_c_str">Currently selected</string>
+    <string name="tip_2">Tips</string>
+    <string name="eth_tip_speed">Accelerated trading: Accelerate ETH on chain trading, successfully refund the last unused transaction fee</string>
+    <string name="eth_tip_cancle">Cancel transaction: Cancel ETH on chain transaction, successfully cancel and refund the last unused transaction fee</string>
 </resources>

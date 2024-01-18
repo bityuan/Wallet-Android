@@ -57,16 +57,6 @@
 
         </LinearLayout>
 
-
-        <TextView
-            android:id="@+id/tv_tip"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="90dp"
-            android:gravity="center_horizontal"
-            android:text="@string/my_scan_toast"
-            android:textColor="@android:color/white"
-            android:textSize="14sp" />
     </LinearLayout>
 
 
