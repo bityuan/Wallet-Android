@@ -99,8 +99,6 @@ class TransactionDetailsActivity : BaseActivity() {
                 binding.tvTranCancel.visibility = View.VISIBLE
             }
         }
-        binding.tvTranToto.visibility = View.VISIBLE
-        binding.tvTranCancel.visibility = View.VISIBLE
 
     }
 
