@@ -837,30 +837,35 @@ class OutActivity : BaseActivity() {
                 //发送交易
                 val sendRawTransaction = GoWallet.sendTran(it.chain, signtx, tokensymbol)
                 runOnUiThread {
-                    loading.dismiss()
-                    if (sendRawTransaction.isNullOrEmpty()) {
-                        ToastUtils.show(this, getString(R.string.home_transfer_currency_fails))
-                        finish()
-                        return@runOnUiThread
-                    }
-                    val result: StringResult? = parseResult(sendRawTransaction)
-                    if (result == null) {
-                        ToastUtils.show(this, getString(R.string.out_result_fails))
-                        finish()
-                        return@runOnUiThread
-                    }
-                    if (!TextUtils.isEmpty(result.error)) {
-                        if (result.error == "transaction underpriced") {
-                            ToastUtils.show(this, getString(R.string.fee_to_low))
-                        } else {
-                            ToastUtils.show(this, result.error)
+                    try {
+                        loading.dismiss()
+                        if (sendRawTransaction.isNullOrEmpty()) {
+                            ToastUtils.show(this, getString(R.string.home_transfer_currency_fails))
+                            finish()
+                            return@runOnUiThread
                         }
+                        val result: StringResult? = parseResult(sendRawTransaction)
+                        if (result == null) {
+                            ToastUtils.show(this, getString(R.string.out_result_fails))
+                            finish()
+                            return@runOnUiThread
+                        }
+                        if (!TextUtils.isEmpty(result.error)) {
+                            if (result.error == "transaction underpriced") {
+                                ToastUtils.show(this, getString(R.string.fee_to_low))
+                            } else {
+                                ToastUtils.show(this, result.error)
+                            }
+                            finish()
+                            return@runOnUiThread
+                        }
+                        ToastUtils.show(this, R.string.home_transfer_currency_success)
+                        MMkvUtil.encode("value${it.netId}", "$toAddress,$money")
                         finish()
-                        return@runOnUiThread
+                    }catch (e:Exception){
+                        toast("$sendRawTransaction:$e")
                     }
-                    ToastUtils.show(this, R.string.home_transfer_currency_success)
-                    MMkvUtil.encode("value${it.netId}", "$toAddress,$money")
-                    finish()
+
                 }
 
             } catch (e: Exception) {
