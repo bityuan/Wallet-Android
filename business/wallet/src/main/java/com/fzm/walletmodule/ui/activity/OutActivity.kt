@@ -506,8 +506,13 @@ class OutActivity : BaseActivity() {
                 val walletsBinding = DialogWalletsBinding.inflate(layoutInflater)
                 walletsDialog.setView(walletsBinding.root)
                 walletsBinding.rvList.layoutManager = LinearLayoutManager(this)
+                val fWallets = wallets.filter { wa->
+                    wa.coinList.find { it.netId == netId } != null
+                }
+
+
                 val adapter =
-                    object : CommonAdapter<PWallet>(this, R.layout.item_wallet, wallets) {
+                    object : CommonAdapter<PWallet>(this, R.layout.item_wallet, fWallets) {
                         override fun convert(holder: ViewHolder, t: PWallet, position: Int) {
                             val coin = t.coinList.find { it.netId == netId }
                             holder.setText(R.id.tv_wallet_name, t.name)
@@ -559,9 +564,9 @@ class OutActivity : BaseActivity() {
                 walletsBinding.rvList.adapter = adapter
                 walletsBinding.rvList.setOnItemClickListener { viewHolder, i ->
                     try {
-                        val coin = wallets[i].coinList.find { it.netId == netId }
+                        val coin = fWallets[i].coinList.find { it.netId == netId }
                         coin?.let {
-                            mSelectedId = wallets[i].id
+                            mSelectedId = fWallets[i].id
                             binding.etToAddress.setText(it.address)
                             walletsDialog.dismiss()
                         }

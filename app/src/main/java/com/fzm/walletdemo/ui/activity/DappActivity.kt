@@ -8,8 +8,6 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Base64
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebChromeClient
@@ -41,8 +39,8 @@ import com.fzm.wallet.sdk.RouterPath.PARAM_ORIG_GAS_PRICE
 import com.fzm.wallet.sdk.base.FEE_CUSTOM_POSITION
 import com.fzm.wallet.sdk.base.LIVE_KEY_FEE
 import com.fzm.wallet.sdk.base.MyWallet
+import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
-import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.ext.toPlainStr
 import com.fzm.wallet.sdk.net.walletQualifier
@@ -51,7 +49,6 @@ import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.fzm.wallet.sdk.utils.StatusBarUtil
 import com.fzm.walletdemo.BuildConfig
-import com.fzm.walletmodule.bean.DGear
 import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.ActivityDappBinding
 import com.fzm.walletdemo.databinding.DialogDappBottomBinding
@@ -65,6 +62,7 @@ import com.fzm.walletdemo.web3.bean.Address
 import com.fzm.walletdemo.web3.bean.Web3Call
 import com.fzm.walletdemo.web3.bean.Web3Transaction
 import com.fzm.walletdemo.web3.listener.JsListener
+import com.fzm.walletmodule.bean.DGear
 import com.fzm.walletmodule.ui.widget.configWindow
 import com.fzm.walletmodule.utils.ClipboardUtils
 import com.google.gson.GsonBuilder
@@ -79,12 +77,18 @@ import org.json.JSONObject
 import org.koin.android.ext.android.inject
 import org.litepal.LitePal
 import org.litepal.extension.find
-import org.litepal.extension.findAll
+import org.web3j.crypto.Wallet
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.protocol.http.HttpService
+import org.web3j.utils.Numeric
 import timber.log.Timber
+import wallet.core.jni.CoinType
+import wallet.core.jni.Curve
+import wallet.core.jni.HDWallet
+import wallet.core.jni.Hash
+import wallet.core.jni.PrivateKey
 import walletapi.Walletapi
 import wendu.dsbridge.DWebView
 import java.math.BigInteger
@@ -582,6 +586,37 @@ class DappActivity : AppCompatActivity() {
             }
 
         }
+
+        override fun onSignPersonalMessage(callbackId: Int, data: String) {
+            doMessage(callbackId,data)
+        }
+
+        override fun onSignMessage(callbackId: Int, data: String) {
+            //同理onSignPersonalMessage
+            doMessage(callbackId,data)
+        }
+    }
+
+
+    private fun doMessage(callbackId: Int, data: String){
+        //输入密码签名
+        val prikey = ""
+        lifecycleScope.launch(Dispatchers.IO) {
+            val bData = getEthereumMessage(data)
+            val digest = Hash.keccak256(bData)
+            val pk = PrivateKey(Walletapi.hexTobyte(prikey))
+            val signature = pk.sign(digest, Curve.SECP256K1)
+            val signHex = Numeric.toHexString(signature)
+            withContext(Dispatchers.Main) {
+                val callback: String =
+                    String.format(JS_CALLBACK_ON, callbackId, signHex)
+                //All WebView methods must be called on the same thread
+                //所以都放在主线程
+                binding.webDapp.evaluateJavascript(callback) { message: String? ->
+                    Timber.d(message)
+                }
+            }
+        }
     }
 
     private fun gotoSetFee() {
@@ -847,6 +882,23 @@ class DappActivity : AppCompatActivity() {
         configWindow(bottomDialog)
         bottomDialog.setView(bottomBinding.root)
         bottomDialog.show()
+    }
+
+
+    //--------------------------test--------------------------
+    private val MESSAGE_PREFIX: String = "\u0019Ethereum Signed Message:\n"
+    private fun getEthereumMessagePrefix(messageLength: Int): ByteArray {
+        val pre = "$MESSAGE_PREFIX${messageLength}"
+        return pre.toByteArray()
+    }
+
+    private fun getEthereumMessage(message: String): ByteArray {
+        val encodedMessage: ByteArray = message.toByteArray()
+        val prefix: ByteArray = getEthereumMessagePrefix(encodedMessage.size)
+        val result = ByteArray(prefix.size + encodedMessage.size)
+        System.arraycopy(prefix, 0, result, 0, prefix.size)
+        System.arraycopy(encodedMessage, 0, result, prefix.size, encodedMessage.size)
+        return result
     }
 
 }

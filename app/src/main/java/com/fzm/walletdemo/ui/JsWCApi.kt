@@ -12,8 +12,12 @@ import com.fzm.walletdemo.web3.bean.Web3Transaction
 import com.fzm.walletdemo.web3.listener.JsListener
 import com.fzm.walletdemo.web3.util.Hex
 import org.json.JSONObject
+import org.web3j.crypto.ECKeyPair
+import org.web3j.crypto.Hash
+import org.web3j.crypto.Sign
 import org.web3j.protocol.core.DefaultBlockParameter
 import org.web3j.protocol.core.DefaultBlockParameterName
+import org.web3j.utils.Numeric
 import timber.log.Timber
 import java.math.BigInteger
 
@@ -66,11 +70,18 @@ class JsWCApi(
     @JavascriptInterface
     fun signMessage(callbackId: Int, data: String?) {
         Timber.tag("edao").v("signMessage")
+        webView.post {
+            jsListener.onSignMessage(callbackId,data)
+        }
     }
 
     @JavascriptInterface
     fun signPersonalMessage(callbackId: Int, data: String?) {
-        logDebug("------------------signPersonalMessage---------")
+        logDebug("signPersonalMessage， callbackId = $callbackId,data = $data")
+        webView.post {
+            jsListener.onSignPersonalMessage(callbackId,data)
+        }
+
     }
 
 

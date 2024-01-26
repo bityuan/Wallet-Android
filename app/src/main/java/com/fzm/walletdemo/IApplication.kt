@@ -9,15 +9,9 @@ import com.fzm.wallet.sdk.IPConfig
 import com.fzm.wallet.sdk.base.WalletModuleApp
 import com.fzm.walletmodule.net.walletModule
 import com.umeng.commonsdk.UMConfigure
-import com.walletconnect.android.Core
-import com.walletconnect.android.CoreClient
-import com.walletconnect.android.relay.ConnectionType
-import com.walletconnect.web3.wallet.client.Wallet
-import com.walletconnect.web3.wallet.client.Web3Wallet
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
-import timber.log.Timber
 
 class IApplication : Application() {
 
@@ -76,6 +70,8 @@ class IApplication : Application() {
         if (!BuildConfig.DEBUG) {
             initUmeng()
         }
+
+        System.loadLibrary("TrustWalletCore")
     }
 
 

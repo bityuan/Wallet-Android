@@ -63,40 +63,45 @@ class ExploresActivity : BaseActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             val list = walletViewModel.getExploreCategory(appsId)
             withContext(Dispatchers.Main) {
-                binding.rvList.layoutManager = LinearLayoutManager(this@ExploresActivity)
-                val app = list[0]
-                apps.clear()
-                apps.addAll(app.apps)
-                title = app.name
-                val exAdapter = ExploresAdapter(this@ExploresActivity, apps)
-                exAdapter.setOnItemClickListener {
-                    try {
-                        val appId = "${app.apps[it].id}"
-                        val type = app.apps[it].type
-                        if (MMkvUtil.decodeBoolean(appId)) {
-                            gotoDapp(it, type)
-                        } else {
-                            MaterialDialog.Builder(this@ExploresActivity)
-                                .negativeText(getString(R.string.cancel))
-                                .positiveText(getString(R.string.ok))
-                                .title(getString(R.string.explore_title))
-                                .content(getString(R.string.explore_disclaimer)).checkBoxPrompt(
-                                    getString(R.string.no_dotip), false
-                                ) { buttonView, isChecked ->
-                                    MMkvUtil.encode(appId, isChecked)
-                                }.onNegative { dialog, which ->
-                                    dismiss()
-                                }.onPositive { dialog, which ->
-                                    gotoDapp(it, type)
-                                }.build().show()
+                try {
+                    binding.rvList.layoutManager = LinearLayoutManager(this@ExploresActivity)
+                    val app = list[0]
+                    apps.clear()
+                    apps.addAll(app.apps)
+                    title = app.name
+                    val exAdapter = ExploresAdapter(this@ExploresActivity, apps)
+                    exAdapter.setOnItemClickListener {
+                        try {
+                            val appId = "${app.apps[it].id}"
+                            val type = app.apps[it].type
+                            if (MMkvUtil.decodeBoolean(appId)) {
+                                gotoDapp(it, type)
+                            } else {
+                                MaterialDialog.Builder(this@ExploresActivity)
+                                    .negativeText(getString(R.string.cancel))
+                                    .positiveText(getString(R.string.ok))
+                                    .title(getString(R.string.explore_title))
+                                    .content(getString(R.string.explore_disclaimer)).checkBoxPrompt(
+                                        getString(R.string.no_dotip), false
+                                    ) { buttonView, isChecked ->
+                                        MMkvUtil.encode(appId, isChecked)
+                                    }.onNegative { dialog, which ->
+                                        dismiss()
+                                    }.onPositive { dialog, which ->
+                                        gotoDapp(it, type)
+                                    }.build().show()
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
                         }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+
+
                     }
+                    binding.rvList.adapter = exAdapter
 
-
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
-                binding.rvList.adapter = exAdapter
             }
 
         }

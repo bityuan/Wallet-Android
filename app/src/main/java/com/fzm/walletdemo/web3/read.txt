@@ -1,0 +1,23 @@
+//根据助记词获取ETH私钥
+    //val newWallet: HDWallet = HDWallet("bbbb bbbb aaaaa", "")
+    //val pk1: PrivateKey = newWallet.getKeyForCoin(CoinType.ETHEREUM)
+    //val ethpriv = Walletapi.byteTohex(pk1.data())
+    //logDebug("ethpriv = $ethpriv")
+
+           //适用于SIGN_PERSONAL_MESSAGE和SIGN_MESSAGE
+    /*   private fun getEthereumMessage(message: String): ByteArray? {
+           val encodedMessage: ByteArray =  message.toByteArray()
+           val result: ByteArray
+           if (messageType === SignMessageType.SIGN_PERSONAL_MESSAGE
+               || messageType === SignMessageType.SIGN_MESSAGE
+           ) {
+
+               val prefix: ByteArray = getEthereumMessagePrefix(encodedMessage.size)
+               result = ByteArray(prefix.size + encodedMessage.size)
+               System.arraycopy(prefix, 0, result, 0, prefix.size)
+               System.arraycopy(encodedMessage, 0, result, prefix.size, encodedMessage.size)
+           } else {
+               result = encodedMessage
+           }
+           return result
+       }*/

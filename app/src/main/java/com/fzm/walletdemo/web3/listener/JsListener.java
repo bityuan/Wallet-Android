@@ -7,9 +7,13 @@ import com.fzm.walletdemo.web3.bean.Web3Transaction;
 /**
  * Created by JB on 15/01/2022.
  */
-public interface JsListener
-{
+public interface JsListener {
     void onRequestAccounts(long callbackId);
+
     void onEthCall(Web3Call txdata);
+
     void onSignTransaction(Web3Transaction transaction);
+
+    void onSignPersonalMessage(int callbackId, String data);
+    void onSignMessage(int callbackId, String data);
 }

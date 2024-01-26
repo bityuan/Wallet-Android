@@ -24,6 +24,12 @@ allprojects {
         mavenCentral()
         maven { url "https://jitpack.io" }
         maven { url 'https://repo1.maven.org/maven2/' }
+        maven { url = uri("https://maven.pkg.github.com/trustwallet/wallet-core")
+            credentials {
+                username = 'JamesSmartCell'
+                password = 'WjJod1gyaFZWVFF4ZGtoVk1qTkdiVVJqTlRWUGVtSlFZVlI0UkRocldYQkRZak5FTlU5aFNnPT0'
+            }
+        }
 
         flatDir {
             dirs 'libs'
@@ -49,8 +55,8 @@ ext {
             buildToolsVersion: "30.0.3",
             minSdkVersion    : 23,
             targetSdkVersion : 33,
-            versionCode      : 25000,
-            versionName      : "2.5.0"
+            versionCode      : 25200,
+            versionName      : "2.5.2"
     ]
 
     applicationId = [
@@ -126,7 +132,8 @@ ext {
     bnbcrypto = "org.web3j:bnbcrypto:1.0.0"
     kotson = "com.github.salomonbrys.kotson:kotson:2.5.0"
     //https://mvnrepository.com/artifact/com.trustwallet/wallet-core
-    trustwallet ="com.trustwallet:wallet-core:2.6.3"
+    //trustwallet ="com.trustwallet:wallet-core:2.6.3"
+    trustwallet ="com.trustwallet:wallet-core:3.2.18"
     dialogX ="com.github.kongzue.DialogX:DialogX:0.0.48"
     IndexRecyclerView ="com.github.jiang111:IndexRecyclerView:v1.1"
 
