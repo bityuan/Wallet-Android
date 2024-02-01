@@ -364,6 +364,7 @@ class DappActivity : AppCompatActivity() {
     var gasPrice = 0L
     var count = 0L
     private var payDialog: AlertDialog? = null
+    private var messageDialog: AlertDialog? = null
 
     private val jsListener = object : JsListener {
         override fun onRequestAccounts(callbackId: Long) {
@@ -588,33 +589,144 @@ class DappActivity : AppCompatActivity() {
         }
 
         override fun onSignPersonalMessage(callbackId: Int, data: String) {
-            doMessage(callbackId,data)
+            doMessage(callbackId, data)
         }
 
         override fun onSignMessage(callbackId: Int, data: String) {
             //同理onSignPersonalMessage
-            doMessage(callbackId,data)
+            doMessage(callbackId, data)
         }
     }
 
+    private var msgPwdDialog: Dialog? = null
+    private fun doMessage(callbackId: Int, data: String) {
+        val view = LayoutInflater.from(this@DappActivity)
+            .inflate(R.layout.fragment_session_message, null)
+        val tvDappName = view.findViewById<TextView>(R.id.tv_dapp_name)
+        val tvDappUrl = view.findViewById<TextView>(R.id.tv_dapp_url)
+        val tvMessage = view.findViewById<TextView>(R.id.tv_message)
+        val tvAddress = view.findViewById<TextView>(R.id.tv_wallet_addr)
+        val tvCancel = view.findViewById<TextView>(R.id.tv_cancel)
+        val btnNext = view.findViewById<Button>(R.id.btn_next)
 
-    private fun doMessage(callbackId: Int, data: String){
-        //输入密码签名
-        val prikey = ""
-        lifecycleScope.launch(Dispatchers.IO) {
-            val bData = getEthereumMessage(data)
-            val digest = Hash.keccak256(bData)
-            val pk = PrivateKey(Walletapi.hexTobyte(prikey))
-            val signature = pk.sign(digest, Curve.SECP256K1)
-            val signHex = Numeric.toHexString(signature)
-            withContext(Dispatchers.Main) {
-                val callback: String =
-                    String.format(JS_CALLBACK_ON, callbackId, signHex)
-                //All WebView methods must be called on the same thread
-                //所以都放在主线程
-                binding.webDapp.evaluateJavascript(callback) { message: String? ->
-                    Timber.d(message)
+        val netName = GoWallet.NET_MAPS[chainId]
+        tvDappName.text = "$netName"
+        tvDappUrl.text = url
+        tvMessage.text = data
+        tvAddress.text = address.toString()
+
+        messageDialog =
+            AlertDialog.Builder(this@DappActivity).setView(view).create()
+                .apply {
+                    window?.setBackgroundDrawableResource(android.R.color.transparent)
                 }
+        messageDialog?.setCancelable(false)
+        messageDialog?.show()
+
+        tvCancel.setOnClickListener {
+            messageDialog?.dismiss()
+            val callback: String = String.format(
+                JS_CALLBACK_ON_FAILURE, callbackId, JS_CANCELLED
+            )
+            binding.webDapp.evaluateJavascript(callback) { value: String? ->
+                Timber.tag("WEB_VIEW").d(value)
+            }
+        }
+        btnNext.setOnClickListener {
+
+            val view =
+                LayoutInflater.from(this).inflate(R.layout.dialog_pwd, null)
+            msgPwdDialog = AlertDialog.Builder(this).setView(view).create().apply {
+                window?.setBackgroundDrawableResource(android.R.color.transparent)
+                show()
+            }
+            val bindingDialog = DialogPwdBinding.bind(view)
+            bindingDialog.ivClose.setOnClickListener {
+                msgPwdDialog?.dismiss()
+
+            }
+            bindingDialog.btnOk.setOnClickListener {
+                val password = bindingDialog.etInput.text.toString()
+                if (password.isEmpty()) {
+                    toast(getString(R.string.my_wallet_password_tips))
+                    return@setOnClickListener
+                }
+                loading.show()
+                lifecycleScope.launch(Dispatchers.IO) {
+                    try {
+                        val wallet = LitePal.find<PWallet>(MyWallet.getId(), true)
+                        wallet?.let { w ->
+                            val check = GoWallet.checkPasswd(password, w.password)
+                            if (!check) {
+                                withContext(Dispatchers.Main) {
+                                    toast(getString(R.string.pwd_fail_str))
+                                    loading.dismiss()
+                                }
+                            } else {
+                                when (w.type) {
+                                    PWallet.TYPE_NOMAL -> {
+                                        val bPassword = GoWallet.encPasswd(password)!!
+                                        val mnem: String = GoWallet.decMenm(bPassword, w.mnem)
+                                        chainName?.let { name ->
+                                            val privKey = GoWallet.getPrikey(
+                                                if (name == "BTY") "ETH" else name, mnem
+                                            )
+                                            handleMessageSign(privKey, callbackId, data)
+                                        }
+                                    }
+
+                                    PWallet.TYPE_PRI_KEY -> {
+                                        val priCoin = w.coinList[0]
+                                        val privKey = priCoin.getPrivkey(password)
+                                        chainName?.let { name ->
+                                            handleMessageSign(privKey, callbackId, data)
+                                        }
+
+                                    }
+
+                                    else -> {}
+                                }
+
+                            }
+
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+
+
+                }
+
+
+            }
+
+
+        }
+
+
+    }
+
+    private fun handleMessageSign(prikey: String, callbackId: Int, data: String) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val bData = getEthereumMessage(data)
+                val digest = Hash.keccak256(bData)
+                val pk = PrivateKey(Walletapi.hexTobyte(prikey))
+                val signature = pk.sign(digest, Curve.SECP256K1)
+                val signHex = Numeric.toHexString(signature)
+                withContext(Dispatchers.Main) {
+                    disMessage()
+                    val callback: String =
+                        String.format(JS_CALLBACK_ON, callbackId, signHex)
+                    //All WebView methods must be called on the same thread
+                    //所以都放在主线程
+                    binding.webDapp.evaluateJavascript(callback) { message: String? ->
+                        Timber.d(message)
+                    }
+                }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
@@ -664,7 +776,7 @@ class DappActivity : AppCompatActivity() {
     private fun showPWD(createTran: CreateTran, chainName: String?) {
         try {
             val view =
-                LayoutInflater.from(this).inflate(com.fzm.walletmodule.R.layout.dialog_pwd, null)
+                LayoutInflater.from(this).inflate(R.layout.dialog_pwd, null)
             pwdDialog = AlertDialog.Builder(this).setView(view).create().apply {
                 window?.setBackgroundDrawableResource(android.R.color.transparent)
                 show()
@@ -811,6 +923,12 @@ class DappActivity : AppCompatActivity() {
         loading.dismiss()
         pwdDialog?.dismiss()
         payDialog?.dismiss()
+    }
+
+    private fun disMessage() {
+        loading.dismiss()
+        msgPwdDialog?.dismiss()
+        messageDialog?.dismiss()
     }
 
 

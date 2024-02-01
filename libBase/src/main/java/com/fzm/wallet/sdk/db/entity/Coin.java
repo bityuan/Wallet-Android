@@ -2,7 +2,6 @@ package com.fzm.wallet.sdk.db.entity;
 
 import android.text.TextUtils;
 
-import com.fzm.wallet.sdk.bean.WithHold;
 import com.fzm.wallet.sdk.utils.GoWallet;
 import com.google.gson.annotations.SerializedName;
 
@@ -24,7 +23,6 @@ public class Coin extends BaseBean implements Comparable<Coin> {
     public static String mPriv;
     public static String webPriv;
     //代扣私钥内存缓存
-    public static WithHold withHold;
 
     private PWallet pWallet;
     //拥有量

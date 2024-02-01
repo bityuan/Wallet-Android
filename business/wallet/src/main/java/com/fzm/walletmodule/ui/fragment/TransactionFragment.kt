@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.bean.response.TransactionResponse
 import com.fzm.wallet.sdk.db.entity.Address
@@ -45,6 +46,7 @@ class TransactionFragment : BaseFragment() {
     private var isCanLoadMore = false
 
     private lateinit var binding: FragmentTransactionBinding
+
     //默认不隐藏
     private var dState: Boolean = false
 
@@ -169,7 +171,7 @@ class TransactionFragment : BaseFragment() {
 
 
     private fun getDatas(index: Long) {
-        if(coin.name == "USDT") {
+        if (coin.name == "USDT") {
             dState = MMkvUtil.decodeBoolean(Constants.TRAN_STATE_KEY)
         }
         val tokensymbol = GoWallet.getTokensymbol(coin)
@@ -187,7 +189,10 @@ class TransactionFragment : BaseFragment() {
                     index,
                     Constants.PAGE_LIMIT
                 )
+
+                logDebug("net tran = $datas")
             }
+
             //cache one page
             if (index == 0L && datas != null) {
                 MMkvUtil.encode(getKey(tokensymbol), datas)

@@ -46,12 +46,13 @@ class JsWCApi(
             }
 
             val dGasPrice = gasPrice ?: "0"
+            val limit = gasLimit ?: "1000000"
             val transaction = Web3Transaction(
                 if (TextUtils.isEmpty(recipient)) Address.EMPTY else Address(recipient!!),
                 null,
                 Hex.hexToBigInteger(dValue),
                 Hex.hexToBigInteger(dGasPrice, BigInteger.ZERO),
-                Hex.hexToBigInteger(gasLimit, BigInteger.ZERO),
+                Hex.hexToBigInteger(limit, BigInteger.ZERO),
                 Hex.hexToLong(nonce, -1),
                 payload,
                 callbackId.toLong()

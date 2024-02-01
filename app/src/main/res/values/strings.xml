@@ -60,6 +60,9 @@
     <string name="fee_setting">矿工费设置</string>
     <string name="enter_str">请输入</string>
     <string name="switch_account_str">切换账号</string>
+    <string name="dapp_sign_re">Dapp发起签名请求</string>
+    <string name="signme">签名信息</string>
+    <string name="i_wallet">我的钱包</string>
 
 
 </resources>

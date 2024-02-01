@@ -59,5 +59,8 @@
     <string name="fee_setting">set gas fee</string>
   <string name="enter_str">please enter</string>
     <string name="switch_account_str">Switch accounts</string>
+    <string name="dapp_sign_re">Dapp initiates a signature request</string>
+  <string name="signme">Signature Information</string>
+  <string name="i_wallet">my wallet</string>
 
 </resources>
