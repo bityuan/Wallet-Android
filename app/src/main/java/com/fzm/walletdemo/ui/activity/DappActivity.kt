@@ -45,6 +45,7 @@ import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.ext.toPlainStr
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.repo.WalletRepository
+import com.fzm.wallet.sdk.utils.AESForPayUtil
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.fzm.wallet.sdk.utils.StatusBarUtil
@@ -65,8 +66,11 @@ import com.fzm.walletdemo.web3.listener.JsListener
 import com.fzm.walletmodule.bean.DGear
 import com.fzm.walletmodule.ui.widget.configWindow
 import com.fzm.walletmodule.utils.ClipboardUtils
+import com.fzm.walletmodule.utils.FingerManager
 import com.google.gson.GsonBuilder
 import com.jeremyliao.liveeventbus.LiveEventBus
+import com.tencent.soter.wrapper.SoterWrapperApi
+import com.tencent.soter.wrapper.wrap_callback.SoterProcessAuthenticationResult
 import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
 import kotlinx.coroutines.Dispatchers
@@ -543,6 +547,17 @@ class DappActivity : AppCompatActivity() {
                             }
                             btnNext.setOnClickListener {
                                 try {
+                                    if (customChain()) {
+                                        if (dGas > 0.1) {
+                                            toast(getString(com.fzm.walletmodule.R.string.tip_fee_high))
+                                            return@setOnClickListener
+                                        }
+                                        if (!::cGasPrice.isInitialized || !::cGas.isInitialized) {
+                                            toast(getString(R.string.tip_init_fee))
+                                            return@setOnClickListener
+                                        }
+                                    }
+
                                     //普通转账input64就传null
                                     var input64: String? = null
                                     tran.payload?.let { data ->
@@ -561,7 +576,22 @@ class DappActivity : AppCompatActivity() {
                                         tran.value,
                                         tran.leafPosition
                                     )
-                                    showPWD(createTran, chainName)
+
+                                    lifecycleScope.launch(Dispatchers.IO) {
+                                        val wallet = LitePal.find<PWallet>(MyWallet.getId(), true)
+                                        withContext(Dispatchers.Main) {
+                                            wallet?.let { w ->
+                                                if (w.fingerState == PWallet.OPEN) {
+                                                    showFingerPay(w, createTran)
+                                                } else {
+                                                    showPWD(w, createTran)
+                                                }
+                                            }
+
+                                        }
+                                    }
+
+
                                 } catch (e: Exception) {
                                     e.printStackTrace()
                                 }
@@ -634,76 +664,96 @@ class DappActivity : AppCompatActivity() {
         }
         btnNext.setOnClickListener {
 
-            val view =
-                LayoutInflater.from(this).inflate(R.layout.dialog_pwd, null)
-            msgPwdDialog = AlertDialog.Builder(this).setView(view).create().apply {
-                window?.setBackgroundDrawableResource(android.R.color.transparent)
-                show()
-            }
-            val bindingDialog = DialogPwdBinding.bind(view)
-            bindingDialog.ivClose.setOnClickListener {
-                msgPwdDialog?.dismiss()
-
-            }
-            bindingDialog.btnOk.setOnClickListener {
-                val password = bindingDialog.etInput.text.toString()
-                if (password.isEmpty()) {
-                    toast(getString(R.string.my_wallet_password_tips))
-                    return@setOnClickListener
-                }
-                loading.show()
-                lifecycleScope.launch(Dispatchers.IO) {
-                    try {
-                        val wallet = LitePal.find<PWallet>(MyWallet.getId(), true)
-                        wallet?.let { w ->
-                            val check = GoWallet.checkPasswd(password, w.password)
-                            if (!check) {
-                                withContext(Dispatchers.Main) {
-                                    toast(getString(R.string.pwd_fail_str))
-                                    loading.dismiss()
-                                }
-                            } else {
-                                when (w.type) {
-                                    PWallet.TYPE_NOMAL -> {
-                                        val bPassword = GoWallet.encPasswd(password)!!
-                                        val mnem: String = GoWallet.decMenm(bPassword, w.mnem)
-                                        chainName?.let { name ->
-                                            val privKey = GoWallet.getPrikey(
-                                                if (name == "BTY") "ETH" else name, mnem
-                                            )
-                                            handleMessageSign(privKey, callbackId, data)
-                                        }
-                                    }
-
-                                    PWallet.TYPE_PRI_KEY -> {
-                                        val priCoin = w.coinList[0]
-                                        val privKey = priCoin.getPrivkey(password)
-                                        chainName?.let { name ->
-                                            handleMessageSign(privKey, callbackId, data)
-                                        }
-
-                                    }
-
-                                    else -> {}
-                                }
-
-                            }
-
+            lifecycleScope.launch(Dispatchers.IO) {
+                val wallet = LitePal.find<PWallet>(MyWallet.getId(), true)
+                withContext(Dispatchers.Main) {
+                    wallet?.let { w ->
+                        if (wallet.fingerState == PWallet.OPEN) {
+                            showMsgFingerPay(w, callbackId, data)
+                        } else {
+                            showMsgPWD(w, callbackId, data)
                         }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
                     }
 
-
                 }
-
-
             }
 
 
         }
 
 
+    }
+
+
+    private fun showMsgPWD(wallet: PWallet, callbackId: Int, data: String) {
+        val view =
+            LayoutInflater.from(this).inflate(R.layout.dialog_pwd, null)
+        msgPwdDialog = AlertDialog.Builder(this).setView(view).create().apply {
+            window?.setBackgroundDrawableResource(android.R.color.transparent)
+            show()
+        }
+        val bindingDialog = DialogPwdBinding.bind(view)
+        bindingDialog.ivClose.setOnClickListener {
+            msgPwdDialog?.dismiss()
+
+        }
+        bindingDialog.btnOk.setOnClickListener {
+            val password = bindingDialog.etInput.text.toString()
+            if (password.isEmpty()) {
+                toast(getString(R.string.my_wallet_password_tips))
+                return@setOnClickListener
+            }
+            loading.show()
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    wallet.let { w ->
+                        val check = GoWallet.checkPasswd(password, w.password)
+                        if (!check) {
+                            withContext(Dispatchers.Main) {
+                                toast(getString(R.string.pwd_fail_str))
+                                loading.dismiss()
+                            }
+                        } else {
+                            sendMsgTrans(w, password, callbackId, data)
+
+                        }
+
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
+            }
+
+
+        }
+    }
+
+
+    private fun sendMsgTrans(w: PWallet, password: String, callbackId: Int, data: String) {
+        when (w.type) {
+            PWallet.TYPE_NOMAL -> {
+                val bPassword = GoWallet.encPasswd(password)!!
+                val mnem: String = GoWallet.decMenm(bPassword, w.mnem)
+                chainName?.let { name ->
+                    val privKey = GoWallet.getPrikey(
+                        if (name == "BTY") "ETH" else name, mnem
+                    )
+                    handleMessageSign(privKey, callbackId, data)
+                }
+            }
+
+            PWallet.TYPE_PRI_KEY -> {
+                val priCoin = w.coinList[0]
+                val privKey = priCoin.getPrivkey(password)
+                chainName?.let { name ->
+                    handleMessageSign(privKey, callbackId, data)
+                }
+
+            }
+
+            else -> {}
+        }
     }
 
     private fun handleMessageSign(prikey: String, callbackId: Int, data: String) {
@@ -772,8 +822,87 @@ class DappActivity : AppCompatActivity() {
         return false
     }
 
+
+    private fun showFingerPay(wallet: PWallet, createTran: CreateTran) {
+        val fm = FingerManager()
+        fm.setOnPasswordListener(object : FingerManager.UserPasswordListener {
+            override fun onPassword() {
+                showPWD(wallet, createTran)
+            }
+
+        })
+        val authParam = fm.getAuthParam(this)
+        SoterWrapperApi.requestAuthorizeAndSign({ result ->
+            if (result.isSuccess) {
+                wallet.let { w ->
+                    val fid = result.extData.fid
+                    val password = AESForPayUtil.decrypt(fid, w.fingerPassword)
+                    if (password == null) {
+                        toast(getString(com.fzm.walletmodule.R.string.veriry_finger_opened))
+                    } else {
+                        toast(getString(com.fzm.walletmodule.R.string.verify_suc))
+                        if (!loading.isShowing) {
+                            loading.show()
+                        }
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            sendTrans(w, password, createTran)
+                        }
+                    }
+
+                }
+
+            } else {
+                showFingerError(result)
+
+            }
+        }, authParam)
+    }
+
+    private fun showMsgFingerPay(wallet: PWallet, callbackId: Int, data: String) {
+        val fm = FingerManager()
+        fm.setOnPasswordListener(object : FingerManager.UserPasswordListener {
+            override fun onPassword() {
+                showMsgPWD(wallet, callbackId, data)
+            }
+
+        })
+        val authParam = fm.getAuthParam(this)
+        SoterWrapperApi.requestAuthorizeAndSign({ result ->
+            if (result.isSuccess) {
+                wallet.let { w ->
+                    val fid = result.extData.fid
+                    val password = AESForPayUtil.decrypt(fid, w.fingerPassword)
+                    if (password == null) {
+                        toast(getString(com.fzm.walletmodule.R.string.veriry_finger_opened))
+                    } else {
+                        toast(getString(com.fzm.walletmodule.R.string.verify_suc))
+                        if (!loading.isShowing) {
+                            loading.show()
+                        }
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            sendMsgTrans(w, password, callbackId, data)
+                        }
+                    }
+
+                }
+
+            } else {
+                showFingerError(result)
+
+            }
+        }, authParam)
+    }
+
+    private fun showFingerError(result: SoterProcessAuthenticationResult) {
+        if (result.errCode == 1013) {
+            toast(getString(com.fzm.walletmodule.R.string.finger_only_tip))
+        } else {
+            toast(result.errMsg)
+        }
+    }
+
     private var pwdDialog: Dialog? = null
-    private fun showPWD(createTran: CreateTran, chainName: String?) {
+    private fun showPWD(wallet: PWallet, createTran: CreateTran) {
         try {
             val view =
                 LayoutInflater.from(this).inflate(R.layout.dialog_pwd, null)
@@ -787,17 +916,6 @@ class DappActivity : AppCompatActivity() {
             }
             bindingDialog.btnOk.setOnClickListener {
                 try {
-                    if (customChain()) {
-                        if (dGas > 0.1) {
-                            toast(getString(com.fzm.walletmodule.R.string.tip_fee_high))
-                            return@setOnClickListener
-                        }
-                        if (!::cGasPrice.isInitialized || !::cGas.isInitialized) {
-                            toast(getString(R.string.tip_init_fee))
-                            return@setOnClickListener
-                        }
-                    }
-
                     val password = bindingDialog.etInput.text.toString()
                     if (password.isEmpty()) {
                         toast(getString(R.string.my_wallet_password_tips))
@@ -806,8 +924,7 @@ class DappActivity : AppCompatActivity() {
                     loading.show()
                     lifecycleScope.launch(Dispatchers.IO) {
                         try {
-                            val wallet = LitePal.find<PWallet>(MyWallet.getId(), true)
-                            wallet?.let { w ->
+                            wallet.let { w ->
                                 val check = GoWallet.checkPasswd(password, w.password)
                                 if (!check) {
                                     withContext(Dispatchers.Main) {
@@ -815,30 +932,7 @@ class DappActivity : AppCompatActivity() {
                                         loading.dismiss()
                                     }
                                 } else {
-                                    when (w.type) {
-                                        PWallet.TYPE_NOMAL -> {
-                                            val bPassword = GoWallet.encPasswd(password)!!
-                                            val mnem: String = GoWallet.decMenm(bPassword, w.mnem)
-                                            chainName?.let { name ->
-                                                val privKey = GoWallet.getPrikey(
-                                                    if (name == "BTY") "ETH" else name, mnem
-                                                )
-                                                signAndSend(name, privKey, createTran)
-                                            }
-                                        }
-
-                                        PWallet.TYPE_PRI_KEY -> {
-                                            val priCoin = w.coinList[0]
-                                            val privKey = priCoin.getPrivkey(password)
-                                            chainName?.let { name ->
-                                                signAndSend(name, privKey, createTran)
-                                            }
-
-                                        }
-
-                                        else -> {}
-                                    }
-
+                                    sendTrans(w, password, createTran)
                                 }
 
                             }
@@ -857,6 +951,34 @@ class DappActivity : AppCompatActivity() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+
+    private suspend fun sendTrans(w: PWallet, password: String, createTran: CreateTran) {
+        when (w.type) {
+            PWallet.TYPE_NOMAL -> {
+                val bPassword = GoWallet.encPasswd(password)!!
+                val mnem: String = GoWallet.decMenm(bPassword, w.mnem)
+                chainName?.let { name ->
+                    val privKey = GoWallet.getPrikey(
+                        if (name == "BTY") "ETH" else name, mnem
+                    )
+                    signAndSend(name, privKey, createTran)
+                }
+            }
+
+            PWallet.TYPE_PRI_KEY -> {
+                val priCoin = w.coinList[0]
+                val privKey = priCoin.getPrivkey(password)
+                chainName?.let { name ->
+                    signAndSend(name, privKey, createTran)
+                }
+
+            }
+
+            else -> {}
+        }
+
     }
 
     private suspend fun signAndSend(name: String, privKey: String, createTran: CreateTran) {

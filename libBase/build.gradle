@@ -62,6 +62,8 @@ dependencies {
     //debugApi  cfg.glance
     api cfg.dialogX
     api cfg.IndexRecyclerView
+    api cfg.soter
+    api cfg.switchbutton
 
     // WalletConnect V2
     def wallet_connect_version = "1.4.1"

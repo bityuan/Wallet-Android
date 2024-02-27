@@ -89,6 +89,7 @@
     <string name="my_wallets_chose2">观察账户</string>
     <string name="my_wallets_current_wallet">当前账户</string>
     <string name="my_wallets_mnem_walllet">助记词账户</string>
+    <string name="my_wallet_detail_open_finger_pay">开启免密支付</string>
     <string name="home_empty">暂无资产，快去添加吧</string>
     <string name="equal">≈</string>
     <string name="cny">¥</string>
@@ -267,4 +268,8 @@
     <string name="tip_2">温馨提示</string>
     <string name="eth_tip_speed">加速交易：加速ETH链上交易，加速成功返还上次未消耗手续费</string>
     <string name="eth_tip_cancle">取消交易：取消ETH链上交易，取消成功返还上次未消耗手续费</string>
+    <string name="close_finger_tip">确定关闭免密支付？</string>
+    <string name="finger_only_tip">开启失败:请前往设置 至少设置一个指纹</string>
+    <string name="verify_suc">验证成功！</string>
+    <string name="veriry_finger_opened">请用开启验证时录入的手指</string>
 </resources>

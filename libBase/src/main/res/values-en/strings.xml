@@ -16,5 +16,8 @@
   <string name="basic_error_data_structure">basic return data structure error</string>
   <string name="my_wallet_detail_password">Please enter the account password</string>
   <string name="lib_ok">Confirm</string>
-
+  <string name="finger_pay">Touch pay</string>
+  <string name="finger_pay_tips">Place your finger</string>
+  <string name="finger_pay_password_pay">Use password</string>
+  <string name="finger_pay_warn">Fingerprint verification failed</string>
 </resources>

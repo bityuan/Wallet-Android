@@ -136,6 +136,8 @@ ext {
     trustwallet ="com.trustwallet:wallet-core:3.2.18"
     dialogX ="com.github.kongzue.DialogX:DialogX:0.0.48"
     IndexRecyclerView ="com.github.jiang111:IndexRecyclerView:v1.1"
+    soter ="com.github.Tencent.soter:soter-wrapper:2.0.9"
+    switchbutton = "com.kyleduo.switchbutton:library:2.0.0"
 
 
 }

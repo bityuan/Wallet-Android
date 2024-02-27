@@ -6,8 +6,12 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.nft.nftModule
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.IPConfig
+import com.fzm.wallet.sdk.IPConfig.Companion.FIGER_KEY
 import com.fzm.wallet.sdk.base.WalletModuleApp
+import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.walletmodule.net.walletModule
+import com.tencent.soter.wrapper.SoterWrapperApi
+import com.tencent.soter.wrapper.wrap_task.InitializeParam.InitializeParamBuilder
 import com.umeng.commonsdk.UMConfigure
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -26,6 +30,7 @@ class IApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        initSort()
         //开源环境
         //BWallet.get().setUrls(BASE_URL,GO_URL)
         val baseUrl = when (W.appType) {
@@ -66,18 +71,29 @@ class IApplication : Application() {
             ARouter.openLog()
             ARouter.openDebug()
         }
+
         ARouter.init(this)
         if (!BuildConfig.DEBUG) {
             initUmeng()
         }
 
         System.loadLibrary("TrustWalletCore")
+
     }
 
 
     private fun initUmeng() {
         UMConfigure.setLogEnabled(BuildConfig.DEBUG);
         UMConfigure.init(this, IPConfig.UMENG_APP_KEY, "test", UMConfigure.DEVICE_TYPE_PHONE, "");
+    }
+
+    private fun initSort() {
+        val param = InitializeParamBuilder()
+            .setScenes(FIGER_KEY)
+            .build()
+        SoterWrapperApi.init(this, { result ->
+            logDebug("$result")
+        }, param)
     }
 
 

@@ -15,7 +15,6 @@ import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
-import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,7 +34,6 @@ import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.FEE_CUSTOM_POSITION
 import com.fzm.wallet.sdk.base.LIVE_KEY_FEE
 import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
-import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.bean.StringResult
@@ -45,6 +43,7 @@ import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.ext.toPlainStr
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.repo.WalletRepository
+import com.fzm.wallet.sdk.utils.AESForPayUtil
 import com.fzm.wallet.sdk.utils.AddressCheckUtils
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.GoWallet.Companion.LOW
@@ -52,6 +51,7 @@ import com.fzm.wallet.sdk.utils.GoWallet.Companion.LOW_GAS_PRICE
 import com.fzm.wallet.sdk.utils.ListUtils
 import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.fzm.wallet.sdk.utils.RegularUtils
+import com.fzm.wallet.sdk.widget.TouchIdDialog
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.bean.DGear
@@ -60,13 +60,19 @@ import com.fzm.walletmodule.databinding.DialogWalletsBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.RemarksTipsDialogView
 import com.fzm.walletmodule.ui.widget.configWindow
-import com.fzm.walletmodule.ui.widget.configWindowDim
 import com.fzm.walletmodule.utils.ClickUtils
+import com.fzm.walletmodule.utils.FingerManager
 import com.fzm.walletmodule.utils.ToastUtils
 import com.fzm.walletmodule.vm.OutViewModel
 import com.fzm.walletmodule.vm.WalletViewModel
 import com.google.gson.Gson
 import com.jeremyliao.liveeventbus.LiveEventBus
+import com.tencent.soter.core.model.ConstantsSoter
+import com.tencent.soter.wrapper.SoterWrapperApi
+import com.tencent.soter.wrapper.wrap_biometric.SoterBiometricCanceller
+import com.tencent.soter.wrapper.wrap_biometric.SoterBiometricStateCallback
+import com.tencent.soter.wrapper.wrap_callback.SoterProcessAuthenticationResult
+import com.tencent.soter.wrapper.wrap_task.AuthenticationParam
 import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.MultiItemTypeAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
@@ -77,7 +83,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.backgroundResource
 import org.jetbrains.anko.imageResource
-import org.jetbrains.anko.sdk27.coroutines.textChangedListener
 import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -90,6 +95,7 @@ import org.web3j.protocol.http.HttpService
 import walletapi.GsendTx
 import walletapi.WalletRecover
 import walletapi.Walletapi
+import java.lang.ref.WeakReference
 import java.math.BigInteger
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -453,7 +459,7 @@ class OutActivity : BaseActivity() {
             }
 
             if (RegularUtils.isAddress(toAddress)) {
-                showPwdDialog()
+                showPayDialog()
             } else {
                 loading.show()
                 lifecycleScope.launch(Dispatchers.IO) {
@@ -471,7 +477,7 @@ class OutActivity : BaseActivity() {
                                     loading.dismiss()
                                     toAddress = list[0]
                                     if (RegularUtils.isAddress(toAddress)) {
-                                        showPwdDialog()
+                                        showPayDialog()
                                     } else {
                                         ToastUtils.show(
                                             this@OutActivity,
@@ -506,7 +512,7 @@ class OutActivity : BaseActivity() {
                 val walletsBinding = DialogWalletsBinding.inflate(layoutInflater)
                 walletsDialog.setView(walletsBinding.root)
                 walletsBinding.rvList.layoutManager = LinearLayoutManager(this)
-                val fWallets = wallets.filter { wa->
+                val fWallets = wallets.filter { wa ->
                     wa.coinList.find { it.netId == netId } != null
                 }
 
@@ -608,6 +614,59 @@ class OutActivity : BaseActivity() {
         return true
     }
 
+
+    private fun showPayDialog() {
+        if (coin?.getpWallet()?.fingerState == PWallet.OPEN) {
+            showFingerPay()
+        } else {
+            showPwdDialog()
+        }
+    }
+
+
+    private fun showFingerPay() {
+        val fm = FingerManager()
+        fm.setOnPasswordListener(object : FingerManager.UserPasswordListener {
+            override fun onPassword() {
+                showPwdDialog()
+            }
+
+        })
+        val authParam = fm.getAuthParam(this)
+        SoterWrapperApi.requestAuthorizeAndSign({ result ->
+            if (result.isSuccess) {
+                coin?.getpWallet()?.let {
+                    val fid = result.extData.fid
+                    val password = AESForPayUtil.decrypt(fid, it.fingerPassword)
+                    if (password == null) {
+                        toast(getString(R.string.veriry_finger_opened))
+                    } else {
+                        toast(getString(R.string.verify_suc))
+                        if (!loading.isShowing) {
+                            loading.show()
+                        }
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            sendTrans(password)
+                        }
+                    }
+
+                }
+
+            } else {
+                showFingerError(result)
+
+            }
+        }, authParam)
+    }
+
+    private fun showFingerError(result: SoterProcessAuthenticationResult) {
+        if (result.errCode == 1013) {
+            toast(getString(R.string.finger_only_tip))
+        } else {
+            toast(result.errMsg)
+        }
+    }
+
     private var addressId = 0
     private fun showPwdDialog() {
         if (!AddressCheckUtils.check(coin?.chain, toAddress)) {
@@ -624,7 +683,6 @@ class OutActivity : BaseActivity() {
             dialog.dismiss()
         }
         bindingDialog.btnOk.setOnClickListener {
-            val money = binding.etMoney.text.toString()
             val password = bindingDialog.etInput.text.toString()
             if (password.isEmpty()) {
                 toast(getString(R.string.my_wallet_password_tips))
@@ -651,47 +709,53 @@ class OutActivity : BaseActivity() {
                             }
 
                         }
-
-                        when (it.getpWallet().type) {
-                            PWallet.TYPE_NOMAL -> {
-                                val bPassword = GoWallet.encPasswd(password)!!
-                                val mnem: String = GoWallet.decMenm(bPassword, it.getpWallet().mnem)
-                                configNomalWallet(it, mnem)
-
-                                //如果需要代扣
-                                if (coinToken.proxy) {
-                                    toPara(it, money)
-                                } else {
-                                    handleTransactions(toAddress, money)
-                                }
-                            }
-
-                            PWallet.TYPE_PRI_KEY -> {
-                                configPrikeyWallet(it)
-                                privkey = it.getPrivkey(password)
-                                //如果需要代扣
-                                if (coinToken.proxy) {
-                                    toPara(it, money)
-                                } else {
-                                    handleTransactions(toAddress, money)
-                                }
-                            }
-
-                            PWallet.TYPE_RECOVER -> {
-                                configPrikeyWallet(it)
-                                privkey = it.getPrivkey(password)
-                                //找回钱包发送交易
-                                doRecover(toAddress, money)
-                            }
-                        }
-
-
+                        sendTrans(password)
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
         }
+    }
+
+    private suspend fun sendTrans(password: String) {
+        coin?.let {
+            val money = binding.etMoney.text.toString()
+            when (it.getpWallet().type) {
+                PWallet.TYPE_NOMAL -> {
+                    val bPassword = GoWallet.encPasswd(password)!!
+                    val mnem: String = GoWallet.decMenm(bPassword, it.getpWallet().mnem)
+                    configNomalWallet(it, mnem)
+
+                    //如果需要代扣
+                    if (coinToken.proxy) {
+                        toPara(it, money)
+                    } else {
+                        handleTransactions(toAddress, money)
+                    }
+                }
+
+                PWallet.TYPE_PRI_KEY -> {
+                    configPrikeyWallet(it)
+                    privkey = it.getPrivkey(password)
+                    //如果需要代扣
+                    if (coinToken.proxy) {
+                        toPara(it, money)
+                    } else {
+                        handleTransactions(toAddress, money)
+                    }
+                }
+
+                PWallet.TYPE_RECOVER -> {
+                    configPrikeyWallet(it)
+                    privkey = it.getPrivkey(password)
+                    //找回钱包发送交易
+                    doRecover(toAddress, money)
+                }
+            }
+        }
+
+
     }
 
     private fun toPara(it: Coin, money: String) {
@@ -867,7 +931,7 @@ class OutActivity : BaseActivity() {
                         ToastUtils.show(this, R.string.home_transfer_currency_success)
                         MMkvUtil.encode("value${it.netId}", "$toAddress,$money")
                         finish()
-                    }catch (e:Exception){
+                    } catch (e: Exception) {
                         toast("$sendRawTransaction:$e")
                     }
 

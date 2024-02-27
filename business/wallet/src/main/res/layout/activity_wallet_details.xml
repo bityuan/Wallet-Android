@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -53,6 +54,40 @@
             android:text="@string/my_wallet_detail_update_name"
             android:textColor="@color/gray_349"
             android:textSize="@dimen/sp_16" />
+
+
+        <LinearLayout
+            android:id="@+id/ll_finger_pay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text="@string/my_wallet_detail_open_finger_pay"
+                android:textColor="@color/gray_349"
+                android:textSize="16sp" />
+
+
+            <com.kyleduo.switchbutton.SwitchButton
+                android:id="@+id/switch_finger_pay"
+                style="@style/SwitchButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="12dp"
+                app:kswThumbMargin="-3dp"
+                app:kswThumbWidth="20dp"
+                app:kswTintColor="#7190ff" />
+        </LinearLayout>
 
 
         <TextView
@@ -114,8 +149,6 @@
             android:text="@string/bind_recover"
             android:textColor="@color/gray_349"
             android:textSize="@dimen/sp_16" />
-
-
 
 
         <TextView

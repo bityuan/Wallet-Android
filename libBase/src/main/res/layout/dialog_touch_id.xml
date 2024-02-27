@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_re_white">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="15dp"
+        android:text="@string/finger_pay"
+        android:textColor="#ff333649"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="45dp"
+        android:layout_height="4dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="51dp"
+        android:background="@color/color_7190FF" />
+
+    <ImageView
+        android:id="@+id/close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:paddingLeft="10dp"
+        android:paddingTop="16dp"
+        android:paddingRight="25dp"
+        android:paddingBottom="16dp"
+        android:src="@mipmap/icon_close" />
+
+    <ImageView
+        android:id="@+id/fingerImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="46dp"
+        android:src="@mipmap/finger_img" />
+
+    <TextView
+        android:id="@+id/tips"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="180dp"
+        android:text="@string/finger_pay_tips"
+        android:textColor="#ff8e92a3"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/warn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="180dp"
+        android:text="@string/finger_pay_warn"
+        android:textColor="#ffec5151"
+        android:textSize="14sp"
+        android:visibility="gone" />
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="27dp"
+        android:layout_marginTop="201dp" />
+
+    <TextView
+        android:id="@+id/passwordPay"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="219dp"
+        android:layout_marginRight="25dp"
+        android:background="@drawable/bg_shape_button"
+        android:gravity="center"
+        android:text="@string/finger_pay_password_pay"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:visibility="visible" />
+
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="17dp"
+        android:layout_below="@id/passwordPay" />
+
+</RelativeLayout>

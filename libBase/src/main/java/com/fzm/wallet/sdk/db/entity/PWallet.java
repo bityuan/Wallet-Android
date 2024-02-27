@@ -7,6 +7,10 @@ import java.util.List;
  * Created by ZX on 2018/5/24.
  */
 public class PWallet extends BaseBean implements Cloneable {
+
+    public static final String OPEN = "open";
+    public static final String CLOSE = "close";
+
     public static final String PWALLET_ID = "pwallet_id";
     public static final String PWALLET_MNEM = "pwallet_mnem";
     public static final int TYPE_CHINESE = 1;
@@ -20,6 +24,9 @@ public class PWallet extends BaseBean implements Cloneable {
     private String user;
     private String name;
     private String password;
+    private String fingerPassword;
+    //"open" "close"
+    private String fingerState;
     private String mnem;
     //0:英文 1:中文
     private int mnemType;
@@ -48,6 +55,22 @@ public class PWallet extends BaseBean implements Cloneable {
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    public String getFingerPassword() {
+        return fingerPassword;
+    }
+
+    public void setFingerPassword(String fingerPassword) {
+        this.fingerPassword = fingerPassword;
+    }
+
+    public String getFingerState() {
+        return fingerState == null ? CLOSE : fingerState;
+    }
+
+    public void setFingerState(String fingerState) {
+        this.fingerState = fingerState;
     }
 
     public String getName() {

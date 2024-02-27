@@ -10,15 +10,18 @@ import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.IPConfig
+import com.fzm.wallet.sdk.IPConfig.Companion.FIGER_KEY
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.IAppTypeProvider
 import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.base.ROUTE_APP_TYPE
+import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.db.entity.PWallet.TYPE_ADDR_KEY
 import com.fzm.wallet.sdk.db.entity.PWallet.TYPE_PRI_KEY
 import com.fzm.wallet.sdk.db.entity.PWallet.TYPE_RECOVER
+import com.fzm.wallet.sdk.utils.AESForPayUtil
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.databinding.ActivityWalletDetailsBinding
@@ -28,9 +31,13 @@ import com.fzm.walletmodule.event.CheckMnemEvent
 import com.fzm.walletmodule.event.UpdatePasswordEvent
 import com.fzm.walletmodule.manager.WalletManager
 import com.fzm.walletmodule.ui.base.BaseActivity
+import com.fzm.walletmodule.utils.FingerManager
 import com.fzm.walletmodule.utils.ListUtils
 import com.fzm.walletmodule.utils.isFastClick
-import com.jeremyliao.liveeventbus.LiveEventBus
+import com.kongzue.dialogx.dialogs.MessageDialog
+import com.tencent.soter.core.model.SoterErrCode
+import com.tencent.soter.wrapper.SoterWrapperApi
+import com.tencent.soter.wrapper.wrap_callback.SoterProcessAuthenticationResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -43,7 +50,6 @@ import org.litepal.LitePal
 import org.litepal.LitePal.find
 import org.litepal.LitePal.select
 import org.litepal.extension.delete
-import org.litepal.extension.deleteAll
 import org.litepal.extension.find
 import org.litepal.extension.findFirst
 
@@ -77,14 +83,14 @@ class WalletDetailsActivity : BaseActivity() {
         initView()
         EventBus.getDefault().register(this)
         initListener()
+        initSort()
+        configWallets()
     }
 
 
     override fun initView() {
         super.initView()
         tvTitle.text = getString(R.string.title_wallet_details)
-        configWallets()
-
     }
 
     override fun configWallets() {
@@ -99,6 +105,7 @@ class WalletDetailsActivity : BaseActivity() {
             mPWallet = find(PWallet::class.java, walletid)
             withContext(Dispatchers.Main) {
                 mPWallet?.let {
+                    binding.switchFingerPay.setCheckedNoEvent(it.fingerState == PWallet.OPEN)
                     when (it.type) {
                         TYPE_PRI_KEY -> {
                             binding.tvForgetPassword.visibility = View.GONE
@@ -113,6 +120,7 @@ class WalletDetailsActivity : BaseActivity() {
                             binding.tvOutPriv.visibility = View.GONE
                             binding.tvOutPub.visibility = View.GONE
                             binding.tvNewRecoverAddress.visibility = View.GONE
+                            binding.llFingerPay.visibility = View.GONE
                         }
 
                         TYPE_RECOVER -> {
@@ -121,11 +129,27 @@ class WalletDetailsActivity : BaseActivity() {
                             binding.tvNewRecoverAddress.visibility = View.GONE
                             binding.tvOutPriv.visibility = View.GONE
                             binding.tvOutPub.visibility = View.GONE
+                            binding.llFingerPay.visibility = View.GONE
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun initSort() {
+        SoterWrapperApi.prepareAuthKey(
+            { result ->
+                logDebug("init sort = $result")
+                if (result.errCode == SoterErrCode.ERR_OK) {
+                    binding.llFingerPay.visibility = View.VISIBLE
+                } else {
+                    binding.llFingerPay.visibility = View.GONE
+                }
+
+            }, false, true, FIGER_KEY, null, null
+        )
+
     }
 
 
@@ -191,8 +215,30 @@ class WalletDetailsActivity : BaseActivity() {
 
         binding.tvNewRecoverAddress.setOnClickListener {
             ARouter.getInstance().build(RouterPath.WALLET_NEW_RECOVER_ADDRESS)
-                .withLong(PWallet.PWALLET_ID, walletid)
-                .navigation()
+                .withLong(PWallet.PWALLET_ID, walletid).navigation()
+        }
+
+        binding.switchFingerPay.setOnCheckedChangeListener { _, checked ->
+            if (checked) {
+                binding.switchFingerPay.setCheckedNoEvent(false)
+                checkPassword(4)
+            } else {
+                binding.switchFingerPay.setCheckedNoEvent(true)
+                val dialog = MessageDialog.build()
+                dialog.title = getString(R.string.close_finger_tip)
+                dialog.cancelButton = getString(R.string.cancel)
+                dialog.okButton = getString(R.string.ok)
+                dialog.setOkButtonClickListener { dialog, v ->
+                    dialog.dismiss()
+                    binding.switchFingerPay.setCheckedNoEvent(false)
+                    mPWallet?.let {
+                        it.fingerState = PWallet.CLOSE
+                        it.update(it.id)
+                    }
+                    true
+                }
+                dialog.show()
+            }
         }
     }
 
@@ -292,7 +338,8 @@ class WalletDetailsActivity : BaseActivity() {
                                         } else if (it.type == PWallet.TYPE_PRI_KEY) {
                                             WalletManager().exportContent(
                                                 this@WalletDetailsActivity,
-                                                coin.getPrivkey(password), "${coin.name}私钥"
+                                                coin.getPrivkey(password),
+                                                "${coin.name}私钥"
                                             )
                                         }
                                     }
@@ -323,14 +370,50 @@ class WalletDetailsActivity : BaseActivity() {
                 }
 
             }
+
+            4 -> {
+                dismiss()
+                showFingerPay(password)
+
+
+            }
+        }
+    }
+
+    private fun showFingerPay(password: String) {
+        val fm = FingerManager()
+        val authParam = fm.getAuthParam(this,false)
+        SoterWrapperApi.requestAuthorizeAndSign({ result ->
+            if (result.isSuccess) {
+                mPWallet?.let {
+                    val fid = result.extData.fid
+                    val encPassword = AESForPayUtil.encrypt(fid, password)
+                    it.fingerPassword = encPassword
+                    it.fingerState = PWallet.OPEN
+                    it.update(it.id)
+                    binding.switchFingerPay.setCheckedNoEvent(true)
+                    toast(getString(R.string.verify_suc))
+                }
+
+            } else {
+                showFingerError(result)
+            }
+        }, authParam)
+    }
+
+
+    private fun showFingerError(result: SoterProcessAuthenticationResult) {
+        if (result.errCode == 1013) {
+            toast(getString(R.string.finger_only_tip))
+        } else {
+            toast(result.errMsg)
         }
     }
 
     private fun doingDelete() {
         commonBinding.tvResult.text = getString(R.string.my_wallet_detail_safe)
         commonBinding.tvResult.textColor = Color.RED
-        commonBinding.tvResultDetails.text =
-            getString(R.string.my_wallet_detail_delete_message)
+        commonBinding.tvResultDetails.text = getString(R.string.my_wallet_detail_delete_message)
         commonBinding.btnLeft.visibility = View.VISIBLE
         commonBinding.btnLeft.setOnClickListener {
             commonDialog.dismiss()
@@ -385,12 +468,13 @@ class WalletDetailsActivity : BaseActivity() {
                                             "${coin.name}公钥"
                                         )
                                     } else if (it.type == PWallet.TYPE_PRI_KEY) {
-                                        if(coin.pubkey != null){
+                                        if (coin.pubkey != null) {
                                             WalletManager().exportContent(
                                                 this@WalletDetailsActivity,
-                                                coin.pubkey, "${coin.name}公钥"
+                                                coin.pubkey,
+                                                "${coin.name}公钥"
                                             )
-                                        }else {
+                                        } else {
                                             toast(getString(R.string.try_imp))
                                         }
 

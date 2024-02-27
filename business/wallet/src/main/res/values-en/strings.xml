@@ -816,7 +816,6 @@
     <string name="finger_pay">Touch pay</string>
     <string name="finger_pay_password_pay">Use password</string>
     <string name="finger_pay_tips">Place your finger</string>
-    <string name="finger_pay_warn">Fingerprint verification failed</string>
     <string name="finger_pay_close_warn">Really disable Touch pay?</string>
     <string name="finger_pay_system_no_finger">Go settings to enable touch pay</string>
     <string name="finger_pay_re_open">The password has been changed.Touch ID pay will be enabled once password validated</string>
@@ -915,4 +914,8 @@
     <string name="tip_2">Tips</string>
     <string name="eth_tip_speed">Accelerated trading: Accelerate ETH on chain trading, successfully refund the last unused transaction fee</string>
     <string name="eth_tip_cancle">Cancel transaction: Cancel ETH on chain transaction, successfully cancel and refund the last unused transaction fee</string>
+    <string name="close_finger_tip">Are you sure you want to close the password free payment?</string>
+    <string name="finger_only_tip">Opening failed: Please go to the settings to set at least one fingerprint</string>
+    <string name="verify_suc">Verification successful!</string>
+    <string name="veriry_finger_opened">Please use the finger verified</string>
 </resources>
