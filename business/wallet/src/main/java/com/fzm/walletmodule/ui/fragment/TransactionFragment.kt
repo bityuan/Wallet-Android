@@ -15,6 +15,7 @@ import com.fzm.wallet.sdk.bean.Transactions
 import com.fzm.wallet.sdk.bean.response.TransactionResponse
 import com.fzm.wallet.sdk.db.entity.Address
 import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.fzm.walletmodule.R
@@ -33,6 +34,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.litepal.LitePal
 import org.litepal.extension.find
+import org.litepal.extension.findAll
 
 
 class TransactionFragment : BaseFragment() {
@@ -76,6 +78,8 @@ class TransactionFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         mType = arguments?.getInt(TYPE) as Int
         coin = arguments?.getSerializable(COIN) as Coin
+        //initCoins()
+        initAddresss()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -105,6 +109,16 @@ class TransactionFragment : BaseFragment() {
                     val otherAddress =
                         if (transaction.type == Transactions.TYPE_SEND) transaction.to else transaction.from
                     holder.setText(R.id.tv_address, otherAddress)
+
+                    transaction.nickName?.let {
+                        if (it.isNotEmpty()) {
+                            holder.setVisible(R.id.tv_name, true)
+                            holder.setText(R.id.tv_name, it)
+                        } else {
+                            holder.setVisible(R.id.tv_name, false)
+                        }
+                    }
+
 
                     //状态
                     val pedding = Color.parseColor("#7190FF")
@@ -245,6 +259,11 @@ class TransactionFragment : BaseFragment() {
                 if (dState && transactions.value?.toDouble()!! < 1 && coin.name == "USDT") {
                     continue
                 }
+
+                val otherAddress =
+                    if (transactions.type == Transactions.TYPE_SEND) transactions.to else transactions.from
+                val name = getContacts(otherAddress)
+                transactions.nickName = name
                 mList.add(transactions)
             }
         } else {
@@ -252,31 +271,71 @@ class TransactionFragment : BaseFragment() {
                 if (dState && transactions.value?.toDouble()!! < 1 && coin.name == "USDT") {
                     continue
                 }
+                val otherAddress =
+                    if (transactions.type == Transactions.TYPE_SEND) transactions.to else transactions.from
+                val name = getContacts(otherAddress)
+                transactions.nickName = name
                 mList.add(transactions)
             }
 
         }
     }
 
+    //---------------------------------------external query-------------------------------------
 
-    private fun getWalletNames(address: String): String {
+    private var coinOnce = false
+    private var coins: List<Coin>? = null
+    private var addressOnce = false
+    private var addresss: List<Address>? = null
+    private fun initCoins() {
+        if (!coinOnce) {
+            coinOnce = true
+            lifecycleScope.launch {
+                val cs = LitePal.findAll<Coin>(true)
+                withContext(Dispatchers.Main) {
+                    coins = cs
+                }
+
+            }
+        }
+    }
+
+    private fun initAddresss() {
+        if (!addressOnce) {
+            addressOnce = true
+            lifecycleScope.launch {
+                val addrs = LitePal.findAll<Address>(true)
+                withContext(Dispatchers.Main) {
+                    addresss = addrs
+                }
+
+            }
+        }
+    }
+
+
+    private fun getWalletNames(address: String?): String {
         var names = ""
-        val coinList = LitePal.where("address = ?", address).find<Coin>(true)
-        for (coin in coinList) {
-            val walletName = coin.getpWallet().name
-            names += "$walletName,"
+        coins?.let { cs ->
+            for (coin in cs) {
+                if (coin.address == address) {
+                    names += "${coin.getpWallet().name} "
+                }
+            }
         }
         return names
     }
 
-    private fun getContacts(address: String): String {
-        var names = ""
-        val addrList = LitePal.where("address = ?", address).find<Address>(true)
-        for (coin in addrList) {
-            val nickName = coin.contacts?.nickName
-            names += "$nickName,"
+    private fun getContacts(address: String?): String {
+        val set = mutableSetOf<String?>()
+        addresss?.let { ass ->
+            for (a in ass) {
+                if (a.address == address) {
+                    set.add(a.contacts?.nickName)
+                }
+            }
         }
-        return names
+        return set.joinToString(separator = " ")
     }
 
 

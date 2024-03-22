@@ -17,8 +17,8 @@
     <application>
         <activity
             android:name=".ui.activity.ChooseChainActivity"
-            android:label=""
-            android:exported="false" />
+            android:exported="false"
+            android:label="" />
         <activity
             android:name=".ui.activity.AddCoinActivity"
             android:exported="false" />
@@ -28,13 +28,13 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.OutActivity"
-            android:launchMode="singleTask"
             android:label=""
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.HistoryActivity"
-            android:launchMode="singleTask"
             android:label=""
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.NewRecoverAddressActivity"
@@ -87,6 +87,9 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name=".ui.activity.CreateMnemTipActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.activity.MnemPasswordActivity"
             android:label="@string/title_set_pwd" />
         <activity
@@ -112,7 +115,8 @@
             android:label="@string/title_transaction_details"
             android:screenOrientation="portrait" />
 
-        <receiver android:name=".update.UpdataBroadcastReceiver"
+        <receiver
+            android:name=".update.UpdataBroadcastReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />

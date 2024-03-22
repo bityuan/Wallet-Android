@@ -16,7 +16,8 @@ public class Address implements Parcelable {
     private final String value;
 
     public Address(@NonNull String value) {
-        value = value.toLowerCase();
+        //转为小写会导致Dapp Cache address 0x632d8B wallet address 0x632d8b" 大小写匹配问题连接不上，所以注释
+        //value = value.toLowerCase();
         if (Hex.containsHexPrefix(value)) {
             value = Hex.cleanHexPrefix(value);
         }

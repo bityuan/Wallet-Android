@@ -51,7 +51,6 @@ import com.fzm.wallet.sdk.utils.GoWallet.Companion.LOW_GAS_PRICE
 import com.fzm.wallet.sdk.utils.ListUtils
 import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.fzm.wallet.sdk.utils.RegularUtils
-import com.fzm.wallet.sdk.widget.TouchIdDialog
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.bean.DGear

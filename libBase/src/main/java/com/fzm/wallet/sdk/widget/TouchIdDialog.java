@@ -20,30 +20,20 @@ import com.fzm.wallet.sdk.R;
  * description:
  */
 public class TouchIdDialog extends Dialog implements View.OnClickListener {
-    public static final int OK = 1;
-    public static final int CANCEL = 2;
     private View mCancelTv;
     private TextView mPassWordTv;
     private Context mContext;
     private ImageView mTouchIdImg;
-    private View warn;
-    private View tips;
 
     private DialogListener dialogListener;
     private boolean showPasswordPay = true;
 
     public interface DialogListener {
-        void whichClick(int i);
+        void whichClick();
     }
 
     public void setDialogListener(DialogListener dialogListener) {
         this.dialogListener = dialogListener;
-        if (warn != null) {
-            warn.setVisibility(View.GONE);
-        }
-        if (tips != null) {
-            tips.setVisibility(View.VISIBLE);
-        }
     }
 
     public TouchIdDialog(@NonNull Context context) {
@@ -68,8 +58,6 @@ public class TouchIdDialog extends Dialog implements View.OnClickListener {
         mPassWordTv = findViewById(R.id.passwordPay);
         mPassWordTv.setOnClickListener(this);
         mTouchIdImg = findViewById(R.id.fingerImg);
-        warn = findViewById(R.id.warn);
-        tips = findViewById(R.id.tips);
         mPassWordTv.setVisibility(showPasswordPay ? View.VISIBLE : View.GONE);
     }
 
@@ -78,13 +66,10 @@ public class TouchIdDialog extends Dialog implements View.OnClickListener {
         int id = v.getId();
         if (id == R.id.close) {
             TouchIdDialog.this.dismiss();
-            if (dialogListener != null) {
-                dialogListener.whichClick(CANCEL);
-            }
         } else if (id == R.id.passwordPay) {
             TouchIdDialog.this.dismiss();
             if (dialogListener != null) {
-                dialogListener.whichClick(OK);
+                dialogListener.whichClick();
             }
         }
     }
@@ -99,8 +84,4 @@ public class TouchIdDialog extends Dialog implements View.OnClickListener {
         mTouchIdImg.startAnimation(anim);
     }
 
-    public void showError() {
-        warn.setVisibility(View.VISIBLE);
-        tips.setVisibility(View.GONE);
-    }
 }

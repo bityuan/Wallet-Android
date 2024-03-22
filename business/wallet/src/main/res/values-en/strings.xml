@@ -918,4 +918,10 @@
     <string name="finger_only_tip">Opening failed: Please go to the settings to set at least one fingerprint</string>
     <string name="verify_suc">Verification successful!</string>
     <string name="veriry_finger_opened">Please use the finger verified</string>
+    <string name="next_st">Next</string>
+    <string name="m_tip1">Click Next and you will see the mnemonic for the wallet. Please remember the following safety points</string>
+    <string name="m_tip2">If I lose my mnemonic, my assets will be lost forever</string>
+    <string name="m_tip3">If I reveal or share my mnemonic words with anyone, my assets may be stolen</string>
+    <string name="m_tip4">The responsibility for protecting the safety of mnemonics lies entirely with me</string>
+    <string name="p_check_str">Please select!</string>
 </resources>

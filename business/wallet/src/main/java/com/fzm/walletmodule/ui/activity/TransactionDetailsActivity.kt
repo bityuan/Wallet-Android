@@ -168,9 +168,6 @@ class TransactionDetailsActivity : BaseActivity() {
                 binding.tvBlock.text = transaction.height.toString()
 
                 binding.tvHash.text = transaction.txid
-                if (!TextUtils.isEmpty(transaction.nickName)) {
-                    binding.tvNickName.text = "${transaction.nickName}"
-                }
                 binding.tvInout.text =
                     if (transaction.type == Transactions.TYPE_SEND) Transactions.OUT_STR else Transactions.IN_STR
                 binding.tvNumber.text = transaction.value
@@ -199,11 +196,11 @@ class TransactionDetailsActivity : BaseActivity() {
                             if (transaction.type == Transactions.TYPE_SEND) transaction.to else transaction.from
                         val addressList =
                             LitePal.where("address = ?", otherAddress).find<Address>(true)
-                        val list = mutableListOf<String?>()
+                        val set = mutableSetOf<String?>()
                         for (addr in addressList) {
-                            list.add(addr.contacts?.nickName)
+                            set.add(addr.contacts?.nickName)
                         }
-                        names = list.joinToString(separator = " ")
+                        names = set.joinToString(separator = " ")
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }

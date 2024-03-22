@@ -39,6 +39,14 @@ class Address : KTBaseBean() {
     var isAdd:Boolean = false
 }
 
+class Node {
+    var name: String? = ""
+    var rpcUrl: String? = ""
+    var chainId: Long? = 0
+    var symbol: String? = ""
+    var browser: String? = ""
+}
+
 
 
 

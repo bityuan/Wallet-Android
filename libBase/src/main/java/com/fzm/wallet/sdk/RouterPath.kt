@@ -10,6 +10,7 @@ object RouterPath {
     //wallet
     const val WALLET_CREATE_WALLET = "/wallet/CreateWalletActivity"
     const val WALLET_CREATE_MNEM = "/wallet/CreateMnemActivity"
+    const val WALLET_CREATE_MNEM_TIP = "/wallet/CreateMnemTipActivity"
     const val WALLET_OUT = "/wallet/OutActivity"
     const val WALLET_HISTORY = "/wallet/HistoryActivity"
     const val WALLET_IN = "/wallet/InActivity"
@@ -39,6 +40,8 @@ object RouterPath {
     const val APP_MsgDetails = "/app/MsgDetailsActivity"
     const val APP_EXPLORES = "/app/ExploresActivity"
     const val APP_ABOUT = "/app/AboutActivity"
+    const val APP_NODE_SETTINGS = "/app/NodeSettingsActivity"
+    const val APP_RPC = "/app/RPCActivity"
     const val APP_SCAN_RESULT = "/app/ScanResultActivity"
     const val APP_DOWNLOAD = "/app/DownLoadActivity"
     const val APP_LANGUAGE = "/app/LanguageActivity"

@@ -50,16 +50,6 @@
         android:textColor="#ff8e92a3"
         android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/warn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="180dp"
-        android:text="@string/finger_pay_warn"
-        android:textColor="#ffec5151"
-        android:textSize="14sp"
-        android:visibility="gone" />
 
     <View
         android:layout_width="1dp"

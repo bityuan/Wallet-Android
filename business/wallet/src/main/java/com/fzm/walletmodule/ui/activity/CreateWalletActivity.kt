@@ -101,7 +101,7 @@ class CreateWalletActivity : BaseActivity() {
             val wallet = PWallet()
             wallet.name = name
             wallet.password = password
-            ARouter.getInstance().build(RouterPath.WALLET_CREATE_MNEM)
+            ARouter.getInstance().build(RouterPath.WALLET_CREATE_MNEM_TIP)
                 .withSerializable(RouterPath.PARAM_WALLET, wallet).navigation()
         }
 

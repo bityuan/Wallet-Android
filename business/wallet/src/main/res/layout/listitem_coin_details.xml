@@ -29,14 +29,11 @@
             android:layout_marginLeft="11dp"
             android:background="@drawable/bg_name_flag"
             android:ellipsize="end"
-            android:maxLength="5"
             android:paddingLeft="8dp"
-            android:paddingTop="3dp"
+            android:paddingTop="2dp"
             android:paddingRight="8dp"
             android:paddingBottom="2dp"
-            android:visibility="gone"
             android:singleLine="true"
-            android:text="@string/common_null"
             android:textColor="@color/color_333649"
             android:textSize="12sp" />
 

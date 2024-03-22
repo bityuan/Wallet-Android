@@ -39,7 +39,7 @@
     <string name="backup_mnemonic">备份助记词</string>
     <string name="create_mnemonic_hint">请务必妥善保存助记词，确定之后将进行校验。</string>
     <string name="common_null">--</string>
-    <string name="create_mnemonic_toast">提示：请勿直接截图保存！如果有人获取你的助记词将直接获取您的资产！\n\n正确做法：\n\n方式一：使用另一离线设备，拍照保存。\n方式二：正确抄写助记词，存放在安全的地方。\n\n点击［开始备份］后，需要对你记住的助记词进行校验。</string>
+    <string name="create_mnemonic_toast">提示：请勿直接截图保存，避免被恶意软件截取！\n如果有人获取你的助记词将直接获取您的资产！\n\n正确做法：\n方式一：使用另一离线设备，拍照保存。\n方式二：正确抄写助记词，存放在安全的地方。\n\n点击［开始备份］后，需要对你记住的助记词进行校验。</string>
     <string name="create_mnemonic_change">更换助记词</string>
     <string name="start_back_up">开始备份</string>
     <string name="validate_mnemonic">验证您备份的助记词</string>
@@ -272,4 +272,10 @@
     <string name="finger_only_tip">开启失败:请前往设置 至少设置一个指纹</string>
     <string name="verify_suc">验证成功！</string>
     <string name="veriry_finger_opened">请用开启验证时录入的手指</string>
+    <string name="next_st">下一步</string>
+    <string name="m_tip1">点击下一步，将看到钱包的助记词，请谨记以下安全点</string>
+    <string name="m_tip2">如果我弄丢了助记词，我的资产将永远丢失</string>
+    <string name="m_tip3">如果我向任何人透露或分享我的助记词，我的资产可能会被盗</string>
+    <string name="m_tip4">保护好助记词的安全的责任全部在于我</string>
+    <string name="p_check_str">请选中！</string>
 </resources>
