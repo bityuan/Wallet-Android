@@ -36,7 +36,7 @@ class MyFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initObserver()
-        if(WalletHelper.isSQ()){
+        if (WalletHelper.isSQ()) {
             binding.tvRecover.visibility = View.GONE
             binding.llContacts.visibility = View.GONE
         }
@@ -45,7 +45,7 @@ class MyFragment : Fragment() {
             ARouter.getInstance().build(RouterPath.APP_DOWNLOAD).navigation()
         }
         binding.llCheckUpdate.setOnClickListener {
-            if(!WalletHelper.isSQ()){
+            if (!WalletHelper.isSQ()) {
                 walletViewModel.getUpdate()
             }
         }
@@ -55,7 +55,6 @@ class MyFragment : Fragment() {
         binding.tvRecover.setOnClickListener {
             ARouter.getInstance().build(RouterPath.WALLET_RECOVER).navigation()
         }
-
         binding.tvLang.setOnClickListener {
             ARouter.getInstance().build(RouterPath.APP_LANGUAGE).navigation()
         }
@@ -64,6 +63,9 @@ class MyFragment : Fragment() {
         }
         binding.tvNotice.setOnClickListener {
             ARouter.getInstance().build(RouterPath.APP_MESSAGES).navigation()
+        }
+        binding.tvNode.setOnClickListener {
+            ARouter.getInstance().build(RouterPath.APP_NODE_SETTINGS).navigation()
         }
     }
 

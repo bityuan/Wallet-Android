@@ -463,9 +463,12 @@ class GoWallet {
                 //bty的推荐手续费设置
                 gWithoutTx.fee = btyfee
                 if (addressId != -1) {
+                    //私钥：0x的私钥为2，1x的私钥为0
                     gWithoutTx.txAddressID = addressId
                     gWithoutTx.feeAddressID = addressId
+                    //系统AddressID ：比特元系统（不管1x还是0x）都为0，YCC系统为2
                     gWithoutTx.execerAddressID = addressId
+
                 }
                 val txResp = Walletapi.coinsWithoutTxGroup(gWithoutTx)
                 return txResp.signedTx

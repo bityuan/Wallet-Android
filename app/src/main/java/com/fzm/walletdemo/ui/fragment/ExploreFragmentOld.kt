@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
@@ -13,6 +14,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
 import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.bean.ExploreBean
 import com.fzm.wallet.sdk.db.entity.PWallet
@@ -24,6 +26,7 @@ import com.fzm.walletdemo.databinding.FragmentExploreBinding
 import com.fzm.walletdemo.ui.adapter.ExploreAdapter
 import com.fzm.walletdemo.ui.adapter.ExploreDiffCallBack
 import com.fzm.walletmodule.vm.WalletViewModel
+import com.jeremyliao.liveeventbus.LiveEventBus
 import com.kongzue.dialogx.dialogs.PopMenu
 import com.kongzue.dialogx.interfaces.OnIconChangeCallBack
 import com.kongzue.dialogx.interfaces.OnMenuItemClickListener
@@ -60,6 +63,14 @@ class ExploreFragmentOld : Fragment() {
             binding.llSearch.setOnClickListener {
                 ARouter.getInstance().build(RouterPath.APP_SEARCH_DAPP).navigation()
             }
+
+            LiveEventBus.get<String>(LIVE_KEY_SCAN).observe(this, Observer { scan ->
+                gotoDapp(scan)
+            })
+            binding.ivScan.setOnClickListener {
+                ARouter.getInstance().build(RouterPath.WALLET_CAPTURE).navigation()
+            }
+
             val netIndex = MMkvUtil.decodeInt(GoWallet.CHAIN_NET)
             binding.incExTitle.tvChainNet.text = GoWallet.getChainNet(netIndex)
             binding.incExTitle.llChooseNet.setOnClickListener {
@@ -193,6 +204,25 @@ class ExploreFragmentOld : Fragment() {
             ARouter.getInstance().build(RouterPath.APP_DAPP).withString("name", appBean.name)
                 .withString(RouterPath.PARAM_URL, appBean.app_url).navigation()
         }
+    }
+
+
+    private fun gotoDapp(url: String) {
+        val count = LitePal.count<PWallet>()
+        if (count == 0) {
+            toast(getString(R.string.create_wallet_pre))
+            return
+        }
+        val id = MyWallet.getId()
+        val wallet = LitePal.find<PWallet>(id)
+        if (wallet?.type == PWallet.TYPE_ADDR_KEY) {
+            toast(getString(R.string.str_addr_no))
+            return
+        }
+        val newUrl = GoWallet.getNewUrl(url)
+        ARouter.getInstance().build(RouterPath.APP_DAPP)
+            .withString(RouterPath.PARAM_URL, newUrl).navigation()
+
     }
 
 }

@@ -84,6 +84,18 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.activity.NodeSettingsActivity"
+            android:exported="false"
+            android:label="@string/my_node"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.RPCActivity"
+            android:exported="false"
+            android:label="@string/my_add_rpc"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.activity.SetFeeActivity"
             android:exported="false"
             android:label="@string/fee_setting"

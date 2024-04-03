@@ -7,6 +7,8 @@
     <string name="my_about">关于我们</string>
     <string name="my_download">应用下载</string>
     <string name="my_lang">语言</string>
+    <string name="my_node">节点设置</string>
+    <string name="my_add_rpc">添加RPC</string>
     <string name="my_w_connect">WalletConnect</string>
 
     <string name="my_share_copy_address">复制下载地址</string>
@@ -63,6 +65,9 @@
     <string name="dapp_sign_re">Dapp发起签名请求</string>
     <string name="signme">签名信息</string>
     <string name="i_wallet">我的钱包</string>
+    <string name="c_entrance">便捷入口</string>
+    <string name="n_yopen">暂未开放</string>
+    <string name="save_suc">保存成功</string>
 
 
 </resources>
