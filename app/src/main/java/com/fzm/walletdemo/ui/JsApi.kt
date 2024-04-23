@@ -46,6 +46,8 @@ class JsApi(private val webView: WebView, private val activity: FragmentActivity
 
     //addressID 比特格式的地址传0， 以太坊格式传2
     private var addressid = -1
+    //系统AddressID ：比特元系统（不管1x还是0x）都为0，YCC系统为2
+    private var sysAddressid = 0
 
     private val loading by lazy {
         val loadingBinding = DialogLoadingBinding.inflate(activity.layoutInflater)
@@ -166,6 +168,7 @@ class JsApi(private val webView: WebView, private val activity: FragmentActivity
             exer = jsSign.exer
             withhold = jsSign.withhold
             addressid = getAddressId()
+            sysAddressid = jsSign.addressid
             activity.lifecycleScope.launch(Dispatchers.Main) {
                 showPwdDialog(1, handler)
             }
@@ -185,6 +188,8 @@ class JsApi(private val webView: WebView, private val activity: FragmentActivity
         var createHash = ""
         var exer = ""
         var withhold = -1
+        //系统addressid
+        var addressid = 0
     }
 
     @JavascriptInterface
@@ -196,6 +201,7 @@ class JsApi(private val webView: WebView, private val activity: FragmentActivity
             exer = jsSign.exer
             withhold = jsSign.withhold
             addressid = getAddressId()
+            sysAddressid = jsSign.addressid
             activity.lifecycleScope.launch(Dispatchers.Main) {
                 showPwdDialog(2, handler)
             }
@@ -329,7 +335,8 @@ class JsApi(private val webView: WebView, private val activity: FragmentActivity
                                     priKey,
                                     priKey,
                                     0.03,
-                                    addressid
+                                    addressid,
+                                    sysAddressid
                                 )
                                 handler?.complete(toJSONStr("signHash" to signTx))
                                 loading.dismiss()

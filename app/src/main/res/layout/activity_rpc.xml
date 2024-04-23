@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+   <cn.finalteam.loadingviewfinal.RecyclerViewFinal
+       android:id="@+id/rv_rpc_list"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:background="@android:color/white" />
+
+   <Button
+       android:id="@+id/btn_add_rpc"
+       android:background="@drawable/my_wallets_import"
+       android:layout_marginTop="20dp"
+       android:textColor="@color/white"
+       android:textSize="17sp"
+       android:text="新增RPC网址"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"/>
+</LinearLayout>

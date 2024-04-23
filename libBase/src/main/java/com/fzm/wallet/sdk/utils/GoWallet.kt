@@ -452,7 +452,8 @@ class GoWallet {
             txPriv: String,
             feePriv: String,
             btyfee: Double,
-            addressId: Int
+            addressId: Int,
+            sysAddressid:Int
         ): String? {
             try {
                 val gWithoutTx = GWithoutTx()
@@ -466,10 +467,9 @@ class GoWallet {
                     //私钥：0x的私钥为2，1x的私钥为0
                     gWithoutTx.txAddressID = addressId
                     gWithoutTx.feeAddressID = addressId
-                    //系统AddressID ：比特元系统（不管1x还是0x）都为0，YCC系统为2
-                    gWithoutTx.execerAddressID = addressId
-
                 }
+                //系统AddressID ：比特元系统（不管1x还是0x）都为0，YCC系统为2
+                gWithoutTx.execerAddressID = sysAddressid
                 val txResp = Walletapi.coinsWithoutTxGroup(gWithoutTx)
                 return txResp.signedTx
             } catch (e: Exception) {

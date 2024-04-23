@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="网络名称"
+        android:textColor="@color/gray_8e"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/et_name"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/bg_remember_words"
+        android:gravity="center_vertical"
+        android:hint="请自定义网络名称"
+        android:paddingStart="10dp"
+        android:paddingEnd="15dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="RPC地址"
+        android:textColor="@color/gray_8e"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/et_rpc_url"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/bg_remember_words"
+        android:gravity="center_vertical"
+        android:hint="请输入节点地址"
+        android:paddingStart="10dp"
+        android:paddingEnd="15dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="链ID"
+        android:textColor="@color/gray_8e"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/et_chain_id"
+        android:inputType="number"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/bg_remember_words"
+        android:gravity="center_vertical"
+        android:hint="请输入链ID"
+        android:paddingStart="10dp"
+        android:paddingEnd="15dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="默认代币符号（选填）"
+        android:textColor="@color/gray_8e"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/et_symbol"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/bg_remember_words"
+        android:hint="请输入默认代币符号（选填）"
+        android:paddingStart="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="区块链浏览器（选填）"
+        android:textColor="@color/gray_8e"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/et_browser"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/bg_remember_words"
+        android:hint="请输入区块链浏览器（选填）"
+        android:paddingStart="10dp" />
+
+
+    <Button
+        android:id="@+id/btn_ok"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/my_wallets_import"
+        android:text="@string/ok"
+        android:textColor="@android:color/white"
+        android:textSize="17sp" />
+
+
+</LinearLayout>

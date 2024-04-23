@@ -115,7 +115,7 @@ class DappActivity : AppCompatActivity() {
 
     private var address = Address.EMPTY
     private var nodeUrl = GoWallet.WEB3_BNB
-    private var chainId: Long = GoWallet.CHAIN_ID_BNB_L
+    private var chainId: Long = 0L
 
     //private var feePosition = 2
     private var feePosition = 0
