@@ -7,9 +7,13 @@ import android.provider.MediaStore
 import android.text.TextUtils
 import android.view.View
 import androidx.lifecycle.lifecycleScope
+import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.base.LIVE_KEY_FROM
 import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
+import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN_EX
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.ToastUtils
@@ -34,11 +38,17 @@ import kotlinx.coroutines.withContext
 class CaptureCustomActivity : BaseActivity(),
     CameraScan.OnScanResultCallback {
     private var mCameraScan: CameraScan? = null
+
+    @JvmField
+    @Autowired(name = LIVE_KEY_FROM)
+    var liveKeyFrom: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         mCustomToobar = true
         mStatusColor = Color.TRANSPARENT
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_capture_custom)
+        ARouter.getInstance().inject(this)
         initMyToolbar()
         initScanUI()
         initListener()
@@ -97,7 +107,6 @@ class CaptureCustomActivity : BaseActivity(),
     }
 
 
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && data != null) {
@@ -115,7 +124,7 @@ class CaptureCustomActivity : BaseActivity(),
         //异步解析
         lifecycleScope.launch(Dispatchers.IO) {
             val result = CodeUtils.parseCode(bitmap)
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 if (TextUtils.isEmpty(result)) {
                     ToastUtils.show(this@CaptureCustomActivity, getString(R.string.config_code))
                 } else {
@@ -135,9 +144,8 @@ class CaptureCustomActivity : BaseActivity(),
     }
 
 
-
     private fun post(result: String) {
-        LiveEventBus.get<String>(LIVE_KEY_SCAN).post(result)
+        LiveEventBus.get<String>(liveKeyFrom ?: LIVE_KEY_SCAN).post(result)
     }
 
 

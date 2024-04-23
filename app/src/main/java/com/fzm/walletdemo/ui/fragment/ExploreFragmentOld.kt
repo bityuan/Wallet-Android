@@ -14,8 +14,11 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.base.LIVE_KEY_FROM
 import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
+import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN_EX
 import com.fzm.wallet.sdk.base.MyWallet
+import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.bean.ExploreBean
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.net.walletQualifier
@@ -64,11 +67,14 @@ class ExploreFragmentOld : Fragment() {
                 ARouter.getInstance().build(RouterPath.APP_SEARCH_DAPP).navigation()
             }
 
-            LiveEventBus.get<String>(LIVE_KEY_SCAN).observe(this, Observer { scan ->
+            LiveEventBus.get<String>(LIVE_KEY_SCAN_EX).observe(this, Observer { scan ->
                 gotoDapp(scan)
             })
             binding.ivScan.setOnClickListener {
-                ARouter.getInstance().build(RouterPath.WALLET_CAPTURE).navigation()
+                ARouter.getInstance().build(RouterPath.WALLET_CAPTURE).withString(
+                    LIVE_KEY_FROM,
+                    LIVE_KEY_SCAN_EX
+                ).navigation()
             }
 
             val netIndex = MMkvUtil.decodeInt(GoWallet.CHAIN_NET)
