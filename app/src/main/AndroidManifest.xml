@@ -7,6 +7,10 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
 
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+
+
+
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
@@ -123,6 +127,10 @@
 
         <activity
             android:name=".ui.activity.GcTestActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.LockTestActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
 

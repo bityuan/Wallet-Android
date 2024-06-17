@@ -8,6 +8,7 @@ import com.fzm.wallet.sdk.net.HttpResult
 import com.fzm.wallet.sdk.net.apiCall
 import com.fzm.wallet.sdk.net.dnsCall
 import com.fzm.wallet.sdk.net.goCall
+import com.fzm.wallet.sdk.net.goStrCall
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -109,6 +110,19 @@ class WalletRepository constructor(private val apis: Apis) {
             param.toString().toRequestBody("application/json".toMediaTypeOrNull())
 
         return goCall { apis.sendRawTransaction(requestBody) }
+    }
+    suspend fun sendTransaction(signHash: String?): HttpResult<String> {
+        val param = JSONObject()
+        val data = JSONObject()
+        data.put("data",signHash)
+        param.put("id", 1)
+        param.put("method", "Chain33.SendTransaction")
+        param.put("params", JSONArray(listOf(data)))
+
+        val requestBody =
+            param.toString().toRequestBody("application/json".toMediaTypeOrNull())
+
+        return goStrCall { apis.sendTransaction(requestBody) }
     }
 
     suspend fun queryTxHistoryCount(

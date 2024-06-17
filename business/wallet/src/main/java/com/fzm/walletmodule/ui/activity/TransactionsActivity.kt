@@ -19,6 +19,7 @@ import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.fzm.walletmodule.R
+import com.fzm.walletmodule.base.Constants.Companion.TRAN_STATE_BTY
 import com.fzm.walletmodule.base.Constants.Companion.TRAN_STATE_KEY
 import com.fzm.walletmodule.databinding.ActivityTransactionsBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
@@ -69,7 +70,14 @@ class TransactionsActivity : BaseActivity() {
             if (it.name == "USDT") {
                 binding.cbRecord.visibility = View.VISIBLE
                 binding.tvLowUsd.visibility = View.VISIBLE
+                binding.tvLowUsd.text = getString(R.string.low_usd_str)
                 val state = MMkvUtil.decodeBoolean(TRAN_STATE_KEY)
+                binding.cbRecord.isChecked = state
+            } else if (it.name == "BTY") {
+                binding.cbRecord.visibility = View.VISIBLE
+                binding.tvLowUsd.visibility = View.VISIBLE
+                binding.tvLowUsd.text = getString(R.string.low_bty_str)
+                val state = MMkvUtil.decodeBoolean(TRAN_STATE_BTY)
                 binding.cbRecord.isChecked = state
             } else {
                 binding.cbRecord.visibility = View.GONE
@@ -158,11 +166,14 @@ class TransactionsActivity : BaseActivity() {
         binding.cbRecord.setOnCheckedChangeListener { compoundButton, check ->
             if (coin?.name == "USDT") {
                 MMkvUtil.encode(TRAN_STATE_KEY, check)
-                when (binding.viewPager.currentItem) {
-                    0 -> transactionFragment0.doAsset()
-                    1 -> transactionFragment1.doAsset()
-                    2 -> transactionFragment2.doAsset()
-                }
+
+            } else if (coin?.name == "BTY") {
+                MMkvUtil.encode(TRAN_STATE_BTY, check)
+            }
+            when (binding.viewPager.currentItem) {
+                0 -> transactionFragment0.doAsset()
+                1 -> transactionFragment1.doAsset()
+                2 -> transactionFragment2.doAsset()
             }
 
         }

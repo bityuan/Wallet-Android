@@ -187,6 +187,8 @@ class TransactionFragment : BaseFragment() {
     private fun getDatas(index: Long) {
         if (coin.name == "USDT") {
             dState = MMkvUtil.decodeBoolean(Constants.TRAN_STATE_KEY)
+        }else if(coin.name == "BTY"){
+            dState = MMkvUtil.decodeBoolean(Constants.TRAN_STATE_BTY)
         }
         val tokensymbol = GoWallet.getTokensymbol(coin)
         var datas: String?
@@ -256,7 +258,7 @@ class TransactionFragment : BaseFragment() {
                     mTokenFeeList.add(transactions)
                     continue
                 }
-                if (dState && transactions.value?.toDouble()!! < 1 && coin.name == "USDT") {
+                if (dState && transactions.value?.toDouble()!! < 1 && (coin.name == "USDT" || coin.name == "BTY")) {
                     continue
                 }
 
@@ -268,7 +270,7 @@ class TransactionFragment : BaseFragment() {
             }
         } else {
             for (transactions in list) {
-                if (dState && transactions.value?.toDouble()!! < 1 && coin.name == "USDT") {
+                if (dState && transactions.value?.toDouble()!! < 1 && (coin.name == "USDT" || coin.name == "BTY")) {
                     continue
                 }
                 val otherAddress =

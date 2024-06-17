@@ -34,6 +34,20 @@ suspend fun <T> goCall(call: suspend () -> GoResponse<T>): HttpResult<T> {
     }
 
 }
+suspend fun <T> goStrCall(call: suspend () -> GoStrResponse<T>): HttpResult<T> {
+    return try {
+        call().let {
+            if (it.error == null) {
+                HttpResult.Success(it.result)
+            } else {
+                HttpResult.Error(it.error ?: "unknown error")
+            }
+        }
+    } catch (e: Exception) {
+        HttpResult.Error(HttpResult.handleException(e)!!)
+    }
+
+}
 
 suspend fun <T> dnsCall(call: suspend () -> DNSResponse<T>): HttpResult<T> {
     return try {

@@ -12,7 +12,8 @@ open class Constants {
     companion object {
         const val COINS_KEY = "coins_key"
         const val TRAN_STATE_KEY = "tran_state_key"
-        const val PAGE_LIMIT = 30L
+        const val TRAN_STATE_BTY = "tran_state_bty"
+        const val PAGE_LIMIT = 100L
 
 
         fun setCoins(list: List<Coin>) {

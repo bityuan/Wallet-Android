@@ -6,6 +6,7 @@ import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.DNSResponse
 import com.fzm.wallet.sdk.net.GoResponse
+import com.fzm.wallet.sdk.net.GoStrResponse
 import com.fzm.wallet.sdk.net.HttpResponse
 import com.fzm.wallet.sdk.net.UrlConfig
 import okhttp3.RequestBody
@@ -82,6 +83,8 @@ interface Apis {
     suspend fun getGasPrice(@Body body: RequestBody): GoResponse<String>
     @POST(IPConfig.BTY_ETH_NODE)
     suspend fun sendRawTransaction(@Body body: RequestBody): GoResponse<String>
+    @POST(IPConfig.BTY_API_NODE)
+    suspend fun sendTransaction(@Body body: RequestBody): GoStrResponse<String>
 
 
     @POST

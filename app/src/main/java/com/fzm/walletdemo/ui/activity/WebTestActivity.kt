@@ -48,6 +48,8 @@ class WebTestActivity : BaseActivity() {
             ARouter.getInstance().build(RouterPath.APP_DAPP).withString("name", "web测试")
                 .withString(RouterPath.PARAM_URL, binding.etUrl.text.toString()).navigation()
         }
+
+
     }
 
     override fun initView() {
@@ -82,6 +84,12 @@ class WebTestActivity : BaseActivity() {
         binding.btnFromPara.setOnClickListener {
             val intent = Intent(this, GcTestActivity::class.java)
             startActivity(intent)
+        }
+
+        binding.btnFromLock.setOnClickListener {
+            val intent = Intent(this, LockTestActivity::class.java)
+            startActivity(intent)
+
         }
     }
 

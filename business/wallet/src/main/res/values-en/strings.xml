@@ -898,6 +898,7 @@
     <string name="fee_to_low">Miner fees are too low</string>
     <string name="no_sup">Not currently supported</string>
     <string name="low_usd_str">Hide records with less than 1 USDT</string>
+    <string name="low_bty_str">Hide records with less than 1 BTY</string>
     <string name="str_history">View historical transaction records</string>
     <string name="out_tip1">This transaction has the same address and transfer amount as the previous transaction. Please carefully verify</string>
     <string name="out_tip2">The current receiving address is an unfamiliar address, please double check</string>
