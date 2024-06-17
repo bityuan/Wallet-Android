@@ -195,6 +195,15 @@ public class AppUtils {
         return url.startsWith("https://");
     }
 
+    public static String removeWhiteSpace(String inputStr) {
+        String outputStr = "";
+        if (inputStr != null && !inputStr.isEmpty()) {
+            //移除所有换行和空格
+            outputStr = inputStr.replaceAll("\\s+", "");
+        }
+        return outputStr;
+    }
+
     /**
      * 根据当前日期获得是星期几
      * time=yyyy-MM-dd

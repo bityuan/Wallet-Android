@@ -253,6 +253,7 @@
 
                 <EditText
                     android:id="@+id/et_money"
+                    android:singleLine="true"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"

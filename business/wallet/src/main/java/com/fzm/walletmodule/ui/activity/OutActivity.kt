@@ -59,6 +59,7 @@ import com.fzm.walletmodule.databinding.DialogWalletsBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.ui.widget.RemarksTipsDialogView
 import com.fzm.walletmodule.ui.widget.configWindow
+import com.fzm.walletmodule.utils.AppUtils
 import com.fzm.walletmodule.utils.ClickUtils
 import com.fzm.walletmodule.utils.FingerManager
 import com.fzm.walletmodule.utils.ToastUtils
@@ -191,7 +192,8 @@ class OutActivity : BaseActivity() {
             binding.etToAddress.onFocusChangeListener =
                 OnFocusChangeListener { v, hasFocus ->
                     if (!hasFocus) {
-                        val input = binding.etToAddress.text.toString()
+                        val etText = binding.etToAddress.text.toString()
+                        val input = AppUtils.removeWhiteSpace(etText)
                         if (input.isNotEmpty()) {
                             binding.llHistory.visibility = View.VISIBLE
                             lifecycleScope.launch(Dispatchers.IO) {
@@ -415,7 +417,8 @@ class OutActivity : BaseActivity() {
             if (ClickUtils.isFastDoubleClick()) {
                 return@setOnClickListener
             }
-            toAddress = binding.etToAddress.text.toString()
+            val ctAddress = binding.etToAddress.text.toString()
+            toAddress = AppUtils.removeWhiteSpace(ctAddress)
             val money = binding.etMoney.text.toString()
             if (!checkAddressAndMoney(toAddress, money)) {
                 return@setOnClickListener
