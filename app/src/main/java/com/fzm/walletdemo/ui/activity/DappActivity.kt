@@ -299,6 +299,7 @@ class DappActivity : AppCompatActivity() {
     ) : WebViewClient() {
         private var loadInterface: URLLoadInterface? = null
         private var loadingError = false
+        //跳转新的dapp 导致连接不上的问题
         private var redirect = false
 
 
@@ -331,7 +332,7 @@ class DappActivity : AppCompatActivity() {
         }
 
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-            redirect = true
+            //redirect = true
             return (externalClient!!.shouldOverrideUrlLoading(
                 view,
                 url
@@ -349,7 +350,7 @@ class DappActivity : AppCompatActivity() {
         override fun shouldOverrideUrlLoading(
             view: WebView?, request: WebResourceRequest?
         ): Boolean {
-            redirect = true
+            //redirect = true
             return (externalClient!!.shouldOverrideUrlLoading(
                 view,
                 request
