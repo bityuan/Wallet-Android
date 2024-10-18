@@ -16,6 +16,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="20dp"
+            android:src="@mipmap/ic_brower_default"
             android:background="@drawable/shape_cir" />
 
 

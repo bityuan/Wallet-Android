@@ -67,5 +67,8 @@
     <string name="c_entrance">Convenient entrance</string>
     <string name="n_yopen">Not yet open</string>
     <string name="save_suc">Successfully saved</string>
+    <string name="like_str">collect</string>
+    <string name="collect_suc_str">Collection successful!</string>
+    <string name="my_collect_str">My Collection</string>
 
 </resources>

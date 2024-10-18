@@ -64,6 +64,7 @@ class ExploreAdapter(private val context: Context) :
                 val binding = ItemExploreBinding.inflate(LayoutInflater.from(parent.context))
                 ViewHolder(binding)
             }
+
             ITEM_VIEW_TYPE_GRID -> {
                 val binding = ItemExploreGridBinding.inflate(LayoutInflater.from(parent.context))
                 GridViewHolder(binding)
@@ -84,13 +85,16 @@ class ExploreAdapter(private val context: Context) :
                 val item = list[position]
                 holder.binding.tvExploreTitle.text = item.name
                 holder.binding.tvExploreDes.text = item.slogan
-                Glide.with(context)
-                    .load(item.icon)
-                    .apply(RequestOptions().transforms(CenterCrop(), RoundedCorners(20)))
-                    .into(holder.binding.ivExplore)
-
+                if (!item.icon.isNullOrEmpty()) {
+                    Glide.with(context)
+                        .load(item.icon)
+                        .apply(RequestOptions().transforms(CenterCrop(), RoundedCorners(20)))
+                        .into(holder.binding.ivExplore)
+                }
                 holder.itemView.setOnClickListener { clickListener(position) }
+
             }
+
             is TitleViewHolder -> {
                 val item = list[position]
                 holder.binding.tvTitle.text = item.name
@@ -99,15 +103,23 @@ class ExploreAdapter(private val context: Context) :
                         .withInt(RouterPath.PARAM_APPS_ID, item.ids).navigation()
                 }
             }
+
             is GridViewHolder -> {
                 val item = list[position]
                 holder.binding.tvExploreTitle.text = item.name
-                Glide.with(context)
-                    .load(item.icon)
-                    .apply(RequestOptions().transforms(CenterCrop(), RoundedCorners(20)))
-                    .into(holder.binding.ivExplore)
+
+                if (!item.icon.isNullOrEmpty()) {
+                    Glide.with(context)
+                        .load(item.icon)
+                        .apply(RequestOptions().transforms(CenterCrop(), RoundedCorners(20)))
+                        .into(holder.binding.ivExplore)
+                }
 
                 holder.itemView.setOnClickListener { clickListener(position) }
+                holder.itemView.setOnLongClickListener {
+                    longClickListener(position)
+                    false
+                }
             }
         }
 
@@ -130,19 +142,27 @@ class ExploreAdapter(private val context: Context) :
                             holder.binding.tvExploreTitle.text = item.name
                         }
                     }
+
                     PAYLOAD_SLOGAN -> {
                         if (holder is ViewHolder) {
                             holder.binding.tvExploreDes.text = item.slogan
                         }
                     }
+
                     PAYLOAD_ICON -> {
                         if (holder is ViewHolder) {
                             Glide.with(context)
                                 .load(item.icon)
-                                .apply(RequestOptions().transforms(CenterCrop(), RoundedCorners(20)))
+                                .apply(
+                                    RequestOptions().transforms(
+                                        CenterCrop(),
+                                        RoundedCorners(20)
+                                    )
+                                )
                                 .into(holder.binding.ivExplore)
                         }
                     }
+
                     PAYLOAD_STYLE -> {
                         if (holder is ViewHolder) {
                             onBindViewHolder(holder, position)
@@ -162,6 +182,12 @@ class ExploreAdapter(private val context: Context) :
 
     fun setOnItemClickListener(listener: (Int) -> Unit) {
         this.clickListener = listener
+    }
+
+    lateinit var longClickListener: (Int) -> Unit
+
+    fun setOnItemLongClickListener(listener: (Int) -> Unit) {
+        this.longClickListener = listener
     }
 
 

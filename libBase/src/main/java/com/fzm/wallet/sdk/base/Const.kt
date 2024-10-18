@@ -17,6 +17,9 @@ const val LIVE_WC_MODEL = "live_wc_model"
 const val LIVE_KEY_FROM = "live_key_from"
 const val FEE_CUSTOM_POSITION = 33
 
+
+const val COLLECT_URL_KEY = "collect_url_key"
+
 fun logDebug(log: String) {
     if (BuildConfig.DEBUG) {
         Log.v("dao", log)

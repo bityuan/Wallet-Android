@@ -57,6 +57,9 @@ class GoWallet {
         val CHAIN_ID_MAPS_L =
             mapOf(CHAIN_ID_ETH_L to "ETH", CHAIN_ID_BNB_L to "BNB", CHAIN_ID_BTY_L to "BTY")
 
+        val CHAIN_ID_MAPS_ADDR =
+            mapOf(CHAIN_ID_ETH_L to "ETH", CHAIN_ID_BNB_L to "BNB", CHAIN_ID_BTY_L to "ETH")
+
         val NET_MAPS =
             mapOf(CHAIN_ID_ETH_L to NET_ETH, CHAIN_ID_BNB_L to NET_BNB, CHAIN_ID_BTY_L to NET_BTY)
 
@@ -453,7 +456,7 @@ class GoWallet {
             feePriv: String,
             btyfee: Double,
             addressId: Int,
-            sysAddressid:Int
+            sysAddressid: Int
         ): String? {
             try {
                 val gWithoutTx = GWithoutTx()
@@ -787,6 +790,10 @@ class GoWallet {
 
                 CHAIN_ID_BNB_L -> {
                     WEB3_BNB
+                }
+
+                CHAIN_ID_BTY_L -> {
+                    WEB3_BTY
                 }
 
                 else -> WEB3_ETH

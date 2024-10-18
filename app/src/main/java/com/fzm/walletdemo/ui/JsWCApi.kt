@@ -31,6 +31,7 @@ class JsWCApi(
     @JavascriptInterface
     fun signTransaction(
         callbackId: Int,
+        //BEP-20 代币（如 USDT）通常会通过智能合约进行转账。如果没有目标地址，则为 BNB 转账
         recipient: String?,
         value: String?,
         nonce: String?,
@@ -128,12 +129,22 @@ class JsWCApi(
     @JavascriptInterface
     fun walletAddEthereumChain(callbackId: Int, msgParams: String?) {
         //切换网络回调
-        Timber.tag("edao").v("======================walletAddEthereumChain")
+        Timber.tag("edao").v("AddEthereumChain, callbackId = $callbackId msgParams = $msgParams")
+
+        webView.post {
+            jsListener.walletAddEthereumChain(callbackId,msgParams)
+        }
     }
 
     @JavascriptInterface
     fun walletSwitchEthereumChain(callbackId: Int, msgParams: String?) {
-        Timber.tag("edao").v("----------------------------walletSwitchEthereumChain")
+        Timber.tag("edao").v("SwitchEthereumChain  callbackId = $callbackId msgParams = $msgParams")
+
+        webView.post {
+            jsListener.walletSwitchEthereumChain(callbackId,msgParams)
+        }
+
+
     }
 
 

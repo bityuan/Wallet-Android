@@ -16,4 +16,6 @@ public interface JsListener {
 
     void onSignPersonalMessage(int callbackId, String data);
     void onSignMessage(int callbackId, String data);
+    void walletSwitchEthereumChain(int callbackId, String data);
+    void walletAddEthereumChain(int callbackId, String data);
 }

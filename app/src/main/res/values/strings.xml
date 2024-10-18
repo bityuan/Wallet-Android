@@ -68,6 +68,9 @@
     <string name="c_entrance">便捷入口</string>
     <string name="n_yopen">暂未开放</string>
     <string name="save_suc">保存成功</string>
+    <string name="like_str">收藏</string>
+    <string name="collect_suc_str">收藏成功！</string>
+    <string name="my_collect_str">我的收藏</string>
 
 
 </resources>

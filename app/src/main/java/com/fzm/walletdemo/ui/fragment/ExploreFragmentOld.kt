@@ -1,6 +1,7 @@
 package com.fzm.walletdemo.ui.fragment
 
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.BWallet
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.base.COLLECT_URL_KEY
 import com.fzm.wallet.sdk.base.LIVE_KEY_FROM
 import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
 import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN_EX
@@ -28,7 +30,10 @@ import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.FragmentExploreBinding
 import com.fzm.walletdemo.ui.adapter.ExploreAdapter
 import com.fzm.walletdemo.ui.adapter.ExploreDiffCallBack
+import com.fzm.walletmodule.utils.PreferencesUtils
 import com.fzm.walletmodule.vm.WalletViewModel
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.jeremyliao.liveeventbus.LiveEventBus
 import com.kongzue.dialogx.dialogs.PopMenu
 import com.kongzue.dialogx.interfaces.OnIconChangeCallBack
@@ -50,6 +55,8 @@ class ExploreFragmentOld : Fragment() {
     private lateinit var adapter: ExploreAdapter
     private val walletViewModel: WalletViewModel by inject(walletQualifier)
 
+    private var collectList: MutableList<ExploreBean.AppsBean> = mutableListOf()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -68,7 +75,7 @@ class ExploreFragmentOld : Fragment() {
             }
 
             LiveEventBus.get<String>(LIVE_KEY_SCAN_EX).observe(this, Observer { scan ->
-                gotoDapp(scan)
+                gotoDapp(getString(R.string.exp_str),scan)
             })
             binding.ivScan.setOnClickListener {
                 ARouter.getInstance().build(RouterPath.WALLET_CAPTURE).withString(
@@ -121,8 +128,52 @@ class ExploreFragmentOld : Fragment() {
         }
         binding.swipeExplore.setOnRefreshListener {
             getExploreAll()
+            getCollet()
         }
         getExploreAll()
+        getCollet()
+
+
+    }
+
+
+    private fun getCollet() {
+        val testurl = PreferencesUtils.getString(context, COLLECT_URL_KEY)
+        if (!TextUtils.isEmpty(testurl)) {
+            val appList =
+                Gson().fromJson<List<ExploreBean.AppsBean>>(
+                    testurl,
+                    object : TypeToken<List<ExploreBean.AppsBean?>?>() {}.type
+                )
+            collectList.clear()
+            collectList.addAll(appList)
+
+            binding.rvCollect.layoutManager = GridLayoutManager(context, 4)
+            val coAdapter = context?.let { ExploreAdapter(it) }
+            coAdapter?.setData(collectList)
+            binding.rvCollect.adapter = coAdapter
+
+
+            coAdapter?.setOnItemClickListener { position ->
+                val collect = collectList[position]
+                gotoDapp(collect.name,collect.app_url)
+            }
+            coAdapter?.setOnItemLongClickListener { position ->
+                MaterialDialog.Builder(requireContext())
+                    .onPositive { dialog, which ->
+                        collectList.removeAt(position)
+                        coAdapter.notifyItemRemoved(position)
+                        val urls = Gson().toJson(collectList)
+                        PreferencesUtils.putString(requireContext(), COLLECT_URL_KEY, urls)
+                    }
+                    .title(getString(R.string.del_str))
+                    .content(getString(R.string.del_tip_str))
+                    .positiveText(getString(R.string.ok))
+                    .negativeText(getString(R.string.cancel))
+                    .show();
+            }
+            coAdapter?.notifyDataSetChanged()
+        }
     }
 
 
@@ -133,6 +184,8 @@ class ExploreFragmentOld : Fragment() {
                 binding.swipeExplore.isRefreshing = false
                 newList = null
                 newList = mutableListOf()
+
+
                 for (l in list) {
                     //在数据上做文章，添加第一条为title
                     //title的style都设置为1
@@ -189,7 +242,10 @@ class ExploreFragmentOld : Fragment() {
             }
 
         }
+
+
     }
+
 
     private fun gotoDapp(app: ExploreBean.AppsBean) {
         app.let { appBean ->
@@ -207,13 +263,16 @@ class ExploreFragmentOld : Fragment() {
                 return@let
             }
 
-            ARouter.getInstance().build(RouterPath.APP_DAPP).withString("name", appBean.name)
-                .withString(RouterPath.PARAM_URL, appBean.app_url).navigation()
+            ARouter.getInstance().build(RouterPath.APP_DAPP)
+                .withString("name", appBean.name)
+                .withString(RouterPath.PARAM_URL, appBean.app_url)
+                .withString(RouterPath.PARAM_ICON, appBean.icon)
+                .navigation()
         }
     }
 
 
-    private fun gotoDapp(url: String) {
+    private fun gotoDapp(name:String,url: String) {
         val count = LitePal.count<PWallet>()
         if (count == 0) {
             toast(getString(R.string.create_wallet_pre))
@@ -227,7 +286,9 @@ class ExploreFragmentOld : Fragment() {
         }
         val newUrl = GoWallet.getNewUrl(url)
         ARouter.getInstance().build(RouterPath.APP_DAPP)
-            .withString(RouterPath.PARAM_URL, newUrl).navigation()
+            .withString("name", name)
+            .withString(RouterPath.PARAM_URL, newUrl)
+            .navigation()
 
     }
 

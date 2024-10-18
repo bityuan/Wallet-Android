@@ -323,9 +323,9 @@ class OutActivity : BaseActivity() {
         }
         binding.seekbarFee.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val value: Double = progress.plus(min).div(100000000.0000)
+                val value: Double = progress.plus(min).div(100000000.00000000)
                 //val rmb = eth.rmb.times(value)
-                val format = DecimalFormat("0.####")
+                val format = DecimalFormat("0.########")
                 //未保留小数的舍弃规则，RoundingMode.FLOOR表示直接舍弃。
                 format.roundingMode = RoundingMode.FLOOR
                 val formatValue = format.format(value)
