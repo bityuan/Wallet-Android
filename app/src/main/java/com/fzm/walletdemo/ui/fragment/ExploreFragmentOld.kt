@@ -128,16 +128,22 @@ class ExploreFragmentOld : Fragment() {
         }
         binding.swipeExplore.setOnRefreshListener {
             getExploreAll()
-            getCollet()
+            getCollect()
         }
         getExploreAll()
-        getCollet()
+        getCollect()
 
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        logDebug("onResume=================")
+        getCollect()
+    }
 
-    private fun getCollet() {
+
+    private fun getCollect() {
         val testurl = PreferencesUtils.getString(context, COLLECT_URL_KEY)
         if (!TextUtils.isEmpty(testurl)) {
             val appList =
@@ -163,6 +169,9 @@ class ExploreFragmentOld : Fragment() {
                     .onPositive { dialog, which ->
                         collectList.removeAt(position)
                         coAdapter.notifyItemRemoved(position)
+                        if (position != collectList.size) {
+                            coAdapter.notifyItemRangeChanged(position, collectList.size - position);
+                        }
                         val urls = Gson().toJson(collectList)
                         PreferencesUtils.putString(requireContext(), COLLECT_URL_KEY, urls)
                     }
