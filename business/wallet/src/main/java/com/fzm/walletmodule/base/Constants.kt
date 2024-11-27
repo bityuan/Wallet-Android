@@ -4,6 +4,8 @@ import android.text.TextUtils
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.fzm.walletmodule.R
+import com.fzm.walletmodule.bean.DGear
+import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import walletapi.Walletapi
@@ -14,6 +16,7 @@ open class Constants {
         const val TRAN_STATE_KEY = "tran_state_key"
         const val TRAN_STATE_BTY = "tran_state_bty"
         const val PAGE_LIMIT = 100L
+        const val FEE_KEY = "fee_key"
 
 
         fun setCoins(list: List<Coin>) {
@@ -27,6 +30,19 @@ open class Constants {
                 return defaultCoinList()
             }
             return Gson().fromJson(json, object : TypeToken<List<Coin?>?>() {}.type);
+        }
+
+        fun setGear(dGear: DGear) {
+            val gearStr = Gson().toJson(dGear)
+            MMkvUtil.encode(FEE_KEY, gearStr)
+        }
+
+        fun getGear(): DGear? {
+            val gearStr = MMkvUtil.decodeString(FEE_KEY)
+            if(gearStr.isEmpty()) {
+                return null
+            }
+            return Gson().fromJson<DGear>(gearStr)
         }
 
 

@@ -11,6 +11,7 @@ import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
@@ -41,7 +42,6 @@ import com.fzm.wallet.sdk.base.COLLECT_URL_KEY
 import com.fzm.wallet.sdk.base.FEE_CUSTOM_POSITION
 import com.fzm.wallet.sdk.base.LIVE_KEY_FEE
 import com.fzm.wallet.sdk.base.MyWallet
-import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.bean.ExploreBean
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
 import com.fzm.wallet.sdk.db.entity.PWallet
@@ -66,6 +66,7 @@ import com.fzm.walletdemo.web3.bean.Address
 import com.fzm.walletdemo.web3.bean.Web3Call
 import com.fzm.walletdemo.web3.bean.Web3Transaction
 import com.fzm.walletdemo.web3.listener.JsListener
+import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.bean.DGear
 import com.fzm.walletmodule.ui.widget.configWindow
 import com.fzm.walletmodule.utils.ClipboardUtils
@@ -125,8 +126,9 @@ class DappActivity : AppCompatActivity() {
     private var chainId: Long = 0L
     private var initChainId: Long = 0L
 
-    //private var feePosition = 2
-    private var feePosition = 0
+    private var feePosition = 2
+
+    //private var feePosition = 0
     private lateinit var cGas: BigInteger
 
     //原始gas
@@ -188,6 +190,8 @@ class DappActivity : AppCompatActivity() {
             cGasPrice = dGear.gasPrice
             showGasUI(cGasPrice.toLong(), cGas.toLong(), chainName)
             setLevel(tvLevel)
+            //cache
+            Constants.setGear(dGear)
         })
     }
 
@@ -284,16 +288,47 @@ class DappActivity : AppCompatActivity() {
 
     }
 
+
+    /**
+     * android 5.0(含) 以上开启图片选择（原生）
+     *
+     * 可以自己改图片选择框架。
+     */
+    private fun onenFileChooseImpleForAndroid(filePathCallback: ValueCallback<Array<Uri>>) {
+        mUploadMessageForAndroid5 = filePathCallback
+        val contentSelectionIntent = Intent(Intent.ACTION_GET_CONTENT)
+        contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE)
+        contentSelectionIntent.type = "image/*"
+        val chooserIntent = Intent(Intent.ACTION_CHOOSER)
+        chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent)
+        chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser")
+        startActivityForResult(chooserIntent, FILE_CHOOSER_RESULT_CODE_FOR_ANDROID_5)
+    }
+
+    private lateinit var web3ViewClient: Web3ViewClient
     private fun setupWeb3(cchainId: Long, nodeUrl: String, address: Address) {
         try {
-            val web3ViewClient = Web3ViewClient(this)
+            web3ViewClient = Web3ViewClient(this)
             binding.webDapp.webChromeClient = object : WebChromeClient() {
                 override fun onProgressChanged(view: WebView?, newProgress: Int) {
                     super.onProgressChanged(view, newProgress)
                     binding.progressWeb.progress = newProgress
                 }
 
+
+                override fun onShowFileChooser(
+                    webView: WebView?,
+                    uploadMsg: ValueCallback<Array<Uri>>,
+                    fileChooserParams: FileChooserParams?
+                ): Boolean {
+                    onenFileChooseImpleForAndroid(uploadMsg);
+
+                    return true
+                }
             }
+
+
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 binding.webDapp.webViewClient = object : WebViewClient() {
                     private var loadInterface: URLLoadInterface? = null
@@ -361,7 +396,7 @@ class DappActivity : AppCompatActivity() {
                     ): Boolean {
                         //redirect = true
                         chainId = initChainId
-                        return (externalClient!!.shouldOverrideUrlLoading(
+                        return (externalClient.shouldOverrideUrlLoading(
                             view,
                             request
                         ) || internalClient.shouldOverrideUrlLoading(view, request))
@@ -375,6 +410,25 @@ class DappActivity : AppCompatActivity() {
             e.printStackTrace()
         }
 
+
+    }
+    var mUploadMessageForAndroid5: ValueCallback<Array<Uri>>? = null
+    private val FILE_CHOOSER_RESULT_CODE_FOR_ANDROID_5 = 2
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
+        val result = if (intent == null || resultCode !== RESULT_OK) null else intent.data
+        when (requestCode) {
+
+            FILE_CHOOSER_RESULT_CODE_FOR_ANDROID_5 -> {
+                if (null == mUploadMessageForAndroid5) return
+                if (result != null) {
+                    mUploadMessageForAndroid5?.onReceiveValue(arrayOf<Uri>(result))
+                } else {
+                    mUploadMessageForAndroid5?.onReceiveValue(arrayOf<Uri>())
+                }
+                mUploadMessageForAndroid5 = null
+            }
+        }
 
     }
 
@@ -480,9 +534,16 @@ class DappActivity : AppCompatActivity() {
                     val llSetFee = view.findViewById<LinearLayout>(R.id.ll_set_fee)
                     transaction?.let { tran ->
                         try {
+                            val dGear = Constants.getGear()
+                            if (dGear != null) {
+                                feePosition = dGear.position
+                                cGas = dGear.gas
+                            } else {
+                                cGas = tran.gasLimit
+                            }
+
                             setLevel(tvLevel)
                             origGas = tran.gasLimit
-                            cGas = tran.gasLimit
 
 
                             var pValue = "0"
@@ -540,9 +601,22 @@ class DappActivity : AppCompatActivity() {
                                                 }
                                             }
 
-                                            showGasUI(
-                                                gasPrice, transaction.gasLimit.toLong(), chainName
-                                            )
+
+
+                                            if (dGear == null) {
+                                                showGasUI(
+                                                    gasPrice,
+                                                    transaction.gasLimit.toLong(),
+                                                    chainName
+                                                )
+                                            } else {
+                                                showGasUI(
+                                                    dGear.gasPrice.toLong(),
+                                                    dGear.gas.toLong(),
+                                                    chainName
+                                                )
+                                            }
+
                                         }
                                     } catch (e: Exception) {
                                         e.printStackTrace()

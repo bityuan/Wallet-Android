@@ -18,6 +18,7 @@ import com.fzm.wallet.sdk.utils.GoWallet.Companion.HIGH
 import com.fzm.wallet.sdk.utils.GoWallet.Companion.LOW
 import com.fzm.wallet.sdk.utils.GoWallet.Companion.LOW_GAS_PRICE
 import com.fzm.wallet.sdk.utils.GoWallet.Companion.MIDDLE
+import com.fzm.wallet.sdk.utils.MMkvUtil
 import com.fzm.walletmodule.bean.DGear
 import com.fzm.walletmodule.bean.Gear
 import com.fzm.walletdemo.R
@@ -177,13 +178,13 @@ class SetFeeActivity : BaseActivity() {
             lowPrice
         )
 
-        if (chainId == GoWallet.CHAIN_ID_BTY_L) {
+     /*   if (chainId == GoWallet.CHAIN_ID_BTY_L) {
             gearList.add(low)
-        } else {
+        } else {*/
             gearList.add(high)
             gearList.add(middle)
             gearList.add(low)
-        }
+     //   }
         mCommonAdapter.notifyDataSetChanged()
     }
 

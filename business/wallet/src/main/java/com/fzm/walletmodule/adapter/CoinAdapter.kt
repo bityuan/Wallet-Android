@@ -40,6 +40,7 @@ class CoinAdapter(private val context: Context) :
             is ViewHolder -> {
                 val item = list[position]
                 holder.binding.tvName.text = item.name
+                holder.binding.tvAddr.text = item.address
                 holder.binding.tvNickName.text =
                     if (item.nickname.isNullOrEmpty()) "" else "(${item.nickname})"
                 Glide.with(context)
