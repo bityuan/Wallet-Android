@@ -5,21 +5,23 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.materialdialogs.MaterialDialog
 import com.fzm.wallet.sdk.db.entity.Contacts
 import com.fzm.wallet.sdk.widget.sidebar.IndexAdapter
 import com.fzm.wallet.sdk.widget.sidebar.Indexable
 import com.fzm.walletmodule.R
-import com.jiang.android.lib.adapter.expand.StickyRecyclerHeadersAdapter
-import com.jiang.android.lib.widget.SwipeItemLayout
-import com.jiang.android.lib.widget.SwipeItemLayout.SwipeItemLayoutDelegate
+import com.fzm.walletmodule.utils.PreferencesUtils
+import com.google.gson.Gson
+import com.tlz.indexrecyclerview.StickyRecyclerHeadersAdapter
 import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
 import java.util.*
 
-class ContactAdapter(context: Context?, layoutId: Int, datas: MutableList<Contacts>) : CommonAdapter<Contacts>(context, layoutId, datas), StickyRecyclerHeadersAdapter<RecyclerView.ViewHolder>,
+class ContactAdapter(context: Context?, layoutId: Int, datas: MutableList<Contacts>) : CommonAdapter<Contacts>(context, layoutId, datas),
+    StickyRecyclerHeadersAdapter<RecyclerView.ViewHolder>,
     IndexAdapter {
     private var mContactsList: MutableList<Contacts> = ArrayList()
-    private val mOpenSwipes: MutableList<SwipeItemLayout> = ArrayList()
+    //private val mOpenSwipes: MutableList<SwipeItemLayout> = ArrayList()
 
     override fun getHeaderId(position: Int): Long {
         return mContactsList[position].sortLetters[0].toLong()
@@ -53,41 +55,9 @@ class ContactAdapter(context: Context?, layoutId: Int, datas: MutableList<Contac
         } else {
             nameFirst.setBackgroundResource(R.drawable.bg_constacts_blue)
         }
-        val swipeItemLayout = holder.getView<SwipeItemLayout>(R.id.swipe_content)
-        swipeItemLayout.setDelegate(object : SwipeItemLayoutDelegate {
-            override fun onSwipeItemLayoutOpened(swipeItemLayout: SwipeItemLayout) {
-                mOpenSwipes.add(swipeItemLayout)
-            }
 
-            override fun onSwipeItemLayoutClosed(swipeItemLayout: SwipeItemLayout) {
-                mOpenSwipes.remove(swipeItemLayout)
-                holder.setText(R.id.tv_delete, mContext.getString(R.string.delete))
-                holder.setBackgroundRes(R.id.tv_delete, R.color.color_8E92A3)
-            }
-
-            override fun onSwipeItemLayoutStartOpen(swipeItemLayout: SwipeItemLayout) {
-                closeSwipeLayouts()
-            }
-        })
-        holder.setOnClickListener(R.id.tv_delete) {
-            val tvDelete = holder.getView<TextView>(R.id.tv_delete)
-            if (tvDelete.text == mContext.getString(R.string.o_delete)) {
-                closeSwipeLayouts()
-                swipeDeleteListener.delete(holder.adapterPosition)
-            } else {
-                holder.setBackgroundRes(R.id.tv_delete, R.color.red_common)
-                holder.setText(R.id.tv_delete, mContext.getString(R.string.o_delete))
-            }
-        }
     }
 
-    //关闭所有
-    fun closeSwipeLayouts() {
-        for (swipeItemLayout in mOpenSwipes) {
-            swipeItemLayout.close()
-        }
-        mOpenSwipes.clear()
-    }
 
     //根据sectioni查询位置
     fun getPositionForSection(section: Char): Int {

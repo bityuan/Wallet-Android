@@ -279,4 +279,6 @@
     <string name="m_tip3">如果我向任何人透露或分享我的助记词，我的资产可能会被盗</string>
     <string name="m_tip4">保护好助记词的安全的责任全部在于我</string>
     <string name="p_check_str">请选中！</string>
+    <string name="del_str">删除</string>
+    <string name="del_tip_str">是否删除?</string>
 </resources>

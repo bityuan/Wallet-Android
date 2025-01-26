@@ -15,7 +15,6 @@ import com.fzm.walletmodule.R
 import com.fzm.walletmodule.databinding.ActivityCreateWalletBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.*
-import com.snail.antifake.jni.EmulatorDetectUtil
 import org.litepal.LitePal
 import org.litepal.LitePal.where
 import org.litepal.extension.find
@@ -86,11 +85,7 @@ class CreateWalletActivity : BaseActivity() {
     }
 
     private fun gotoFinishTask() {
-        if (EmulatorDetectUtil.isEmulator(this)) {
-            ToastUtils.show(this, getString(R.string.check_str))
-        } else {
             finishTask()
-        }
     }
 
     private fun finishTask() {

@@ -23,7 +23,7 @@ class SplashActivity : BaseActivity() {
 
     private val requestList = mutableListOf(
         Manifest.permission.CAMERA,
-        Manifest.permission.READ_PHONE_STATE
+        //Manifest.permission.READ_PHONE_STATE
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {

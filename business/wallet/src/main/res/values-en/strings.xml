@@ -925,4 +925,6 @@
     <string name="m_tip3">If I reveal or share my mnemonic words with anyone, my assets may be stolen</string>
     <string name="m_tip4">The responsibility for protecting the safety of mnemonics lies entirely with me</string>
     <string name="p_check_str">Please select!</string>
+    <string name="del_str">delete</string>
+    <string name="del_tip_str">Delete?</string>
 </resources>

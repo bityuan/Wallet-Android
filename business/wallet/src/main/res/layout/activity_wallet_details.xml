@@ -76,17 +76,14 @@
                 android:textColor="@color/gray_349"
                 android:textSize="16sp" />
 
-
-            <com.kyleduo.switchbutton.SwitchButton
+            <Switch
                 android:id="@+id/switch_finger_pay"
-                style="@style/SwitchButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="12dp"
-                app:kswThumbMargin="-3dp"
-                app:kswThumbWidth="20dp"
-                app:kswTintColor="#7190ff" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+
         </LinearLayout>
 
 

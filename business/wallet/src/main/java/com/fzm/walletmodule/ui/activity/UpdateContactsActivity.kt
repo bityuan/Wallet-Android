@@ -39,7 +39,6 @@ import com.fzm.walletmodule.databinding.ActivityUpdateContactsBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.KeyboardUtils
 import com.jeremyliao.liveeventbus.LiveEventBus
-import com.jiang.android.lib.adapter.expand.StickyRecyclerHeadersDecoration
 import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
 import kotlinx.coroutines.Dispatchers

@@ -9,6 +9,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.materialdialogs.MaterialDialog
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -24,8 +25,9 @@ import com.fzm.walletmodule.adapter.ContactAdapter
 import com.fzm.walletmodule.databinding.ActivityContactsBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.utils.KeyboardUtils
-import com.jiang.android.lib.adapter.expand.StickyRecyclerHeadersDecoration
-import kotlinx.android.synthetic.main.view_header_wallet.name
+import com.fzm.walletmodule.utils.PreferencesUtils
+import com.google.gson.Gson
+import com.tlz.indexrecyclerview.StickyRecyclerHeadersDecoration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -78,11 +80,11 @@ class ContactsActivity : BaseActivity() {
         binding.rvList.addItemDecoration(headersDecor)
         mContactAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onChanged() {
-                headersDecor.invalidateHeaders()
+                //headersDecor.invalidateHeaders()
             }
         })
         binding.sidebarCharacter.setOnTouchingLetterChangedListener { s ->
-            mContactAdapter.closeSwipeLayouts()
+            //mContactAdapter.closeSwipeLayouts()
             val position = mContactAdapter.getPositionForSection(s[0])
             if (position != -1) {
                 binding.rvList.layoutManager?.scrollToPosition(position)
@@ -94,6 +96,23 @@ class ContactsActivity : BaseActivity() {
                 .withLong(RouterPath.PARAM_CONTACTS_ID, contacts.id)
                 .withSerializable(RouterPath.PARAM_COIN, coin)
                 .navigation()
+        }
+        binding.rvList.setOnItemLongClickListener { viewHolder, position ->
+            MaterialDialog.Builder(this)
+                .onPositive { dialog, which ->
+                    val contacts = mContactsList[position]
+                    LitePal.delete<Contacts>(contacts.id)
+                    mContactsList.removeAt(position)
+                    mContactAdapter.notifyItemRemoved(position)
+
+                }
+                .title(getString(R.string.del_str))
+                .content(getString(R.string.del_tip_str))
+                .positiveText(getString(R.string.ok))
+                .negativeText(getString(R.string.cancel))
+                .show();
+
+            false
         }
         mContactAdapter.setSwipeDeleteListener(object : ContactAdapter.SwipeDeleteListener {
             override fun delete(position: Int) {

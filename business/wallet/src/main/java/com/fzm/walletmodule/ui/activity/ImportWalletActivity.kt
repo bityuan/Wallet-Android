@@ -38,7 +38,6 @@ import com.fzm.walletmodule.utils.ListUtils
 import com.fzm.walletmodule.utils.ToastUtils
 import com.fzm.walletmodule.utils.isFastClick
 import com.jeremyliao.liveeventbus.LiveEventBus
-import com.snail.antifake.jni.EmulatorDetectUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.toast
@@ -248,11 +247,7 @@ class ImportWalletActivity : BaseActivity() {
 
         binding.btnImport.setOnClickListener {
             hideKeyboard(binding.btnImport)
-            if (EmulatorDetectUtil.isEmulator(this)) {
-                ToastUtils.show(this, getString(R.string.check_str))
-            } else {
                 finishTask()
-            }
 
         }
     }

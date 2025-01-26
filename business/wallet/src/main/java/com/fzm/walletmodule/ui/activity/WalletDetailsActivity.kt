@@ -4,6 +4,8 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
+import android.widget.CompoundButton
+import android.widget.CompoundButton.OnCheckedChangeListener
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import com.alibaba.android.arouter.facade.annotation.Autowired
@@ -87,6 +89,14 @@ class WalletDetailsActivity : BaseActivity() {
         configWallets()
     }
 
+    private fun setCheckedNoEvent(state:Boolean){
+        // 临时移除监听器
+        binding.switchFingerPay.setOnCheckedChangeListener(null);
+        // 设置开关状态
+        binding.switchFingerPay.isChecked = state;
+        // 重新设置监听器
+        binding.switchFingerPay.setOnCheckedChangeListener(checkedListener);
+    }
 
     override fun initView() {
         super.initView()
@@ -105,7 +115,8 @@ class WalletDetailsActivity : BaseActivity() {
             mPWallet = find(PWallet::class.java, walletid)
             withContext(Dispatchers.Main) {
                 mPWallet?.let {
-                    binding.switchFingerPay.setCheckedNoEvent(it.fingerState == PWallet.OPEN)
+                    setCheckedNoEvent(it.fingerState == PWallet.OPEN)
+                    //binding.switchFingerPay.setCheckedNoEvent(it.fingerState == PWallet.OPEN)
                     when (it.type) {
                         TYPE_PRI_KEY -> {
                             binding.tvForgetPassword.visibility = View.GONE
@@ -217,20 +228,26 @@ class WalletDetailsActivity : BaseActivity() {
             ARouter.getInstance().build(RouterPath.WALLET_NEW_RECOVER_ADDRESS)
                 .withLong(PWallet.PWALLET_ID, walletid).navigation()
         }
+        binding.switchFingerPay.setOnCheckedChangeListener(checkedListener)
+    }
 
-        binding.switchFingerPay.setOnCheckedChangeListener { _, checked ->
-            if (checked) {
-                binding.switchFingerPay.setCheckedNoEvent(false)
+    private val checkedListener =
+        OnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                setCheckedNoEvent(false)
+                //binding.switchFingerPay.setCheckedNoEvent(false)
                 checkPassword(4)
             } else {
-                binding.switchFingerPay.setCheckedNoEvent(true)
+                setCheckedNoEvent(true)
+                //binding.switchFingerPay.setCheckedNoEvent(true)
                 val dialog = MessageDialog.build()
                 dialog.title = getString(R.string.close_finger_tip)
                 dialog.cancelButton = getString(R.string.cancel)
                 dialog.okButton = getString(R.string.ok)
                 dialog.setOkButtonClickListener { dialog, v ->
                     dialog.dismiss()
-                    binding.switchFingerPay.setCheckedNoEvent(false)
+                    setCheckedNoEvent(false)
+                    //binding.switchFingerPay.setCheckedNoEvent(false)
                     mPWallet?.let {
                         it.fingerState = PWallet.CLOSE
                         it.update(it.id)
@@ -240,7 +257,6 @@ class WalletDetailsActivity : BaseActivity() {
                 dialog.show()
             }
         }
-    }
 
 
     private fun updateWalletName() {
@@ -391,7 +407,8 @@ class WalletDetailsActivity : BaseActivity() {
                     it.fingerPassword = encPassword
                     it.fingerState = PWallet.OPEN
                     it.update(it.id)
-                    binding.switchFingerPay.setCheckedNoEvent(true)
+                    setCheckedNoEvent(true)
+                    //binding.switchFingerPay.setCheckedNoEvent(true)
                     toast(getString(R.string.verify_suc))
                 }
 

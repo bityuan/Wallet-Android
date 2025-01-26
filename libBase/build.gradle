@@ -39,7 +39,6 @@ dependencies {
     api cfg.rvAdapter
     api cfg.systembartint
     api cfg.eventbus
-    api cfg.antifake
     api cfg.glide
     api cfg.lifecycleRuntime
     api cfg.lifecycleLivedata
@@ -53,7 +52,6 @@ dependencies {
     api cfg.materialDialogs
     api cfg.navigationUi
     api cfg.navigationFragment
-    api cfg.broccoli
     api cfg.swipeRecyclerview
     api cfg.web3j
     //api cfg.bnbcrypto
@@ -63,7 +61,6 @@ dependencies {
     api cfg.dialogX
     api cfg.IndexRecyclerView
     api cfg.soter
-    api cfg.switchbutton
 
     // WalletConnect V2
     def wallet_connect_version = "1.4.1"
