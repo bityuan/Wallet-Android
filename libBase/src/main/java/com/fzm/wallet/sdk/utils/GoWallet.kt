@@ -394,7 +394,7 @@ class GoWallet {
          * @param chain String     主链名称，例如：“BTC”
          * @param unSignData String   创建交易后的数据（result）
          * @param priv String     私钥
-         * @return String?
+         * @return String
          */
         fun signTran(chain: String, unSignData: String, priv: String): String? {
             try {
