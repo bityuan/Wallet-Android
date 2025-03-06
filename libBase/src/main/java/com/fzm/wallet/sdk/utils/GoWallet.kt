@@ -433,22 +433,6 @@ class GoWallet {
             return null
         }
 
-        fun signTran(chain: String, unSignData: ByteArray, priv: String): String? {
-            try {
-                val signData = SignData()
-                signData.cointype = chain
-                signData.data = unSignData
-                signData.privKey = priv
-                val signRawTransaction =
-                    Walletapi.signRawTransaction(signData)
-                Log.v("tag", "签名交易: $signRawTransaction")
-                return signRawTransaction
-            } catch (e: java.lang.Exception) {
-                e.printStackTrace()
-            }
-            return null
-        }
-
         fun signTxGroup(
             execer: String?,
             createTx: String,
@@ -476,6 +460,22 @@ class GoWallet {
                 val txResp = Walletapi.coinsWithoutTxGroup(gWithoutTx)
                 return txResp.signedTx
             } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return null
+        }
+
+        fun signTran(chain: String, unSignData: ByteArray, priv: String): String? {
+            try {
+                val signData = SignData()
+                signData.cointype = chain
+                signData.data = unSignData
+                signData.privKey = priv
+                val signRawTransaction =
+                    Walletapi.signRawTransaction(signData)
+                Log.v("tag", "签名交易: $signRawTransaction")
+                return signRawTransaction
+            } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
             return null
