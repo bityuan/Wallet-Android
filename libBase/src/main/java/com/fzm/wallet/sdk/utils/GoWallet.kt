@@ -658,7 +658,8 @@ class GoWallet {
             cointype: String,
             name: String,
             platform: String?,
-            treaty: String?
+            treaty: String?,
+            contract_address: String?
         ): CoinToken {
             val coinToken = CoinToken()
             coinToken.cointype = cointype
@@ -686,12 +687,24 @@ class GoWallet {
             if (isETHPara(cointype, platform) || isBTYPara(cointype, platform)) {
                 coinToken.proxy = true
                 if (treaty == "1") {
-                    coinToken.cointype = Walletapi.TypeBtyString
-                    coinToken.tokenSymbol = "$platform.$name"
-                    coinToken.exer = "user.p.$platform.token"
+                    if (name == "WWRWA") {
+                        coinToken.cointype = Walletapi.TypeBtyString
+                        coinToken.tokenSymbol = "ccc.$contract_address"
+                        coinToken.exer = "user.p.$platform.token"
+                    } else {
+                        coinToken.cointype = Walletapi.TypeBtyString
+                        coinToken.tokenSymbol = "$platform.$name"
+                        coinToken.exer = "user.p.$platform.token"
+                    }
+
                 } else if (treaty == "2") {
+                    coinToken.priCoinType = if (cointype == "ETH") {
+                        cointype
+                    } else {
+                        Walletapi.TypeBtyString
+                    }
                     coinToken.cointype = Walletapi.TypeBtyString
-                    coinToken.tokenSymbol = "$platform.coins"
+                    coinToken.tokenSymbol = "$name.coins"
                     coinToken.exer = "user.p.$platform.coins"
                 }
             }
@@ -714,6 +727,7 @@ class GoWallet {
             //是否要代扣,默认不代扣
             var proxy: Boolean = false
             var exer: String = ""
+            var priCoinType: String = ""
         }
 
 

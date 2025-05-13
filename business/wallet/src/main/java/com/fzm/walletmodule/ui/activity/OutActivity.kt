@@ -26,6 +26,7 @@ import com.alibaba.fastjson.JSON
 import com.fzm.wallet.sdk.IPConfig
 import com.fzm.wallet.sdk.IPConfig.Companion.BTY_FEE
 import com.fzm.wallet.sdk.IPConfig.Companion.BTY_PR
+import com.fzm.wallet.sdk.IPConfig.Companion.RWA
 import com.fzm.wallet.sdk.IPConfig.Companion.TOKEN_FEE
 import com.fzm.wallet.sdk.IPConfig.Companion.YBF_BTY_PR
 import com.fzm.wallet.sdk.IPConfig.Companion.YBF_FEE_ADDR
@@ -106,7 +107,7 @@ import kotlin.math.pow
 @Route(path = RouterPath.WALLET_OUT)
 class OutActivity : BaseActivity() {
     private var mSelectedId: Long = 0
-
+    protected val gson by lazy { Gson() }
     private var toAddress: String = ""
     private lateinit var privkey: String
     private val outViewModel by viewModel<OutViewModel>(walletQualifier)
@@ -131,6 +132,7 @@ class OutActivity : BaseActivity() {
     //主链余额
     var chainBalance: Double = 0.0
     private var oldName = ""
+    private var oldChain = ""
     private lateinit var coinToken: GoWallet.Companion.CoinToken
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -157,6 +159,7 @@ class OutActivity : BaseActivity() {
     override fun initView() {
         coin?.let {
             oldName = it.name
+            oldChain = it.chain
             it.oldName = oldName
             title = "${it.uiName}(${it.nickname})${getString(R.string.home_transfer)}"
             binding.tvBalance.text = "${it.balance} ${it.uiName}"
@@ -304,23 +307,42 @@ class OutActivity : BaseActivity() {
             }
         })
 
-        if (coinToken.proxy) {
+        outViewModel.createByContract.observe(this, Observer {
+            if (it.isSucceed()) {
+                val createResult = it.data()
+                val createJson = gson.toJson(createResult)
+                coin?.let {
+                    signAndSends(oldChain, it.name, createJson, money,"CCC")
+                }
+
+            }
+        })
+        if (oldName == RWA) {
             binding.seekbarFee.visibility = View.GONE
             binding.llVMiner.visibility = View.GONE
             binding.llSetFee.visibility = View.GONE
-            binding.tvFee.text =
-                "${if (coin?.platform == IPConfig.YBF_CHAIN) YBF_TOKEN_FEE else TOKEN_FEE} $oldName"
+            binding.tvFee.text = "0.01 WW"
         } else {
-            if (customChain()) {
+            if (coinToken.proxy) {
                 binding.seekbarFee.visibility = View.GONE
                 binding.llVMiner.visibility = View.GONE
-                initFee()
-            } else {
                 binding.llSetFee.visibility = View.GONE
-                //val minerChain = if (coin?.chain == "ETH" && coin?.name != "ETH") "ETHTOKEN" else coin?.chain
-                outViewModel.getMiner(coin?.chain!!)
+                binding.tvFee.text =
+                    "${if (coin?.platform == IPConfig.YBF_CHAIN) YBF_TOKEN_FEE else TOKEN_FEE} $oldName"
+            } else {
+                if (customChain()) {
+                    binding.seekbarFee.visibility = View.GONE
+                    binding.llVMiner.visibility = View.GONE
+                    initFee()
+                } else {
+                    binding.llSetFee.visibility = View.GONE
+                    //val minerChain = if (coin?.chain == "ETH" && coin?.name != "ETH") "ETHTOKEN" else coin?.chain
+                    outViewModel.getMiner(coin?.chain!!)
+                }
             }
         }
+
+
         binding.seekbarFee.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 val value: Double = progress.plus(min).div(100000000.00000000)
@@ -720,21 +742,38 @@ class OutActivity : BaseActivity() {
         }
     }
 
+    private var money = "0.0"
     private suspend fun sendTrans(password: String) {
         coin?.let {
-            val money = binding.etMoney.text.toString()
+            money = binding.etMoney.text.toString()
             when (it.getpWallet().type) {
                 PWallet.TYPE_NOMAL -> {
                     val bPassword = GoWallet.encPasswd(password)!!
                     val mnem: String = GoWallet.decMenm(bPassword, it.getpWallet().mnem)
                     configNomalWallet(it, mnem)
 
-                    //如果需要代扣
-                    if (coinToken.proxy) {
-                        toPara(it, money)
+
+                    if (oldName == RWA) {
+                        outViewModel.createByContract(
+                            oldChain,
+                            "",
+                            it.address,
+                            toAddress,
+                            money.toDouble(),
+                            fee,
+                            it.contract_address
+                        )
+
                     } else {
-                        handleTransactions(toAddress, money)
+                        //如果需要代扣
+                        if (coinToken.proxy) {
+                            toPara(it, money)
+                        } else {
+                            handleTransactions(toAddress, money)
+                        }
+
                     }
+
                 }
 
                 PWallet.TYPE_PRI_KEY -> {
@@ -762,7 +801,7 @@ class OutActivity : BaseActivity() {
 
     private fun toPara(it: Coin, money: String) {
         val gsendTx = GsendTx().apply {
-            feepriv = if (it.platform == IPConfig.YBF_CHAIN) YBF_BTY_PR else BTY_PR
+            feepriv = privkey
             to = toAddress
             tokenSymbol = it.name
             execer = coinToken.exer
@@ -771,15 +810,11 @@ class OutActivity : BaseActivity() {
             //消耗的BTY
             fee = BTY_FEE
             //扣的手续费接收地址
-            tokenFeeAddr = YBF_FEE_ADDR
+            //tokenFeeAddr = YBF_FEE_ADDR
             //扣多少手续费
-            tokenFee = if (it.platform == IPConfig.YBF_CHAIN) YBF_TOKEN_FEE else TOKEN_FEE
-            if (it.treaty == "1") {
-                coinsForFee = false
-                tokenFeeSymbol = oldName
-            } else if (it.treaty == "2") {
-                coinsForFee = true
-            }
+            //tokenFee = if (it.platform == IPConfig.YBF_CHAIN) YBF_TOKEN_FEE else TOKEN_FEE
+            coinsForFee = false
+
             //feeAddressID是收比特元的手续费地址格式，txAddressID是当前用户地址格式
             feeAddressID = if (it.address.startsWith("0x")) 2 else 0
             txAddressID = if (it.address.startsWith("0x")) 2 else 0
@@ -795,10 +830,48 @@ class OutActivity : BaseActivity() {
             finish()
         }
     }
+//    private fun toPara(it: Coin, money: String) {
+//        val gsendTx = GsendTx().apply {
+//            feepriv = if (it.platform == IPConfig.YBF_CHAIN) YBF_BTY_PR else BTY_PR
+//            to = toAddress
+//            tokenSymbol = it.name
+//            //execer = coinToken.exer
+//            execer = "user.p.chatprochain2test.coins"
+//            amount = money.toDouble()
+//            txpriv = privkey
+//            //消耗的BTY
+//            fee = BTY_FEE
+//            //扣的手续费接收地址
+//            tokenFeeAddr = YBF_FEE_ADDR
+//            //扣多少手续费
+//            tokenFee = if (it.platform == IPConfig.YBF_CHAIN) YBF_TOKEN_FEE else TOKEN_FEE
+//            if (it.treaty == "1") {
+//                coinsForFee = false
+//                tokenFeeSymbol = oldName
+//            } else if (it.treaty == "2") {
+//                coinsForFee = true
+//            }
+//
+//            val feeAddr = GoWallet.privToAddr("BTY",feepriv)
+//            //feeAddressID是收比特元的手续费地址格式，txAddressID是当前用户地址格式
+//            feeAddressID = if (feeAddr!!.startsWith("0x")) 2 else 0
+//            txAddressID = if (it.address.startsWith("0x")) 2 else 0
+//        }
+//        val gsendTxResp = Walletapi.coinsTxGroup(gsendTx)
+//        GoWallet.sendTran("CCC", gsendTxResp.signedTx, "")
+//        val sendTx = gsendTxResp.txId
+//        runOnUiThread {
+//            loading.dismiss()
+//            ToastUtils.show(
+//                this@OutActivity, R.string.home_transfer_currency_success
+//            )
+//            finish()
+//        }
+//    }
 
     private fun configNomalWallet(coin: Coin, mnem: String) {
         if ("YCC" == coin.chain || "BTY" == coin.chain) {
-            if ("ethereum" == coin.platform || "yhchain" == coin.platform) {
+            if ("ethereum" == coin.platform || "yhchain" == coin.platform || RWA == oldName) {
                 addressId = 2
                 privkey = coin.getPrivkey("ETH", mnem)
             } else if ("btc" == coin.platform) {
@@ -811,10 +884,16 @@ class OutActivity : BaseActivity() {
                 privkey = coin.getPrivkey("BNB", mnem)
                 addressId = 2
             } else {
-                privkey = coin.getPrivkey(coin.chain, mnem)
+                if (coinToken.priCoinType.isNotEmpty()) {
+                    privkey = coin.getPrivkey(coinToken.priCoinType, mnem)
+                } else {
+                    privkey = coin.getPrivkey(coin.chain, mnem)
+                }
+
             }
         } else {
             privkey = coin.getPrivkey(coin.chain, mnem)
+
         }
 
     }
@@ -898,46 +977,7 @@ class OutActivity : BaseActivity() {
                 if (createRawResult.isNullOrEmpty()) {
                     return
                 }
-                //签名交易
-                val signtx = GoWallet.signTran(
-                    it.chain, Walletapi.stringTobyte(createRawResult), privkey, addressId
-                )
-                if (signtx.isNullOrEmpty()) {
-                    return
-                }
-                //发送交易
-                val sendRawTransaction = GoWallet.sendTran(it.chain, signtx, tokensymbol)
-                runOnUiThread {
-                    try {
-                        loading.dismiss()
-                        if (sendRawTransaction.isNullOrEmpty()) {
-                            ToastUtils.show(this, getString(R.string.home_transfer_currency_fails))
-                            finish()
-                            return@runOnUiThread
-                        }
-                        val result: StringResult? = parseResult(sendRawTransaction)
-                        if (result == null) {
-                            ToastUtils.show(this, getString(R.string.out_result_fails))
-                            finish()
-                            return@runOnUiThread
-                        }
-                        if (!TextUtils.isEmpty(result.error)) {
-                            if (result.error == "transaction underpriced") {
-                                ToastUtils.show(this, getString(R.string.fee_to_low))
-                            } else {
-                                ToastUtils.show(this, result.error)
-                            }
-                            finish()
-                            return@runOnUiThread
-                        }
-                        ToastUtils.show(this, R.string.home_transfer_currency_success)
-                        MMkvUtil.encode("value${it.netId}", "$toAddress,$money")
-                        finish()
-                    } catch (e: Exception) {
-                        toast("$sendRawTransaction:$e")
-                    }
-
-                }
+                signAndSends(it.chain, tokensymbol, createRawResult, money,it.chain)
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -945,6 +985,55 @@ class OutActivity : BaseActivity() {
         }
 
 
+    }
+
+    private fun signAndSends(
+        coinType:String,
+        tokenSymbol: String,
+        createRawResult: String,
+        money: String,
+        sendChain:String
+    ) {
+        //签名交易
+        val signtx = GoWallet.signTran(
+            coinType, Walletapi.stringTobyte(createRawResult), privkey, addressId
+        )
+        if (signtx.isNullOrEmpty()) {
+            return
+        }
+        //发送交易
+        val sendRawTransaction = GoWallet.sendTran(sendChain, signtx, tokenSymbol)
+        runOnUiThread {
+            try {
+                loading.dismiss()
+                if (sendRawTransaction.isNullOrEmpty()) {
+                    ToastUtils.show(this, getString(R.string.home_transfer_currency_fails))
+                    finish()
+                    return@runOnUiThread
+                }
+                val result: StringResult? = parseResult(sendRawTransaction)
+                if (result == null) {
+                    ToastUtils.show(this, getString(R.string.out_result_fails))
+                    finish()
+                    return@runOnUiThread
+                }
+                if (!TextUtils.isEmpty(result.error)) {
+                    if (result.error == "transaction underpriced") {
+                        ToastUtils.show(this, getString(R.string.fee_to_low))
+                    } else {
+                        ToastUtils.show(this, result.error)
+                    }
+                    finish()
+                    return@runOnUiThread
+                }
+                ToastUtils.show(this, R.string.home_transfer_currency_success)
+                MMkvUtil.encode("value${coin?.netId}", "$toAddress,$money")
+                finish()
+            } catch (e: Exception) {
+                toast("$sendRawTransaction:$e")
+            }
+
+        }
     }
 
 

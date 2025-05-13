@@ -9,10 +9,12 @@ import com.fzm.wallet.sdk.net.GoResponse
 import com.fzm.wallet.sdk.net.GoStrResponse
 import com.fzm.wallet.sdk.net.HttpResponse
 import com.fzm.wallet.sdk.net.UrlConfig
+import me.jessyan.retrofiturlmanager.RetrofitUrlManager
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Query
 import retrofit2.http.Url
@@ -79,10 +81,13 @@ interface Apis {
 
     @POST(IPConfig.BTY_ETH_NODE)
     suspend fun getTransactionCount(@Body body: RequestBody): GoResponse<String>
+
     @POST(IPConfig.BTY_ETH_NODE)
     suspend fun getGasPrice(@Body body: RequestBody): GoResponse<String>
+
     @POST(IPConfig.BTY_ETH_NODE)
     suspend fun sendRawTransaction(@Body body: RequestBody): GoResponse<String>
+
     @POST(IPConfig.BTY_API_NODE)
     suspend fun sendTransaction(@Body body: RequestBody): GoStrResponse<String>
 
@@ -99,4 +104,11 @@ interface Apis {
         @Body body: RequestBody,
         @Url url: String = UrlConfig.GO_URL
     ): GoResponse<TxTotal>
+
+
+    @POST
+    suspend fun createByContract(
+        @Body body: RequestBody,
+        @Url url: String = UrlConfig.GO_URL
+    ): GoResponse<CreateRaw>
 }
