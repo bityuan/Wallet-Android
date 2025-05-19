@@ -3,6 +3,8 @@ package com.fzm.wallet.sdk.utils
 import android.text.TextUtils
 import android.util.Log
 import com.fzm.wallet.sdk.IPConfig
+import com.fzm.wallet.sdk.IPConfig.Companion.PARA
+import com.fzm.wallet.sdk.IPConfig.Companion.RWA
 import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.bean.response.BalanceResponse
 import com.fzm.wallet.sdk.db.entity.Coin
@@ -250,6 +252,9 @@ class GoWallet {
         fun isPara(coin: Coin): Boolean {
             return (coin.chain == "ETH" && coin.platform != "ethereum")
         }
+        fun isPa(coin: Coin): Boolean {
+            return (coin.name == PARA)
+        }
 
         //通过平行获取Tokensymbol
         fun getTokensymbol(coin: Coin): String {
@@ -413,9 +418,18 @@ class GoWallet {
         }
 
         //unSignData只有dapp签名（16进制）的时候才是hexTobyte，普通转账是stringTobyte
-        fun signTran(chain: String, unSignData: ByteArray, priv: String, addressId: Int): String? {
+        fun signTran(
+            chain: String,
+            unSignData: ByteArray,
+            priv: String,
+            addressId: Int,
+            chainID: Int = -1
+        ): String? {
             try {
                 val signData = SignData()
+                if (chainID != -1) {
+                    signData.chainID = chainID
+                }
                 signData.cointype = chain
                 signData.data = unSignData
                 signData.privKey = priv
@@ -687,9 +701,9 @@ class GoWallet {
             if (isETHPara(cointype, platform) || isBTYPara(cointype, platform)) {
                 coinToken.proxy = true
                 if (treaty == "1") {
-                    if (name == "WWRWA") {
+                    if (name == RWA) {
                         coinToken.cointype = Walletapi.TypeBtyString
-                        coinToken.tokenSymbol = "ccc.$contract_address"
+                        coinToken.tokenSymbol = "$PARA.$contract_address"
                         coinToken.exer = "user.p.$platform.token"
                     } else {
                         coinToken.cointype = Walletapi.TypeBtyString

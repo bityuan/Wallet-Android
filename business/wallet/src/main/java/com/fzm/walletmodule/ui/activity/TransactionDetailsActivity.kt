@@ -12,6 +12,7 @@ import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.IPConfig
+import com.fzm.wallet.sdk.IPConfig.Companion.BTY_FEE
 import com.fzm.wallet.sdk.IPConfig.Companion.YBF_TOKEN_FEE
 import com.fzm.wallet.sdk.IPConfig.Companion.getBrowserUrl
 import com.fzm.wallet.sdk.RouterPath
@@ -156,11 +157,11 @@ class TransactionDetailsActivity : BaseActivity() {
             transactions?.let { transaction ->
                 binding.tvOutAddress.text = transaction.from
                 binding.tvInAddress.text = transaction.to
-                if (GoWallet.isPara(co)) {
+                if (GoWallet.isPara(co) || GoWallet.isPa(co)) {
                     if (transaction.note!!.contains("para")) {
                         binding.tvMiner.text = "0 ${co.uiName}"
                     } else {
-                        binding.tvMiner.text = "$YBF_TOKEN_FEE ${co.uiName}"
+                        binding.tvMiner.text = "$BTY_FEE ${co.uiName}"
                     }
                 } else {
                     binding.tvMiner.text = "${transaction.fee} ${co.newChain.cointype}"

@@ -26,6 +26,7 @@ import com.alibaba.fastjson.JSON
 import com.fzm.wallet.sdk.IPConfig
 import com.fzm.wallet.sdk.IPConfig.Companion.BTY_FEE
 import com.fzm.wallet.sdk.IPConfig.Companion.BTY_PR
+import com.fzm.wallet.sdk.IPConfig.Companion.PARA
 import com.fzm.wallet.sdk.IPConfig.Companion.RWA
 import com.fzm.wallet.sdk.IPConfig.Companion.TOKEN_FEE
 import com.fzm.wallet.sdk.IPConfig.Companion.YBF_BTY_PR
@@ -91,8 +92,13 @@ import org.litepal.LitePal
 import org.litepal.LitePal.where
 import org.litepal.extension.find
 import org.litepal.extension.findAll
+import org.web3j.crypto.Credentials
+import org.web3j.crypto.RawTransaction
+import org.web3j.crypto.TransactionEncoder
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.http.HttpService
+import org.web3j.utils.Convert
+import org.web3j.utils.Numeric
 import walletapi.GsendTx
 import walletapi.WalletRecover
 import walletapi.Walletapi
@@ -312,7 +318,21 @@ class OutActivity : BaseActivity() {
                 val createResult = it.data()
                 val createJson = gson.toJson(createResult)
                 coin?.let {
-                    signAndSends(oldChain, it.name, createJson, money,"CCC")
+
+//                    val gasPrice = Convert.toWei("20", Convert.Unit.GWEI).toBigInteger()
+//                    val gasLimit = BigInteger.valueOf(21000)
+//                    val value = Convert.toWei(money, Convert.Unit.ETHER).toBigInteger()
+//
+//                    val rawTransaction = RawTransaction.createEtherTransaction(
+//                        createResult!!.nonce.toBigInteger(), gasPrice, gasLimit, toAddress, value
+//                    )
+//
+//                    val credentials = Credentials.create(privkey)
+//                    val signedMessage = TransactionEncoder.signMessage(rawTransaction, 12999, credentials)
+//                    val hexValue = Numeric.toHexString(signedMessage)
+
+                    //sendTrans("CCC",hexValue,it.name)
+                    signAndSends(oldChain, it.name, createJson,PARA,5188)
                 }
 
             }
@@ -321,14 +341,14 @@ class OutActivity : BaseActivity() {
             binding.seekbarFee.visibility = View.GONE
             binding.llVMiner.visibility = View.GONE
             binding.llSetFee.visibility = View.GONE
-            binding.tvFee.text = "0.01 WW"
+            binding.tvFee.text = "0.001 $PARA"
         } else {
             if (coinToken.proxy) {
                 binding.seekbarFee.visibility = View.GONE
                 binding.llVMiner.visibility = View.GONE
                 binding.llSetFee.visibility = View.GONE
                 binding.tvFee.text =
-                    "${if (coin?.platform == IPConfig.YBF_CHAIN) YBF_TOKEN_FEE else TOKEN_FEE} $oldName"
+                    "${if (coin?.platform == IPConfig.YBF_CHAIN) YBF_TOKEN_FEE else BTY_FEE} $oldName"
             } else {
                 if (customChain()) {
                     binding.seekbarFee.visibility = View.GONE
@@ -755,12 +775,12 @@ class OutActivity : BaseActivity() {
 
                     if (oldName == RWA) {
                         outViewModel.createByContract(
-                            oldChain,
+                            PARA,
                             "",
                             it.address,
                             toAddress,
                             money.toDouble(),
-                            fee,
+                            0.001,
                             it.contract_address
                         )
 
@@ -977,7 +997,7 @@ class OutActivity : BaseActivity() {
                 if (createRawResult.isNullOrEmpty()) {
                     return
                 }
-                signAndSends(it.chain, tokensymbol, createRawResult, money,it.chain)
+                signAndSends(it.chain, tokensymbol, createRawResult,it.chain,-1)
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -991,16 +1011,20 @@ class OutActivity : BaseActivity() {
         coinType:String,
         tokenSymbol: String,
         createRawResult: String,
-        money: String,
-        sendChain:String
+        sendChain:String,
+        chainId:Int
     ) {
         //签名交易
         val signtx = GoWallet.signTran(
-            coinType, Walletapi.stringTobyte(createRawResult), privkey, addressId
+            coinType, Walletapi.stringTobyte(createRawResult), privkey, addressId,chainId
         )
         if (signtx.isNullOrEmpty()) {
             return
         }
+        sendTrans(sendChain,signtx,tokenSymbol)
+    }
+
+    private fun sendTrans(sendChain:String,signtx:String,tokenSymbol:String){
         //发送交易
         val sendRawTransaction = GoWallet.sendTran(sendChain, signtx, tokenSymbol)
         runOnUiThread {
