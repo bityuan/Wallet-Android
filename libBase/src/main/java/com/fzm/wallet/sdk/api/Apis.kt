@@ -16,6 +16,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.Url
 
@@ -61,6 +62,7 @@ interface Apis {
     suspend fun getNoticeDetail(
         @Query("id") id: Int
     ): HttpResponse<Notice>
+
 
     /**
      * DNS域名查询
@@ -111,4 +113,62 @@ interface Apis {
         @Body body: RequestBody,
         @Url url: String = UrlConfig.GO_URL
     ): GoResponse<CreateRaw>
+
+
+    //铭文 获取余额
+    @GET("http://190.92.231.38:8080/api/v1/inscription/balance/{address}")
+    suspend fun getBrc20Balance(@Path("address") address: String): GoResponse<Brc20Balances>
+
+    //铭文 获取交易记录
+    @GET("http://190.92.231.38:8080/api/v1/inscription/history/{address}/{name}/0/10")
+    suspend fun getBrc20Tran(
+        @Path("address") address: String,
+        @Path("name") name: String
+    ): List<Brc20Tran>
+
+    //铭文：根据公钥创建地址
+    @GET("http://190.92.231.38:8080/api/v1/inscription/genBtcWitNessAddr/{pubkey}/testnet")
+    suspend fun genBtcWitNessAddr(
+        @Path("pubkey") pubkey: String,
+    ): String
+
+    //查询可转移的块
+    @GET("http://190.92.231.38:8080/api/v1/inscription/TransferAble/{address}/{name}")
+    suspend fun transferAble(
+        @Path("address") address: String,
+        @Path("name") name: String,
+    ): GoResponse<TransferAbles>
+
+    //铭刻第1步：铭刻铭文获取utxo数据
+    @GET("http://190.92.231.38:8080/api/v1/inscription/inscribe-transfer/{address}/{name}")
+    suspend fun inscribeTransfer(
+        @Path("address") address: String,
+        @Path("name") name: String,
+    ): String
+
+    //铭刻第2步：构造签名铭文数据
+    @POST("http://190.92.231.38:8080/api/v1/inscription/inscriptionTransfer")
+    suspend fun inscriptionTransfer(
+        @Body body: RequestBody,
+    ): InsTransfer2
+
+    //铭刻第3步：构造签名铭文数据
+    @POST("http://190.92.231.38:8080/api/v1/transfer")
+    suspend fun transfer(
+        @Body body: RequestBody,
+    ): List<String>
+
+    //转账第1步：构造
+    @GET("http://190.92.231.38:8080/api/v1/inscription/transfer/{address}/{name}/{inscriptionId}")
+    suspend fun insTransfer(
+        @Path("address") address: String?,
+        @Path("name") name: String?,
+        @Path("inscriptionId") inscriptionId: String?,
+    ): String
+
+    @POST("http://190.92.231.38:8080/api/v1/inscription/transfer")
+    suspend fun insTransferPost(
+        @Body body: RequestBody,
+    ): InsTransfer2
+
 }

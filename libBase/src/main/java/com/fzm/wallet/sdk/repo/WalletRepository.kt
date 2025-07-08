@@ -6,6 +6,7 @@ import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.HttpResult
 import com.fzm.wallet.sdk.net.apiCall
+import com.fzm.wallet.sdk.net.brc20Call
 import com.fzm.wallet.sdk.net.dnsCall
 import com.fzm.wallet.sdk.net.goCall
 import com.fzm.wallet.sdk.net.goStrCall
@@ -14,6 +15,7 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import org.json.JSONObject
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 class WalletRepository constructor(private val apis: Apis) {
@@ -79,13 +81,12 @@ class WalletRepository constructor(private val apis: Apis) {
         param.put("params", JSONArray(listOf(address, "latest")))
 
 
-
-
         val requestBody =
             param.toString().toRequestBody("application/json".toMediaTypeOrNull())
 
         return goCall { apis.getTransactionCount(requestBody) }
     }
+
     suspend fun getGasPrice(): HttpResult<String> {
 
         val param = JSONObject()
@@ -111,10 +112,11 @@ class WalletRepository constructor(private val apis: Apis) {
 
         return goCall { apis.sendRawTransaction(requestBody) }
     }
+
     suspend fun sendTransaction(signHash: String?): HttpResult<String> {
         val param = JSONObject()
         val data = JSONObject()
-        data.put("data",signHash)
+        data.put("data", signHash)
         param.put("id", 1)
         param.put("method", "Chain33.SendTransaction")
         param.put("params", JSONArray(listOf(data)))
@@ -188,5 +190,97 @@ class WalletRepository constructor(private val apis: Apis) {
         }
     }
 
+
+    //铭文
+    suspend fun getBrc20Balance(address: String): HttpResult<Brc20Balances> {
+        return brc20Call { apis.getBrc20Balance(address) }
+    }
+
+    suspend fun getBrc20Tran(address: String, name: String): List<Brc20Tran> {
+        return apis.getBrc20Tran(address, name)
+    }
+
+    suspend fun genBtcWitNessAddr(pubkey: String): String {
+        return apis.genBtcWitNessAddr(pubkey)
+    }
+
+
+    suspend fun transferAble(address: String,name: String): HttpResult<TransferAbles> {
+        return brc20Call { apis.transferAble(address,name) }
+
+    }
+
+    //---------------------------铭刻-----------------------------
+    suspend fun inscribeTransfer(address: String,name: String): String {
+        return apis.inscribeTransfer(address,name)
+    }
+
+    suspend fun inscriptionTransfer(
+        signer: String,
+        ticker: String,
+        amount: Int,
+        raw_utxo: String,
+        data: String,
+        test: Boolean
+    ): InsTransfer2 {
+
+
+        return apis.inscriptionTransfer(
+            toRequestBody(
+                "signer" to signer,
+                "ticker" to ticker,
+                "amount" to amount,
+                "raw_utxo" to raw_utxo,
+                "data" to data,
+                "test" to test,
+            )
+        )
+    }
+
+    suspend fun transfer(rawtx: String): List<String> {
+        return apis.transfer(
+            toRequestBody(
+                "rawtx" to rawtx
+            )
+        )
+    }
+
+
+    //--------------------------转账--------------------------------
+    suspend fun insTransfer(
+        address: String?,
+        name: String?,
+        inscriptionId: String?,
+    ): String {
+        return apis.insTransfer(address, name, inscriptionId)
+    }
+
+    //{
+    //    "signer": "tb1qs49cddy0zzkzc0jwwwaek5tap6guw3yhp4hf7s",
+    //    "ticker": "ordi",
+    //    "receive":"目的地址"，
+    //    "raw_utxo": "7b2274786964223a2262623064653161323062383465633065653264663032383036386436663463623561353361313564373530353764356666366134386662376161666436353439222c22766f7574223a302c22616d6f756e74223a302e3030352c227363726970745075624b6579223a223030313438353462383662343866313061633263336534653733626239623531376430653931633734343937227d",
+    //    "data": "privkey",
+    //    "test": true
+    //}
+    suspend fun insTransferPost(
+        signer: String?,
+        ticker: String?,
+        receive: String?,
+        raw_utxo: String?,
+        data: String?,
+        test: Boolean
+    ): InsTransfer2 {
+        return apis.insTransferPost(
+            toRequestBody(
+                "signer" to signer,
+                "ticker" to ticker,
+                "receive" to receive,
+                "raw_utxo" to raw_utxo,
+                "data" to data,
+                "test" to test,
+            )
+        )
+    }
 
 }

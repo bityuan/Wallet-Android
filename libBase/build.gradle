@@ -10,8 +10,9 @@ dependencies {
     androidTestImplementation cfg.library.espressocore
 
     api cfg.arouter
-    //api cfg.WalletApiAndroid
+    //api cfg.WalletApiAndroid  api 'com.github.ppledd:walletapi-and:2.0.2'
     api(name: 'walletapi', ext: 'aar')
+    //api(name: 'inscription-custom', ext: 'aar')
     //api files('libs/core-4.8.8-android.jar')
     api cfg.litepal
     api cfg.litepal

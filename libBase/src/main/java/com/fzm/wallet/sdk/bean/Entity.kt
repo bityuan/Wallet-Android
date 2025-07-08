@@ -77,3 +77,64 @@ data class Notice(
     }
 
 }
+
+//铭文
+data class Brc20Balances(
+    val detail: List<Brc20Balance>
+)
+
+data class Brc20Balance(
+    val ticker: String,
+    val availableBalance: String,
+    val transferableBalance: String,
+    var address: String?,
+)
+
+
+data class Brc20Tran(
+    val amount: String,
+    val availableBalance: String,
+    val fee: Int,
+    val from: String,
+    val height: Int,
+    val inscriptionId: String,
+    val inscriptionNumber: Int,
+    val overallBalance: String,
+    val satoshi: Int,
+    val ticker: String,
+    val blocktime: Long,
+    val to: String,
+    val transferBalance: String,
+    val txid: String,
+    val txidx: Int,
+    val type: String,
+    val valid: Boolean
+)
+
+
+//查询可以转移的铭文
+data class TransferAbles(
+    val detail: List<TransferAble>,
+    val height: Int,
+    val start: Int,
+    val total: Int
+)
+
+data class TransferAble(
+    val confirmations: Int,
+    val data: Able,
+    val inscriptionId: String,
+    val inscriptionNumber: Int,
+    val satoshi: Int
+)
+
+data class Able(
+    val amt: String,
+    val decimal: String,
+    val lim: String,
+    val op: String,
+    val tick: String
+)
+data class InsTransfer2(
+    val rawtx: String
+)

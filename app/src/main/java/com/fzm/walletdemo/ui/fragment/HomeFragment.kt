@@ -96,8 +96,8 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = Adapter(childFragmentManager)
-        adapter.addFragment(WalletFragment(), "资产")
-        //adapter.addFragment(NFTFragment(), "NFT")
+        adapter.addFragment(WalletFragment(), "coin")
+        adapter.addFragment(Brc20Fragment(), "brc-20")
         binding.vpHome.adapter = adapter
         binding.tabHome.setupWithViewPager(binding.vpHome)
 

@@ -48,6 +48,11 @@ object RouterPath {
     const val APP_WEBTEST = "/app/WebTestActivity"
     const val APP_WCONNECT = "/app/WConnectActivity"
     const val APP_SETFEE = "/app/SetFeeActivity"
+    const val APP_BRC20TRANS = "/app/Brc20TransActivity"
+    const val APP_BRC20_IN = "/app/Brc20InActivity"
+    const val APP_BRC20_OUT = "/app/Brc20OutActivity"
+    const val APP_BRC20_OUT_PRE = "/app/Brc20OutPreActivity"
+    const val APP_BRC20_OUT_MINKE = "/app/Brc20OutMinkeActivity"
 
     //param
     const val PARAM_COIN = "coin"
@@ -69,4 +74,5 @@ object RouterPath {
     const val PARAM_ORIG_GAS_PRICE = "orig_gas_price"
     const val PARAM_URL = "url"
     const val PARAM_ICON = "icon"
+
 }

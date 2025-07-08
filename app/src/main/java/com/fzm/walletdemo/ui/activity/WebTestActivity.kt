@@ -5,8 +5,11 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.EditText
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
@@ -15,10 +18,15 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.BuildConfig
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.LIVE_KEY_SCAN
+import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.base.PRE_X_RECOVER
+import com.fzm.wallet.sdk.base.logDebug
+import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.ActivityWebTestBinding
 import com.fzm.walletmodule.ui.base.BaseActivity
+import com.fzm.walletmodule.ui.widget.EditDialogFragment
 import com.fzm.walletmodule.utils.ClipboardUtils
 import com.fzm.walletmodule.utils.PreferencesUtils
 import com.google.gson.Gson
@@ -26,6 +34,13 @@ import com.google.gson.reflect.TypeToken
 import com.jeremyliao.liveeventbus.LiveEventBus
 import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
+import org.jetbrains.anko.uiThread
+import org.litepal.LitePal
+import org.litepal.extension.find
+import walletapi.HDWallet
+import walletapi.Walletapi
 import java.util.ArrayList
 
 @Route(path = RouterPath.APP_WEBTEST)
@@ -90,6 +105,55 @@ class WebTestActivity : BaseActivity() {
             val intent = Intent(this, LockTestActivity::class.java)
             startActivity(intent)
 
+        }
+
+        binding.btnPriv.setOnClickListener {
+            val editDialogFragment =
+                EditDialogFragment()
+            editDialogFragment.setTitle(getString(com.fzm.walletmodule.R.string.my_wallet_detail_password))
+            editDialogFragment.setHint(getString(com.fzm.walletmodule.R.string.my_wallet_detail_password))
+            editDialogFragment.setAutoDismiss(false)
+            editDialogFragment.setType(1)
+                .setRightButtonStr(getString(com.fzm.walletmodule.R.string.ok))
+                .setOnButtonClickListener(object : EditDialogFragment.OnButtonClickListener {
+                    override fun onLeftButtonClick(v: View?) {}
+                    override fun onRightButtonClick(v: View?) {
+                        val etInput: EditText = editDialogFragment.etInput
+                        val value = etInput.text.toString()
+                        if (TextUtils.isEmpty(value)) {
+                            toast(getString(com.fzm.walletmodule.R.string.rsp_dialog_input_password))
+                            return
+                        }
+                        editDialogFragment.dismiss()
+                        handlePasswordAfter(value)
+                    }
+                })
+            editDialogFragment.showDialog("tag", supportFragmentManager)
+        }
+    }
+
+
+    fun handlePasswordAfter(password: String) {
+        showLoading()
+        doAsync {
+            try {
+                val pWallet = LitePal.find<PWallet>(MyWallet.getId())
+                val bPassword: ByteArray? = GoWallet.encPasswd(password)
+                val mnem: String = GoWallet.decMenm(bPassword!!, pWallet!!.mnem)
+                if (!TextUtils.isEmpty(mnem)) {
+                    val hdWallet: HDWallet? = GoWallet.getHDWallet("BTC", mnem)
+                    val priv = Walletapi.byteTohex(hdWallet!!.newKeyPriv(100))
+                    logDebug("ppp === $priv")
+                    dismiss()
+                } else {
+                    uiThread {
+                        dismiss()
+                        toast(getString(com.fzm.walletmodule.R.string.my_wallet_detail_wrong_password))
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 

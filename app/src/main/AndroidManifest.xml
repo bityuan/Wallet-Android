@@ -88,6 +88,36 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.activity.Brc20TransActivity"
+            android:exported="false"
+            android:label=""
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.Brc20InActivity"
+            android:exported="false"
+            android:label=""
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.Brc20OutActivity"
+            android:exported="false"
+            android:label=""
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.Brc20OutMinkeActivity"
+            android:exported="false"
+            android:label="铭刻"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.Brc20OutPreActivity"
+            android:exported="false"
+            android:label="步骤一"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.activity.NodeSettingsActivity"
             android:exported="false"
             android:label="@string/my_node"

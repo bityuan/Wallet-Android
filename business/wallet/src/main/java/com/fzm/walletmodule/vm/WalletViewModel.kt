@@ -6,9 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.bean.AppVersion
+import com.fzm.wallet.sdk.bean.Brc20Balances
+import com.fzm.wallet.sdk.bean.Brc20Tran
 import com.fzm.wallet.sdk.bean.ExploreBean
+import com.fzm.wallet.sdk.bean.InsTransfer2
 import com.fzm.wallet.sdk.bean.Notice
 import com.fzm.wallet.sdk.bean.Notices
+import com.fzm.wallet.sdk.bean.TransferAbles
 import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.net.HttpResult
@@ -66,6 +70,46 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
     private val _sendRawTransaction = MutableLiveData<HttpResult<String>>()
     val sendRawTransaction: LiveData<HttpResult<String>>
         get() = _sendRawTransaction
+
+
+    private val _getBrc20Balance = MutableLiveData<HttpResult<Brc20Balances>>()
+    val getBrc20Balance: LiveData<HttpResult<Brc20Balances>>
+        get() = _getBrc20Balance
+
+    private val _getBrc20Tran = MutableLiveData<List<Brc20Tran>>()
+    val getBrc20Tran: LiveData<List<Brc20Tran>>
+        get() = _getBrc20Tran
+
+    private val _genBtcWitNessAddr = MutableLiveData<String>()
+    val genBtcWitNessAddr: LiveData<String>
+        get() = _genBtcWitNessAddr
+
+    private val _transferAbles = MutableLiveData<HttpResult<TransferAbles>>()
+    val transferAbles: LiveData<HttpResult<TransferAbles>>
+        get() = _transferAbles
+
+
+    //铭文 1 2 3
+
+    private val _inscribeTransfer = MutableLiveData<String>()
+    val inscribeTransfer: LiveData<String>
+        get() = _inscribeTransfer
+
+    private val _inscriptionTransfer = MutableLiveData<InsTransfer2>()
+    val inscriptionTransfer: LiveData<InsTransfer2>
+        get() = _inscriptionTransfer
+
+    private val _transfer = MutableLiveData<List<String>>()
+    val transfer: LiveData<List<String>>
+        get() = _transfer
+
+    private val _transfer123 = MutableLiveData<List<String>>()
+    val transfer123: LiveData<List<String>>
+        get() = _transfer123
+
+    private val _out = MutableLiveData<List<String>>()
+    val out: LiveData<List<String>>
+        get() = _out
 
 
     fun getCoins(id: Long): Flow<List<Coin>> = flow {
@@ -174,16 +218,19 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
             _getUpdate.value = walletRepository.getUpdate()
         }
     }
+
     fun getTransactionCount(address: String) {
         viewModelScope.launch {
             _getTransactionCount.value = walletRepository.getTransactionCount(address)
         }
     }
+
     fun getGasPrice() {
         viewModelScope.launch {
             _getGasPrice.value = walletRepository.getGasPrice()
         }
     }
+
     fun sendRawTransaction(signHash: String?) {
         viewModelScope.launch {
             _sendRawTransaction.value = walletRepository.sendRawTransaction(signHash)
@@ -191,14 +238,111 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
     }
 
 
-
-     suspend fun getExploreList(): List<ExploreBean> {
+    suspend fun getExploreList(): List<ExploreBean> {
         return walletRepository.getExploreList().dataOrNull() ?: emptyList()
     }
 
-     suspend fun getExploreCategory(id: Int): List<ExploreBean> {
+    suspend fun getExploreCategory(id: Int): List<ExploreBean> {
         return walletRepository.getExploreCategory(id).dataOrNull() ?: emptyList()
     }
 
+
+    //铭文
+    fun getBrc20Balance(address: String) {
+        viewModelScope.launch {
+            _getBrc20Balance.value = walletRepository.getBrc20Balance(address)
+        }
+    }
+
+    fun getBrc20Tran(address: String, name: String) {
+        viewModelScope.launch {
+            _getBrc20Tran.value = walletRepository.getBrc20Tran(address, name)
+        }
+    }
+
+    fun getGenBtcWitNessAddr(pubkey: String) {
+        viewModelScope.launch {
+            _genBtcWitNessAddr.value = walletRepository.genBtcWitNessAddr(pubkey)
+        }
+    }
+
+    fun transferAble(address: String,name:String) {
+        viewModelScope.launch {
+            _transferAbles.value = walletRepository.transferAble(address,name)
+        }
+    }
+
+    fun inscribeTransfer(address: String,name:String) {
+        viewModelScope.launch {
+            _inscribeTransfer.value = walletRepository.inscribeTransfer(address,name)
+        }
+    }
+
+    fun inscriptionTransfer(
+        signer: String,
+        ticker: String,
+        amount: Int,
+        raw_utxo: String,
+        data: String,
+        test: Boolean
+    ) {
+        viewModelScope.launch {
+            _inscriptionTransfer.value =
+                walletRepository.inscriptionTransfer(signer, ticker, amount, raw_utxo, data, test)
+        }
+    }
+
+    fun transfer(rawtx: String) {
+        viewModelScope.launch {
+            _transfer.value = walletRepository.transfer(rawtx)
+        }
+    }
+
+    //铭刻
+    fun transfer123(
+        address: String,
+        ticker: String,
+        amount: Int,
+        data: String,
+        test: Boolean,
+    ) {
+        viewModelScope.launch {
+            val raw_utxo = walletRepository.inscribeTransfer(address,ticker)
+            val insTransfer2 = walletRepository.inscriptionTransfer(
+                address,
+                ticker,
+                amount,
+                raw_utxo,
+                data,
+                test
+            )
+            _transfer123.value = walletRepository.transfer(insTransfer2.rawtx)
+        }
+    }
+
+
+    //转账
+    fun out123(
+        address: String?,
+        inscriptionId:String?,
+        ticker: String?,
+        receive: String?,
+        data: String?,
+        test: Boolean,
+    ) {
+
+        viewModelScope.launch {
+            val raw_utxo = walletRepository.insTransfer(address,ticker,inscriptionId)
+            val insTransfer2 = walletRepository.insTransferPost(
+                address,
+                ticker,
+                receive,
+                raw_utxo,
+                data,
+                test
+            )
+            _out.value = walletRepository.transfer(insTransfer2.rawtx)
+        }
+    }
 
 }

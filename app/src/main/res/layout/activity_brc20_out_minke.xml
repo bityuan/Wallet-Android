@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="18dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50dp"
+        android:text="铭刻TRANSFER"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="可用"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_amt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="888"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/et_amt"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/shape_edit_input"
+        android:inputType="number"
+        android:paddingLeft="10dp" />
+
+
+    <Button
+        android:id="@+id/btn_ok"
+        style="@style/buttonPressStyle"
+        android:layout_marginTop="50dp"
+        android:text="@string/ok" />
+
+
+</LinearLayout>

@@ -34,6 +34,20 @@ suspend fun <T> goCall(call: suspend () -> GoResponse<T>): HttpResult<T> {
     }
 
 }
+suspend fun <T> brc20Call(call: suspend () -> GoResponse<T>): HttpResult<T> {
+    return try {
+        call().let {
+            if (it.error?.message.isNullOrEmpty()) {
+                HttpResult.Success(it.data)
+            } else {
+                HttpResult.Error(it.error?.message ?: "unknown error")
+            }
+        }
+    } catch (e: Exception) {
+        HttpResult.Error(HttpResult.handleException(e)!!)
+    }
+
+}
 suspend fun <T> goStrCall(call: suspend () -> GoStrResponse<T>): HttpResult<T> {
     return try {
         call().let {
