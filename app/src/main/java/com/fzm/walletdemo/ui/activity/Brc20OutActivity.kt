@@ -97,6 +97,7 @@ class Brc20OutActivity : BaseActivity() {
             dialog.title = "转账提交成功，请等待确认..."
             dialog.okButton = "确定并关闭"
             dialog.setOkButtonClickListener { dialog, v ->
+                dialog.dismiss()
                 finish()
                 false
             }

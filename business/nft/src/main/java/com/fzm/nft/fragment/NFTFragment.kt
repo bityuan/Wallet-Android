@@ -15,6 +15,7 @@ import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.nft.adapter.NFTAdapter
 import com.fzm.nft.databinding.FragmentNftBinding
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.ext.toastError
 import com.fzm.walletmodule.utils.isFastClick
 import com.fzm.walletmodule.vm.WalletViewModel
 import org.jetbrains.anko.support.v4.onRefresh
@@ -109,7 +110,7 @@ class NFTFragment : Fragment() {
                     }
                 }
             } else {
-                toast(it.error())
+                activity?.toastError(it.error())
             }
         })
     }

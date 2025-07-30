@@ -20,6 +20,7 @@ import com.fzm.wallet.sdk.base.MyWallet
 import com.fzm.wallet.sdk.db.entity.AddCoinTabBean
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.ext.toastError
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.utils.GoWallet
 import com.fzm.walletmodule.R
@@ -275,7 +276,7 @@ class AddCoinActivity : BaseActivity() {
                 }
                 mAdapter!!.notifyDataSetChanged()
             } else {
-                toast(it.error())
+                toastError(it.error())
             }
         })
 
@@ -318,8 +319,7 @@ class AddCoinActivity : BaseActivity() {
                 }
                 mCommonAdapter!!.notifyDataSetChanged()
             } else {
-                Log.e("addCoin", "请求失败${it.error()}")
-                toast(it.error())
+                toastError(it.error())
             }
         })
     }
@@ -430,7 +430,8 @@ class AddCoinActivity : BaseActivity() {
                 val bPassword: ByteArray? = GoWallet.encPasswd(password)
                 val mnem: String = GoWallet.decMenm(bPassword!!, mPWallet!!.mnem)
                 if (!TextUtils.isEmpty(mnem)) {
-                    val hdWallet: HDWallet? = GoWallet.getHDWallet(coin.chain, mnem)
+                    val chain = if(coin.chain == "POL") "ETH" else coin.chain
+                    val hdWallet: HDWallet? = GoWallet.getHDWallet(chain, mnem)
                     val address = hdWallet!!.newAddress_v2(0)
                     val pubkey = hdWallet.newKeyPub(0)
                     val pubkeyStr: String = GoWallet.encodeToStrings(pubkey)

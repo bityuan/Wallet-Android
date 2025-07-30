@@ -97,7 +97,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val adapter = Adapter(childFragmentManager)
         adapter.addFragment(WalletFragment(), "coin")
-        adapter.addFragment(Brc20Fragment(), "brc-20")
+        //adapter.addFragment(Brc20Fragment(), "brc-20")
         binding.vpHome.adapter = adapter
         binding.tabHome.setupWithViewPager(binding.vpHome)
 

@@ -43,6 +43,7 @@ import com.fzm.wallet.sdk.databinding.DialogPwdBinding
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
 import com.fzm.wallet.sdk.ext.toPlainStr
+import com.fzm.wallet.sdk.ext.toastError
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.repo.WalletRepository
 import com.fzm.wallet.sdk.utils.AESForPayUtil
@@ -309,7 +310,7 @@ class OutActivity : BaseActivity() {
 
                 }
             } else {
-                ToastUtils.show(this, it.error())
+                toastError(it.error())
             }
         })
 
@@ -332,7 +333,7 @@ class OutActivity : BaseActivity() {
 //                    val hexValue = Numeric.toHexString(signedMessage)
 
                     //sendTrans("CCC",hexValue,it.name)
-                    signAndSends(oldChain, it.name, createJson,PARA,5188)
+                    signAndSends(oldChain, it.name, createJson, PARA, 5188)
                 }
 
             }
@@ -912,7 +913,7 @@ class OutActivity : BaseActivity() {
 
             }
         } else {
-            privkey = coin.getPrivkey(coin.chain, mnem)
+            privkey = coin.getPrivkey(if (coin.chain == "POL") "ETH" else coin.chain, mnem)
 
         }
 
@@ -997,7 +998,7 @@ class OutActivity : BaseActivity() {
                 if (createRawResult.isNullOrEmpty()) {
                     return
                 }
-                signAndSends(it.chain, tokensymbol, createRawResult,it.chain,-1)
+                signAndSends(it.chain, tokensymbol, createRawResult, it.chain, -1)
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -1008,23 +1009,23 @@ class OutActivity : BaseActivity() {
     }
 
     private fun signAndSends(
-        coinType:String,
+        coinType: String,
         tokenSymbol: String,
         createRawResult: String,
-        sendChain:String,
-        chainId:Int
+        sendChain: String,
+        chainId: Int
     ) {
         //签名交易
         val signtx = GoWallet.signTran(
-            coinType, Walletapi.stringTobyte(createRawResult), privkey, addressId,chainId
+            coinType, Walletapi.stringTobyte(createRawResult), privkey, addressId, chainId
         )
         if (signtx.isNullOrEmpty()) {
             return
         }
-        sendTrans(sendChain,signtx,tokenSymbol)
+        sendTrans(sendChain, signtx, tokenSymbol)
     }
 
-    private fun sendTrans(sendChain:String,signtx:String,tokenSymbol:String){
+    private fun sendTrans(sendChain: String, signtx: String, tokenSymbol: String) {
         //发送交易
         val sendRawTransaction = GoWallet.sendTran(sendChain, signtx, tokenSymbol)
         runOnUiThread {

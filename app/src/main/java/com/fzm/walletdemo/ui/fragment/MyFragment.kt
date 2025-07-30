@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
+import com.fzm.wallet.sdk.ext.toastError
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.walletdemo.databinding.FragmentMyBinding
 import com.fzm.walletdemo.ui.WalletHelper
@@ -79,7 +80,7 @@ class MyFragment : Fragment() {
                     }
                 }
             } else {
-                toast(it.error())
+                activity?.toastError(it.error())
             }
 
         })

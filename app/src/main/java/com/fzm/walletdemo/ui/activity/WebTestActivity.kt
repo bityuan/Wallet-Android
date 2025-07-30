@@ -32,6 +32,7 @@ import com.fzm.walletmodule.utils.PreferencesUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.jeremyliao.liveeventbus.LiveEventBus
+import com.kongzue.dialogx.dialogs.MessageDialog
 import com.zhy.adapter.recyclerview.CommonAdapter
 import com.zhy.adapter.recyclerview.base.ViewHolder
 import org.jetbrains.anko.doAsync
@@ -144,6 +145,16 @@ class WebTestActivity : BaseActivity() {
                     val hdWallet: HDWallet? = GoWallet.getHDWallet("BTC", mnem)
                     val priv = Walletapi.byteTohex(hdWallet!!.newKeyPriv(100))
                     logDebug("ppp === $priv")
+                    val dialog = MessageDialog.build()
+                    dialog.isCancelable = false
+                    dialog.title = "私钥"
+                    dialog.message = "$priv"
+                    dialog.okButton = "确定"
+                    dialog.setOkButtonClickListener { dialog, v ->
+                        dialog.dismiss()
+                        false
+                    }
+                    dialog.show()
                     dismiss()
                 } else {
                     uiThread {

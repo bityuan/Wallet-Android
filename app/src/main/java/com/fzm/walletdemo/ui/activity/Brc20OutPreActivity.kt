@@ -21,6 +21,7 @@ import com.fzm.walletdemo.ui.adapter.Brc20OutPreAdapter
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.ui.base.BaseActivity
 import com.fzm.walletmodule.vm.WalletViewModel
+import org.jetbrains.anko.support.v4.onRefresh
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -66,6 +67,10 @@ class Brc20OutPreActivity : BaseActivity() {
 
     override fun initView() {
         super.initView()
+        binding.swlLayout.onRefresh {
+            address?.let { walletViewModel.transferAble(it,name!!) }
+        }
+
         address?.let { walletViewModel.transferAble(it,name!!) }
         binding.rvList.layoutManager = GridLayoutManager(this, 3)
         adapter = Brc20OutPreAdapter(this, ableList)

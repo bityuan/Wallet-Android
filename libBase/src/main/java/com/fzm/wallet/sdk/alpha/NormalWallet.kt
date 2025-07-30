@@ -36,7 +36,7 @@ class NormalWallet(wallet: PWallet) : BaseWallet(wallet) {
             }
             withContext(Dispatchers.IO) {
                 coins.forEachIndexed { index, coin ->
-                    val chain = if ("ETHW" == coin.chain) "ETH" else coin.chain
+                    val chain = if ("ETHW" == coin.chain || coin.chain == "POL") "ETH" else coin.chain
                     val hdWallet = GoWallet.getHDWallet(chain, mnem)
                     hdWallet?.let {
                         val privateKey = it.newKeyPriv(0)

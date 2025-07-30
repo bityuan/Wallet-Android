@@ -266,15 +266,15 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
         }
     }
 
-    fun transferAble(address: String,name:String) {
+    fun transferAble(address: String, name: String) {
         viewModelScope.launch {
-            _transferAbles.value = walletRepository.transferAble(address,name)
+            _transferAbles.value = walletRepository.transferAble(address, name)
         }
     }
 
-    fun inscribeTransfer(address: String,name:String) {
+    fun inscribeTransfer(address: String, name: String) {
         viewModelScope.launch {
-            _inscribeTransfer.value = walletRepository.inscribeTransfer(address,name)
+            _inscribeTransfer.value = walletRepository.inscribeTransfer(address, name)
         }
     }
 
@@ -307,16 +307,21 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
         test: Boolean,
     ) {
         viewModelScope.launch {
-            val raw_utxo = walletRepository.inscribeTransfer(address,ticker)
-            val insTransfer2 = walletRepository.inscriptionTransfer(
-                address,
-                ticker,
-                amount,
-                raw_utxo,
-                data,
-                test
-            )
-            _transfer123.value = walletRepository.transfer(insTransfer2.rawtx)
+            try {
+                val raw_utxo = walletRepository.inscribeTransfer(address, ticker)
+                val insTransfer2 = walletRepository.inscriptionTransfer(
+                    address,
+                    ticker,
+                    amount,
+                    raw_utxo,
+                    data,
+                    test
+                )
+                _transfer123.value = walletRepository.transfer(insTransfer2.rawtx)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
         }
     }
 
@@ -324,7 +329,7 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
     //转账
     fun out123(
         address: String?,
-        inscriptionId:String?,
+        inscriptionId: String?,
         ticker: String?,
         receive: String?,
         data: String?,
@@ -332,16 +337,21 @@ class WalletViewModel constructor(private val walletRepository: WalletRepository
     ) {
 
         viewModelScope.launch {
-            val raw_utxo = walletRepository.insTransfer(address,ticker,inscriptionId)
-            val insTransfer2 = walletRepository.insTransferPost(
-                address,
-                ticker,
-                receive,
-                raw_utxo,
-                data,
-                test
-            )
-            _out.value = walletRepository.transfer(insTransfer2.rawtx)
+            try {
+                val raw_utxo = walletRepository.insTransfer(address, ticker, inscriptionId)
+                val insTransfer2 = walletRepository.insTransferPost(
+                    address,
+                    ticker,
+                    receive,
+                    raw_utxo,
+                    data,
+                    test
+                )
+                _out.value = walletRepository.transfer(insTransfer2.rawtx)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
         }
     }
 

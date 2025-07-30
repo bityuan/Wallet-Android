@@ -88,6 +88,7 @@ class Brc20OutMinkeActivity : BaseActivity() {
             dialog.title = "铭刻提交成功，请等待确认..."
             dialog.okButton = "确定并关闭"
             dialog.setOkButtonClickListener { dialog, v ->
+                dialog.dismiss()
                 finish()
                 false
             }

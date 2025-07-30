@@ -87,8 +87,8 @@ class Brc20TransActivity : BaseActivity() {
             if (it.isSucceed()) {
                 val details = it.data()?.detail
                 val deta = details?.find { it.ticker == name }
-                binding.tvBalance.text =
-                    "可用${deta?.availableBalance}\n可转移${deta?.transferableBalance}"
+                binding.tvTransferable.text = "${deta?.transferableBalance}"
+                binding.tvAvailable.text = "${deta?.availableBalance}"
             }
         })
         walletViewModel.getBrc20Tran.observe(this, Observer {
@@ -136,7 +136,8 @@ class Brc20TransActivity : BaseActivity() {
         val bitmap: Bitmap = CodeUtils.createQRCode(address, 190)
         binding.ivAddress.setImageBitmap(bitmap)
         binding.tvAddress.text = HtmlUtils.change4(address)
-        binding.tvBalance.text = "可用$availableBalance\n可转移$transferableBalance"
+        binding.tvTransferable.text = "${transferableBalance}"
+        binding.tvAvailable.text = "${availableBalance}"
 
         val coin = Coin()
         coin.name = name

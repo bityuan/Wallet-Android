@@ -15,6 +15,7 @@ import com.fzm.wallet.sdk.base.LIVE_WC_STATUS
 import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.ext.toastError
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.utils.LocalManageUtil
 import com.fzm.walletdemo.R
@@ -95,7 +96,7 @@ class MainActivity : BaseActivity() {
                     UpdateUtils(this).update(it, supportFragmentManager, this, true)
                 }
             } else {
-                toast(it.error())
+                toastError(it.error())
             }
 
         })
@@ -146,6 +147,18 @@ class MainActivity : BaseActivity() {
             chain = "BNB"
             platform = "bnb"
             netId = "694"
+        },
+        Coin().apply {
+            name = "BTY"
+            chain = "BTC"
+            platform = "btc"
+            netId = "731"
+        },
+        Coin().apply {
+            name = "BTY"
+            chain = "ETH"
+            platform = "ethereum"
+            netId = "732"
         },
 
         )

@@ -8,6 +8,7 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.bean.Notice
+import com.fzm.wallet.sdk.ext.toastError
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.walletdemo.R
 import com.fzm.walletdemo.databinding.ActivityMessagesBinding
@@ -76,7 +77,7 @@ class MessagesActivity : BaseActivity() {
                 }
 
             } else {
-                toast(it.error())
+                toastError(it.error())
             }
             binding.swlLayout.onRefreshComplete()
             binding.rvList.onLoadMoreComplete()

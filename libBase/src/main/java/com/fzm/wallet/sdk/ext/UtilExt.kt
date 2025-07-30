@@ -1,8 +1,10 @@
 package com.fzm.wallet.sdk.ext
 
+import android.content.Context
 import android.net.Uri
 import android.util.ArrayMap
 import android.view.View
+import android.widget.Toast
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.json.JSONObject
@@ -25,7 +27,7 @@ fun toJSONStr(vararg params: Pair<String, Any?>): String {
 
 fun View.oneClick() {
     var oldTime: Long = 0
-    if (System.currentTimeMillis() - oldTime  > 500) {
+    if (System.currentTimeMillis() - oldTime > 500) {
         setOnClickListener {
 
         }
@@ -43,3 +45,8 @@ fun String.toPlainStr(point: Int = 4): String {
     return BigDecimal(this).setScale(point, RoundingMode.DOWN)
         .stripTrailingZeros().toPlainString()
 }
+
+fun Context.toastError(message: CharSequence): Toast =
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).apply {
+        //show()
+    }

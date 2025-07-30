@@ -24,6 +24,7 @@ import com.fzm.wallet.sdk.bean.Miner
 import com.fzm.wallet.sdk.databinding.DialogPwdBinding
 import com.fzm.wallet.sdk.db.entity.Coin
 import com.fzm.wallet.sdk.db.entity.PWallet
+import com.fzm.wallet.sdk.ext.toastError
 import com.fzm.wallet.sdk.net.UrlConfig
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.wallet.sdk.utils.GoWallet
@@ -126,7 +127,7 @@ class NFTOutActivity : BaseActivity() {
                 }
 
             } else {
-                it.error()
+                toastError(it.error())
             }
         })
         nftViewModel.outNFT.observe(this, Observer { createHash: String ->

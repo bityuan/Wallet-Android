@@ -1,5 +1,8 @@
 package com.fzm.walletmodule.utils
 
+import android.content.Context
+import android.widget.Toast
+import org.jetbrains.anko.toast
 import org.json.JSONException
 import org.json.JSONObject
 import walletapi.Walletapi
@@ -62,6 +65,10 @@ fun mapToJson(vararg params: Pair<String, Any?>): String {
     }
     return param.toString()
 }
+
+
+
+
 
 
 

@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.LIVE_KEY_CHOOSE_CHAIN
 import com.fzm.wallet.sdk.db.entity.Coin
+import com.fzm.wallet.sdk.ext.toastError
 import com.fzm.wallet.sdk.net.walletQualifier
 import com.fzm.walletmodule.R
 import com.fzm.walletmodule.databinding.ActivityChooseChainBinding
@@ -61,7 +62,7 @@ class ChooseChainActivity : BaseActivity() {
                     mAdapter.notifyDataSetChanged()
                 }
             } else {
-                toast(it.error())
+                toastError(it.error())
             }
         })
     }

@@ -134,6 +134,7 @@
                         android:layout_marginTop="29dp"
                         android:layout_marginBottom="13dp"
                         android:background="@null"
+                        android:hint="请输入地址"
                         android:paddingRight="@dimen/dp_16"
                         android:textSize="@dimen/sp_16" />
 

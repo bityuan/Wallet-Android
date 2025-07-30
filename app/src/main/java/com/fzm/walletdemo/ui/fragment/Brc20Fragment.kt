@@ -176,14 +176,20 @@ class Brc20Fragment : BaseFragment() {
             if (it.isSucceed()) {
                 val details = it.data()?.detail
                 list.clear()
-                if (details != null) {
+                if (!details.isNullOrEmpty()) {
                     for (de in details){
                         de.address = brc20Addr
                     }
                     list.addAll(details)
+                }else {
+                    val de = Brc20Balance("ordi","0","0",brc20Addr)
+                    list.clear()
+                    list.add(de)
                 }
 
                 brc20BalanceAdapter.notifyDataSetChanged()
+            }else {
+                toast("$it")
             }
         })
     }
