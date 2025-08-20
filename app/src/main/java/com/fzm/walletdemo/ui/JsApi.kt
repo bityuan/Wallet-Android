@@ -69,7 +69,8 @@ class JsApi(private val webView: WebView, private val activity: FragmentActivity
         val map = msg.toString().jsonToMap<String>()
         val chain = map["cointype"]
         chain?.let {
-            val chain = GoWallet.getChain(it)
+            val c = if(it == "HXC")"ETH" else it
+            val chain = GoWallet.getChain(c)
             handler.complete(toJSONStr("address" to chain?.address))
         }
 
@@ -217,7 +218,7 @@ class JsApi(private val webView: WebView, private val activity: FragmentActivity
             "BTY" -> {
                 0
             }
-            "YCC" -> {
+            "YCC","ETH","HXC" -> {
                 2
             }
             else -> 0
@@ -252,7 +253,7 @@ class JsApi(private val webView: WebView, private val activity: FragmentActivity
             2 -> {
                 var thisCointype = ""
                 val mnem: String = GoWallet.decMenm(bPassword, wallet.mnem)
-                if (cointype == "YCC") {
+                if (cointype == "YCC" || cointype == "ETH"|| cointype == "HXC") {
                     thisCointype = Walletapi.TypeETHString
                 } else {
                     thisCointype = Walletapi.TypeBtyString

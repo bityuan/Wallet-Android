@@ -252,6 +252,7 @@ class GoWallet {
         fun isPara(coin: Coin): Boolean {
             return (coin.chain == "ETH" && coin.platform != "ethereum")
         }
+
         fun isPa(coin: Coin): Boolean {
             return (coin.name == PARA)
         }
@@ -448,6 +449,38 @@ class GoWallet {
         }
 
         fun signTxGroup(
+            execer: String?,
+            createTx: String,
+            txPriv: String,
+            feePriv: String,
+            btyfee: Double,
+            addressId: Int,
+            sysAddressid: Int
+        ): String? {
+            try {
+                val gWithoutTx = GWithoutTx()
+                gWithoutTx.noneExecer = execer
+                gWithoutTx.feepriv = feePriv //代扣手续费的私钥
+                gWithoutTx.txpriv = txPriv
+                gWithoutTx.rawTx = createTx
+                //bty的推荐手续费设置
+                gWithoutTx.fee = btyfee
+                if (addressId != -1) {
+                    //私钥：0x的私钥为2，1x的私钥为0
+                    gWithoutTx.txAddressID = addressId
+                    gWithoutTx.feeAddressID = addressId
+                }
+                //系统AddressID ：比特元系统（不管1x还是0x）都为0，YCC系统为2
+                gWithoutTx.execerAddressID = sysAddressid
+                val txResp = Walletapi.coinsWithoutTxGroup(gWithoutTx)
+                return txResp.signedTx
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return null
+        }
+
+        fun signTxGroupHX(
             execer: String?,
             createTx: String,
             txPriv: String,
@@ -687,6 +720,13 @@ class GoWallet {
                 Walletapi.TypeBtyString -> {
                     if (platform != "bnb") {
                         coinToken.cointype = Walletapi.TypeBtyString
+                        coinToken.tokenSymbol = ""
+                    }
+                }
+
+                "HXC" -> {
+                    if (platform != "bnb") {
+                        coinToken.cointype = "HXC"
                         coinToken.tokenSymbol = ""
                     }
                 }

@@ -14,7 +14,7 @@ class OutRepository constructor(private val apis: Apis) {
         return apiCall { apis.getMinerList(name) }
     }
 
-    suspend fun createByContract(
+    suspend fun createRawTransaction(
         cointype: String,
         tokensymbol: String,
         from: String,

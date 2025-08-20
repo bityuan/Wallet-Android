@@ -47,7 +47,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="20dp"
             android:layout_marginRight="16dp"
-            android:text="提取锁仓余额" />
+            android:text="HX" />
         <Button
             android:id="@+id/btn_priv"
             android:layout_width="match_parent"

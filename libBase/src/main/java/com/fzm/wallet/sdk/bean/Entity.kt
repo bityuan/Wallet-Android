@@ -9,6 +9,7 @@ import okhttp3.RequestBody
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.Serializable
+import java.math.BigInteger
 
 
 fun toRequestBody(vararg params: Pair<String, Any?>): RequestBody {
@@ -137,4 +138,13 @@ data class Able(
 )
 data class InsTransfer2(
     val rawtx: String
+)
+data class CreateBindMiner(
+    val txHex: String
+)
+data class TicketBalance(
+    val currency: BigInteger,
+    val balance: BigInteger,
+    val frozen: BigInteger,
+    val addr: String
 )

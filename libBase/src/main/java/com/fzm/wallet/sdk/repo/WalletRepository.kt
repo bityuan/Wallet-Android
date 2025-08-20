@@ -17,6 +17,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import retrofit2.http.Path
 import retrofit2.http.Query
+import java.math.BigInteger
 
 class WalletRepository constructor(private val apis: Apis) {
     suspend fun getCoinList(names: List<String>): HttpResult<List<Coin>> {
@@ -125,6 +126,72 @@ class WalletRepository constructor(private val apis: Apis) {
             param.toString().toRequestBody("application/json".toMediaTypeOrNull())
 
         return goStrCall { apis.sendTransaction(requestBody) }
+    }
+    suspend fun sendTransactionTest(signHash: String?): HttpResult<String> {
+        val param = JSONObject()
+        val data = JSONObject()
+        data.put("data", signHash)
+        param.put("id", 1)
+        param.put("method", "Chain33.SendTransaction")
+        param.put("params", JSONArray(listOf(data)))
+
+        val requestBody =
+            param.toString().toRequestBody("application/json".toMediaTypeOrNull())
+
+        return goStrCall { apis.sendTransactionTest(requestBody) }
+    }
+    suspend fun createBindMiner(amount: Long?,bindAddr:String,originAddr:String): HttpResult<CreateBindMiner> {
+        val param = JSONObject()
+        val data = JSONObject()
+        data.put("amount", amount)
+        data.put("bindAddr", bindAddr)
+        data.put("checkBalance", false)
+        data.put("originAddr", originAddr)
+        param.put("id", 1)
+        param.put("method", "ticket.CreateBindMiner")
+        param.put("params", JSONArray(listOf(data)))
+
+        val requestBody =
+            param.toString().toRequestBody("application/json".toMediaTypeOrNull())
+
+        return goStrCall { apis.createBindMiner(requestBody) }
+    }
+    suspend fun chain33CreateRaw(amount: BigInteger?): HttpResult<String> {
+        val param = JSONObject()
+        val data = JSONObject()
+        data.put("to", "16htvcBNSEA7fZhAdLJphDwQRQJaHpyHTp")
+        data.put("amount", amount)
+        data.put("fee", 100000)
+        data.put("note", "")
+        data.put("isToken", false)
+        data.put("isWithdraw", true)
+        data.put("tokenSymbol", "")
+        data.put("execName", "")
+        data.put("exec", "coins")
+
+        param.put("id", 1)
+        param.put("method", "Chain33.CreateRawTransaction")
+        param.put("params", JSONArray(listOf(data)))
+
+        val requestBody =
+            param.toString().toRequestBody("application/json".toMediaTypeOrNull())
+
+        return goStrCall { apis.chain33CreateRaw(requestBody) }
+    }
+    suspend fun chain33Balance(address: String): HttpResult<List<TicketBalance>> {
+        val param = JSONObject()
+        val data = JSONObject()
+        data.put("addresses", JSONArray(listOf(address)))
+        data.put("execer", "ticket")
+
+        param.put("id", 1)
+        param.put("method", "Chain33.GetBalance")
+        param.put("params", JSONArray(listOf(data)))
+
+        val requestBody =
+            param.toString().toRequestBody("application/json".toMediaTypeOrNull())
+
+        return goStrCall { apis.chain33Balance(requestBody) }
     }
 
     suspend fun queryTxHistoryCount(

@@ -92,6 +92,14 @@ interface Apis {
 
     @POST(IPConfig.BTY_API_NODE)
     suspend fun sendTransaction(@Body body: RequestBody): GoStrResponse<String>
+    @POST(IPConfig.HX_API_NODE)
+    suspend fun sendTransactionTest(@Body body: RequestBody): GoStrResponse<String>
+    @POST(IPConfig.HX_API_NODE)
+    suspend fun createBindMiner(@Body body: RequestBody): GoStrResponse<CreateBindMiner>
+    @POST(IPConfig.HX_API_NODE)
+    suspend fun chain33CreateRaw(@Body body: RequestBody): GoStrResponse<String>
+    @POST(IPConfig.HX_API_NODE)
+    suspend fun chain33Balance(@Body body: RequestBody): GoStrResponse<List<TicketBalance>>
 
 
     @POST

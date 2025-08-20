@@ -35,7 +35,7 @@ class OutViewModel constructor(private val outRepository: OutRepository) : ViewM
         contractAddress: String
     ) {
         viewModelScope.launch {
-            _createByContract.value = outRepository.createByContract(
+            _createByContract.value = outRepository.createRawTransaction(
                 cointype,
                 tokensymbol,
                 from,

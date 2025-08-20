@@ -891,7 +891,7 @@ class OutActivity : BaseActivity() {
 //    }
 
     private fun configNomalWallet(coin: Coin, mnem: String) {
-        if ("YCC" == coin.chain || "BTY" == coin.chain) {
+        if ("YCC" == coin.chain || "BTY" == coin.chain || "HXC" == coin.chain) {
             if ("ethereum" == coin.platform || "yhchain" == coin.platform || RWA == oldName) {
                 addressId = 2
                 privkey = coin.getPrivkey("ETH", mnem)

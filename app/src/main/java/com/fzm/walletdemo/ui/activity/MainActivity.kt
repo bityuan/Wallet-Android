@@ -252,7 +252,7 @@ class MainActivity : BaseActivity() {
 
     }
 
-    override fun initObserver() {
+    override fun initObserver() {                                            
         super.initObserver()
         LiveEventBus.get<Long>(LIVE_KEY_WALLET).observeSticky(this, Observer {
             it?.let {
