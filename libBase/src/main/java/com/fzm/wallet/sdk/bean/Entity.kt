@@ -9,6 +9,7 @@ import okhttp3.RequestBody
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.Serializable
+import java.math.BigDecimal
 import java.math.BigInteger
 
 
@@ -143,8 +144,8 @@ data class CreateBindMiner(
     val txHex: String
 )
 data class TicketBalance(
-    val currency: BigInteger,
-    val balance: BigInteger,
-    val frozen: BigInteger,
+    val currency: BigDecimal,
+    val balance: BigDecimal,
+    val frozen: BigDecimal,
     val addr: String
 )

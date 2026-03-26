@@ -849,6 +849,22 @@ class GoWallet {
                 else -> WEB3_ETH
             }
         }
+        fun getWeb3UrlL(chainId: Long): String {
+            return when (chainId) {
+                CHAIN_ID_ETH_L -> {
+                    WEB3_ETH
+                }
+
+                CHAIN_ID_BNB_L -> {
+                    WEB3_BNB
+                }
+                CHAIN_ID_BTY_L -> {
+                    WEB3_BTY
+                }
+
+                else -> WEB3_ETH
+            }
+        }
 
         fun getWeb3UrlL(chainId: Long?): String {
             return when (chainId) {

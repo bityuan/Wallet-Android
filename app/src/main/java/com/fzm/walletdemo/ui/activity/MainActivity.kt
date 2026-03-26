@@ -160,6 +160,12 @@ class MainActivity : BaseActivity() {
             platform = "ethereum"
             netId = "732"
         },
+        Coin().apply {
+            name = "BTY"
+            chain = "BTY"
+            platform = "bty"
+            netId = "154"
+        },
 
         )
     private val DEFAULT_COINS_SQ = listOf(

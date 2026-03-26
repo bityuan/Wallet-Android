@@ -44,7 +44,9 @@ import walletapi.ContractTransferReq
 import walletapi.GWithoutTx
 import walletapi.WalletSendTx
 import walletapi.Walletapi
+import java.math.BigDecimal
 import java.math.BigInteger
+import java.math.RoundingMode
 import kotlin.math.log
 
 class LockTestActivity : BaseActivity() {
@@ -53,7 +55,7 @@ class LockTestActivity : BaseActivity() {
     private var type: Int = 0
     private var coin: Coin? = null
 
-    private var balance: BigInteger? = null
+    private var balance: BigDecimal? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lock_test)
@@ -63,7 +65,7 @@ class LockTestActivity : BaseActivity() {
 
     override fun initView() {
         super.initView()
-        coin = GoWallet.getChain(Walletapi.TypeETHString)
+        coin = GoWallet.getChain(Walletapi.TypeBtyString)
         coin?.let {
             tv_address.text = it.address
             et_origin_addr.setText(it.address)
@@ -94,8 +96,12 @@ class LockTestActivity : BaseActivity() {
                     withContext(Dispatchers.Main) {
                         val data = banResult.data()?.get(0)
                         data?.let { ba ->
-                            balance = ba.balance.div(1000000.toBigInteger())
-                            val frozen = ba.frozen.div(1000000.toBigInteger())
+                            //balance = ba.balance.div(100000000.toBigDecimal())
+
+                            balance = ba.balance.divide(100000000.toBigDecimal(), 4, RoundingMode.HALF_UP)
+
+
+                            val frozen = ba.frozen.divide(100000000.toBigDecimal(),4,RoundingMode.HALF_UP)
                             tv_ticket_balance.text = balance.toString()
                             tv_frozen_balance.text = frozen.toString()
                         }
@@ -280,7 +286,7 @@ class LockTestActivity : BaseActivity() {
                         2 -> {
                             val createResult =
                                 walletRepository.chain33CreateRaw(
-                                    getAmount.toBigInteger().multiply(1000000.toBigInteger())
+                                    getAmount.toBigDecimal().multiply(100000000.toBigDecimal()).toBigInteger()
                                 )
                             if (createResult.isSucceed()) {
                                 createHex = createResult.data()
@@ -298,11 +304,11 @@ class LockTestActivity : BaseActivity() {
                         GoWallet.decMenm(GoWallet.encPasswd(password)!!, coin.getpWallet().mnem)
                     val priKey = coin.getPrivkey(coin.chain, mnem)
                     var addressid = 0
-                    if (type == 0) {
+                  /*  if (type == 0) {
                         addressid = 2
                     } else {
                         addressid = 0
-                    }
+                    }*/
                     val signTx = txHex.let { hex ->
                         GoWallet.signTxGroupHX(
                             null,

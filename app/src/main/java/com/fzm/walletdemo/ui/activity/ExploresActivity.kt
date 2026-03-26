@@ -119,10 +119,10 @@ class ExploresActivity : BaseActivity() {
             }
             val id = MyWallet.getId()
             val wallet = LitePal.find<PWallet>(id)
-            if (wallet?.type == PWallet.TYPE_ADDR_KEY) {
+            /*if (wallet?.type == PWallet.TYPE_ADDR_KEY) {
                 toast(getString(R.string.str_addr_no))
                 return@let
-            }
+            }*/
 
             ARouter.getInstance().build(RouterPath.APP_DAPP).withString("name", appBean.name)
                 .withString(RouterPath.PARAM_URL, appBean.app_url).navigation()

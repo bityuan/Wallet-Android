@@ -230,7 +230,7 @@ class DappActivity : AppCompatActivity() {
             }
 
             2 -> {
-                val addr = GoWallet.getChain("BNB")?.address
+                val addr = GoWallet.getChain("ETH")?.address
                 addr?.let {
                     currentAddress = it
                     address = Address(it)
@@ -895,7 +895,7 @@ class DappActivity : AppCompatActivity() {
                 val mnem: String = GoWallet.decMenm(bPassword, w.mnem)
                 chainId?.let { cid ->
                     val privKey = GoWallet.getPrikey(
-                        if (cid == 2999L) "ETH" else name ?: "", mnem
+                        "ETH", mnem
                     )
                     handleMessageSign(privKey, callbackId, data)
                 }

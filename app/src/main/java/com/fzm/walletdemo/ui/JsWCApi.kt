@@ -1,7 +1,6 @@
 package com.fzm.walletdemo.ui
 
 import android.text.TextUtils
-import android.util.Log
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import androidx.fragment.app.FragmentActivity
@@ -12,12 +11,8 @@ import com.fzm.walletdemo.web3.bean.Web3Transaction
 import com.fzm.walletdemo.web3.listener.JsListener
 import com.fzm.walletdemo.web3.util.Hex
 import org.json.JSONObject
-import org.web3j.crypto.ECKeyPair
-import org.web3j.crypto.Hash
-import org.web3j.crypto.Sign
 import org.web3j.protocol.core.DefaultBlockParameter
 import org.web3j.protocol.core.DefaultBlockParameterName
-import org.web3j.utils.Numeric
 import timber.log.Timber
 import java.math.BigInteger
 
@@ -26,7 +21,6 @@ class JsWCApi(
     private val activity: FragmentActivity,
     private val jsListener: JsListener
 ) {
-
 
     @JavascriptInterface
     fun signTransaction(
@@ -73,7 +67,7 @@ class JsWCApi(
     fun signMessage(callbackId: Int, data: String?) {
         Timber.tag("edao").v("signMessage")
         webView.post {
-            jsListener.onSignMessage(callbackId,data)
+            jsListener.onSignMessage(callbackId, data)
         }
     }
 
@@ -81,7 +75,7 @@ class JsWCApi(
     fun signPersonalMessage(callbackId: Int, data: String?) {
         logDebug("signPersonalMessage， callbackId = $callbackId,data = $data")
         webView.post {
-            jsListener.onSignPersonalMessage(callbackId,data)
+            jsListener.onSignPersonalMessage(callbackId, data)
         }
 
     }
@@ -96,6 +90,7 @@ class JsWCApi(
 
     @JavascriptInterface
     fun signTypedMessage(callbackId: Int, data: String?) {
+        logDebug("signTypedMessage === $callbackId, $data")
         webView.post {
         }
     }
@@ -132,7 +127,7 @@ class JsWCApi(
         Timber.tag("edao").v("AddEthereumChain, callbackId = $callbackId msgParams = $msgParams")
 
         webView.post {
-            jsListener.walletAddEthereumChain(callbackId,msgParams)
+            jsListener.walletAddEthereumChain(callbackId, msgParams)
         }
     }
 
@@ -141,7 +136,7 @@ class JsWCApi(
         Timber.tag("edao").v("SwitchEthereumChain  callbackId = $callbackId msgParams = $msgParams")
 
         webView.post {
-            jsListener.walletSwitchEthereumChain(callbackId,msgParams)
+            jsListener.walletSwitchEthereumChain(callbackId, msgParams)
         }
 
 
