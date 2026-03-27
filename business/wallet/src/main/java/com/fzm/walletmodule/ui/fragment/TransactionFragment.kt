@@ -332,7 +332,7 @@ class TransactionFragment : BaseFragment() {
         val set = mutableSetOf<String?>()
         addresss?.let { ass ->
             for (a in ass) {
-                if (a.address == address) {
+                if (a.address.lowercase() == address?.lowercase()) {
                     set.add(a.contacts?.nickName)
                 }
             }
