@@ -70,5 +70,9 @@
     <string name="like_str">collect</string>
     <string name="collect_suc_str">Collection successful!</string>
     <string name="my_collect_str">My Collection</string>
+    <string name="region_not_supported">This feature is not available in your region</string>
+    <string name="region_block_title">Something went wrong</string>
+    <string name="region_block_subtitle">Please try again later</string>
+    <string name="region_block_retry">Retry</string>
 
 </resources>

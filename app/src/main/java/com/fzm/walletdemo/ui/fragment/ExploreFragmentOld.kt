@@ -142,6 +142,12 @@ class ExploreFragmentOld : Fragment() {
         getCollect()
     }
 
+    /** 重新拉取探索列表与收藏（例如从地区限制页重试进入后刷新）。 */
+    fun reloadExploreData() {
+        getExploreAll()
+        getCollect()
+    }
+
 
     private fun getCollect() {
         val testurl = PreferencesUtils.getString(context, COLLECT_URL_KEY)

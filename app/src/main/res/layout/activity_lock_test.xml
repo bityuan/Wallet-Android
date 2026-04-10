@@ -145,7 +145,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:text="balance："
+            android:text="ticket balance："
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <TextView
@@ -160,11 +160,42 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:text="frozen："
+            android:text="ticket frozen："
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <TextView
             android:id="@+id/tv_frozen_balance"
+            android:text="--"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="50dp"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="paracross balance："
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/tv_para_balance"
+            android:text="--"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="paracross frozen："
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/tv_para_frozen_balance"
             android:text="--"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -201,12 +232,21 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/btn_withdraw"
+        android:id="@+id/btn_withdraw_ticket"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:background="@drawable/bg_import_wallet_button_ok"
-        android:text="取回"
+        android:text="取回ticket"
+        android:textColor="@android:color/white"
+        android:textSize="20sp" />
+    <Button
+        android:id="@+id/btn_withdraw_para"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_import_wallet_button_ok"
+        android:text="取回paracross"
         android:textColor="@android:color/white"
         android:textSize="20sp" />
 

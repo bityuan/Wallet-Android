@@ -156,11 +156,10 @@ class WalletRepository constructor(private val apis: Apis) {
 
         return goStrCall { apis.createBindMiner(requestBody) }
     }
-    suspend fun chain33CreateRaw(amount: BigInteger?): HttpResult<String> {
+    suspend fun chain33CreateRaw(amount: BigInteger?,contractAddress:String): HttpResult<String> {
         val param = JSONObject()
         val data = JSONObject()
-        //data.put("to", "16htvcBNSEA7fZhAdLJphDwQRQJaHpyHTp")
-        data.put("to", "1HPkPopVe3ERfvaAgedDtJQ792taZFEHCe")
+        data.put("to", contractAddress)
         data.put("amount", amount)
         data.put("fee", 100000)
         data.put("note", "")
@@ -179,12 +178,11 @@ class WalletRepository constructor(private val apis: Apis) {
 
         return goStrCall { apis.chain33CreateRaw(requestBody) }
     }
-    suspend fun chain33Balance(address: String): HttpResult<List<TicketBalance>> {
+    suspend fun chain33Balance(address: String,execer:String): HttpResult<List<TicketBalance>> {
         val param = JSONObject()
         val data = JSONObject()
         data.put("addresses", JSONArray(listOf(address)))
-        //data.put("execer", "ticket")
-        data.put("execer", "paracross")
+        data.put("execer", execer)
 
         param.put("id", 1)
         param.put("method", "Chain33.GetBalance")

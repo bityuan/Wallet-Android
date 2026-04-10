@@ -10,6 +10,7 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.utils.LocalManageUtil
+import com.fzm.wallet.sdk.utils.RegionHelper
 import com.fzm.walletdemo.R
 import com.fzm.walletdemo.ui.WalletHelper
 import com.fzm.walletmodule.ui.base.BaseActivity
@@ -73,7 +74,9 @@ class SplashActivity : BaseActivity() {
 
     private fun gotoMain() {
         lifecycleScope.launch(Dispatchers.IO) {
+            val regionJob = launch { RegionHelper.checkRegion(applicationContext) }
             delay(1000)
+            regionJob.join()
             ARouter.getInstance().build(RouterPath.APP_MAIN).navigation()
             finish()
         }

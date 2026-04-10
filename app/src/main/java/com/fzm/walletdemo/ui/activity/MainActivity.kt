@@ -11,6 +11,7 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.fzm.wallet.sdk.RouterPath
 import com.fzm.wallet.sdk.base.LIVE_KEY_WALLET
+import com.fzm.wallet.sdk.utils.RegionHelper
 import com.fzm.wallet.sdk.base.LIVE_WC_STATUS
 import com.fzm.wallet.sdk.base.logDebug
 import com.fzm.wallet.sdk.db.entity.Coin
@@ -25,6 +26,7 @@ import com.fzm.walletdemo.ui.fragment.ExploreFragment
 import com.fzm.walletdemo.ui.fragment.ExploreFragmentOld
 import com.fzm.walletdemo.ui.fragment.HomeFragment
 import com.fzm.walletdemo.ui.fragment.MyFragment
+import com.fzm.walletdemo.ui.fragment.RegionBlockFragment
 import com.fzm.walletdemo.ui.fragment.WebFragment
 import com.fzm.walletmodule.base.Constants
 import com.fzm.walletmodule.ui.base.BaseActivity
@@ -43,6 +45,7 @@ class MainActivity : BaseActivity() {
     private var tianFragment: WebFragment? = null
     private var tpFragment: WebFragment? = null
     private var exploreFragment: ExploreFragmentOld? = null
+    private var regionBlockFragment: RegionBlockFragment? = null
     private var mWalletIndexFragment: WalletIndexFragment? = null
     private var mHomeFragment: HomeFragment? = null
     private var myFragment: MyFragment? = null
@@ -280,6 +283,7 @@ class MainActivity : BaseActivity() {
         mWalletIndexFragment?.let { transaction.hide(it) }
         mHomeFragment?.let { transaction.hide(it) }
         exploreFragment?.let { transaction.hide(it) }
+        regionBlockFragment?.let { transaction.hide(it) }
         myFragment?.let { transaction.hide(it) }
         tianFragment?.let { transaction.hide(it) }
         tpFragment?.let { transaction.hide(it) }
@@ -317,6 +321,10 @@ class MainActivity : BaseActivity() {
     }
 
     private fun showExploreFragment(fragmentTransaction: FragmentTransaction) {
+        if (RegionHelper.isChinaUser()) {
+            showRegionBlockFragment(fragmentTransaction)
+            return
+        }
         if (exploreFragment != null) {
             fragmentTransaction.show(exploreFragment!!)
         } else {
@@ -327,6 +335,41 @@ class MainActivity : BaseActivity() {
                 "showExploreFragment"
             )
 
+        }
+        fragmentTransaction.commitAllowingStateLoss()
+    }
+
+    private fun showRegionBlockFragment(fragmentTransaction: FragmentTransaction) {
+        if (regionBlockFragment != null) {
+            fragmentTransaction.show(regionBlockFragment!!)
+        } else {
+            regionBlockFragment = RegionBlockFragment()
+            fragmentTransaction.add(
+                R.id.fl_tabcontent,
+                regionBlockFragment!!,
+                "showRegionBlockFragment"
+            )
+        }
+        fragmentTransaction.commitAllowingStateLoss()
+    }
+
+    /**
+     * 地区检测通过后，从地区限制页切换到探索页并加载数据（由 [RegionBlockFragment] 重试触发）。
+     */
+    fun showExploreAfterRegionUnblocked() {
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        hideFragments(fragmentTransaction)
+        regionBlockFragment?.let { fragmentTransaction.hide(it) }
+        if (exploreFragment != null) {
+            fragmentTransaction.show(exploreFragment!!)
+            exploreFragment!!.reloadExploreData()
+        } else {
+            exploreFragment = ExploreFragmentOld()
+            fragmentTransaction.add(
+                R.id.fl_tabcontent,
+                exploreFragment!!,
+                "showExploreFragment"
+            )
         }
         fragmentTransaction.commitAllowingStateLoss()
     }

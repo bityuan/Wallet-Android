@@ -23,7 +23,8 @@ import com.kongzue.dialogx.dialogs.MessageDialog
 import kotlinx.android.synthetic.main.activity_lock_test.btn_all
 import kotlinx.android.synthetic.main.activity_lock_test.btn_bind
 import kotlinx.android.synthetic.main.activity_lock_test.btn_ok
-import kotlinx.android.synthetic.main.activity_lock_test.btn_withdraw
+import kotlinx.android.synthetic.main.activity_lock_test.btn_withdraw_para
+import kotlinx.android.synthetic.main.activity_lock_test.btn_withdraw_ticket
 import kotlinx.android.synthetic.main.activity_lock_test.et_amount
 import kotlinx.android.synthetic.main.activity_lock_test.et_bind_addr
 import kotlinx.android.synthetic.main.activity_lock_test.et_create
@@ -32,6 +33,8 @@ import kotlinx.android.synthetic.main.activity_lock_test.et_origin_addr
 import kotlinx.android.synthetic.main.activity_lock_test.rg_lock
 import kotlinx.android.synthetic.main.activity_lock_test.tv_address
 import kotlinx.android.synthetic.main.activity_lock_test.tv_frozen_balance
+import kotlinx.android.synthetic.main.activity_lock_test.tv_para_balance
+import kotlinx.android.synthetic.main.activity_lock_test.tv_para_frozen_balance
 import kotlinx.android.synthetic.main.activity_lock_test.tv_ticket_balance
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -91,7 +94,7 @@ class LockTestActivity : BaseActivity() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             coin?.let {
-                val banResult = walletRepository.chain33Balance(it.address)
+                val banResult = walletRepository.chain33Balance(it.address,"ticket")
                 if (banResult.isSucceed()) {
                     withContext(Dispatchers.Main) {
                         val data = banResult.data()?.get(0)
@@ -104,6 +107,29 @@ class LockTestActivity : BaseActivity() {
                             val frozen = ba.frozen.divide(100000000.toBigDecimal(),4,RoundingMode.HALF_UP)
                             tv_ticket_balance.text = balance.toString()
                             tv_frozen_balance.text = frozen.toString()
+                        }
+                    }
+
+
+                }
+
+            }
+        }
+        lifecycleScope.launch(Dispatchers.IO) {
+            coin?.let {
+                val banResult = walletRepository.chain33Balance(it.address,"paracross")
+                if (banResult.isSucceed()) {
+                    withContext(Dispatchers.Main) {
+                        val data = banResult.data()?.get(0)
+                        data?.let { ba ->
+                            //balance = ba.balance.div(100000000.toBigDecimal())
+
+                            balance = ba.balance.divide(100000000.toBigDecimal(), 4, RoundingMode.HALF_UP)
+
+
+                            val frozen = ba.frozen.divide(100000000.toBigDecimal(),4,RoundingMode.HALF_UP)
+                            tv_para_balance.text = balance.toString()
+                            tv_para_frozen_balance.text = frozen.toString()
                         }
                     }
 
@@ -183,7 +209,7 @@ class LockTestActivity : BaseActivity() {
                 })
             mEditDialogFragment.showDialog("tag", supportFragmentManager)
         }
-        btn_withdraw.setOnClickListener {
+        btn_withdraw_ticket.setOnClickListener {
             val mEditDialogFragment = EditDialogFragment()
             mEditDialogFragment.setType(1)
                 .setRightButtonStr(getString(R.string.home_confirm))
@@ -198,7 +224,36 @@ class LockTestActivity : BaseActivity() {
                             lifecycleScope.launch(Dispatchers.IO) {
                                 val result = GoWallet.checkPasswd(password, localPassword)
                                 if (result) {
-                                    createSignSend(it, password, 2)
+                                    createSignSend(it, password, 21)
+                                } else {
+                                    withContext(Dispatchers.Main) {
+                                        dismiss()
+                                        toast(getString(R.string.pwd_fail_str))
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                })
+            mEditDialogFragment.showDialog("tag", supportFragmentManager)
+        }
+        btn_withdraw_para.setOnClickListener {
+            val mEditDialogFragment = EditDialogFragment()
+            mEditDialogFragment.setType(1)
+                .setRightButtonStr(getString(R.string.home_confirm))
+                .setOnButtonClickListener(object : EditDialogFragment.OnButtonClickListener {
+                    override fun onLeftButtonClick(v: View) {}
+                    override fun onRightButtonClick(v: View) {
+                        coin?.let {
+                            val etPassword: EditText = mEditDialogFragment.getEtInput()
+                            val password = etPassword.text.toString()
+                            val localPassword: String = it.getpWallet().password
+                            showLoading()
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                val result = GoWallet.checkPasswd(password, localPassword)
+                                if (result) {
+                                    createSignSend(it, password, 22)
                                 } else {
                                     withContext(Dispatchers.Main) {
                                         dismiss()
@@ -283,10 +338,20 @@ class LockTestActivity : BaseActivity() {
                             }
                         }
 
-                        2 -> {
+                        21 -> {
                             val createResult =
                                 walletRepository.chain33CreateRaw(
-                                    getAmount.toBigDecimal().multiply(100000000.toBigDecimal()).toBigInteger()
+                                    getAmount.toBigDecimal().multiply(100000000.toBigDecimal()).toBigInteger(),"16htvcBNSEA7fZhAdLJphDwQRQJaHpyHTp"
+                                )
+                            if (createResult.isSucceed()) {
+                                createHex = createResult.data()
+                            }
+
+                        }
+                        22 -> {
+                            val createResult =
+                                walletRepository.chain33CreateRaw(
+                                    getAmount.toBigDecimal().multiply(100000000.toBigDecimal()).toBigInteger(),"1HPkPopVe3ERfvaAgedDtJQ792taZFEHCe"
                                 )
                             if (createResult.isSucceed()) {
                                 createHex = createResult.data()
