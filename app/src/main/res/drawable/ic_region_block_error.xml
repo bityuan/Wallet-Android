@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="64dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+
+    <!-- Circular arrow (retry icon) similar to TikTok error -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M32,12 A20,20 0 1,1 14.6,25"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round"
+        android:strokeWidth="3" />
+
+    <!-- Arrow head -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M14.6,25 L8,22 L12,29Z" />
+
+</vector>
