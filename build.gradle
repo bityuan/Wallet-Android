@@ -1,4 +1,15 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+//
+// GitHub Packages（maven.pkg.github.com / trustwallet）凭据 — GPR 惯例，勿提交密钥：
+// 在用户级 gradle.properties 中配置（与项目根目录 gradle.properties 不同）：
+//   Windows:  %USERPROFILE%\.gradle\gradle.properties
+//   macOS/Linux: ~/.gradle/gradle.properties
+//   gpr.user=<GitHub 用户名>
+//   gpr.key=<含 read:packages 的 PAT>
+// CI（如 GitHub Actions）一般可用环境变量 GITHUB_ACTOR、GITHUB_TOKEN，无需 gpr.*。
+def gprUser = (rootProject.findProperty('gpr.user') ?: System.getenv('GITHUB_ACTOR') ?: '').toString().trim()
+def gprKey = (rootProject.findProperty('gpr.key') ?: System.getenv('GITHUB_TOKEN') ?: '').toString().trim()
+
 buildscript {
     ext.kotlin_version = "1.5.31"
     repositories {
@@ -28,8 +39,8 @@ allprojects {
         maven { url 'https://repo1.maven.org/maven2/' }
         maven { url = uri("https://maven.pkg.github.com/trustwallet/wallet-core")
             credentials {
-                username = ''
-                password = ''
+                username = gprUser
+                password = gprKey
             }
         }
 
@@ -118,7 +129,8 @@ ext {
     zxingLite = "com.github.jenly1314:zxing-lite:2.4.0"
     backgroundLibrary = "com.github.JavaNoober.BackgroundLibrary:libraryx:1.7.3"
     fragmentKtx = "androidx.fragment:fragment-ktx:1.4.1"
-    dsBridge = "com.github.wendux:DSBridge-Android:3.0.0"
+    // JitPack：artifactId 须用小写 dsbridge-android；DSBridge-Android 的 .aar 在 JitPack 上 404
+    dsBridge = "com.github.wendux:dsbridge-android:3.0.0"
     livedatabus = "io.github.jeremyliao:live-event-bus-x:1.8.0"
     permissionx = "com.guolindev.permissionx:permissionx:1.7.1"
     materialDialogs = "com.afollestad.material-dialogs:core:0.9.6.0"
